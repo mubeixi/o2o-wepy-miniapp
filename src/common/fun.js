@@ -22,3 +22,18 @@ export const error = (title, icon, duration) => {
     toast(title, 'none', '/static/icon_http_error.png', duration)
   }
 }
+
+export const linkTo = (url, type = 'default') => {
+
+  if (type === 'default') {
+    wx.navigateTo({
+      url,
+      fail(err) {
+        console.log(err)
+        wx.switchTab({
+          url
+        })
+      }
+    })
+  }
+}

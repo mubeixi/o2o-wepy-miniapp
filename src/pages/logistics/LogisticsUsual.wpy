@@ -1,0 +1,66 @@
+<template>
+  <div class="page-wrap">
+    <div class="group-cell">
+      <div class="cell-item">
+        <div class="label">运费计算方式</div>
+        <div class="content"></div>
+        <icon type="iconarrowleft" class="right"></icon>
+      </div>
+      <div class="cell-item">
+        <div class="label">快递模板</div>
+        <div class="content"></div>
+        <icon type="iconarrowleft" class="right"></icon>
+      </div>
+    </div>
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+
+    },
+    created() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+
+.page-wrap{
+  height: 100vh;
+  background: white;
+}
+.group-cell{
+  padding-right: 20rpx;
+}
+.label{
+  color: #333 !important;
+  padding: 20rpx 0;
+}
+
+</style>
+<config>
+  {
+    "navigationBarTitleText": "普通物流",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "copyright": "~@/components/copyright",
+      "icon": "~@/components/icon",
+      "ad": "~@/components/ad"
+    }
+  }
+</config>

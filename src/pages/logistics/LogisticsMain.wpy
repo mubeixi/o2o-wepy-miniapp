@@ -1,0 +1,106 @@
+<template>
+  <div class="page-wrap">
+    <div class="channel-list">
+      <div class="channel-item" @click="$linkTo('/pages/logistics/LogisticsUsual')">
+        <div class="content">
+          <image src="/static/logistics/base.png" class="img"></image>
+          <div class="title">普通物流</div>
+        </div>
+        <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>
+      </div>
+      <div class="channel-item">
+        <div class="content">
+          <image src="/static/logistics/cheng.png" class="img"></image>
+          <div class="title">同城配送</div>
+        </div>
+        <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>
+      </div>
+      <div class="channel-item">
+        <div class="content">
+          <image src="/static/logistics/nopaper.png" class="img"></image>
+          <div class="title">电子面单</div>
+        </div>
+        <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>
+      </div>
+    </div>
+
+    <!--    <div class="p-t-50 p-b-50 bgwhite">-->
+    <!--      <copyright></copyright>-->
+    <!--    </div>-->
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+
+    },
+    created() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+
+  .page-wrap{
+    height: 100vh;
+    background: white;
+  }
+  .channel{
+    &-list{
+      padding: 80rpx 0 0;
+    }
+    &-item{
+      width: 610rpx;
+      height: 120rpx;
+      margin:0 30rpx 55rpx;
+      padding: 0 40rpx;
+      box-shadow: 1rpx 0 18rpx rgba(4, 0, 0, 0.11);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .content{
+        display: flex;
+        align-items: center;
+        .img{
+          width: 70rpx;
+          height: 80rpx;
+        }
+        .title{
+          margin-left: 40rpx;
+          color: #333;
+          font-size: 14px;
+        }
+      }
+      .arrow-right{
+
+      }
+
+    }
+  }
+
+</style>
+<config>
+  {
+    "navigationBarTitleText": "物流管理",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "copyright": "~@/components/copyright",
+      "icon": "~@/components/icon",
+      "ad": "~@/components/ad"
+    }
+  }
+</config>
