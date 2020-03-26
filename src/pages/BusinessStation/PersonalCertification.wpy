@@ -15,7 +15,7 @@
               <div v-if="trade.label">{{trade.label}}</div>
             </div>
             <div class="form-cell-item__right">
-              <span class="wzwicon iconright font16" style="color: #666"></span>
+              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
             </div>
           </div>
           <div class="form-cell-item">
@@ -70,7 +70,7 @@
               <div v-if="addressInfo.label">{{addressInfo.label}}</div>
             </div>
             <div class="form-cell-item__right">
-              <span class="wzwicon iconright font16" style="color: #666"></span>
+              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
             </div>
           </div>
           <div class="form-cell-item">
@@ -134,7 +134,7 @@
               <!--                            <div v-if="trade.label">{{trade.label}}</div>-->
             </div>
             <div class="form-cell-item__right">
-              <span class="wzwicon iconright font16" style="color: #666"></span>
+              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
             </div>
           </div>
           <div class="form-cell-item">
@@ -302,6 +302,9 @@
 </style>
 <config>
   {
-  "navigationBarTitleText": "个人认证"
+  "navigationBarTitleText": "个人认证",
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
   }
 </config>
