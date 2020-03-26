@@ -1,0 +1,200 @@
+<template>
+  <div class="station-all flex ">
+    <div class="station-left">
+      <div class="circle" style="margin-top: 11px">
+        1
+      </div>
+      <div class="line"></div>
+      <div class="circle">
+        2
+      </div>
+      <div class="line"></div>
+      <div class="circle">
+        3
+      </div>
+      <div class="line"></div>
+      <div class="circle">
+        4
+      </div>
+      <div class="line"></div>
+      <div class="circle">
+        5
+      </div>
+    </div>
+    <div class="station-right">
+      <div class="rectangle flex flex-between flex-vertical-center">
+        <div>
+          <div class="station-title">注册供货商</div>
+          <div class="station-title-sub">快速一键注册</div>
+        </div>
+
+        <div class="station-button">
+          已完成
+        </div>
+      </div>
+
+      <div class="rectangle flex flex-between flex-vertical-center">
+        <div>
+          <div class="station-title">签署入驻协议</div>
+          <div class="station-title-sub">在线签署商家入住协议</div>
+        </div>
+        <div class="right-div">
+          <div class="station-button">
+            已完成
+          </div>
+          <div class="look-info">
+            查看资料
+          </div>
+        </div>
+
+      </div>
+
+      <div class="rectangle flex flex-between flex-vertical-center">
+        <div>
+          <div class="station-title">提交资质</div>
+          <div class="station-title-sub">提交企业资料和银行账户信息</div>
+        </div>
+
+        <div class="station-button active">
+          去提交
+        </div>
+        <!--				<div class="station-button">-->
+        <!--					已完成-->
+        <!--				</div>-->
+
+      </div>
+
+      <div class="rectangle flex flex-between flex-vertical-center">
+        <div>
+          <div class="station-title">付款</div>
+          <div class="station-title-sub">根据不同的入驻类目及入驻年限打款</div>
+        </div>
+
+        <div class="station-button active">
+          去提交
+        </div>
+
+      </div>
+
+      <div class="rectangle flex flex-between flex-vertical-center">
+        <div>
+          <div class="station-title">入驻成功</div>
+          <div class="station-title-sub">恭喜您入驻成功</div>
+        </div>
+
+        <div class="station-button active">
+          去提交
+        </div>
+
+      </div>
+
+
+
+
+
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    created() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .station-all{
+    min-height: 100vh;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 28px;
+    box-sizing: border-box;
+    .station-left{
+      width: 34rpx;
+      margin-right: 10px;
+    }
+    .station-right{
+      width: 654rpx;
+    }
+  }
+  .circle{
+    width: 34rpx;
+    height: 34rpx;
+    background-color: #E41515;
+    border-radius: 50%;
+    overflow: hidden;
+    line-height: 34rpx;
+    text-align: center;
+    font-size: 11px;
+    color: #ffffff;
+  }
+  .rectangle{
+    width: 100%;
+    height: 70px;
+    background-color: #ffffff;
+    padding-left: 16px;
+    padding-right: 12px;
+    box-sizing: border-box;
+    margin-bottom: 35px;
+    position: relative;
+  }
+  .line{
+    width: 9px;
+    box-sizing: border-box;
+    height: 90px;
+    border-right: 1px dotted #FFADAD;
+  }
+
+  .station-button{
+    width: 55px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    font-size: 12px;
+    background-color: #CACACA;
+    color: #FFFFFF;
+  }
+  .active{
+    background-color: #E41515 !important;
+  }
+
+  .station-title{
+    font-size: 14px;
+    color: #333333;
+    font-weight: bold;
+    line-height: 21px;
+  }
+  .station-title-sub{
+    font-size: 11px;
+    color: #777777;
+    line-height: 21px;
+  }
+  .look-info{font-size: 10px;color: #E41515;margin-top: 5px}
+  .right-div{
+    text-align: center;
+  }
+
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "商家入驻"
+  }
+</config>

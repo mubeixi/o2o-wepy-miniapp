@@ -56,7 +56,8 @@ wepy.app({
 <config>
 {
     pages: [
-      "pages/index"
+      "pages/index",
+      "pages/BusinessStation/BusinessStation"
     ],
     window: {
         backgroundTextStyle: "light",
@@ -76,7 +77,7 @@ wepy.app({
                 "text": "发现"
             },
             {
-                "pagePath": "pages/index",
+                "pagePath": "pages/BusinessStation/BusinessStation",
                 "iconPath": "/static/tabbar/live.png",
                 "selectedIconPath": "/static/tabbar/live.png",
                 "text": "直播"
