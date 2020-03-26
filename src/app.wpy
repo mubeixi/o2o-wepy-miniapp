@@ -63,6 +63,7 @@ wepy.app({
       "pages/BusinessStation/CompanyCertification",
       "pages/BusinessStation/BusinessPay",
       "pages/Store/StoreSetting",
+      "pages/Store/StoreInfo",
       "pages/Store/SameCityDelivery",
       "pages/ProductManager",
       "pages/StoreMarketing",
