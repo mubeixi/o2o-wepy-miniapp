@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="station-right">
-      <div class="rectangle flex flex-between flex-vertical-center">
+      <div class="rectangle flex flex-justify-between flex-vertical-center">
         <div>
           <div class="station-title">注册供货商</div>
           <div class="station-title-sub">快速一键注册</div>
@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <div class="rectangle flex flex-between flex-vertical-center">
+      <div class="rectangle flex flex-justify-between flex-vertical-center">
         <div>
           <div class="station-title">签署入驻协议</div>
           <div class="station-title-sub">在线签署商家入住协议</div>
@@ -49,7 +49,7 @@
 
       </div>
 
-      <div class="rectangle flex flex-between flex-vertical-center">
+      <div class="rectangle flex flex-justify-between flex-vertical-center">
         <div>
           <div class="station-title">提交资质</div>
           <div class="station-title-sub">提交企业资料和银行账户信息</div>
@@ -64,7 +64,7 @@
 
       </div>
 
-      <div class="rectangle flex flex-between flex-vertical-center">
+      <div class="rectangle flex flex-justify-between flex-vertical-center">
         <div>
           <div class="station-title">付款</div>
           <div class="station-title-sub">根据不同的入驻类目及入驻年限打款</div>
@@ -76,7 +76,7 @@
 
       </div>
 
-      <div class="rectangle flex flex-between flex-vertical-center">
+      <div class="rectangle flex flex-justify-between flex-vertical-center">
         <div>
           <div class="station-title">入驻成功</div>
           <div class="station-title-sub">恭喜您入驻成功</div>
