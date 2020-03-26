@@ -58,7 +58,11 @@ wepy.app({
     pages: [
       "pages/index",
       "pages/BusinessStation/BusinessStation",
-      "pages/BusinessStation/SettlementAgreement"
+      "pages/BusinessStation/SettlementAgreement",
+      "pages/BusinessStation/PersonalCertification",
+      "pages/BusinessStation/CompanyCertification",
+      "pages/BusinessStation/BusinessPay",
+      "pages/Store/StoreSetting"
     ],
     window: {
         backgroundTextStyle: "light",
@@ -78,13 +82,13 @@ wepy.app({
                 "text": "发现"
             },
             {
-                "pagePath": "pages/BusinessStation/SettlementAgreement",
+                "pagePath": "pages/BusinessStation/PersonalCertification",
                 "iconPath": "/static/tabbar/live.png",
                 "selectedIconPath": "/static/tabbar/live.png",
                 "text": "直播"
             },
             {
-                "pagePath": "pages/index",
+                "pagePath": "pages/Store/StoreSetting",
                 "iconPath": "/static/tabbar/praise.png",
                 "selectedIconPath": "/static/tabbar/praise.png",
                 "text": "好评"
