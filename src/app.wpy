@@ -65,7 +65,9 @@ wepy.app({
       "pages/Store/StoreSetting",
       "pages/StoreDashboard",
       "pages/ProductManager",
-      "pages/StoreMarketing"
+      "pages/StoreMarketing",
+      "pages/logistics/LogisticsMain",
+      "pages/logistics/LogisticsUsual"
     ],
     window: {
         backgroundTextStyle: "light",

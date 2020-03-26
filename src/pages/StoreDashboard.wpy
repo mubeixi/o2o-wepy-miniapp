@@ -62,7 +62,7 @@
            <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
            <div class="grid-item-title">数据统计</div>
          </div>
-         <div class="grid-item">
+         <div class="grid-item" @click="toMarketing">
            <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
            <div class="grid-item-title">推广营销</div>
          </div>
@@ -76,7 +76,7 @@
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
-          <div class="grid-item">
+          <div class="grid-item" @click="toLogistics">
             <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
             <div class="grid-item-title">物流管理</div>
           </div>
@@ -105,30 +105,30 @@
     getSystemInfo
   } from '../api/system'
   import {
-    toast
+    linkTo
   } from '../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      storeInfo:{
-        volidate:false
+      storeInfo: {
+        volidate: false
       }
     },
-    methods:{
-
+    methods: {
+      toLogistics() {
+        linkTo('/pages/logistics/LogisticsMain')
+      },
+      toMarketing() {
+        console.log('toMarketing')
+        wx.navigateTo({
+          url: '/pages/StoreMarketing'
+        })
+      }
     },
     created() {
-      // getSystemInfo({
-      //
-      // }).then(res => {
-      //   console.log(res)
-      //   toast('请求成功')
-      //   // eslint-disable-next-line handle-callback-err
-      // }).catch(err => {
-      //   wx.fun.error('请求失败')
-      // })
+
     }
 
   })

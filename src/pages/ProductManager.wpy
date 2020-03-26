@@ -112,28 +112,28 @@
     {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 0},
     {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
     {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1}
-  ];
-  wepy.page({
+  ]
+wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      showHandle:false,
-      allCheck:false,
+      showHandle: false,
+      allCheck: false,
       productList: []
     },
     methods: {
-      taggleAllCheck(){
+      taggleAllCheck() {
         const check = !this.allCheck
         this.allCheck = check
         this.productList = mockData.map(item => {
-          return {...item,check}
+          return {...item, check}
         })
       },
-      taggleProductCheck(idx){
+      taggleProductCheck(idx) {
         console.log(idx)
         this.productList[idx].check = !this.productList[idx].check
       },
-      taggleHandleShow(){
+      taggleHandleShow() {
         this.showHandle = !this.showHandle
       },
       checkboxChange: function (e) {
@@ -141,9 +141,8 @@
       }
     },
     created() {
-
       this.productList = mockData.map(item => {
-        return {...item,check:false}
+        return {...item, check: false}
       })
       // getSystemInfo({
       //

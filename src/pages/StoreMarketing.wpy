@@ -55,11 +55,11 @@
     store,
     mixins: [pageMixin],
     data: {
-      storeInfo:{
-        volidate:false
+      storeInfo: {
+        volidate: false
       }
     },
-    methods:{
+    methods: {
 
     },
     created() {
@@ -80,6 +80,10 @@
 <style lang="scss">
   @import "../assets/variables.scss";
   @import "../assets/mixins.scss";
+  .page-wrap{
+    height: 100vh;
+    background: white;
+  }
   .feature{
     &-list{
       padding: 40rpx 0;
@@ -108,7 +112,6 @@
   {
     "navigationBarTitleText": "营销推广",
     "navigationBarTextStyle": "black",
-    "navigationBarBackgroundColor": "#f8f8f8",
     "usingComponents": {
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
