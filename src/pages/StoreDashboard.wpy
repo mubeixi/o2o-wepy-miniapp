@@ -48,7 +48,7 @@
             <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
             <div class="grid-item-title">店铺模板</div>
           </div>
-          <div class="grid-item">
+          <div class="grid-item" @click="$linkTo('/pages/ProductManager')">
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
           </div>
@@ -72,7 +72,7 @@
          </div>
        </div>
         <div class="grid-row">
-          <div class="grid-item">
+          <div class="grid-item" @click="$linkTo('/pages/Store/StoreSetting')">
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
