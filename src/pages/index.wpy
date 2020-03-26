@@ -1,5 +1,7 @@
 <template>
-
+<div class="p-t-60 text-center" @click="$linkTo('/pages/StoreDashboard')">
+  O2O Merchant Application
+</div>
 </template>
 
 <script>
@@ -47,8 +49,6 @@
 <config>
   {
     "navigationBarTitleText": "首页",
-    "navigationStyle": "custom",
-    "navigationBarTextStyle": "white",
     "usingComponents": {
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
