@@ -1,0 +1,108 @@
+<style lang="scss">
+@import "/assets/app.scss";
+
+
+</style>
+
+<script>
+import wepy from '@wepy/core'
+// import eventHub from './common/eventHub'
+import vuex from '@wepy/x'
+wepy.use(vuex)
+
+require('./common/index')
+
+// import promisify.js  from '@wepy/use-promisify.js'
+// wepy.use(promisify.js)
+
+wepy.app({
+  hooks: {
+    // App 级别 hook，对整个 App 生效
+    // 同时存在 Page hook 和 App hook 时，优先执行 Page hook，返回值再交由 App hook 处
+    // 'before-setData': function (dirty) {
+    //   console.log('setData dirty: ', dirty)
+    //   return dirty
+    // }
+  },
+  globalData: {
+    userInfo: null
+  },
+
+  onLaunch() {
+    // this.testAsync()
+    // eventHub.$on('app-launch', (...args) => {
+    //   console.log('app-launch event emitted, the params are:')
+    //   console.log(args)
+    // })
+  },
+
+  methods: {
+
+    // sleep (s) {
+    //   return new Promise((resolve, reject) => {
+    //     setTimeout(() => {
+    //       resolve('promise resolved')
+    //     }, s * 1000)
+    //   })
+    // },
+    //
+    // async testAsync () {
+    //   let d = await this.sleep(3)
+    //   console.log(d)
+    // }
+  }
+})
+</script>
+<config>
+{
+    pages: [
+      "pages/index",
+      "pages/store/index",
+      "pages/tmpl",
+      "pages/productDetail"
+    ],
+    window: {
+        backgroundTextStyle: "light",
+        navigationBarBackgroundColor: "#fff",
+        navigationBarTitleText: "本地生活",
+        navigationBarTextStyle: "black"
+    },
+    tabBar: {
+        borderStyle: "white",
+        color: "#999999",
+        selectedColor: "#26C78D",
+        list: [
+            {
+                "pagePath": "pages/index",
+                "iconPath": "/static/tabbar/find.png",
+                "selectedIconPath": "/static/tabbar/find.png",
+                "text": "发现"
+            },
+            {
+                "pagePath": "pages/index",
+                "iconPath": "/static/tabbar/live.png",
+                "selectedIconPath": "/static/tabbar/live.png",
+                "text": "直播"
+            },
+            {
+                "pagePath": "pages/index",
+                "iconPath": "/static/tabbar/praise.png",
+                "selectedIconPath": "/static/tabbar/praise.png",
+                "text": "好评"
+            },
+            {
+                "pagePath": "pages/index",
+                "iconPath": "/static/tabbar/notify.png",
+                "selectedIconPath": "/static/tabbar/notify.png",
+                "text": "消息"
+            },
+            {
+                "pagePath": "pages/index",
+                "iconPath": "/static/tabbar/user.png",
+                "selectedIconPath": "/static/tabbar/user.png",
+                "text": "我的"
+            }
+        ]
+    },
+}
+</config>

@@ -1,0 +1,58 @@
+<template>
+  
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../store'
+  import pageMixin from '../mixins'
+
+  import {
+    getSystemInfo
+  } from '../api/system'
+  import {
+    toast
+  } from '../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+     
+    },
+    methods:{
+     
+    },
+    created() {
+      // getSystemInfo({
+      //
+      // }).then(res => {
+      //   console.log(res)
+      //   toast('请求成功')
+      //   // eslint-disable-next-line handle-callback-err
+      // }).catch(err => {
+      //   wx.fun.error('请求失败')
+      // })
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../assets/variables.scss";
+  @import "../assets/mixins.scss";
+  
+
+</style>
+<config>
+  {
+    "navigationBarTitleText": "首页",
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "white",
+    "usingComponents": {
+      "copyright": "~@/components/copyright",
+      "icon": "~@/components/icon",
+      "ad": "~@/components/ad"
+    }
+  }
+</config>

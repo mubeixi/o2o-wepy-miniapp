@@ -1,0 +1,10 @@
+@mixin cover-img($paddingTop:0px,$bgsize:cover,$bgcolor:#f2f2f2,$repreat:no-repeat) {
+  background: {
+    color: $bgcolor;
+    size: $bgsize;
+    repeat: $repreat;
+  };
+  padding: {
+    top:$paddingTop;
+  };
+}
