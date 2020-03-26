@@ -64,7 +64,8 @@ wepy.app({
       "pages/BusinessStation/BusinessPay",
       "pages/Store/StoreSetting",
       "pages/StoreDashboard",
-      "pages/ProductManager"
+      "pages/ProductManager",
+      "pages/StoreMarketing"
     ],
     window: {
         backgroundTextStyle: "light",
