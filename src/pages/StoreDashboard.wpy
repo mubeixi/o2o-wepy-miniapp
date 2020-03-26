@@ -1,0 +1,70 @@
+<template>
+  <div class="page-wrap">
+    <div class="head">
+      <div class="base">
+        <image class="store-logo"></image>
+        <span class="store-title">老船长咖啡</span>
+      </div>
+      <div class="action">
+        <div><span>未认证</span><i></i></div>
+        <div><span>已认证</span><i></i></div>
+        <i></i>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../store'
+  import pageMixin from '../mixins'
+
+  import {
+    getSystemInfo
+  } from '../api/system'
+  import {
+    toast
+  } from '../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods:{
+
+    },
+    created() {
+      // getSystemInfo({
+      //
+      // }).then(res => {
+      //   console.log(res)
+      //   toast('请求成功')
+      //   // eslint-disable-next-line handle-callback-err
+      // }).catch(err => {
+      //   wx.fun.error('请求失败')
+      // })
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../assets/variables.scss";
+  @import "../assets/mixins.scss";
+
+
+</style>
+<config>
+  {
+    "navigationBarTitleText": "店铺概览",
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#f8f8f8",
+    "usingComponents": {
+      "copyright": "~@/components/copyright",
+      "icon": "~@/components/icon",
+      "ad": "~@/components/ad"
+    }
+  }
+</config>

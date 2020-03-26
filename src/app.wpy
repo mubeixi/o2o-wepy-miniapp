@@ -56,7 +56,8 @@ wepy.app({
 <config>
 {
     pages: [
-      "pages/index"
+      "pages/index",
+      "pages/StoreDashboard"
     ],
     window: {
         backgroundTextStyle: "light",
