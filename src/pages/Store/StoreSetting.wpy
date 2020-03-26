@@ -1,79 +1,42 @@
 <template>
-  <div class="business-pay">
-    <div class="form-cell-item flex flex-between flex-vertical-center" @click="openTradeSelect">
-      <div class="form-cell-item__label">选择分类</div>
-      <div>
-        <text class="font12 form-cell-color">羽绒服、连衣裙、毛衣</text>
-        <span class="wzwicon iconright font16" style="color: #666"></span>
-      </div>
-    </div>
-
-    <div class="form-cell-item flex  flex-vertical-center" >
-      <div class="form-cell-item__label">保证金</div>
-      <div class="form-cell-item__right">
-        <input placeholder-class="__placeholder" class="input" placeholder="请输入保证金" />
-      </div>
-    </div>
-
-    <div class="form-cell-items">
-      <div class="form-cell-item__labels">
-        选择年限
-      </div>
-      <div class="flex">
-        <div class="form-cell-div flex flex-vertical-center">
-          <image src="/static/icon/checkedIcon.png" class="form-img"></image>
-          <text class="form-text">1年</text>
+    <div class="store-all">
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          绑定会员
         </div>
-        <div class="form-cell-div flex flex-vertical-center">
-          <div class="unchecked"></div>
-          <text class="form-text">2年</text>
+        <div class="store-titles">
+            肖战
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
-    </div>
-
-    <div class="form-cell-items">
-      <div class="form-cell-item__labels">
-        选择支付方式
-      </div>
-      <div class="flex">
-        <div class="form-cell-div flex flex-vertical-center">
-          <image src="/static/icon/checkedIcon.png" class="form-img"></image>
-          <text class="form-text">支付宝</text>
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          到店自提
         </div>
-        <div class="form-cell-div flex flex-vertical-center">
-          <div class="unchecked"></div>
-          <text class="form-text">微信</text>
+        <div class="store-titles">
+          开启
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          线下消费利润
+        </div>
+        <div class="store-titles">
+          10%
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          结算配置
+        </div>
+        <div class="store-titles">
+          未配置
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
     </div>
-
-
-    <div class="pay-detail">
-      <div class="pay-detail-div">
-        小计： 保证金 <text class="color-font">¥1000、</text> 年费 <text class="color-font">¥1000</text>
-      </div>
-    </div>
-
-
-    <div class="pay-bottom flex flex-vertical-center flex-between">
-      <div class="pay-bottom-monery ">
-        总计： <text class="color-font font13 pay-bottom-text">¥</text><text class="color-font font15 pay-bottom-text">1000</text>
-      </div>
-
-      <div class="pay-button">
-        立即支付
-      </div>
-    </div>
-
-    <!--    <select-trade-->
-    <!--      :show="showTrade"-->
-    <!--      :has="trade.list"-->
-    <!--      @close="handleTradeSelectClose"-->
-    <!--      @onConfirm="handleTradeSelect"-->
-    <!--    >-->
-
-    <!--    </select-trade>-->
-  </div>
 </template>
 
 <script>
@@ -99,116 +62,33 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-  .business-pay{
-    padding-top: 15px;
-    padding-bottom: 98rpx;
-    background-color: #ffffff;
-    min-height: 100vh;
-    box-sizing: border-box;
-  }
-  .form-cell-item{
-    height: 49px;
-    width: 710rpx;
-    margin: 0 auto;
-    font-size: 14px;
-    color: #333333;
-    box-sizing: border-box;
-    border-bottom: 1px solid #EBEBEB;
-  }
-  .form-cell-items{
-    width: 710rpx;
-    margin: 0 auto;
-    font-size: 14px;
-    color: #333333;
-    box-sizing: border-box;
-    border-bottom: 1px solid #EBEBEB;
-  }
-  .form-cell-color{color: #666666}
-  .form-cell-item__labels{
-    height: 49px;
-    line-height: 49px;
-  }
-  .__placeholder{
-    color: #CAC8C8;
-  }
-  .form-img{
-    width: 20px;
-    height: 20px;
-  }
-  .form-cell-div{
-    margin-bottom: 18px;height: 20px;font-size: 12px;color: #666666;margin-right: 20px;
-  }
-  .form-text{
-    margin-left: 10px;
-  }
-  .form-cell-item__right{
-    flex: 1;
-    padding-left: 19px;
-    height: 49px;
-    line-height: 49px;
-    font-size: 13px;
-    .input{
-      height: 49px;
-      line-height: 49px;
-      font-size: 13px;
+
+  .store-all{
+    background-color: #FFFFFF;
+    height: 100vh;
+    .store-item{
+      height: 108rpx;
+      border-bottom: 1px solid #EBEBEB;
+      box-sizing: border-box;
+      width: 710rpx;
+      margin: 0 auto;
+    }
+    .store-title{
+      color: #333333;
+      font-size: 30rpx;
+    }
+    .store-titles{
+      color: #999999;
+      font-size: 26rpx;
     }
   }
-  .unchecked{
-    width: 20px;
-    height: 20px;
-    border: 1px solid #eeeeee;
-    box-sizing: border-box;
-  }
-  .pay-detail{
-    margin-top: 20px;
-    height: 12px;
-    font-size: 12px;
-    color: #333333;
-  }
-  .color-font{color: #E41515}
-  .pay-detail-div{
-    height: 12px;
-    line-height: 12px;
-    float: right;
-    margin-right: 10px;
-  }
-  .pay-bottom{
-    width: 750rpx;
-    height: 98rpx;
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    box-shadow:0px 0px 9px 0px rgba(182,182,182,0.43);
-  }
-  .pay-button{
-    height: 80rpx;
-    width: 276rpx;
-    line-height: 80rpx;
-    text-align: center;
-    margin-right: 5px;
-    font-size: 17px;
-    color: #ffffff;
-    background-color: #E41515;
-    border-radius: 20px;
-  }
-  .pay-bottom-monery{
-    height: 13px;
-    line-height: 13px;
-    flex: 1;
-    margin-right: 12px;
-    text-align: right;
-    font-size: 12px;
-    color: #333333;
-  }
-  .pay-bottom-text{
-    height: 13px;
-    line-height: 13px;
-  }
-
 
 </style>
 <config>
   {
-  "navigationBarTitleText": "店铺设置"
+  "navigationBarTitleText": "店铺设置",
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
   }
 </config>
