@@ -3,7 +3,7 @@
 </style>
 <template>
   <i class="iconfont {{type}}"
-     :style="{ color: color, 'font-size': size + 'px' }"
+     :style="{ color: color, 'font-size': size + 'px','font-weight':weight }"
      @click="_onClick"
   ></i>
 </template>
@@ -15,6 +15,10 @@
         require: true,
         type: String,
         default: ''
+      },
+      weight: {
+        type: String,
+        default: 'normal'
       },
       color: {
         type: String,
