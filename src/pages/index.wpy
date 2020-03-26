@@ -1,5 +1,5 @@
 <template>
-  
+
 </template>
 
 <script>
@@ -18,10 +18,10 @@
     store,
     mixins: [pageMixin],
     data: {
-     
+
     },
     methods:{
-     
+
     },
     created() {
       // getSystemInfo({
@@ -41,7 +41,7 @@
 <style lang="scss">
   @import "../assets/variables.scss";
   @import "../assets/mixins.scss";
-  
+
 
 </style>
 <config>

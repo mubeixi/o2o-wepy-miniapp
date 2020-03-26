@@ -69,6 +69,10 @@
   .fz-#{$i} { font-size: ($i)+px; }
 }
 
+.fz-bold{
+  font-weight: bold;
+}
+
 page{
   background: #f8f8f8;
 }
@@ -86,6 +90,18 @@ page{
   color: $fun-primary-color;
 }
 
+.text-left{
+  text-align: left;
+}
+.text-center{
+  text-align: center;
+}
+.text-right{
+  text-align: right;
+}
+.bgwhite{
+  background: white;
+}
 
 .flex{
   display: flex;
