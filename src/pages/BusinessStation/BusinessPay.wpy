@@ -188,7 +188,7 @@
     margin-right: 5px;
     font-size: 17px;
     color: #ffffff;
-    background-color: #E41515;
+    background-color: #00A8FF;
     border-radius: 20px;
   }
   .pay-bottom-monery{
