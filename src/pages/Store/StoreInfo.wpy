@@ -1,5 +1,14 @@
 <template>
   <div class="store-all">
+    <div class="store-item item-last flex flex-vertical-center flex-justify-between">
+      <div class="store-title">
+        店铺logo
+      </div>
+      <div class="store-titles">
+        <image src="https://new401t.bafangka.com/uploadfiles/userfile/175/image/20191230092546196.jpg"  style="width: 102rpx;height: 102rpx;margin-left: 20rpx;"></image>
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </div>
+    </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
         店铺名称
@@ -90,11 +99,16 @@
       width: 710rpx;
       margin: 0 auto;
     }
+    .item-last{
+      height: 150rpx;
+    }
     .store-title{
       color: #333333;
       font-size: 30rpx;
     }
     .store-titles{
+      display: flex;
+      align-items: center;
       color: #999999;
       font-size: 26rpx;
     }

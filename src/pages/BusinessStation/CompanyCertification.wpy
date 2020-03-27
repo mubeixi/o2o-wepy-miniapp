@@ -244,7 +244,7 @@
       align-items: center;
       padding: 10px 0;
       &__place{
-        background: red;
+        background: #00A8FF;
         width: 4px;
         height: 16px;
         margin: 0 10px;
@@ -325,7 +325,7 @@
       bottom: 0;
       width: 750rpx;
       border-radius: 0;
-      background: red;
+      background: #00A8FF;
       color: #fff;
       border: none;
       z-index: 9999;
