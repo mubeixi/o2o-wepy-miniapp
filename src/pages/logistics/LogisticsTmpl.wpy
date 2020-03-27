@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="actions">
+    <div class="actions" @click="$linkTo('/pages/logistics/LogisticsAdds')">
       <icon type="iconadd" size="20" color="#00a8ff"></icon>
       <span class="p-l-6">新增物流模板</span>
     </div>
