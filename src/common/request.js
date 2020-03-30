@@ -16,7 +16,7 @@ export const getAccessToken = () => ls.get('access_token')
 
 export const getUserID = () => ls.get('user_id') ? ls.get('user_id') : 'null'
 
-function createToken(object) {
+export const createToken=function(object){
   object = ObjectToArr(object)
   var signString = ObjectToString(object)
   signString = signString.slice(0, -1)
@@ -91,10 +91,17 @@ class XHR {
 
 
     if (!_param.hasOwnProperty('access_token')) {
-      _param.access_token = getAccessToken()
+      // _param.access_token = getAccessToken()
+
+      _param.access_token = 'yFc5E3Tb58WgdGEXFUedmG0qLYTt67Zf'
+
+      //先写死 后续删除
+      _param.biz_id='3'
+
     }
 
-    _param.Users_ID = getUsersID()   // Users_ID  写死
+    // _param.Users_ID = getUsersID()
+    _param.Users_ID ='wkbq6nc2kc'   // Users_ID
     _param.env = 'wx_lp'
     _param.biz_id = 3
     // 数据加密

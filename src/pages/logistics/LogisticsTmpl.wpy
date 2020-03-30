@@ -1,39 +1,9 @@
 <template>
   <div class="page-wrap">
     <div class="group-cell">
-      <div class="cell-item">
-        <div class="label">顺丰</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">中通</div>
-        <div class="content">按件数</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">申通</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">百世</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">中通</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">韵达</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">邮政</div>
-        <div class="content">按件数</div>
+      <div class="cell-item" v-for="(item,index) of list" :key="index">
+        <div class="label">{{item.Template_Name}}</div>
+        <div class="content">{{item.By_Method}}</div>
         <icon type="iconarrowleft" color="#999" class="right"></icon>
       </div>
     </div>
@@ -52,17 +22,23 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
+  import {getShippingTemplate} from  '../../api/store'
+
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      list:[]
     },
     methods: {
-
+      getList(){
+        getShippingTemplate().then(res=>{
+            this.list=res.data
+        })
+      }
     },
     created() {
-
+        this.getList()
     }
 
   })

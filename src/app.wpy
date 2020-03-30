@@ -71,6 +71,7 @@ wepy.app({
       "pages/BusinessStation/BusinessPay",
       "pages/Store/StoreSetting",
       "pages/Store/StoreInfo",
+      "pages/Store/StoreInfoUpda",
       "pages/Store/SameCityDelivery",
       "pages/ProductManager",
       "pages/StoreMarketing",
