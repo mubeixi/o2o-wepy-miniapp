@@ -249,7 +249,7 @@
 <config>
   {
   "usingComponents": {
-  "LyTree": "~@/components/ly-tree/ly-tree.vue",
+  "LyTree": "~@/components/ly-tree/ly-tree.wpy",
   }
   }
 </config>

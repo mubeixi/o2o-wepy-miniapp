@@ -136,7 +136,7 @@
   .circle{
     width: 34rpx;
     height: 34rpx;
-    background-color: #E41515;
+    background-color: #00A8FF;
     border-radius: 50%;
     overflow: hidden;
     line-height: 34rpx;
@@ -171,7 +171,7 @@
     color: #FFFFFF;
   }
   .active{
-    background-color: #E41515 !important;
+    background-color: #00A8FF !important;
   }
 
   .station-title{
@@ -185,7 +185,7 @@
     color: #777777;
     line-height: 21px;
   }
-  .look-info{font-size: 10px;color: #E41515;margin-top: 5px}
+  .look-info{font-size: 10px;color: #00A8FF;margin-top: 5px}
   .right-div{
     text-align: center;
   }

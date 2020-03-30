@@ -1,0 +1,120 @@
+<template>
+  <div class="page-wrap">
+    <div class="group-cell">
+      <div class="cell-item">
+        <div class="label">顺丰</div>
+        <div class="content">按重量</div>
+        <icon type="iconarrowleft" color="#999" class="right"></icon>
+      </div>
+      <div class="cell-item">
+        <div class="label">中通</div>
+        <div class="content">按件数</div>
+        <icon type="iconarrowleft" color="#999" class="right"></icon>
+      </div>
+      <div class="cell-item">
+        <div class="label">申通</div>
+        <div class="content">按重量</div>
+        <icon type="iconarrowleft" color="#999" class="right"></icon>
+      </div>
+      <div class="cell-item">
+        <div class="label">百世</div>
+        <div class="content">按重量</div>
+        <icon type="iconarrowleft" color="#999" class="right"></icon>
+      </div>
+      <div class="cell-item">
+        <div class="label">中通</div>
+        <div class="content">按重量</div>
+        <icon type="iconarrowleft" color="#999" class="right"></icon>
+      </div>
+      <div class="cell-item">
+        <div class="label">韵达</div>
+        <div class="content">按重量</div>
+        <icon type="iconarrowleft" color="#999" class="right"></icon>
+      </div>
+      <div class="cell-item">
+        <div class="label">邮政</div>
+        <div class="content">按件数</div>
+        <icon type="iconarrowleft" color="#999" class="right"></icon>
+      </div>
+    </div>
+
+    <div class="actions" @click="$linkTo('/pages/logistics/LogisticsAdds')">
+      <icon type="iconadd" size="20" color="#00a8ff"></icon>
+      <span class="p-l-6">新增物流模板</span>
+    </div>
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+
+    },
+    created() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+
+.page-wrap{
+  min-height: 100vh;
+  background: white;
+}
+.group-cell{
+  padding-right: 30rpx;
+  padding-left: 30rpx;
+  .cell-item{
+    .label{
+      color: #333 !important;
+      padding: 20rpx 0;
+    }
+    .content{
+      color: #999;
+      font-size: 12px;
+    }
+    .right{
+      margin-right: 0;
+    }
+  }
+}
+
+.actions{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 750rpx;
+  height: 90rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  box-shadow:0rpx 0rpx 18rpx 0rpx rgba(0, 0, 0, 0.16);
+}
+
+
+</style>
+<config>
+  {
+    "navigationBarTitleText": "物流模板",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "copyright": "~@/components/copyright",
+      "icon": "~@/components/icon",
+      "ad": "~@/components/ad"
+    }
+  }
+</config>

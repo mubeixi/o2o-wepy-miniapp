@@ -1,3 +1,6 @@
+import {
+  linkTo, toast, error
+} from '../common/fun'
 
 export default {
   data: {
@@ -7,7 +10,11 @@ export default {
     diyHeadRight: 0
     // mixin: 'PageMin'
   },
+
   methods: {
+    $linkTo: linkTo,
+    $toast: toast,
+    $error: error,
     mixintap () {
       this.mixin = 'MixinText' + (Math.random() + '').substring(3, 7)
       // console.log('mixin method tap')

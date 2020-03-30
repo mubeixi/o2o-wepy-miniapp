@@ -1,0 +1,341 @@
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .form{
+
+    &-panel{
+      margin: 10px;
+    }
+    &-title{
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      &__place{
+        background: #00A8FF;
+        width: 4px;
+        height: 16px;
+        margin: 0 10px;
+        border-radius: 2px;
+      }
+      &__text{
+        color: #333333;
+        font-weight: bold;
+      }
+    }
+    &-upload{
+
+      &-item{
+        display: block;
+        padding: 10px;
+
+        &__label{
+          color: #555555;
+        }
+        &__content{
+          padding: 10px 0;
+        }
+
+      }
+
+    }
+    &-cell{
+      background: white;
+      border-radius: 4px;
+      overflow: hidden;
+      font-size: 14px;
+
+      &-item{
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+
+        &__label{
+          width: 80px;
+          padding: 0 10px;
+          color: #555555;
+
+          line-height: 1.3;
+        }
+        &__content{
+          flex: 1;
+          height: 32px;
+          line-height: 32px;
+          display: flex;
+          align-items: center;
+          .input{
+            font-size: 14px;
+            flex: 1;
+            color: #555555;
+            &::placeholder{
+              color: #CAC8C8;
+            }
+          }
+
+          .__placeholder{
+            color: #CAC8C8;
+          }
+
+        }
+        &__right{
+          width: 32px;
+          text-align: center;
+        }
+
+      }
+    }
+
+  }
+  .actions{
+
+    &-subbtn{
+      position: fixed;
+      bottom: 0;
+      width: 750rpx;
+      border-radius: 0;
+      background: #00A8FF;
+      color: #fff;
+      border: none;
+      z-index: 9999;
+    }
+  }
+
+
+</style>
+<template>
+  <div class="page-wrap">
+    <form class="form" @submit="formSubmit" @reset="formReset">
+
+      <div class="form-panel">
+        <div class="form-title">
+          <div class="form-title__place"></div>
+          <div class="form-title__text">基本信息</div>
+        </div>
+        <div class="form-cell">
+          <div class="form-cell-item" @click="openTradeSelect">
+            <div class="form-cell-item__label">商家行业</div>
+            <div class="form-cell-item__content">
+              <div class="__placeholder" v-if="!trade.label">请选择所在行业</div>
+              <div v-if="trade.label">{{trade.label}}</div>
+            </div>
+            <div class="form-cell-item__right">
+              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">主营商品</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入主营商品，多个商品间用逗号隔开" />
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">联系人</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入联系人姓名" />
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">手机</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入手机号" />
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">邮箱地址</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入邮箱地址" />
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">公司名称</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入门店名称" />
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">公司主体</div>
+            <div class="form-cell-item__content">
+              <div class="__placeholder">请选择公司主体</div>
+            </div>
+            <div class="form-cell-item__right">
+              <span class="wzwicon iconright font16" style="color: #666"></span>
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">公司固话</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="格式如021-12345678" />
+            </div>
+          </div>
+          <div class="form-cell-item" @click="openAddressChoose">
+            <div class="form-cell-item__label">企业所在地</div>
+            <div class="form-cell-item__content">
+              <div class="__placeholder" v-if="!addressInfo.label">请选择企业所在地</div>
+              <div v-if="addressInfo.label">{{addressInfo.label}}</div>
+            </div>
+            <div class="form-cell-item__right">
+              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">详细地址</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入详细地址" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-panel">
+        <div class="form-title">
+          <div class="form-title__place"></div>
+          <div class="form-title__text">资质信息</div>
+        </div>
+        <div class="form-cell">
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">真实姓名</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入真实姓名" />
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">身份证号</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入身份证号" />
+            </div>
+          </div>
+          <div class="form-upload-item">
+            <div class="form-upload-item__label">身份证正面扫描件</div>
+            <div class="form-upload-item__content">
+<!--              <upload-image-->
+<!--                :limit="1"-->
+<!--                @onUpSuccess="idcardUploadSuccess"-->
+<!--              ></upload-image>-->
+            </div>
+          </div>
+          <div class="form-upload-item">
+            <div class="form-upload-item__label">身份证反面扫描件</div>
+            <div class="form-upload-item__content">
+<!--              <upload-image-->
+<!--                :limit="1"-->
+<!--                @onUpSuccess="idcardBackUploadSuccess"-->
+<!--              ></upload-image>-->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-panel">
+        <div class="form-title">
+          <div class="form-title__place"></div>
+          <div class="form-title__text">账户信息</div>
+        </div>
+        <div class="form-cell">
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">提现方式</div>
+            <div class="form-cell-item__content">
+              <div class="__placeholder">请选择提现方式</div>
+              <!--                            <div v-if="trade.label">{{trade.label}}</div>-->
+            </div>
+            <div class="form-cell-item__right">
+              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">开户城市</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户城市" />
+            </div>
+          </div>
+
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">开户银行</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户银行" />
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">开户姓名</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户姓名" />
+            </div>
+          </div>
+          <div class="form-cell-item">
+            <div class="form-cell-item__label">银行卡号</div>
+            <div class="form-cell-item__content">
+              <input placeholder-class="__placeholder" class="input" placeholder="请输入银行卡号" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="actions-subbtn">提交</button>
+
+    </form>
+
+    <div style="height: 50px"></div>
+
+    <select-trade
+      :show="showTrade"
+      :has="trade.list"
+      @close="handleTradeSelectClose"
+      @onConfirm="handleTradeSelect"
+    >
+    </select-trade>
+
+
+
+
+  </div>
+</template>
+
+<script>
+  // "select-trade": "~@/components/SelectTrade"
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      showTrade: false,
+      trade: {
+        label: '',
+        list: []
+      }
+    },
+    methods: {
+      openTradeSelect() {
+        this.showTrade = true
+      },
+      handleTradeSelectClose() {
+        this.showTrade = false
+      },
+      handleTradeSelect(select_trade_list){
+        console.log(select_trade_list)
+        let trade_names = [],trade_ids = []
+        for(let trade of select_trade_list){
+          trade_names.push(trade.industry_name)
+          trade_ids.push(trade.id)
+        }
+        this.trade.label = trade_names.join(',')
+        this.trade.list = trade_ids
+        this.handleTradeSelectClose()
+      },
+    },
+    created() {
+
+    }
+
+  })
+
+</script>
+
+<config>
+  {
+    "navigationBarTitleText": "个人认证",
+    "usingComponents": {
+      "icon": "~@/components/icon"
+    }
+  }
+</config>

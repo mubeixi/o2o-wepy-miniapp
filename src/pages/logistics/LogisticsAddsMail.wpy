@@ -1,0 +1,158 @@
+<template>
+  <div class="mail-all">
+      <div class="mail-item">
+         <div class="mail-item-top flex">
+            <div class="select-area">
+              选择地区
+            </div>
+            <div class="flex1 area-all">
+
+              北京市,天津市,上海市,河南省,郑州市,开封市,
+              苏州市,杭州市,上海市,云南省,昆明市
+              <span style="color: #00A8FF">编辑</span>
+            </div>
+         </div>
+         <div class="mail-item-bottom flex">
+           <div class="select-area">
+             设置包邮条件
+           </div>
+           <div>
+             <div>
+               <radio-group class="radio-group" bindchange="radioChange">
+                 <radio class="radio" >
+                    件数
+                 </radio>
+                 <radio class="radio" >
+                   金额
+                 </radio>
+                 <radio class="radio" >
+                   件数+金额
+                 </radio>
+               </radio-group>
+             </div>
+             <div class="input-all">
+                  <block>
+                    满 <input type="text" class="inputs"/>元以上包邮
+                  </block>
+<!--                  <block>-->
+<!--                    满 <input type="text" class="inputs"/>件，<input type="text" class="inputs"/>元以上包邮-->
+<!--                  </block>-->
+             </div>
+           </div>
+         </div>
+      </div>
+
+      <div class="submit-last">
+        为指定区域设置运费
+      </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    created() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .mail-all{
+    background-color: #FFFFFF;
+    height: 100vh;
+    padding-top: 40rpx;
+  }
+  .mail-item{
+    width: 710rpx;
+    margin: 0 auto 30rpx;
+    border: 1px solid #E1E1E1;
+  }
+  .mail-item-top{
+    min-height: 142rpx;
+    border-bottom: 1px solid #E1E1E1;
+    .area-all{
+      padding: 40rpx 70rpx 40rpx 40rpx;
+      font-size: 22rpx;
+      color: #888888;
+    }
+  }
+  .select-area{
+    width: 170rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    background-color: #F2F7FF;
+    border-right: 1px solid #E1E1E1;
+    font-size: 24rpx;
+    color: #333333;
+  }
+  .mail-item-bottom{
+    height: 194rpx;
+  }
+  .radio-group{
+    font-size: 24rpx;
+    height: 28rpx;
+    line-height: 28rpx;
+    margin-top: 40rpx;
+    margin-bottom: 42rpx;
+    color: #888888;
+    display: flex;
+    align-items: center;
+    .radio{
+      margin-left: 50rpx;
+      transform: scale(0.8);
+    }
+  }
+  .inputs{
+    width: 120rpx;
+    height: 50rpx;
+    border: 1px solid #C8C8C8;
+    margin-left: 14rpx;
+    margin-right: 10rpx;
+  }
+  .input-all{
+    height: 50rpx;
+    margin-bottom: 38rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24rpx;
+    color: #888888;
+  }
+  .submit-last{
+    width:226rpx;
+    height:56rpx;
+    border:1px solid rgba(0,168,255,1);
+    border-radius:6rpx;
+    margin-left: 504rpx;
+    line-height: 56rpx;
+    text-align: center;
+    color: #00A8FF;
+    font-size: 22rpx;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "指定包邮条件",
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
+  }
+</config>

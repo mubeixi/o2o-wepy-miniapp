@@ -69,6 +69,10 @@
   .fz-#{$i} { font-size: ($i)+px; }
 }
 
+.fz-bold{
+  font-weight: bold;
+}
+
 page{
   background: #f8f8f8;
 }
@@ -86,6 +90,18 @@ page{
   color: $fun-primary-color;
 }
 
+.text-left{
+  text-align: left;
+}
+.text-center{
+  text-align: center;
+}
+.text-right{
+  text-align: right;
+}
+.bgwhite{
+  background: white;
+}
 
 .flex{
   display: flex;
@@ -128,6 +144,33 @@ page{
   &-nav{
     &-item{
 
+    }
+  }
+}
+
+.group-cell{
+  padding-left:20rpx;
+  box-sizing: border-box;
+  .cell-item{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 20rpx 0;
+    &:last-child{
+
+    }
+    .label{
+      margin-right: 20rpx;
+      color: #999;
+    }
+    .content{
+      flex: 1;
+      text-align: right;
+      padding: 20rpx 0;
+      color: #444;
+    }
+    .right{
+      margin: 0 10px;
     }
   }
 }

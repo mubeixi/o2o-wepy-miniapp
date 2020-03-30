@@ -1,383 +1,382 @@
-import Node from './node';
-import {getNodeKey} from '../tool/util';
+import Node from './node'
+import {getNodeKey} from '../tool/util'
 
 export default class TreeStore {
-	constructor(options) {
-		this.ready = false;
-		this.currentNode = null;
-		this.currentNodeKey = null;
+  constructor(options) {
+    this.ready = false
+    this.currentNode = null
+    this.currentNodeKey = null
 
-		Object.assign(this, options);
+    Object.assign(this, options)
 
-		if (!this.key) {
-			throw new Error('[Tree] nodeKey is required');
-		}
+    if (!this.key) {
+      throw new Error('[Tree] nodeKey is required')
+    }
 
-		this.nodesMap = {};
-		this.root = new Node({
-			data: this.data,
-			store: this
-		});
+    this.nodesMap = {}
+    this.root = new Node({
+      data: this.data,
+      store: this
+    })
 
-		if (this.lazy && this.load) {
-			const loadFn = this.load;
-			loadFn(this.root, (data) => {
-				this.root.doCreateChildren(data);
-				this._initDefaultCheckedNodes();
-				this.ready = true;
-			});
-		} else {
-			this._initDefaultCheckedNodes();
-			this.ready = true;
-		}
-	}
+    if (this.lazy && this.load) {
+      const loadFn = this.load
+      loadFn(this.root, (data) => {
+        this.root.doCreateChildren(data)
+        this._initDefaultCheckedNodes()
+        this.ready = true
+      })
+    } else {
+      this._initDefaultCheckedNodes()
+      this.ready = true
+    }
+  }
 
-	filter(value, data) {
-		const filterNodeMethod = this.filterNodeMethod;
-		const lazy = this.lazy;
-		const _self = this;
-		const traverse = function(node) {
-			const childNodes = node.root ? node.root.getChildNodes(node.root.childNodesId) : node.getChildNodes(node.childNodesId);
+  filter(value, data) {
+    const filterNodeMethod = this.filterNodeMethod
+    const lazy = this.lazy
+    const _self = this
+    const traverse = function(node) {
+      const childNodes = node.root ? node.root.getChildNodes(node.root.childNodesId) : node.getChildNodes(node.childNodesId)
 
-			childNodes.forEach((child) => {
-				if (data && typeof data === 'object') {
-					let nodePath = _self.getNodePath(child.data);
-					if (!nodePath.some(pathItem => pathItem[_self.key] === data[_self.key])) {
-						child.visible = false;
-						traverse(child);
-						return;
-					}
-				}
-				
-				if (_self.childVisibleForFilterNode) {
-					let parent = child.getParent(child.parentId);
-					child.visible = filterNodeMethod.call(child, value, child.data, child) || (parent && parent.visible);
-				} else {
-					child.visible = filterNodeMethod.call(child, value, child.data, child);
-				}
-				
-				traverse(child);
-			});
+      childNodes.forEach((child) => {
+        if (data && typeof data === 'object') {
+          let nodePath = _self.getNodePath(child.data)
+          if (!nodePath.some(pathItem => pathItem[_self.key] === data[_self.key])) {
+            child.visible = false
+            traverse(child)
+            return
+          }
+        }
 
-			if (!node.visible && childNodes.length) {
-				let allHidden = true;
-				allHidden = !childNodes.some(child => child.visible);
+        if (_self.childVisibleForFilterNode) {
+          let parent = child.getParent(child.parentId)
+          child.visible = filterNodeMethod.call(child, value, child.data, child) || (parent && parent.visible)
+        } else {
+          child.visible = filterNodeMethod.call(child, value, child.data, child)
+        }
 
-				if (node.root) {
-					node.root.visible = allHidden === false;
-				} else {
-					node.visible = allHidden === false;
-				}
-			}
-			
-			if (!value) return;
+        traverse(child)
+      })
 
-			if (node.visible && !node.isLeaf && !lazy) node.expand();
-		};
+      if (!node.visible && childNodes.length) {
+        let allHidden = true
+        allHidden = !childNodes.some(child => child.visible)
 
-		traverse(this);
-	}
+        if (node.root) {
+          node.root.visible = allHidden === false
+        } else {
+          node.visible = allHidden === false
+        }
+      }
 
-	setData(newVal) {
-		const instanceChanged = newVal !== this.root.data;
-		if (instanceChanged) {
-			this.root.setData(newVal);
-			this._initDefaultCheckedNodes();
-		} else {
-			this.root.updateChildren();
-		}
-	}
+      if (!value) return
 
-	getNode(data) {
-		if (data instanceof Node) return data;
-		const key = typeof data !== 'object' ? data : getNodeKey(this.key, data);
-		return this.nodesMap[key] || null;
-	}
+      if (node.visible && !node.isLeaf && !lazy) node.expand()
+    }
 
-	insertBefore(data, refData) {
-		const refNode = this.getNode(refData);
-		let parent = refNode.getParent(refNode.parentId);
-		parent.insertBefore({
-			data
-		}, refNode);
-	}
+    traverse(this)
+  }
 
-	insertAfter(data, refData) {
-		const refNode = this.getNode(refData);
-		let parent = refNode.getParent(refNode.parentId);
-		parent.insertAfter({
-			data
-		}, refNode);
-	}
+  setData(newVal) {
+    const instanceChanged = newVal !== this.root.data
+    if (instanceChanged) {
+      this.root.setData(newVal)
+      this._initDefaultCheckedNodes()
+    } else {
+      this.root.updateChildren()
+    }
+  }
 
-	remove(data) {
-		const node = this.getNode(data);
+  getNode(data) {
+    if (data instanceof Node) return data
+    const key = typeof data !== 'object' ? data : getNodeKey(this.key, data)
+    return this.nodesMap[key] || null
+  }
 
-		if (node && node.parentId !== null) {
-			let parent = node.getParent(node.parentId);
-			if (node === this.currentNode) {
-				this.currentNode = null;
-			}
-			parent.removeChild(node);
-		}
-	}
+  insertBefore(data, refData) {
+    const refNode = this.getNode(refData)
+    let parent = refNode.getParent(refNode.parentId)
+    parent.insertBefore({
+      data
+    }, refNode)
+  }
 
-	append(data, parentData) {
-		const parentNode = parentData ? this.getNode(parentData) : this.root;
+  insertAfter(data, refData) {
+    const refNode = this.getNode(refData)
+    let parent = refNode.getParent(refNode.parentId)
+    parent.insertAfter({
+      data
+    }, refNode)
+  }
 
-		if (parentNode) {
-			parentNode.insertChild({
-				data
-			});
-		}
-	}
+  remove(data) {
+    const node = this.getNode(data)
 
-	_initDefaultCheckedNodes() {
-		const defaultCheckedKeys = this.defaultCheckedKeys || [];
-		const nodesMap = this.nodesMap;
+    if (node && node.parentId !== null) {
+      let parent = node.getParent(node.parentId)
+      if (node === this.currentNode) {
+        this.currentNode = null
+      }
+      parent.removeChild(node)
+    }
+  }
 
-		defaultCheckedKeys.forEach((checkedKey) => {
-			const node = nodesMap[checkedKey];
+  append(data, parentData) {
+    const parentNode = parentData ? this.getNode(parentData) : this.root
 
-			if (node) {
-				node.setChecked(true, !this.checkStrictly);
-			}
-		});
-	}
+    if (parentNode) {
+      parentNode.insertChild({
+        data
+      })
+    }
+  }
 
-	_initDefaultCheckedNode(node) {
-		const defaultCheckedKeys = this.defaultCheckedKeys || [];
+  _initDefaultCheckedNodes() {
+    const defaultCheckedKeys = this.defaultCheckedKeys || []
+    const nodesMap = this.nodesMap
 
-		if (defaultCheckedKeys.indexOf(node.key) !== -1) {
-			node.setChecked(true, !this.checkStrictly);
-		}
-	}
+    defaultCheckedKeys.forEach((checkedKey) => {
+      const node = nodesMap[checkedKey]
 
-	setDefaultCheckedKey(newVal) {
-		if (newVal !== this.defaultCheckedKeys) {
-			this.defaultCheckedKeys = newVal;
-			this._initDefaultCheckedNodes();
-		}
-	}
+      if (node) {
+        node.setChecked(true, !this.checkStrictly)
+      }
+    })
+  }
 
-	registerNode(node) {
+  _initDefaultCheckedNode(node) {
+    const defaultCheckedKeys = this.defaultCheckedKeys || []
 
-		const key = this.key;
-		if (!key || !node || !node.data) return;
+    if (defaultCheckedKeys.indexOf(node.key) !== -1) {
+      node.setChecked(true, !this.checkStrictly)
+    }
+  }
 
-		const nodeKey = node.key;
-		if (nodeKey !== undefined) this.nodesMap[node.key] = node;
-	}
+  setDefaultCheckedKey(newVal) {
+    if (newVal !== this.defaultCheckedKeys) {
+      this.defaultCheckedKeys = newVal
+      this._initDefaultCheckedNodes()
+    }
+  }
 
-	deregisterNode(node) {
-		const key = this.key;
-		if (!key || !node || !node.data) return;
+  registerNode(node) {
+    const key = this.key
+    if (!key || !node || !node.data) return
 
-		let childNodes = node.getChildNodes(node.childNodesId);
-		childNodes.forEach(child => {
-			this.deregisterNode(child);
-		});
+    const nodeKey = node.key
+    if (nodeKey !== undefined) this.nodesMap[node.key] = node
+  }
 
-		delete this.nodesMap[node.key];
-	}
-	
-	getNodePath(data) {
-		if (!this.key) throw new Error('[Tree] nodeKey is required in getNodePath');
-		const node = this.getNode(data);
-		if (!node) return [];
-		
-		const path = [node.data];
-		let parent = node.getParent(node.parentId);
-		while (parent && parent !== this.root) {
-			path.push(parent.data);
-			parent = parent.getParent(parent.parentId);
-		}
-		return path.reverse();
-	}
+  deregisterNode(node) {
+    const key = this.key
+    if (!key || !node || !node.data) return
 
-	getCheckedNodes(leafOnly = false, includeHalfChecked = false) {
-		const checkedNodes = [];
-		const traverse = function(node) {
-			const childNodes = node.root ? node.root.getChildNodes(node.root.childNodesId) : node.getChildNodes(node.childNodesId);
+    let childNodes = node.getChildNodes(node.childNodesId)
+    childNodes.forEach(child => {
+      this.deregisterNode(child)
+    })
 
-			childNodes.forEach((child) => {
-				if ((child.checked || (includeHalfChecked && child.indeterminate)) && (!leafOnly || (leafOnly && child.isLeaf))) {
-					checkedNodes.push(child.data);
-				}
+    delete this.nodesMap[node.key]
+  }
 
-				traverse(child);
-			});
-		};
+  getNodePath(data) {
+    if (!this.key) throw new Error('[Tree] nodeKey is required in getNodePath')
+    const node = this.getNode(data)
+    if (!node) return []
 
-		traverse(this);
+    const path = [node.data]
+    let parent = node.getParent(node.parentId)
+    while (parent && parent !== this.root) {
+      path.push(parent.data)
+      parent = parent.getParent(parent.parentId)
+    }
+    return path.reverse()
+  }
 
-		return checkedNodes;
-	}
+  getCheckedNodes(leafOnly = false, includeHalfChecked = false) {
+    const checkedNodes = []
+    const traverse = function(node) {
+      const childNodes = node.root ? node.root.getChildNodes(node.root.childNodesId) : node.getChildNodes(node.childNodesId)
 
-	getCheckedKeys(leafOnly = false) {
-		return this.getCheckedNodes(leafOnly).map((data) => (data || {})[this.key]);
-	}
+      childNodes.forEach((child) => {
+        if ((child.checked || (includeHalfChecked && child.indeterminate)) && (!leafOnly || (leafOnly && child.isLeaf))) {
+          checkedNodes.push(child.data)
+        }
 
-	getHalfCheckedNodes() {
-		const nodes = [];
-		const traverse = function(node) {
-			const childNodes = node.root ? node.root.getChildNodes(node.root.childNodesId) : node.getChildNodes(node.childNodesId);
+        traverse(child)
+      })
+    }
 
-			childNodes.forEach((child) => {
-				if (child.indeterminate) {
-					nodes.push(child.data);
-				}
+    traverse(this)
 
-				traverse(child);
-			});
-		};
+    return checkedNodes
+  }
 
-		traverse(this);
+  getCheckedKeys(leafOnly = false) {
+    return this.getCheckedNodes(leafOnly).map((data) => (data || {})[this.key])
+  }
 
-		return nodes;
-	}
+  getHalfCheckedNodes() {
+    const nodes = []
+    const traverse = function(node) {
+      const childNodes = node.root ? node.root.getChildNodes(node.root.childNodesId) : node.getChildNodes(node.childNodesId)
 
-	getHalfCheckedKeys() {
-		return this.getHalfCheckedNodes().map((data) => (data || {})[this.key]);
-	}
+      childNodes.forEach((child) => {
+        if (child.indeterminate) {
+          nodes.push(child.data)
+        }
 
-	_getAllNodes() {
-		const allNodes = [];
-		const nodesMap = this.nodesMap;
-		for (let nodeKey in nodesMap) {
-			if (nodesMap.hasOwnProperty(nodeKey)) {
-				allNodes.push(nodesMap[nodeKey]);
-			}
-		}
+        traverse(child)
+      })
+    }
 
-		return allNodes;
-	}
+    traverse(this)
 
-	updateChildren(key, data) {
-		const node = this.nodesMap[key];
-		if (!node) return;
-		const childNodes = node.getChildNodes(node.childNodesId);
-		for (let i = childNodes.length - 1; i >= 0; i--) {
-			const child = childNodes[i];
-			this.remove(child.data);
-		}
-		for (let i = 0, j = data.length; i < j; i++) {
-			const child = data[i];
-			this.append(child, node.data);
-		}
-	}
+    return nodes
+  }
 
-	_setCheckedKeys(key, leafOnly = false, checkedKeys) {
-		const allNodes = this._getAllNodes().sort((a, b) => b.level - a.level);
-		const cache = Object.create(null);
-		const keys = Object.keys(checkedKeys);
-		allNodes.forEach(node => node.setChecked(false, false));
-		for (let i = 0, j = allNodes.length; i < j; i++) {
-			const node = allNodes[i];
-			const nodeKey = node.data[key].toString();
-			let checked = keys.indexOf(nodeKey) > -1;
-			if (!checked) {
-				if (node.checked && !cache[nodeKey]) {
-					node.setChecked(false, false);
-				}
-				continue;
-			}
+  getHalfCheckedKeys() {
+    return this.getHalfCheckedNodes().map((data) => (data || {})[this.key])
+  }
 
-			let parent = node.getParent(node.parentId);
-			while (parent && parent.level > 0) {
-				cache[parent.data[key]] = true;
-				parent = parent.getParent(parent.parentId);
-			}
+  _getAllNodes() {
+    const allNodes = []
+    const nodesMap = this.nodesMap
+    for (let nodeKey in nodesMap) {
+      if (nodesMap.hasOwnProperty(nodeKey)) {
+        allNodes.push(nodesMap[nodeKey])
+      }
+    }
 
-			if (node.isLeaf || this.checkStrictly) {
-				node.setChecked(true, false);
-				continue;
-			}
-			node.setChecked(true, true);
+    return allNodes
+  }
 
-			if (leafOnly) {
-				node.setChecked(false, false);
-				const traverse = function(node) {
-					const childNodes = node.getChildNodes(node.childNodesId);
-					childNodes.forEach((child) => {
-						if (!child.isLeaf) {
-							child.setChecked(false, false);
-						}
-						traverse(child);
-					});
-				};
-				traverse(node);
-			}
-		}
-	}
+  updateChildren(key, data) {
+    const node = this.nodesMap[key]
+    if (!node) return
+    const childNodes = node.getChildNodes(node.childNodesId)
+    for (let i = childNodes.length - 1; i >= 0; i--) {
+      const child = childNodes[i]
+      this.remove(child.data)
+    }
+    for (let i = 0, j = data.length; i < j; i++) {
+      const child = data[i]
+      this.append(child, node.data)
+    }
+  }
 
-	setCheckedNodes(array, leafOnly = false) {
-		const key = this.key;
-		const checkedKeys = {};
-		array.forEach((item) => {
-			checkedKeys[(item || {})[key]] = true;
-		});
+  _setCheckedKeys(key, leafOnly = false, checkedKeys) {
+    const allNodes = this._getAllNodes().sort((a, b) => b.level - a.level)
+    const cache = Object.create(null)
+    const keys = Object.keys(checkedKeys)
+    allNodes.forEach(node => node.setChecked(false, false))
+    for (let i = 0, j = allNodes.length; i < j; i++) {
+      const node = allNodes[i]
+      const nodeKey = node.data[key].toString()
+      let checked = keys.indexOf(nodeKey) > -1
+      if (!checked) {
+        if (node.checked && !cache[nodeKey]) {
+          node.setChecked(false, false)
+        }
+        continue
+      }
 
-		this._setCheckedKeys(key, leafOnly, checkedKeys);
-	}
+      let parent = node.getParent(node.parentId)
+      while (parent && parent.level > 0) {
+        cache[parent.data[key]] = true
+        parent = parent.getParent(parent.parentId)
+      }
 
-	setCheckedKeys(keys, leafOnly = false) {
-		this.defaultCheckedKeys = keys;
-		const key = this.key;
-		const checkedKeys = {};
-		keys.forEach((key) => {
-			checkedKeys[key] = true;
-		});
+      if (node.isLeaf || this.checkStrictly) {
+        node.setChecked(true, false)
+        continue
+      }
+      node.setChecked(true, true)
 
-		this._setCheckedKeys(key, leafOnly, checkedKeys);
-	}
+      if (leafOnly) {
+        node.setChecked(false, false)
+        const traverse = function(node) {
+          const childNodes = node.getChildNodes(node.childNodesId)
+          childNodes.forEach((child) => {
+            if (!child.isLeaf) {
+              child.setChecked(false, false)
+            }
+            traverse(child)
+          })
+        }
+        traverse(node)
+      }
+    }
+  }
 
-	setDefaultExpandedKeys(keys) {
-		keys = keys || [];
-		this.defaultExpandedKeys = keys;
+  setCheckedNodes(array, leafOnly = false) {
+    const key = this.key
+    const checkedKeys = {}
+    array.forEach((item) => {
+      checkedKeys[(item || {})[key]] = true
+    })
 
-		keys.forEach((key) => {
-			const node = this.getNode(key);
-			if (node) node.expand(null, this.autoExpandParent);
-		});
-	}
+    this._setCheckedKeys(key, leafOnly, checkedKeys)
+  }
 
-	setChecked(data, checked, deep) {
-		const node = this.getNode(data);
+  setCheckedKeys(keys, leafOnly = false) {
+    this.defaultCheckedKeys = keys
+    const key = this.key
+    const checkedKeys = {}
+    keys.forEach((key) => {
+      checkedKeys[key] = true
+    })
 
-		if (node) {
-			node.setChecked(!!checked, deep);
-		}
-	}
+    this._setCheckedKeys(key, leafOnly, checkedKeys)
+  }
 
-	getCurrentNode() {
-		return this.currentNode;
-	}
+  setDefaultExpandedKeys(keys) {
+    keys = keys || []
+    this.defaultExpandedKeys = keys
 
-	setCurrentNode(currentNode) {
-		const prevCurrentNode = this.currentNode;
-		if (prevCurrentNode) {
-			prevCurrentNode.isCurrent = false;
-		}
-		this.currentNode = currentNode;
-		this.currentNode.isCurrent = true;
-	}
+    keys.forEach((key) => {
+      const node = this.getNode(key)
+      if (node) node.expand(null, this.autoExpandParent)
+    })
+  }
 
-	setUserCurrentNode(node) {
-		const key = node[this.key];
-		const currNode = this.nodesMap[key];
-		this.setCurrentNode(currNode);
-	}
+  setChecked(data, checked, deep) {
+    const node = this.getNode(data)
 
-	setCurrentNodeKey(key) {
-		if (key === null || key === undefined) {
-			this.currentNode && (this.currentNode.isCurrent = false);
-			this.currentNode = null;
-			return;
-		}
-		const node = this.getNode(key);
-		if (node) {
-			this.setCurrentNode(node);
-		}
-	}
+    if (node) {
+      node.setChecked(!!checked, deep)
+    }
+  }
+
+  getCurrentNode() {
+    return this.currentNode
+  }
+
+  setCurrentNode(currentNode) {
+    const prevCurrentNode = this.currentNode
+    if (prevCurrentNode) {
+      prevCurrentNode.isCurrent = false
+    }
+    this.currentNode = currentNode
+    this.currentNode.isCurrent = true
+  }
+
+  setUserCurrentNode(node) {
+    const key = node[this.key]
+    const currNode = this.nodesMap[key]
+    this.setCurrentNode(currNode)
+  }
+
+  setCurrentNodeKey(key) {
+    if (key === null || key === undefined) {
+      this.currentNode && (this.currentNode.isCurrent = false)
+      this.currentNode = null
+      return
+    }
+    const node = this.getNode(key)
+    if (node) {
+      this.setCurrentNode(node)
+    }
+  }
 };
