@@ -13,7 +13,7 @@ export const getAccessToken = () => ls.get('access_token')
 
 export const getUserID = () => ls.get('user_id') ? ls.get('user_id') : 'null'
 
-function createToken(object) {
+export const createToken=function(object){
   object = ObjectToArr(object)
   var signString = ObjectToString(object)
   signString = signString.slice(0, -1)
