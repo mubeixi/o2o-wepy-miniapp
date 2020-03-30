@@ -1,6 +1,6 @@
 <template>
   <div class="store-all">
-    <div class="store-item item-last flex flex-vertical-center flex-justify-between">
+    <div class="store-item item-last flex flex-vertical-center flex-justify-between"  @click="updaImg">
       <div class="store-title">
         店铺logo
       </div>
@@ -22,10 +22,11 @@
       <div class="store-title">
         主营类目
       </div>
-      <div class="store-titles">
-        美食
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{business_type}}"   range-key="name">
+          {{info.city_express_config.business_type}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-      </div>
+      </picker>
+
     </div>
 <!--    <div class="store-item flex flex-vertical-center flex-justify-between">-->
 <!--      <div class="store-title">-->
@@ -62,6 +63,12 @@
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
+
+<!--    <picker @change="bindPickerChange" value="{{index}}" range="{{business_type}}"   range-key="name">-->
+<!--      <view class="picker">-->
+<!--        当前选择：{{business_type[index].name}}-->
+<!--      </view>-->
+<!--    </picker>-->
   </div>
 </template>
 
@@ -70,25 +77,71 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getBizInfo} from  '../../api/store'
+  import {getBizInfo,getCityExpressConfig,opCityExpressConfig} from  '../../api/store'
   import {
-    linkTo
+    hideLoading,
+    linkTo, showLoading,chooseImageByPromise,uploadImages
   } from '../../common/fun'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-        info:{}
+        info:{},
+      business_type:{},
+      index:0
+    },
+    onLoad(){
+      showLoading('加载中')
     },
     methods:{
+      updaImg(){
+        let temp_file_list=[]
+        let that=this
+        chooseImageByPromise({count:1}).then(tempFiles=>{
+          temp_file_list = tempFiles
+        })
+        that.imgs = [...temp_file_list]
+
+        let arrs = temp_file_list.map(item=>item.path)
+        uploadImages(arrs).then(urls=>{
+          console.log(2,urls)
+          for(let item of urls){
+            // that.arr.push(item)
+          }
+        })
+      },
+      bindPickerChange(e) {
+        let ind=e.$wx.detail.value
+        let data=this.business_type[ind].name
+        showLoading('修改中')
+        opCityExpressConfig({business_type:data}).then(res=>{
+            this.info.city_express_config.business_type=data
+            hideLoading()
+        })
+      },
       updateInfo(item){
         let data='/pages/Store/StoreInfoUpda?type='+item
         linkTo(data)
       },
-      getBizInfo(){
-        getBizInfo().then(res=>{
+      async getBizInfo(){
+        await getBizInfo().then(res=>{
             this.info=res.data
         })
+        hideLoading()
+        await getCityExpressConfig().then(res=>{
+          let arr=res.data.business_type
+          let arrData=[]
+          for(let it in arr){
+            arrData.push({name:it,id:arr[it]})
+          }
+          this.business_type=arrData
+          for(let it=0;it<arrData.length;it++){
+            if(arrData[it].name==this.info.city_express_config.business_type){
+              this.index=it
+            }
+          }
+        })
+
       }
     },
     onShow() {
@@ -125,6 +178,14 @@
       color: #999999;
       font-size: 26rpx;
     }
+  }
+  .picker-mbx{
+    flex: 1;
+    text-align: right;
+    height: 108rpx;
+    line-height: 108rpx;
+    color: #999999;
+    font-size: 26rpx;
   }
 
 </style>
