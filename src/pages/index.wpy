@@ -101,8 +101,9 @@
   import store from '../store'
   import pageMixin from '../mixins'
 
+
   import {
-    getSystemInfo
+    initInfo,bizLogin
   } from '../api/system'
   import {
     linkTo
@@ -117,6 +118,15 @@
       }
     },
     methods: {
+      getInit(){
+        let  data={
+          account:'18530863000',
+          password:'123456'
+        }
+        bizLogin(data).then(res=>{
+          console.log(res,'sss')
+        })
+      },
       toLogistics() {
         linkTo('/pages/logistics/LogisticsMain')
       },
@@ -128,7 +138,7 @@
       }
     },
     created() {
-
+         this.getInit()
     }
 
   })
