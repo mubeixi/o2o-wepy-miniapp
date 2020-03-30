@@ -52,6 +52,8 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
+  import {getShippingTemplate} from  '../../api/store'
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -59,10 +61,14 @@
 
     },
     methods: {
+      getList(){
+        getShippingTemplate().then(res=>{
 
+        })
+      }
     },
     created() {
-
+        this.getList()
     }
 
   })

@@ -2,11 +2,11 @@
   <div class="page-wrap">
     <div class="head">
       <div class="base">
-        <image src="https://retailer.bafangka.com/uploadfiles/wkbq6nc2kc/userfile/48/image/202003111341101495.jpg" class="store-logo"></image>
-        <span class="store-title">老船长咖啡</span>
+        <image :src="info.biz_logo" class="store-logo"></image>
+        <span class="store-title">{{info.biz_name}}</span>
       </div>
-      <div class="action">
-        <div v-if="storeInfo.volidate" class="validate"><span class="tip">已认证</span><icon class="iconfont" type="iconrenzheng"></icon></div>
+      <div class="action" v-if="info.entry_process">
+        <div v-if="info.entry_process.is_auth==1" class="validate"><span class="tip">已认证</span><icon class="iconfont" type="iconrenzheng"></icon></div>
         <div v-else class="no-validate"><span class="tip">未认证</span><icon class="iconrenzheng" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft" class="iconarrowleft"></icon>
       </div>
@@ -14,12 +14,12 @@
 
     <div class="finance-box">
       <div class="finance-item">
-        <div><span class="fz-12">￥</span><span class="fz-18">399.00</span></div>
+        <div><span class="fz-12">￥</span><span class="fz-18">{{info.biz_money}}</span></div>
         <span class="title">店铺余额</span>
       </div>
       <div class="space-line"></div>
       <div class="finance-item">
-        <div class="fz-18">215</div>
+        <div class="fz-18">{{info.view_person_count}}</div>
         <span class="title">今日来访</span>
       </div>
       <div class="space-line"></div>
@@ -32,12 +32,12 @@
     <div class="container">
       <div class="count-box">
         <div class="count-item">
-          <div class="val"><icon class="icon" type="iconyuanhuan" color="#FA9981"></icon><div class="fz-16 c333 text-center">15</div></div>
+          <div class="val"><icon class="icon" type="iconyuanhuan" color="#FA9981"></icon><div class="fz-16 c333 text-center">{{info.today_order_count}}</div></div>
           <span class="title">今日订单</span>
         </div>
         <div style="width: 50rpx;"></div>
         <div class="count-item">
-          <div class="val"><icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon><div class="fz-12 c333 text-center">￥<span class="fz-16">399.00</span></div></div>
+          <div class="val"><icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon><div class="fz-12 c333 text-center">￥<span class="fz-16">{{info.today_order_money}}</span></div></div>
           <span class="title">今日订单金额</span>
         </div>
       </div>
@@ -72,7 +72,7 @@
           </div>
         </div>
         <div class="grid-row">
-          <div class="grid-item">
+          <div class="grid-item"  >
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
@@ -102,7 +102,7 @@
   import pageMixin from '../mixins'
 
   import {
-    initInfo, bizLogin
+    initInfo, bizLogin,bizLogout
   } from '../api/system'
   import {
     linkTo
@@ -114,16 +114,16 @@
     data: {
       storeInfo: {
         volidate: false
-      }
+      },
+      info:{}
     },
     methods: {
       getInit() {
-        let data = {
-          account: '18530863000',
-          password: '123456'
+        let datas={
+          biz_id:'3'
         }
-        bizLogin(data).then(res => {
-          console.log(res, 'sss')
+        initInfo(datas).then(res => {
+          this.info=res.data
         }).catch(err => {})
       },
       toLogistics() {

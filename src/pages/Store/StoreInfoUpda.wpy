@@ -1,0 +1,84 @@
+<template>
+  <div class="all">
+    <input v-if="type==1" type="text" class="my-info" v-model="biz_shop_name"  placeholder="请输入店铺名称"/>
+    <input v-if="type==4" type="text" class="my-info" v-model="biz_name"  placeholder="请输入联系人"/>
+    <div class="button">
+      保存
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import {getBizInfo} from  '../../api/store'
+
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+        info:{},
+        type:-1,
+      biz_shop_name:'',
+      biz_name:''
+    },
+    onLoad(options){
+      this.type=options.type
+    },
+    methods:{
+      getBizInfo(){
+        getBizInfo().then(res=>{
+          this.info=res.data
+        })
+      }
+    },
+    onShow() {
+      this.getBizInfo()
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .all{
+    height: 100vh;
+    background-color: #FFFFFF !important;
+    padding-top: 40rpx;
+  }
+  .my-info{
+    width: 710rpx;
+    margin: 0 auto;
+    height: 80rpx;
+    line-height: 80rpx;
+    border: 1px solid #efefef;
+    padding-left: 20rpx;
+    box-sizing: border-box;
+  }
+  .button{
+    height: 80rpx;
+    width: 710rpx;
+    line-height: 80rpx;
+    color: #fff;
+    background-color:#00A8FF;
+    margin: 20px auto;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "修改资料",
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
+  }
+</config>

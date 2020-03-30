@@ -88,10 +88,17 @@ class XHR {
     _param.User_ID = getUserID()
 
     if (!_param.hasOwnProperty('access_token')) {
-      _param.access_token = getAccessToken()
+      // _param.access_token = getAccessToken()
+
+      _param.access_token = 'yFc5E3Tb58WgdGEXFUedmG0qLYTt67Zf'
+
+      //先写死 后续删除
+      _param.biz_id='3'
+
     }
 
-    _param.Users_ID = getUsersID()   // Users_ID  写死
+    // _param.Users_ID = getUsersID()
+    _param.Users_ID ='wkbq6nc2kc'   // Users_ID
     _param.env = 'wx_lp'
     // 数据加密
     let postData = createToken(_param)
