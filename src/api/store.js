@@ -1,5 +1,7 @@
 import { fetch } from '../common/request'
 
+// 获取商家入驻行业列表
+export const bizIndustryList = (param, options) => fetch({act: 'bizIndustryList', param, options})
 
 
 // 获取物流模板列表

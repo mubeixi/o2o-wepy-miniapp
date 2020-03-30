@@ -4,7 +4,7 @@
   "description": "o2o project by WePY",
   "main": "weapp/app.js",
   "scripts": {
-    "dev": "./node_modules/.bin/wepy build --watch",
+    "dev": "./node_modules/.bin/wepy build --watch --log trace",
     "build": "cross-env NODE_ENV=production ./node_modules/.bin/wepy build --no-cache",
     "clean": "rimraf weapp",
     "test": "echo \"Error: no test specified\" && exit 1"

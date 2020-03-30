@@ -1,0 +1,118 @@
+<style lang="scss">
+@import "../assets/app.scss";
+</style>
+<template>
+  <div :style="{paddingLeft:val.pid === 0 ? 0:indent+'px'}" class="m-t-15  p-l-10 p-r-10">
+    <div class="flex" @tap.stop="clickFn(val)">
+      <div v-show="(!checkOnlyLeaf || isLeaf)">
+        <icon type="iconcheck-box-o" :color="isCheck?'#F53636':'#ccc'"></icon>
+      </div>
+      <div class="flex1 p-l-10 fz-14 c6">{{ labelText }}</div>
+    </div>
+    <div v-if="children.length>0"  :style="{paddingLeft:indent+'px'}">
+      <div v-for="(item, index) in children" :key="index" class="m-t-10">
+        <fun-tree-node :conf="conf" :val="item"></fun-tree-node>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import {
+    TreeHub
+  } from './TreeHub'
+
+  wepy.component({
+    props: {
+      checkOnlyLeaf: {
+        type: Boolean,
+        default: false
+      },
+      nodekey: {
+        type: String,
+        require: true
+      },
+      eid: {
+        type: String,
+        require: true
+      },
+      val: {
+        type: [Object],
+        default: {},
+        required: true
+      },
+      indent: {
+        type: Number,
+        require
+      },
+      conf: {
+        type: Object,
+        require: true
+      }
+    },
+    data: {
+      isCheck: false,
+      expanded: true
+    },
+    computed: {
+      // 叶子目录
+      isLeaf() {
+        try {
+          return this.children.length < 1
+        } catch (e) {
+          return false
+        }
+      },
+      // 计算文本，利用conf中的label做键名
+      labelText() {
+        try {
+          return this.val[this.conf.label]
+        } catch (e) {
+          return ''
+        }
+      },
+      children() {
+        try {
+          return this.val[this.conf.children]
+        } catch (e) {
+          return []
+        }
+      }
+    },
+    watch: {
+      val(newVal) {
+        // console.log(newVal)
+      }
+    },
+    methods: {
+      clickFn(item) {
+        if (!this.checkOnlyLeaf || this.isLeaf) {
+          if (!item.hasOwnProperty(this.nodekey)) {
+            throw new Error('nodeKey参数有误')
+          }
+          this.isCheck = !this.isCheck
+          if (this.isCheck) {
+            TreeHub.addCheck(this.eid, item, this.nodekey)
+          } else {
+            TreeHub.removeCheck(this.eid, item, this.nodekey)
+          }
+        }
+      }
+    },
+
+    created() {
+
+    }
+
+  })
+
+</script>
+<config>
+  {
+    "usingComponents": {
+      "icon": "~@/components/icon",
+      "fun-tree-node": "~@/components/fun-tree-node"
+    }
+  }
+</config>
