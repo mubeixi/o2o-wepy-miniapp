@@ -95,7 +95,7 @@
       background: #00A8FF;
       color: #fff;
       border: none;
-      z-index: 9999;
+      z-index: 2;
     }
   }
 
@@ -274,22 +274,12 @@
 
     <div style="height: 50px"></div>
 
-    <select-trade
-      :show="showTrade"
-      :has="trade.list"
-      @close="handleTradeSelectClose"
-      @onConfirm="handleTradeSelect"
-    >
-    </select-trade>
-
-
-
+    <select-trade :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
 
   </div>
 </template>
 
 <script>
-  // "select-trade": "~@/components/SelectTrade"
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
@@ -313,14 +303,14 @@
       },
       handleTradeSelect(select_trade_list){
         console.log(select_trade_list)
-        let trade_names = [],trade_ids = []
-        for(let trade of select_trade_list){
-          trade_names.push(trade.industry_name)
-          trade_ids.push(trade.id)
-        }
-        this.trade.label = trade_names.join(',')
-        this.trade.list = trade_ids
-        this.handleTradeSelectClose()
+        // let trade_names = [],trade_ids = []
+        // for(let trade of select_trade_list){
+        //   trade_names.push(trade.industry_name)
+        //   trade_ids.push(trade.id)
+        // }
+        // this.trade.label = trade_names.join(',')
+        // this.trade.list = trade_ids
+        // this.handleTradeSelectClose()
       },
     },
     created() {
@@ -335,7 +325,8 @@
   {
     "navigationBarTitleText": "个人认证",
     "usingComponents": {
-      "icon": "~@/components/icon"
+      "icon": "~@/components/icon",
+      "select-trade": "~@/components/SelectTrade"
     }
   }
 </config>

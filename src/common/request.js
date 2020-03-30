@@ -4,11 +4,14 @@ import {
   error
 } from './fun'
 import {
+  emptyObject,
   ls
 } from './helper'
 import {hexMD5} from './tool/md5'
 import Base64 from './tool/base64.js'
+
 export const getUsersID = () => ls.get('users_id')
+
 export const getAccessToken = () => ls.get('access_token')
 
 export const getUserID = () => ls.get('user_id') ? ls.get('user_id') : 'null'
@@ -85,7 +88,7 @@ class XHR {
 
   static formData = (param) => {
     let _param = param
-    _param.User_ID = getUserID()
+
 
     if (!_param.hasOwnProperty('access_token')) {
       _param.access_token = getAccessToken()
@@ -93,11 +96,12 @@ class XHR {
 
     _param.Users_ID = getUsersID()   // Users_ID  写死
     _param.env = 'wx_lp'
+    _param.biz_id = 3
     // 数据加密
     let postData = createToken(_param)
     // 保持签名通过，同时支持传空字符串
-    Object.assign(postData, param)
-    return postData
+    // Object.assign(postData, param)
+    return emptyObject(postData)
   }
 }
 
@@ -162,6 +166,8 @@ export const fetch = function ({act, param = {}, options = false, url = '/api/li
       error('act参数必传')
       return
     }
+
+    param.User_ID = getUserID()
     // 如果某接口指定不要User_ID的
     if (options && options.noUid) delete param.User_ID
     // 检查是否同一个接口请求过快

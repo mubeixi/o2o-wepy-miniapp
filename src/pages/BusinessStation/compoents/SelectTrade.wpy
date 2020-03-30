@@ -4,7 +4,7 @@
     <div class="wrap" :style="_location">
       <div class="text-center padding10-r">选择行业</div>
       <block v-if="isReady">
-        <ly-tree
+        <fun-tree
           ref="tree"
           :tree-data="treeData"
           :showCheckbox="true"
@@ -13,7 +13,7 @@
           node-key="industry_name"
           @node-expand="handleNodeExpand"
           @node-click="handleNodeClick">
-        </ly-tree>
+        </fun-tree>
       </block>
 
       <div @click="subFn" class="btn">提交</div>
@@ -249,7 +249,7 @@
 <config>
   {
   "usingComponents": {
-  "LyTree": "~@/components/ly-tree/ly-tree.wpy",
-  }
+    "fun-tree": "~@/components/funTree"
+    }
   }
 </config>

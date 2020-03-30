@@ -1,0 +1,113 @@
+<style>
+  .fun-tree{}
+</style>
+<template>
+  <div>
+    <div v-if="isEmpty" class="fun-empty">{{emptyText}}</div>
+    <div v-else class="fun-tree">
+      <template v-for="item in tree">
+        <fun-tree-node
+          :val="item"
+          :eid="'tree_'+eleId"
+          :show-checkbox="showCheckbox"
+          :show-radio="showRadio"
+          :check-only-leaf="checkOnlyLeaf"
+          :key="item.id"
+          :conf="conf"
+          nodekey="nodekey"
+          :indent="indent"
+        >
+        </fun-tree-node>
+      </template>
+
+    </div>
+  </div>
+</template>
+
+<script>
+
+  import wepy from '@wepy/core'
+  import { TreeHub } from './TreeHub'
+  import { objTranslate } from '../common/helper'
+
+  wepy.component({
+    data: {
+      hub: null,
+      tree: []
+    },
+    props: {
+      // 展示数据
+      treeData: Array,
+
+      // 自主控制loading加载，避免数据还没获取到的空档出现“暂无数据”字样
+      ready: {
+        type: Boolean,
+        default: true
+      },
+      nodeKey: {
+        type: String,
+        default: 'id'
+      },
+
+      // 是否最后一层叶子节点才显示单选/多选框
+      checkOnlyLeaf: {
+        type: Boolean,
+        default: true
+      },
+
+      // 内容为空的时候展示的文本
+      emptyText: {
+        type: String,
+        default: '暂无数据'
+      },
+      // 相邻级节点间的水平缩进，单位为像素
+      indent: {
+        type: Number,
+        default: 18
+      },
+      eleId: {
+        type: String,
+        require: true
+      },
+      conf: {
+        type: Object,
+        default () {
+          return {
+            children: 'children', // 指定子树为节点对象的某个属性值
+            label: 'label', // 指定节点标签为节点对象的某个属性值
+            disabled: 'disabled' // 指定节点选择框是否禁用为节点对象的某个属性值
+          }
+        }
+      }
+    },
+    computed: {
+      isEmpty() {
+        return false
+      }
+    },
+    watch: {
+
+      treeData(newVal) {
+        console.log(newVal)
+        this.tree = newVal
+        // this.store.setData(newVal)
+      }
+    },
+    methods: {
+      getCheckedNodes() {
+        return 233
+      }
+    },
+    ready() {
+      console.log(this.nodeKey)
+      this.hub = new TreeHub({eid: 'tree_' + this.eleId, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey})
+    }
+  })
+</script>
+<config>
+  {
+    "usingComponents": {
+      "fun-tree-node": "~@/components/fun-tree-node"
+    }
+  }
+</config>
