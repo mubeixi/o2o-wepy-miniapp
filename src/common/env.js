@@ -1,2 +1,2 @@
-export const apiBaseUrl = 'http://wze.com'
+export const apiBaseUrl = 'http://www.newo2osrc.com'
 
