@@ -1,6 +1,6 @@
 
 <template>
-  <div v-show="showTree" @touchmove.prevent.stop="noop">
+  <div v-show="show" @touchmove.prevent.stop="noop">
     <div class="mask" @click="close" ></div>
     <div class="wrap" >
       <div class="title">
@@ -11,13 +11,13 @@
         <fun-tree
           ele-id="select_treade"
           ref="tree"
+          :has="has"
           :conf="propsConf"
           :tree-data="treeData"
           :showCheckbox="true"
           :checkOnlyLeaf="true"
-          nodeKey="industry_name"
-          @node-expand="handleNodeExpand"
-          @node-click="handleNodeClick">
+          nodeKey="id"
+        >
         </fun-tree>
       </div>
 <!--      <div @click="subFn" class="btn">提交</div>-->
@@ -33,6 +33,10 @@
 
   wepy.component({
     props: {
+      has:{
+        type:Array,
+        default:[]
+      },
       show: {
         type: Boolean,
         default: false
@@ -48,7 +52,7 @@
     },
     data: {
       isReady: false,
-      showTree: true,
+      // showTree: false,
       timer: null,
       iftoggle: false,
       translateValue: -100, // 位移距离
@@ -82,7 +86,6 @@
     methods: {
       subFn() {
         let checkNodeList = this.$refs.tree.getCheckedNodes()
-        console.log(checkNodeList)
         this.$emit('onConfirm', checkNodeList)
       },
       loadNode() {
