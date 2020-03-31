@@ -11,7 +11,7 @@ export class TreeHub {
   eid = ''
   constructor(options) {
     console.log(options)
-    const {treeData, nodeKey, eid} = options
+    const {treeData, nodeKey, eid, has = []} = options
     if (!nodeKey) {
       throw Error('nodeKey必须设置')
     }
@@ -23,27 +23,45 @@ export class TreeHub {
 
     let nodes = []
     plainArray(treeData, 'child', nodes)
-    console.log(nodes)
+
+    //has
+    if (has.length > 0) {
+      for (let i in nodes) {
+        console.log(nodes[i][nodeKey])
+        if (has.includes(nodes[i][nodeKey])) {
+          nodes[i].check = true
+        }
+      }
+    }
+
     // 我居然行到tree来搞定储存，真是牛逼
     ls.set(eid, nodes)
   }
 
+  static getCHeckList(eid) {
+    let nodes = ls.get(eid)
+    const checkList = nodes.filter(({check}) => check)
+    return checkList
+  }
+
   static addCheck(eid, item, key) {
     let nodes = ls.get(eid)
-    const idx = findArrayIdx(nodes, {key: item[key]})
+
+    const idx = findArrayIdx(nodes, {[key]: item[key]})
+    console.log(nodes, {[key]: item[key]}, idx)
     // 得不存在，才能加入
-    if (idx === false) {
-      nodes.push(item)
+    if (idx !== false) {
+      nodes[idx].check = true
       ls.set(eid, nodes)
     }
   }
 
   static removeCheck(eid, item, key) {
     let nodes = ls.get(eid)
-    const idx = findArrayIdx(nodes, {key: item[key]})
+    const idx = findArrayIdx(nodes, {[key]: item[key]})
     // 得不存在，才能加入
     if (idx !== false) {
-      nodes.remove(idx)
+      nodes[idx].check = false
       ls.set(eid, nodes)
     }
   }
