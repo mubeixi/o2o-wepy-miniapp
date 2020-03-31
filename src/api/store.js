@@ -26,3 +26,6 @@ export const opBizInfo = (param, options) => fetch({act: 'opBizInfo', param, opt
 
 // 发送验证码
 export const bizRegSms = (param, options) => fetch({act: 'bizRegSms', param, options})
+
+// 获取城市列表
+export const getCityList = (param, options) => fetch({act: 'getCityList', param, options})
