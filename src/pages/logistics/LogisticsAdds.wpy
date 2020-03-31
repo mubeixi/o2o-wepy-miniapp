@@ -12,12 +12,12 @@
       <div class="store-title">
         计价方式
       </div>
-      <div class="store-titles">
-        按重量
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{By_Method}}"   >
+        {{By_Method[index]}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-      </div>
+      </picker>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between">
+    <div class="store-item flex flex-vertical-center flex-justify-between"   @click="$linkTo('/pages/logistics/LogisticsMethod')">
       <div class="store-title">
         运送方式
       </div>
@@ -56,7 +56,18 @@
     store,
     mixins: [pageMixin],
     data: {
-
+      By_Method:['按重量计费','按件数计费']
+    },
+    methods:{
+      bindPickerChange(e) {
+        let ind=e.$wx.detail.value
+        let data=this.business_type[ind].name
+        showLoading('修改中')
+        opCityExpressConfig({business_type:data}).then(res=>{
+          this.info.city_express_config.business_type=data
+          hideLoading()
+        })
+      },
     },
     created() {
 
@@ -103,6 +114,14 @@
   }
   .__placeholder{
     color: #CAC8C8;
+  }
+  .picker-mbx{
+    flex: 1;
+    text-align: right;
+    height: 108rpx;
+    line-height: 108rpx;
+    color: #999999;
+    font-size: 26rpx;
   }
 
 </style>
