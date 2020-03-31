@@ -11,7 +11,7 @@ export class TreeHub {
   eid = ''
   constructor(options) {
     console.log(options)
-    const {treeData, nodeKey, eid, has = []} = options
+    const {treeData, nodeKey, eid, has = [],childrenName} = options
     if (!nodeKey) {
       throw Error('nodeKey必须设置')
     }
@@ -22,7 +22,7 @@ export class TreeHub {
     this.eid = eid
 
     let nodes = []
-    plainArray(treeData, 'child', nodes)
+    plainArray(treeData, childrenName, nodes)
 
     //has
     if (has.length > 0) {

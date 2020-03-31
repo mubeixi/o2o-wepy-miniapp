@@ -2,13 +2,13 @@
   <div class="mail-all">
     <div class="first">
       <span class="first-title">默认运费：</span>
-      <input type="text" class="input-out"/> kg内，
-      <input type="text"  class="input-out"/> 元
+      <input type="text" class="input-out"  v-model="express_start"/> kg内，
+      <input type="text"  class="input-out" v-model="express_postage"/> 元
     </div>
     <div class="second">
       每增加
-      <input type="text" class="input-out"/> kg，增加运费
-      <input type="text"  class="input-out"/> 元
+      <input type="text" class="input-out" v-model="express_plus"/> kg，增加运费
+      <input type="text"  class="input-out" v-model="express_postageplus"/> 元
     </div>
 
 
@@ -21,7 +21,7 @@
 
           北京市,天津市,上海市,河南省,郑州市,开封市,
           苏州市,杭州市,上海市,云南省,昆明市
-          <span style="color: #00A8FF">编辑</span>
+          <span style="color: #00A8FF" @click="edit">编辑</span>
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -61,6 +61,8 @@
     <div class="submit-last">
       为指定区域设置运费
     </div>
+    <city @onConfirm="selectValue"  @close="close"   deep="2"  :show="showSelect"></city>
+<!--    :has="hasValue"-->
   </div>
 </template>
 
@@ -69,16 +71,33 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-
+  import  {getCityList} from '../../api/store'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      showSelect:false,
+      hasValue:[],
+      express_start:'',
+      express_postage:'',
+      express_plus:'',
+      express_postageplus:'',
+    },
+    onLoad(options) {
 
     },
-    created() {
-
+    methods:{
+      edit(){
+        this.showSelect=true
+      },
+      close(){
+        this.showSelect=false
+      },
+      selectValue(value){
+        this.showSelect=false
+        console.log(value)
+      }
     }
 
   })
@@ -182,7 +201,8 @@
   {
   "navigationBarTitleText": "运送方式",
   "usingComponents": {
-  "icon": "~@/components/icon"
+    "icon": "~@/components/icon",
+    "city": "~@/components/SelectCity"
   }
   }
 </config>
