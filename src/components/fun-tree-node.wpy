@@ -11,7 +11,7 @@
     </div>
     <div v-if="children.length>0"  :style="{paddingLeft:indent+'px'}">
       <div v-for="(item, index) in children" :key="index" class="m-t-10">
-        <fun-tree-node :conf="conf" :val="item"></fun-tree-node>
+        <fun-tree-node :has="has" :indent="indent" :eid="eid" :nodeKey="nodeKey" :conf="conf" :val="item"></fun-tree-node>
       </div>
     </div>
   </div>
@@ -29,7 +29,7 @@
         type: Boolean,
         default: false
       },
-      nodekey: {
+      nodeKey: {
         type: String,
         require: true
       },
@@ -42,9 +42,12 @@
         default: {},
         required: true
       },
+      has: {
+        type: Array
+      },
       indent: {
         type: Number,
-        require
+        require: true
       },
       conf: {
         type: Object,
@@ -83,19 +86,29 @@
     watch: {
       val(newVal) {
         // console.log(newVal)
+      },
+      has(newVal) {
+        try {
+          let isHas = this.has.includes(this.val[this.nodeKey])
+          if (isHas) {
+            this.isCheck = true
+          }
+        } catch (e) {
+
+        }
       }
     },
     methods: {
       clickFn(item) {
         if (!this.checkOnlyLeaf || this.isLeaf) {
-          if (!item.hasOwnProperty(this.nodekey)) {
+          if (!item.hasOwnProperty(this.nodeKey)) {
             throw new Error('nodeKey参数有误')
           }
           this.isCheck = !this.isCheck
           if (this.isCheck) {
-            TreeHub.addCheck(this.eid, item, this.nodekey)
+            TreeHub.addCheck(this.eid, item, this.nodeKey)
           } else {
-            TreeHub.removeCheck(this.eid, item, this.nodekey)
+            TreeHub.removeCheck(this.eid, item, this.nodeKey)
           }
         }
       }

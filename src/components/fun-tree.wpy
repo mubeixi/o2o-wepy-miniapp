@@ -8,13 +8,14 @@
       <template v-for="item in tree">
         <fun-tree-node
           :val="item"
+          :has="has"
           :eid="'tree_'+eleId"
           :show-checkbox="showCheckbox"
           :show-radio="showRadio"
           :check-only-leaf="checkOnlyLeaf"
           :key="item.id"
           :conf="conf"
-          nodekey="nodekey"
+          :nodeKey="nodeKey"
           :indent="indent"
         >
         </fun-tree-node>
@@ -48,7 +49,9 @@
         type: String,
         default: 'id'
       },
-
+      has: {
+        type: Array
+      },
       // 是否最后一层叶子节点才显示单选/多选框
       checkOnlyLeaf: {
         type: Boolean,
@@ -95,12 +98,12 @@
     },
     methods: {
       getCheckedNodes() {
-        return 233
+        return TreeHub.getCHeckList('tree_' + this.eleId)
       }
     },
     ready() {
       console.log(this.nodeKey)
-      this.hub = new TreeHub({eid: 'tree_' + this.eleId, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey})
+      this.hub = new TreeHub({eid: 'tree_' + this.eleId, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey,has:this.has})
     }
   })
 </script>
