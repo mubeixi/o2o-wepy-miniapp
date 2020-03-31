@@ -1,7 +1,7 @@
 import * as ENV from './env'
 // import store from '../store'
 import {
-  error
+  error, toast
 } from './fun'
 import {
   emptyObject,
@@ -16,7 +16,11 @@ export const getAccessToken = () => ls.get('access_token')
 
 export const getUserID = () => ls.get('user_id') ? ls.get('user_id') : 'null'
 
-export const createToken=function(object){
+export const getBizId = () => ls.get('biz_id')
+
+export const getEnv = () => 'wx_lp'
+
+export const createToken = function(object) {
   object = ObjectToArr(object)
   var signString = ObjectToString(object)
   signString = signString.slice(0, -1)
@@ -87,23 +91,8 @@ class XHR {
   }
 
   static formData = (param) => {
-    let _param = param
+    let _param = {access_token: getAccessToken(), biz_id: getBizId(), env: getEnv(), ...param}
 
-
-    if (!_param.hasOwnProperty('access_token')) {
-      // _param.access_token = getAccessToken()
-
-      _param.access_token = 'yFc5E3Tb58WgdGEXFUedmG0qLYTt67Zf'
-
-      //先写死 后续删除
-      _param.biz_id='3'
-
-    }
-
-    // _param.Users_ID = getUsersID()
-    _param.Users_ID ='wkbq6nc2kc'   // Users_ID
-    _param.env = 'wx_lp'
-    _param.biz_id = 3
     // 数据加密
     let postData = createToken(_param)
     // 保持签名通过，同时支持传空字符串
@@ -187,6 +176,60 @@ export const fetch = function ({act, param = {}, options = false, url = '/api/li
   } catch (e) {
     console.log('request error :' + JSON.stringify(e))
   }
+}
+
+export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressList = []}) => {
+  let _param = {
+    access_token: getAccessToken(),
+    Users_ID: getUsersID(),
+    env: getEnv(),
+    act: 'uploadFile',
+    ...param
+  }
+
+  const url = `/api/v1/${_param.act}.html`
+  const formData = XHR.formData(_param)
+
+  const _url = ENV.apiBaseUrl + url
+
+  return new Promise((resolve, reject) => {
+    const uploadTask = wx.uploadFile({
+      url: _url,
+      filePath,
+      name,
+      formData,
+      success: (res) => {
+        let {data = {}} = res
+        if (typeof data === 'string' && data) {
+          let body = JSON.parse(data)
+          data = body.data
+        }
+        const {path = ''} = data
+        if (path) {
+          resolve(path)
+        } else {
+          resolve(false)
+          toast('文件上传失败')
+        }
+      },
+      fail: (err) => {
+        reject(new Error(err))
+      },
+      complete: (rt) => {
+
+      }
+    })
+
+    uploadTask.onProgressUpdate((res) => {
+      console.log('上传进度' + res.progress)
+      console.log('已经上传的数据长度' + res.totalBytesSent)
+      console.log('预期需要上传的数据总长度' + res.totalBytesExpectedToSend)
+
+      if (progressList.length > 0 && progressList[idx] && progressList[idx].hasOwnProperty('task')) {
+        progressList[idx].task = res
+      }
+    })
+  })
 }
 
 export default {

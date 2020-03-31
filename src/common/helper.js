@@ -1,6 +1,9 @@
 import {
   error, toast
 } from './fun'
+import {
+  upload
+} from './request'
 
 export const objTranslate = (obj) => JSON.parse(JSON.stringify(obj))
 
@@ -112,4 +115,83 @@ export const compareObj = (obj1, obj2) => {
     }
   }
   return true
+}
+
+/**
+ * 从元素是对象的一维数组中，获取指定的键名对应的值组成的简单值一维数组
+ * @param arr
+ * @param column
+ * @returns {[]}
+ */
+export const getArrColumn = (arr, column) => {
+  if (!Array.isArray(arr)) {
+    throw new Error('数据必传')
+  }
+  if (typeof column !== 'string') {
+    throw new Error('键名为字符串')
+  }
+  if (!column) {
+    throw new Error('键名必传')
+  }
+  let rt = []
+  for (var k in arr) {
+    if (typeof arr[k] !== 'object') {
+      throw new Error('获取的数值为简单值')
+    }
+    rt.push(arr[k][column])
+  }
+  return rt
+}
+
+/**
+ * 获取图片
+ * @param count
+ * @param sizeType
+ * @returns {Promise<unknown>}
+ */
+export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compressed']} = {}) => {
+  return new Promise((resolve, reject) => {
+    wx.chooseImage({
+      count,
+      sizeType, // 可以指定是原图还是压缩图，默认二者都有
+      success(res) {
+        resolve(res.tempFiles)
+      },
+      fail(e) {
+        reject(new Error(false))
+      },
+      complete() {
+
+      }
+    })
+  })
+}
+
+/**
+ * 批量上传照片
+ * @param imgs string:[]
+ * @param name 标识
+ * @param data 业务参数:{}
+ * @returns {Promise<unknown>}
+ */
+export const uploadImages = ({imgs, name = 'image', data, progressList = []}) => {
+  let taskList = []
+  for (let i = 0; i < imgs.length; i++) {
+    let taskItem = upload({
+      filePath: imgs[i],
+      idx: i,
+      name,
+      progressList,
+      formData: data
+    })
+    taskList.push(taskItem)
+  }
+
+  return new Promise((resolve, reject) => {
+    Promise.all(taskList).then((urls) => {
+      resolve(urls)
+    }).catch((error) => {
+      reject(new Error(error))
+    })
+  })
 }

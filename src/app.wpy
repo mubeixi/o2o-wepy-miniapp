@@ -82,7 +82,8 @@ wepy.app({
       "pages/logistics/LogisticsUsual",
       "pages/logistics/LogisticsTmpl",
       "pages/logistics/LogisticsPaperless",
-      "pages/logistics/ExpressCompany"
+      "pages/logistics/ExpressCompany",
+      "pages/demo"
     ],
     window: {
         backgroundTextStyle: "light",
