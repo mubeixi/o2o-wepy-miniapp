@@ -66,6 +66,10 @@
   .p-l-#{$i} { padding-left: ($i)+px; }
   .p-r-#{$i} { padding-right: ($i)+px; }
 
+
+  .w#{$i} { width: ($i)+px; }
+  .h#{$i} { height: ($i)+px; }
+
   .fz-#{$i} { font-size: ($i)+px; }
 }
 
@@ -151,26 +155,66 @@ page{
 .group-cell{
   padding-left:20rpx;
   box-sizing: border-box;
+  margin-bottom: 30rpx;
+  &:last-child{
+    margin-bottom: 0;
+  }
   .cell-item{
     display: flex;
     align-items: center;
     border-bottom: 1px solid #eee;
     padding: 20rpx 0;
     &:last-child{
-
+      border-bottom: none;
     }
     .label{
-      margin-right: 20rpx;
+
       color: #999;
     }
     .content{
       flex: 1;
       text-align: right;
-      padding: 20rpx 0;
       color: #444;
     }
     .right{
       margin: 0 10px;
     }
   }
+}
+
+.form{
+  .group-cell{
+    .cell-item{
+      .label{
+        &:not(:empty){
+          width: 180rpx;
+        }
+        color: #333;
+      }
+    }
+  }
+}
+
+.bor-b{
+  border-bottom: 1px solid #eee;
+}
+
+.btn{
+  height: 80rpx;
+  width: 750rpx;
+  box-sizing: border-box;
+  line-height: 80rpx;
+  text-align: center;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 0;
+  &-primary{
+    background: $fun-blue-color;
+  }
+}
+
+.safearea-box{
+  height: constant(safe-area-inset-bottom);
+  height: env(safe-area-inset-bottom);
+  width: 100%;
 }

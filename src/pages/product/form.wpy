@@ -1,31 +1,639 @@
+<template>
+  <div class="page-wrap">
+    <div class="form">
+      <err-msg :errs="formCheckResult"></err-msg>
+      <form>
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">商品名称</div>
+            <div class="content">
+              <input name="Products_Name" placeholder="请输入商品名称" />
+            </div>
+          </div>
+          <div class="cell-item ">
+            <div class="label">商品主图</div>
+            <div class="content">
+              <div></div>
+              <div class="img-box">
+                <div @click="bindThumbClick(idx,img)" class="img-item img" v-for="(img,idx) in imgTempList" :key="idx" :style="{backgroundImage:'url('+img.path+')'}"><span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span></div>
+                <div class="img-item add" @click="addImg" v-if="imgTempList.length<thumbLimit"><icon color="#ddd" size="40" type="iconupload"></icon></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="group-cell" @click="openPop('orderType')">
+          <div class="cell-item">
+            <div class="label">订单类型</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">平台分类</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">商品价格</div>
+            <div class="content">
+              <div class="flex flex-justify-center flex-vertical-center">
+                <input class="line-input" style="width: 210rpx" name="Products_PriceX" placeholder="请输入商品原价"  />
+                <input class="m-l-15 line-input" style="width: 210rpx" name="Products_PriceY" placeholder="请输入商品现价"  />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label"></div>
+            <div class="content">
+              <div class="flex">
+                <div class="flex1 flex flex-vertical-center">
+                  <span style="white-space: nowrap" class="c3 text-left p-r-10">拼购价</span>
+                  <input class="line-input" name="pintuan_pricex" placeholder="请输入拼购价"  />
+                </div>
+                <div class="flex1 flex flex-vertical-center" style="margin-left: 30rpx">
+                  <span style="white-space: nowrap" class="c3 text-centert p-r-10">成团人数</span>
+                  <input class="line-input" name="pintuan_people" placeholder="请输入成团人数"  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">库存</div>
+            <div class="content">
+              <input name="Products_Count" placeholder="请输入商品库存" />
+            </div>
+          </div>
+        </div>
+
+        <div class="bgwhite m-b-15 flex flex-vertical-center" v-for="(item) in specs">
+          <div class="group-cell flex1" style="margin-bottom: 0" >
+            <div class="cell-item" style="border-bottom: none">
+              <div class="label">规格名</div>
+              <div class="content">
+                <input class="line-input" style="width: 450rpx" placeholder="请输入规格名" />
+              </div>
+            </div>
+            <div class="cell-item" style="border-bottom: none">
+              <div class="label">商品价格</div>
+              <div class="content">
+                <div class="flex flex-vertical-center"  style="width: 450rpx">
+                  <input class="line-input" style="width: 210rpx" placeholder="请输入商品原价"  />
+                  <input class="line-input" style="width: 210rpx;margin-left: 30rpx" placeholder="请输入商品现价"  />
+                </div>
+              </div>
+            </div>
+            <div class="cell-item">
+              <div class="label">库存</div>
+              <div class="content">
+                <input class="line-input" style="width: 450rpx" placeholder="请输入商品库存" />
+              </div>
+            </div>
+          </div>
+          <div class="right" style="padding-right: 20rpx">
+            <icon type="iconminus" color="#F53636"></icon>
+          </div>
+        </div>
+
+        <div class="specs-action-box">
+          <div class="add-btn" @click="addSpecsRow"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加规格</span></div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">产品简介</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">重量</div>
+            <div class="content">
+              <div class="flex flex-vertical-center"><input class="line-input" style="width: 210rpx" placeholder="请输入商品库存" /><span class="c9 fz-12 p-l-8">kg</span></div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="group-cell" @click="openPop('specailAttr')">
+          <div class="cell-item">
+            <div class="label">特殊属性</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">自定义分类</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+        </div>
+
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">商品承诺</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+        </div>
+
+        <div class="group-cell" @click="openPop('content')">
+          <div class="cell-item">
+            <div class="label">详情</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">销量</div>
+            <div class="content">
+              <input placeholder="请输入商品销量" />
+            </div>
+          </div>
+          <div class="cell-item">
+            <div class="label">限购</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+          <div class="cell-item">
+            <div class="label">优惠券赠送</div>
+            <div class="content">
+
+            </div>
+            <div class="right">
+              <div class="flex-vertical-center flex"><span class="c9 fz-12">不赠送</span><icon type="iconarrowleft" color="#999"></icon></div>
+            </div>
+          </div>
+          <div class="cell-item">
+            <div class="label">退换货</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+
+          <div class="cell-item">
+            <div class="label">运费</div>
+            <div class="content">
+
+            </div>
+            <div class="right">
+              <div class="flex-vertical-center flex"><span class="c9 fz-12">设置运费</span><icon type="iconarrowleft" color="#999"></icon></div>
+            </div>
+          </div>
+          <div class="cell-item">
+            <div class="label">下单模板</div>
+            <div class="content"></div>
+            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          </div>
+        </div>
+        <div class="safearea-space"></div>
+        <button class="btn action-btn btn-primary">保存数据</button>
+      </form>
+
+
+    </div>
+
+    <popup-layer title="订单类型" ref="orderType" :autoClose="false">
+      <radio-group class="type-list p-l-10 p-r-10"  @change="setOrderType">
+        <label class="type-item flex flex-vertical-center bor-b">
+          <radio color="#00A8FF" value="0" :checked="formData.orderType === 0"></radio>
+          <div class="label p-10">
+            <div class="title m-b-4">实物订单</div>
+            <div class="desc fz-12 c9">买家下单-买家付款-商家发货-买家收货-订单完成</div>
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center bor-b">
+          <radio color="#00A8FF" value="1" :checked="formData.orderType === 1"></radio>
+          <div class="label p-10">
+            <div class="title m-b-4">虚拟订单</div>
+            <div class="desc fz-12 c9">买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成</div>
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center bor-b">
+          <radio color="#00A8FF" value="2" :checked="formData.orderType === 2"></radio>
+          <div class="label p-10">
+            <div class="title m-b-4">其他</div>
+            <div class="desc fz-12 c9">买家下单-买家付款-订单完成</div>
+          </div>
+        </label>
+      </radio-group>
+      <button class="btn btn-primary m-t-35" @click="closePop('orderType')">确认</button>
+    </popup-layer>
+
+    <popup-layer title="特殊属性" ref="specailAttr" :autoClose="false">
+      <div class="type-list p-l-10 p-r-10">
+        <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('Products_SoldOut')">
+          <checkbox color="#00A8FF" :checked="formData.Products_SoldOut"></checkbox>
+          <div class="label p-10">
+            <div class="title m-b-4">下架</div>
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('Products_IsNew')">
+          <checkbox color="#00A8FF" :checked="formData.Products_IsNew"></checkbox>
+          <div class="label p-10">
+            <div class="title m-b-4">新品</div>
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('Products_IsHot')">
+          <checkbox color="#00A8FF" :checked="formData.Products_IsHot"></checkbox>
+          <div class="label p-10">
+            <div class="title m-b-4">热卖</div>
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('Products_IsRecommend')">
+          <checkbox color="#00A8FF" :checked="formData.Products_IsRecommend"></checkbox>
+          <div class="label p-10">
+            <div class="title m-b-4">推荐</div>
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('one_hour_send')">
+          <checkbox color="#00A8FF" :checked="formData.one_hour_send"></checkbox>
+          <div class="label p-10">
+            <div class="title m-b-4">一小时达</div>
+          </div>
+        </label>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="closePop('specailAttr')">确认</button>
+    </popup-layer>
+
+
+    <popup-layer :full="true"  ref="content" :autoClose="false">
+      <div class="editor-wrap">
+        <div class="editor-container">
+          <editor
+            placeholder="{{placeholderCotnent}}"
+            showImgSize
+            showImgToolbar
+            showImgResize
+            bindstatuschange="onEditorStatusChange"
+            :style="{maxHeight:systemInfo.windowHeight-150+'px'}" class="editor-instance" id="editor"></editor>
+          <div>
+            <div class="editor-add-btn" @click="addImgByEditor" ><icon color="#ddd" size="40" type="iconupload"></icon></div>
+          </div>
+        </div>
+        <button style="position: absolute;bottom: 0;" class="btn btn-primary m-t-35" @click="closePop('content')">编辑完成</button>
+      </div>
+
+    </popup-layer>
+
+    <div class="safearea-box"></div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {
+    chooseImageByPromise, getArrColumn, uploadImages, validateFun,getDomain
+  } from '../../common/helper'
+  import { error } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      placeholderCotnent:'请输入文字介绍...',
+      editorInstance: null,
+      thumbLimit: 5,
+      formCheckResult: false,
+      _click: false,
+      imgTempList: [],
+      cate_ids: '',
+      imgs: [],
+      specs: [1],
+      formData: {
+        Products_Name: '',
+        orderType: 0,
+        Products_SoldOut: 0, // 下架
+        Products_IsNew: 0, // 新品
+        Products_IsHot: 0, // 热卖
+        Products_IsRecommend: 0, // 推荐
+        one_hour_send: 0 // 一小时达
+
+      }
+    },
+    watch: {
+      formData: {
+        deep: true,
+        handler(newVal) {
+          console.log(newVal)
+        }
+      }
+    },
+    methods: {
+      onEditorStatusChange(e){
+        console.log(e)
+      },
+      taggleFormData(key) {
+        this.formData[key] = !this.formData[key]
+      },
+      setFormData(key, val) {
+        this.formData[key] = val
+      },
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      },
+      setOrderType(e) {
+        this.formData.orderType = parseInt(e.$wx.detail.value)
+      },
+      addSpecsRow() {
+        this.specs.push(null)
+      },
+      subFn() {
+        if (this.cate_ids === '') {
+          error('请选择商品分类')
+          return
+        }
+        if (this.ruleForm.Products_Type == '' && this.ruleForm.Products_Type != 0) {
+          error('请选择商品类型')
+          return
+        }
+        let productInfo = {
+    // Products_Index: this.formData.Products_Index, // 商品排序
+          Products_Name: this.formData.Products_Name, // 商品名称
+          Products_Category: this.cate_ids // 商品分类
+    // Products_Sales: this.formData.Products_Sales, // 虚拟销量
+    // Products_PriceY: this.formData.Products_PriceY, // 原价
+    // Products_PriceX: this.formData.Products_PriceX, // 现价
+    // pintuan_flag: this.formData.pintuan_flag ? '1' : '0', // 是否拼团
+    // Products_Profit: this.formData.Products_Profit, // 产品利润
+    // Products_BriefDescription: this.formData.Products_BriefDescription, // 产品简介
+    // Products_Count: this.formData.Products_Count, // 库存
+    // Products_Type: this.formData.Products_Type, // 商品类型id
+    // Products_Weight: this.formData.Products_Weight, // 商品重量
+    // fee_type: this.formData.goods, // 运费选择
+    // prod_order_type: this.formData.orderType, // 订单类型
+    // Products_Description: this.editorText, // 富文本类型
+    // Product_backup: this.formData.refund, // 退货id
+    // platForm_Income_Reward: this.platForm_Income_Reward,
+    // nobi_ratio: this.nobi_ratio,
+    // area_Proxy_Reward: this.area_Proxy_Reward,
+    // sha_Reward: this.sha_Reward,
+    // commission_ratio: this.commission_ratio,
+    // manage_Reward: this.manage_Reward
+        }
+        // if (this.formData.orderType === 2) {
+        //   let arr = []
+        //   for (let item of this.multipleSelection) {
+        //     arr.push(item.Card_Id)
+        //   }
+        //   productInfo.virtual_card_ids = JSON.stringify(arr)
+        // }
+        // if (id) {
+        //   productInfo.prod_id = id
+        // }
+        // let arrPromise = []
+        // for (let item of this.Products_Promise) {
+        //   arrPromise.push({'name': item})
+        // }
+        // productInfo.Products_Promise = JSON.stringify(arrPromise)
+        //
+              if (this.formData.imgs.length < 1) {
+                error('商品主图不能为空')
+              } else {
+                productInfo.Products_JSON = JSON.stringify({'ImgPath': this.formData.imgs})
+              }
+        //
+        // // 优惠券
+        // if (this.selectValue.length > 0) {
+        //   productInfo.coupon_present = this.selectValue.join(',')
+        // }
+        //
+        // productInfo.video_url = this.video ? this.video : ''
+        // productInfo.cover_url = this.imgs ? this.imgs : ''
+        //
+        // for (let item of this.formData.otherAttributes) {
+        //   if (item == '下架') productInfo.Products_SoldOut = 1
+        //   if (item == '新品')productInfo.Products_IsNew = 1
+        //   if (item == '热卖')productInfo.Products_IsHot = 1
+        //   if (item == '推荐')productInfo.Products_IsRecommend = 1
+        // }
+        //
+        // if (this.formData.goods == 1) {
+        //   // 如果是免运费的话
+        //   productInfo.fix_fee = this.fix_fee
+        // } else if (this.formData.goods == 2 && this.yunfei.length > 0) {
+        //   if (!this.shipping_temp) {
+        //     this.$message({
+        //       type: 'error',
+        //       message: `物流模板不能为空`
+        //     })
+        //     this.isLoading = false
+        //     return
+        //   }
+        //   productInfo.shipping_temp = this.shipping_temp
+        // }
+        //
+        // if (this.prodConfig.Payment_RmainderEnabled) {
+        //   // 如果可以设置余额支付
+        //   productInfo.Products_IsPaysBalance = this.formData.Products_IsPaysBalance ? '1' : '0'
+        // }
+        //
+        // if (this.formData.pintuan_flag) {
+        //   // 是拼团商品
+        //   // 转化时间
+        //   var d = new Date(this.formData.pintuan_end_time)
+        //   var date = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+        //   productInfo.pintuan_people = this.formData.pintuan_people
+        //   productInfo.pintuan_pricex = this.formData.pintuan_pricex
+        //   productInfo.pintuan_end_time = date
+        // }
+        //
+        // productInfo.prod_limit = JSON.stringify(prodObj)
+        // productInfo.self_commi = this.self_commi
+        // productInfo.parent_commi = this.parent_commi
+        // productInfo.manage_commi = this.manage_commi
+      },
+      bindThumbClick(idx, img) {
+        wx.showActionSheet({
+          itemList: ['预览图片', '移除图片'],
+          success: (res) => {
+            const {tapIndex} = res
+
+            if (tapIndex === 0) {
+              wx.previewImage({
+                urls: [img.path]
+              })
+            }
+            if (tapIndex === 1) {
+              this.imgTempList.splice(idx, 1)
+              this.imgs.splice(idx, 1)
+            }
+          },
+          fail (res) {
+
+          }
+        })
+      },
+      async addImgByEditor() {
+        if (this._click) {
+          error('操作过快')
+          return
+        }
+        const files = await chooseImageByPromise({count: 9}).catch(err => {
+          wx.showModal({
+            title: '请选择图片',
+            content: JSON.stringify(err)
+          })
+          return []
+        })
+
+        // const arr1 = files.map(file => {
+        //   return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+        // })
+
+        const imgs = getArrColumn(files, 'path')
+        const ossUrls = await uploadImages({imgs}).catch(err => {
+          wx.showModal({
+            title: '文件批量上传失败',
+            content: JSON.stringify(err)
+          })
+        })
+        this._click = false
+
+        for (let img of ossUrls) {
+          this.editorInstance.insertImage({
+            src: getDomain(img),
+            extClass: 'editor-img'
+          })
+        }
+      },
+      async addImg() {
+        if (this._click) {
+          error('操作过快')
+          return
+        }
+        const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch(err => {
+          wx.showModal({
+            title: '请选择图片',
+            content: JSON.stringify(err)
+          })
+          return []
+        })
+
+        const arr1 = files.map(file => {
+          return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+        })
+        this.imgTempList = this.imgTempList.concat(arr1)
+        const imgs = getArrColumn(files, 'path')
+        const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch(err => {
+          wx.showModal({
+            title: '文件批量上传失败',
+            content: JSON.stringify(err)
+          })
+        })
+
+        this.imgs = this.imgs.concat(ossUrls)
+
+        this._click = false
+      }
+    },
+    onReady() {
+
+
+      let that = this
+      wx.createSelectorQuery().select('#editor').context(function (res) {
+        that.editorInstance = res.context
+      }).exec()
+
+    },
+    onLoad() {
+
+    }
+  })
+</script>
 <style lang="scss">
   @import "../../assets/mixins.scss";
   @import "../../assets/variables.scss";
 
-  .page-wrap{
-
+  .editor{
+    &-wrap{
+      background: #f8f8f8;
+      height: 100%;
+      position: relative;
+      padding: 20px 10px;
+      box-sizing: border-box;
+    }
+    &-instance{
+      padding: 10px;
+      border: 1px solid #eee;
+      line-height: 1.4;
+    }
+    &-container{
+      background: white;
+      padding: 15px;
+    }
+    &-add-btn{
+      margin-top: 15px;
+      width: 110rpx;
+      height: 110rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed #ccc;
+      box-sizing: border-box;
+    }
   }
+
+  .page-wrap{
+    background: #fff;
+  }
+  .specs-action-box{
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 30rpx;
+    .add-btn{
+      width: 155rpx;
+      height: 56rpx;
+      display: flex;
+      align-items: center;
+      border:1px solid #00A8FF;
+      color:#00A8FF;
+      border-radius: 5rpx;
+      justify-content: center
+    }
+  }
+
   .img{
     @include cover-img();
     &-box{
-      width: 700rpx;
-      padding: 25rpx;
       display: flex;
       flex-wrap: wrap;
+      width: 400rpx;
     }
     &-item{
-      width: 220rpx;
-      height: 220rpx;
+      width: 120rpx;
+      height: 120rpx;
       margin-bottom: 20rpx;
       margin-right: 20rpx;
-      background-color: #f2f2f2;
       position: relative;
       .progress{
         position: absolute;
         width: 100%;
         height: 100%;
         text-align: center;
-        line-height: 220rpx;
+        line-height: 120rpx;
         color: white;
         background: rgba(0,0,0,.3);
       }
@@ -39,117 +647,62 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 1px dashed #999;
+    border: 1px dashed #ccc;
     box-sizing: border-box;
+    margin-right: 0;
+    margin-bottom: 0;
   }
-</style>
-<template>
-  <div class="page-wrap">
 
-    <err-msg :errs="formCheckResult"></err-msg>
-    <div class="img-box">
-      <div class="img-item img" v-for="(img,idx) in imgs" :key="idx" :style="{backgroundImage:'url('+img.path+')'}"><span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span></div>
-      <div class="img-item add" @click="addImg" v-show="imgs.length<9"><icon color="#ddd" size="40" type="iconadd"></icon></div>
-    </div>
-
-    <popup-layer title="商品承诺" ref="form1">
-
-    </popup-layer>
-  </div>
-</template>
-<script>
-  import wepy from '@wepy/core'
-  import store from '../../store'
-  import pageMixin from '../../mixins'
-  import {
-    chooseImageByPromise, getArrColumn, uploadImages, validateFun
-  } from '../../common/helper'
-  import { error } from '../../common/fun'
-
-  wepy.page({
-    store,
-    mixins: [pageMixin],
-    data: {
-      formCheckResult:[],
-      _click: false,
-      imgs: []
-    },
-    methods: {
-
-      async addImg() {
-        if (this._click) {
-          error('操作过快')
-          return
+  .form{
+    background: #f8f8f8;
+    padding-bottom: 80rpx;
+    /*font-size: 16px;*/
+    .group-cell{
+      background: white;
+      .cell-item{
+        .label{
+          /*font-size: 16px;*/
         }
-        const files = await chooseImageByPromise({count: 9}).catch(err => {
-          wx.showModal({
-            title: '请选择图片',
-            content: JSON.stringify(err)
-          })
-        })
-
-        this.imgs = files.map(file => {
-          return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
-        })
-        const imgs = getArrColumn(files, 'path')
-        const ossUrls = await uploadImages({imgs, progressList: this.imgs}).catch(err => {
-          wx.showModal({
-            title: '文件批量上传失败',
-            content: JSON.stringify(err)
-          })
-        })
-        console.log(ossUrls)
-        this._click = false
-      }
-    },
-    onReady() {
-      // this.$refs.form1.show()
-
-      var constraints = {
-        creditCardNumber: {
-          presence: true,
-          format: {
-            pattern: /^(34|37|4|5[1-5]).*$/,
-            message: function(value, attribute, validatorOptions, attributes, globalOptions) {
-              return wx.$validate.format('^%{num} 不是有效的银行卡', {
-                num: value
-              })
-            }
-          },
-          length: function(value, attributes, attributeName, options, constraints) {
-            if (value) {
-              // Amex
-              if ((/^(34|37).*$/).test(value)) return {is: 15}
-            // Visa, Mastercard
-              if ((/^(4|5[1-5]).*$/).test(value)) return {is: 16}
-            }
-            // Unknown card, don't validate length
-            return false
-          }
-        },
-        creditCardZip: function(value, attributes, attributeName, options, constraints) {
-          if (!(/^(34|37).*$/).test(attributes.creditCardNumber)) return null
-          return {
-            presence: {message: 'is required when using AMEX'},
-            length: {is: 5}
+        .content{
+          padding-right: 20rpx;
+          text-align: left;
+          .line-input{
+            border:1px solid #eee;
+            height: 56rpx;
+            line-height: 56rpx;
+            text-align: center;
+            font-size: 14px;
           }
         }
       }
-
-      const validateRt = validateFun({creditCardNumber: '99999'}, constraints)
-
-      if (validateRt !== true) {
-        this.formCheckResult = validateRt
-      }
-    },
-    onLoad() {
-
     }
-  })
-</script>
+    .safearea-space{
+      height: constant(safe-area-inset-bottom);
+      height: env(safe-area-inset-bottom);
+    }
+  }
+
+  .action-btn{
+    position: fixed;
+    left: 0;
+    z-index: 3;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
+  }
+  .safearea-box{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: #fff;
+    z-index: 3;
+  }
+
+
+
+</style>
 <config>
   {
-    "navigationBarTitleText": "demo",
+    "navigationBarTitleText": "商品详情",
     "navigationBarTextStyle": "black",
     "usingComponents": {
       "err-msg": "~@/components/err-msg",

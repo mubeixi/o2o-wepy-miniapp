@@ -233,3 +233,12 @@ export const getString = (arr, key, mbx = 99) => {
     return str
   }
 }
+import {
+  apiBaseUrl as staticUrl
+} from './env'
+
+export const getDomain = (url) => {
+  if (!url) return ''
+  if (url.indexOf('http') === -1) return staticUrl + url
+  return url
+}
