@@ -4,23 +4,23 @@
     <div class="mask" @click="close" ></div>
     <div class="wrap" >
       <div class="title">
-        <div class="text">选择行业</div>
+        <div class="text">选择城市</div>
         <div @click="subFn" class="btn">确认</div>
       </div>
-      <div v-if="isReady">
+      <div v-if="isReady"  class="mbx">
         <fun-tree
-          ele-id="select_treade"
+          ele-id="select_city"
           ref="tree"
           :has="has"
           :conf="propsConf"
           :tree-data="treeData"
           :show-checkbox="true"
           :check-only-leaf="true"
-          nodeKey="id"
+          nodeKey="area_name"
         >
         </fun-tree>
       </div>
-<!--      <div @click="subFn" class="btn">提交</div>-->
+      <!--      <div @click="subFn" class="btn">提交</div>-->
     </div>
   </div>
 </template>
@@ -28,7 +28,7 @@
 
   import wepy from '@wepy/core'
   import {
-    bizIndustryList
+    getCityList
   } from '../api/store'
 
   wepy.component({
@@ -45,6 +45,10 @@
         type: Number || String,
         default: 0
       },
+      deep: {
+        type: Number,
+        default: -1
+      },
       direction: {
         type: String,
         default: 'top' // 方向  top，bottom，left，right
@@ -60,8 +64,8 @@
       maskOpacity: 0,
       propsConf: {
         // icon:'iconname',
-        children: 'child', // 指定子树为节点对象的某个属性值
-        label: 'industry_name', // 指定节点标签为节点对象的某个属性值
+        children: '_child', // 指定子树为节点对象的某个属性值
+        label: 'area_name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled' //	指定节点选择框是否禁用为节点对象的某个属性值
       }
     },
@@ -71,17 +75,24 @@
           val && this.open()
           !val && this.close()
         }
+      },
+      deep:{
+        immediate:true,
+        handler(val) {
+          if(val<1) return;
+          getCityList({'deep':val}).then(res => {
+            this.treeData = res.data// mockData
+            this.isReady = true
+          })
+        }
       }
     },
     created() {
-    // setTimeout(()=>{
-      //   this.treeData = mockData
+      //
+      // getCityList({'deep':this.deep}).then(res => {
+      //   this.treeData = res.data// mockData
       //   this.isReady = true
-      // },200)
-      bizIndustryList().then(res => {
-        this.treeData = res.data// mockData
-        this.isReady = true
-      })
+      // })
     },
     methods: {
       subFn() {
@@ -94,7 +105,7 @@
 
       },
       close() {
-
+        this.$emit('close')
       },
       open() {
 
@@ -150,12 +161,16 @@
     overflow: hidden;
     bottom: 0;
   }
+  .mbx{
+    height: 840rpx;
+    overflow: scroll;
+  }
 
 </style>
 <config>
   {
-    "usingComponents": {
-      "fun-tree": "~@/components/fun-tree"
-    }
+  "usingComponents": {
+  "fun-tree": "~@/components/fun-tree"
+  }
   }
 </config>

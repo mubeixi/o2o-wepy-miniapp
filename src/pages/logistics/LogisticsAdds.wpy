@@ -5,7 +5,7 @@
         模板名称
       </div>
       <div class="store-titles flex1">
-        <input type="text" placeholder="请输入模板名称" placeholder-class="__placeholder"  class="input-logistics" >
+        <input type="text" v-model="Template_Name" placeholder="请输入模板名称" placeholder-class="__placeholder"  class="input-logistics" >
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
@@ -13,11 +13,11 @@
         计价方式
       </div>
       <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{By_Method}}"   >
-        {{By_Method[index]}}
+        {{By_Method[ind]}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </picker>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between"   @click="$linkTo('/pages/logistics/LogisticsMethod')">
+    <div class="store-item flex flex-vertical-center flex-justify-between"   @click="goMethods">
       <div class="store-title">
         运送方式
       </div>
@@ -37,11 +37,15 @@
       <div class="store-title">
         状态
       </div>
-      <div class="store-titles">
+      <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{status}}"   >
+        {{status[index]}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-      </div>
+      </picker>
     </div>
 
+    <div class="submit-main" @click="save">
+      提交
+    </div>
   </div>
 </template>
 
@@ -49,28 +53,86 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
+  import {
+    hideLoading,
+    showLoading,linkTo
+  } from '../../common/fun'
 
+  import  {opShippingTemplate,getTemplateDetail} from '../../api/store'
 
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      By_Method:['按重量计费','按件数计费']
+      listData:{},
+      By_Method:['按重量计费','按件数计费'],
+      status:['禁用','启用'],
+      ind:0,
+      index:0,
+      temp_id:'',//模板id
+      Template_Name:'',//模板名称
+    },
+    onLoad(options){
+      if(options.temp_id){
+        this.temp_id=options.temp_id
+        this.getDetail()
+      }
+
     },
     methods:{
-      bindPickerChange(e) {
-        let ind=e.$wx.detail.value
-        let data=this.business_type[ind].name
-        showLoading('修改中')
-        opCityExpressConfig({business_type:data}).then(res=>{
-          this.info.city_express_config.business_type=data
-          hideLoading()
+      goMethods(){
+        if(this.temp_id){
+          linkTo('/pages/logistics/LogisticsMethod?temp_id='+this.temp_id)
+        }
+          linkTo('/pages/logistics/LogisticsMethod')
+      },
+      getDetail(){
+        getTemplateDetail({'temp_id':this.temp_id}).then(res=>{
+              this.listData=res.data
+              this.Template_Name=this.listData.Template_Name
+              this.index=String(this.listData.Template_Status)
+              this.ind=this.listData.By_Method=='按重量'?'0':'1'
         })
       },
-    },
-    created() {
+      bindPickerChanges(e){
+        this.index=e.$wx.detail.value
+      },
+      bindPickerChange(e) {
+        this.ind=e.$wx.detail.value
+      },
+      save(){
+        showLoading('保存中')
+        let data={
+          'Template_Name':this.Template_Name,
+          'By_Method':this.ind==0?'by_weight':'by_qty',
+          'status':this.index
+        }
+        if(this.temp_id){
+          data.temp_id=this.temp_id
+        }
 
+        opShippingTemplate(data).then(res=>{
+
+          if(this.temp_id){
+            wx.showToast({
+              title:'修改成功',
+              icon:"success"
+            })
+          }else{
+            wx.showToast({
+              title:'新增成功',
+              icon:"success"
+            })
+          }
+          setTimeout(()=>{
+            wx.navigateBack({
+              delta: 1
+            })
+          },1000)
+          hideLoading()
+        })
+      }
     }
 
   })
@@ -122,6 +184,18 @@
     line-height: 108rpx;
     color: #999999;
     font-size: 26rpx;
+  }
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
   }
 
 </style>

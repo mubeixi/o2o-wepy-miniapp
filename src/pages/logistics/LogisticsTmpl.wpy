@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrap">
     <div class="group-cell">
-      <div class="cell-item" v-for="(item,index) of list" :key="index">
+      <div class="cell-item" v-for="(item,index) of list" :key="index"  @click="goNext(item.Template_ID)">
         <div class="label">{{item.Template_Name}}</div>
         <div class="content">{{item.By_Method}}</div>
         <icon type="iconarrowleft" color="#999" class="right"></icon>
@@ -23,7 +23,9 @@
   import pageMixin from '../../mixins'
 
   import {getShippingTemplate} from  '../../api/store'
-
+  import {
+    linkTo
+  } from '../../common/fun'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -31,14 +33,18 @@
       list:[]
     },
     methods: {
+      goNext(item){
+        let data='/pages/logistics/LogisticsAdds?temp_id='+item
+        linkTo(data)
+      },
       getList(){
         getShippingTemplate().then(res=>{
             this.list=res.data
         })
       }
     },
-    created() {
-        this.getList()
+    onShow() {
+      this.getList()
     }
 
   })

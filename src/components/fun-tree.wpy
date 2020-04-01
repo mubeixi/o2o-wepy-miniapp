@@ -103,7 +103,7 @@
     },
     ready() {
       console.log(this.nodeKey)
-      this.hub = new TreeHub({eid: 'tree_' + this.eleId, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey,has:this.has})
+      this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName:this.conf.children,treeData: objTranslate(this.treeData), nodeKey: this.nodeKey,has:this.has})
     }
   })
 </script>
