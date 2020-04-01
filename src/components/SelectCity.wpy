@@ -33,9 +33,9 @@
 
   wepy.component({
     props: {
-      has:{
-        type:Array,
-        default:[]
+      has: {
+        type: Array,
+        default: []
       },
       show: {
         type: Boolean,
@@ -76,11 +76,11 @@
           !val && this.close()
         }
       },
-      deep:{
-        immediate:true,
+      deep: {
+        immediate: true,
         handler(val) {
-          if(val<1) return;
-          getCityList({'deep':val}).then(res => {
+          if (val < 1) return
+          getCityList({'deep': val}).then(res => {
             this.treeData = res.data// mockData
             this.isReady = true
           })
