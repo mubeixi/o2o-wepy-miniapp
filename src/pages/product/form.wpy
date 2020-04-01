@@ -1,0 +1,160 @@
+<style lang="scss">
+  @import "../../assets/mixins.scss";
+  @import "../../assets/variables.scss";
+
+  .page-wrap{
+
+  }
+  .img{
+    @include cover-img();
+    &-box{
+      width: 700rpx;
+      padding: 25rpx;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    &-item{
+      width: 220rpx;
+      height: 220rpx;
+      margin-bottom: 20rpx;
+      margin-right: 20rpx;
+      background-color: #f2f2f2;
+      position: relative;
+      .progress{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        line-height: 220rpx;
+        color: white;
+        background: rgba(0,0,0,.3);
+      }
+      &:nth-child(3n+0){
+        margin-right: 0;
+      }
+    }
+  }
+  .add{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #999;
+    box-sizing: border-box;
+  }
+</style>
+<template>
+  <div class="page-wrap">
+
+    <err-msg :errs="formCheckResult"></err-msg>
+    <div class="img-box">
+      <div class="img-item img" v-for="(img,idx) in imgs" :key="idx" :style="{backgroundImage:'url('+img.path+')'}"><span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span></div>
+      <div class="img-item add" @click="addImg" v-show="imgs.length<9"><icon color="#ddd" size="40" type="iconadd"></icon></div>
+    </div>
+
+    <popup-layer title="商品承诺" ref="form1">
+
+    </popup-layer>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {
+    chooseImageByPromise, getArrColumn, uploadImages, validateFun
+  } from '../../common/helper'
+  import { error } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      formCheckResult:[],
+      _click: false,
+      imgs: []
+    },
+    methods: {
+
+      async addImg() {
+        if (this._click) {
+          error('操作过快')
+          return
+        }
+        const files = await chooseImageByPromise({count: 9}).catch(err => {
+          wx.showModal({
+            title: '请选择图片',
+            content: JSON.stringify(err)
+          })
+        })
+
+        this.imgs = files.map(file => {
+          return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+        })
+        const imgs = getArrColumn(files, 'path')
+        const ossUrls = await uploadImages({imgs, progressList: this.imgs}).catch(err => {
+          wx.showModal({
+            title: '文件批量上传失败',
+            content: JSON.stringify(err)
+          })
+        })
+        console.log(ossUrls)
+        this._click = false
+      }
+    },
+    onReady() {
+      // this.$refs.form1.show()
+
+      var constraints = {
+        creditCardNumber: {
+          presence: true,
+          format: {
+            pattern: /^(34|37|4|5[1-5]).*$/,
+            message: function(value, attribute, validatorOptions, attributes, globalOptions) {
+              return wx.$validate.format('^%{num} 不是有效的银行卡', {
+                num: value
+              })
+            }
+          },
+          length: function(value, attributes, attributeName, options, constraints) {
+            if (value) {
+              // Amex
+              if ((/^(34|37).*$/).test(value)) return {is: 15}
+            // Visa, Mastercard
+              if ((/^(4|5[1-5]).*$/).test(value)) return {is: 16}
+            }
+            // Unknown card, don't validate length
+            return false
+          }
+        },
+        creditCardZip: function(value, attributes, attributeName, options, constraints) {
+          if (!(/^(34|37).*$/).test(attributes.creditCardNumber)) return null
+          return {
+            presence: {message: 'is required when using AMEX'},
+            length: {is: 5}
+          }
+        }
+      }
+
+      const validateRt = validateFun({creditCardNumber: '99999'}, constraints)
+
+      if (validateRt !== true) {
+        this.formCheckResult = validateRt
+      }
+    },
+    onLoad() {
+
+    }
+  })
+</script>
+<config>
+  {
+    "navigationBarTitleText": "demo",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "err-msg": "~@/components/err-msg",
+      "icon": "~@/components/icon",
+      "popup-layer": "~@/components/popup-layer"
+    }
+  }
+</config>

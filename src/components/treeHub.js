@@ -48,7 +48,7 @@ export class TreeHub {
     let nodes = ls.get(eid)
 
     const idx = findArrayIdx(nodes, {[key]: item[key]})
-    console.log(nodes, {[key]: item[key]}, idx)
+
     // 得不存在，才能加入
     if (idx !== false) {
       nodes[idx].check = true

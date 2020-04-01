@@ -176,7 +176,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  */
 export const uploadImages = ({imgs, name = 'image', data, progressList = []}) => {
   let taskList = []
-  console.log(imgs,"ssss")
+  console.log(imgs, 'ssss')
   for (let i = 0; i < imgs.length; i++) {
     let taskItem = upload({
       filePath: imgs[i],
@@ -195,4 +195,15 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = []}) =>
       reject(new Error(error))
     })
   })
+}
+
+/**
+ * 数据校验
+ * @param data
+ * @param rule
+ * @returns {boolean}
+ */
+export const validateFun = (data, rule) => {
+  const rt = wx.$validate(data, rule)
+  return rt === undefined ? true : rt
 }

@@ -1,7 +1,6 @@
 <style lang="scss">
   @import "../assets/mixins.scss";
   .page-wrap{
-    /*background: #fff;*/
     height: 100vh;
   }
   .img{
@@ -15,7 +14,6 @@
     &-item{
       width: 220rpx;
       height: 220rpx;
-
       margin-bottom: 20rpx;
       margin-right: 20rpx;
       background-color: #f2f2f2;
@@ -39,6 +37,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: 1px dashed #999;
+    box-sizing: border-box;
   }
 </style>
 <template>
@@ -52,6 +52,10 @@
       <div class="img-item img" v-for="(img,idx) in imgs2" :key="idx" :style="{backgroundImage:'url('+img.path+')'}"><span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span></div>
       <div class="img-item add" @click="addImg2" v-show="imgs.length<9"><icon color="#ddd" size="40" type="iconadd"></icon></div>
     </div>
+
+    <popup-layer title="商品承诺" ref="form1" :showPop="showPopup">
+
+    </popup-layer>
   </div>
 </template>
 <script>
@@ -69,9 +73,9 @@
     data: {
       _click: false,
       imgs: [],
-
       _click2: false,
-      imgs2: []
+      imgs2: [],
+      showPopup:false
     },
     methods: {
       async addImg() {
@@ -123,6 +127,12 @@
 
         this._click2 = false
       }
+    },
+    onReady() {
+      this.$refs.form1.show()
+    },
+    onLoad() {
+
     }
   })
 </script>
@@ -132,6 +142,7 @@
     "navigationBarTextStyle": "black",
     "usingComponents": {
       "icon": "~@/components/icon",
+      "popup-layer": "~@/components/popup-layer"
     }
   }
 </config>
