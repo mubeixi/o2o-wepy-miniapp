@@ -176,6 +176,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  */
 export const uploadImages = ({imgs, name = 'image', data, progressList = []}) => {
   let taskList = []
+  console.log(imgs,"ssss")
   for (let i = 0; i < imgs.length; i++) {
     let taskItem = upload({
       filePath: imgs[i],

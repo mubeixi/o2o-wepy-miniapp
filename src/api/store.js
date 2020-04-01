@@ -18,6 +18,9 @@ export const getCityExpressConfig = (param, options) => fetch({act: 'getCityExpr
 // 同城配送配置编辑
 export const opCityExpressConfig = (param, options) => fetch({act: 'opCityExpressConfig', param, options})
 
+// 开启和关闭对应同城配送服务商
+export const cityExpressProvider = (param, options) => fetch({act: 'cityExpressProvider', param, options})
+
 
 // 获取商家详情和入驻信息
 export const getBizInfo = (param, options) => fetch({act: 'getBizInfo', param, options})
