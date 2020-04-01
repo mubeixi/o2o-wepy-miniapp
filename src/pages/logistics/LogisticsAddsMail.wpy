@@ -9,7 +9,7 @@
 
               北京市,天津市,上海市,河南省,郑州市,开封市,
               苏州市,杭州市,上海市,云南省,昆明市
-              <span style="color: #00A8FF">编辑</span>
+              <span style="color: #00A8FF" @click="edit">编辑</span>
             </div>
          </div>
          <div class="mail-item-bottom flex">
@@ -18,25 +18,25 @@
            </div>
            <div>
              <div>
-               <radio-group class="radio-group" bindchange="radioChange">
-                 <radio class="radio" >
+               <radio-group class="radio-group" bindchange="radioChange" >
+                 <radio class="radio" value="0"  :checked="radioValue==0?true:false">
                     件数
                  </radio>
-                 <radio class="radio" >
+                 <radio class="radio"  value="1"  :checked="radioValue==1?true:false">
                    金额
                  </radio>
-                 <radio class="radio" >
+                 <radio class="radio"  value="2"  :checked="radioValue==2?true:false">
                    件数+金额
                  </radio>
                </radio-group>
              </div>
              <div class="input-all">
-                  <block>
-                    满 <input type="text" class="inputs"/>元以上包邮
+                  <block v-if="radioValue!=2">
+                    满 <input type="text" v-model="preferentialQty" class="inputs"/>{{radioValue==0?'件':'元'}}以上包邮
                   </block>
-<!--                  <block>-->
-<!--                    满 <input type="text" class="inputs"/>件，<input type="text" class="inputs"/>元以上包邮-->
-<!--                  </block>-->
+                  <block v-else>
+                    满 <input type="text" v-model="preferentialQty" class="inputs"/>件，<input v-model="preferentialMoney" type="text" class="inputs"/>元以上包邮
+                  </block>
              </div>
            </div>
          </div>
@@ -45,6 +45,9 @@
       <div class="submit-last">
         为指定区域设置运费
       </div>
+
+    <city @onConfirm="selectValue"  @close="close"   deep="2"  :show="showSelect"></city>
+    <!--    :has="hasValue"-->
   </div>
 </template>
 
@@ -52,17 +55,41 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-
-
+  import {ls} from '../../common/helper'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      temp_id: '',
+      editData: {},
+      showSelect: false,
+      hasValue: [],
+      designated: '0',
+      radioValue: '0',
+      preferentialMoney: '',
+      preferentialQty: ''
     },
-    created() {
-
+    onLoad(options) {
+      if (options.temp_id) {
+        this.temp_id = options.temp_id
+        this.editData = ls.get('Free_Content')
+      }
+    },
+    methods: {
+      radioChange(e) {
+        this.radioValue = e.$wx.detail.value
+      },
+      edit() {
+        this.showSelect = true
+      },
+      close() {
+        this.showSelect = false
+      },
+      selectValue(value) {
+        this.showSelect = false
+        console.log(value)
+      }
     }
 
   })
@@ -152,7 +179,8 @@
   {
   "navigationBarTitleText": "指定包邮条件",
   "usingComponents": {
-  "icon": "~@/components/icon"
+    "icon": "~@/components/icon",
+    "city": "~@/components/SelectCity"
   }
   }
 </config>

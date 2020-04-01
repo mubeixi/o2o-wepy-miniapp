@@ -77,11 +77,12 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getBizInfo,getCityExpressConfig,opCityExpressConfig} from  '../../api/store'
+  import {getBizInfo,getCityExpressConfig,opCityExpressConfig,opBizInfo} from  '../../api/store'
   import {
     hideLoading,
-    linkTo, showLoading,chooseImageByPromise,uploadImages
+    linkTo, showLoading
   } from '../../common/fun'
+  import {chooseImageByPromise,uploadImages} from '../../common/helper'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -94,20 +95,18 @@
       showLoading('加载中')
     },
     methods:{
-      updaImg(){
+      async updaImg(){
         let temp_file_list=[]
         let that=this
-        chooseImageByPromise({count:1}).then(tempFiles=>{
-          temp_file_list = tempFiles
+        await chooseImageByPromise().then(tempFiles=>{
+          temp_file_list.push(tempFiles[0].path)
+          showLoading('上传图片中')
         })
-        that.imgs = [...temp_file_list]
-
-        let arrs = temp_file_list.map(item=>item.path)
-        uploadImages(arrs).then(urls=>{
-          console.log(2,urls)
-          for(let item of urls){
-            // that.arr.push(item)
-          }
+        await uploadImages({'imgs':temp_file_list}).then(urls=>{
+          opBizInfo({biz_logo:urls[0]}).then(res=>{
+            this.getDetail()
+            hideLoading()
+          })
         })
       },
       bindPickerChange(e) {
@@ -122,6 +121,11 @@
       updateInfo(item){
         let data='/pages/Store/StoreInfoUpda?type='+item
         linkTo(data)
+      },
+      getDetail(){
+        getBizInfo().then(res=>{
+          this.info=res.data
+        })
       },
       async getBizInfo(){
         await getBizInfo().then(res=>{
