@@ -1,0 +1,66 @@
+<style lang="scss">
+
+  @import "../assets/app.scss";
+  .err-msg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 199;
+    width: 100%;
+    background: $fun-red-color;
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 10px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  .item{
+    margin-bottom: 10px;
+    &:last-child{
+      margin-bottom: 0;
+    }
+    .label{
+
+    }
+    .content{
+      .row{
+        margin-top: 6px;
+        &:last-child{
+          margin-top: 0;
+        }
+      }
+    }
+  }
+</style>
+<template>
+  <div class="err-msg" v-if="errs">
+    <div v-for="(row,idx) in errs" class="item" :key="idx">
+<!--      <div class="label">{{idx}}:</div>-->
+      <div class="content">
+        <div class="row" v-for="(msg,idx2) in row" :key="idx2"><span class="p-r-4">*</span><span>{{msg}}</span></div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  wepy.component({
+    props: {
+      errs: {
+        default: false,
+        require: true
+      }
+    },
+    watch: {
+      errs(newVal) {
+        console.log(newVal)
+      }
+    },
+    methods: {
+
+    },
+    ready() {
+      console.log(this.errs)
+    }
+  })
+</script>

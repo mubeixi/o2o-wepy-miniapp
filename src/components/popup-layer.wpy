@@ -1,0 +1,132 @@
+<template>
+  <view v-if="isShow">
+    <view @tap="ableClose" @touchmove.stop.prevent id="mask" class="popup-layer"  ></view>
+    <view :animation="animationData" id="wrap" class="popup-wrap"   @tap.stop="noop" >
+      <div v-if="title" class="pupup-title">{{title}}</div>
+      <slot></slot>
+      <div class="safearea-box2"></div>
+    </view>
+  </view>
+</template>
+
+<script>
+
+  import wepy from '@wepy/core'
+  wepy.component({
+    props: {
+      // showPop: {
+      //   type: Boolean,
+      //   default: false
+      // },
+      title: {
+        type: String,
+        default: '' // 方向  top，bottom，left，right
+      },
+      direction: {
+        type: String,
+        default: 'bottom' // 方向  top，bottom，left，right
+      },
+      autoClose: {
+        type: Boolean,
+        default: true
+      },
+      bottomHeight: {
+        type: Number || String,
+        default: 0
+      }
+    },
+    data: {
+      isShow: false,
+      systemInfo: {statusBarHeight: 0},
+      domInfo: {},
+      animationData: {}
+    },
+    onload() {
+
+    },
+    ready() {
+      this.systemInfo = wx.getSystemInfoSync()
+      if (this.showPop) {
+        this.show()
+      }
+    },
+    watch: {
+      // showPop(value) {
+      //   if (value) {
+      //     this.show()
+      //   } else {
+      //     this.close()
+      //   }
+      // }
+    },
+    methods: {
+      noop() {},
+      show: function() {
+        this.isShow = true
+        // var animation = wx.createAnimation({
+        //   duration: 800,
+        //   timingFunction: 'ease'
+        // })
+        //
+        // const query = wx.createSelectorQuery().in(this)
+        // query.select('#content').boundingClientRect(domInfo => {
+        //   this.domInfo = domInfo
+        //   const { height = 420 } = domInfo
+        //   animation.translateY(this.is_open_buy ? 0 : height).step()
+        //   this.animationData = animation.export()
+        // }).exec()
+      },
+      close() {
+        this.isShow = false
+      },
+      ableClose() {
+        if (this.autoClose) {
+          this.close()
+        }
+        this.$emit('maskClicked', true)
+      },
+      stopEvent(event) {},
+      doSome() {
+
+      }
+
+    }
+  })
+
+</script>
+
+<style lang="scss">
+
+  .popup-layer {
+    position: fixed;
+    z-index: 99;
+    background: rgba(0, 0, 0,.6);
+    width: 100%;
+    height:100%;
+    left: 0px;
+    top:0;
+    //transform: translateY(100%);
+  }
+
+  .popup-wrap {
+    position: fixed;
+    left: 0;
+    bottom:0;
+    width: 100%;
+    //transform:translateY(100%);
+    z-index: 100;
+    background: #FFFFFF;
+    overflow: hidden;
+    .pupup-title{
+      padding: 30rpx 0 60rpx;
+      font-size: 16px;
+      text-align: center;
+      color: #333;
+    }
+  }
+  .safearea-box2{
+    height: constant(safe-area-inset-bottom);
+    height: env(safe-area-inset-bottom);
+    width: 100%;
+  }
+</style>

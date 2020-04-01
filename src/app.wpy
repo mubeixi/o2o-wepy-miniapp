@@ -10,6 +10,9 @@ import wepy from '@wepy/core'
 import vuex from '@wepy/x'
 wepy.use(vuex)
 
+const validate = require('validate.js')
+wx.$validate = validate
+
 require('./common/index')
 
 // import promisify.js  from '@wepy/use-promisify.js'
@@ -83,6 +86,7 @@ wepy.app({
       "pages/logistics/LogisticsTmpl",
       "pages/logistics/LogisticsPaperless",
       "pages/logistics/ExpressCompany",
+      "pages/product/form",
       "pages/demo"
     ],
     window: {
