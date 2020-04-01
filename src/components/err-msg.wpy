@@ -33,7 +33,7 @@
   }
 </style>
 <template>
-  <div class="err-msg" v-if="errs">
+  <div class="err-msg" v-if="errs && errs.length>0">
     <div v-for="(row,idx) in errs" class="item" :key="idx">
 <!--      <div class="label">{{idx}}:</div>-->
       <div class="content">

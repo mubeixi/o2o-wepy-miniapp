@@ -1,7 +1,7 @@
 <template>
   <view v-if="isShow">
     <view @tap="ableClose" @touchmove.stop.prevent id="mask" class="popup-layer"  ></view>
-    <view :animation="animationData" id="wrap" class="popup-wrap"   @tap.stop="noop" >
+    <view :animation="animationData" id="wrap" class="popup-wrap"   @tap.stop="noop" :style="{height:full?'100%':'auto'}" >
       <div v-if="title" class="pupup-title">{{title}}</div>
       <slot></slot>
       <div class="safearea-box2"></div>
@@ -25,6 +25,11 @@
       direction: {
         type: String,
         default: 'bottom' // 方向  top，bottom，left，right
+      },
+      // 是否铺满
+      full: {
+        type: Boolean,
+        default: false
       },
       autoClose: {
         type: Boolean,

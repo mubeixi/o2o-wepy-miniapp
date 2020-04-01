@@ -207,3 +207,13 @@ export const validateFun = (data, rule) => {
   const rt = wx.$validate(data, rule)
   return rt === undefined ? true : rt
 }
+
+import {
+  apiBaseUrl as staticUrl
+} from './env'
+
+export const getDomain = (url) => {
+  if (!url) return ''
+  if (url.indexOf('http') === -1) return staticUrl + url
+  return url
+}
