@@ -44,7 +44,7 @@
     </div>
 
     <div class="submit-main" @click="save">
-      提交
+      保存
     </div>
   </div>
 </template>
@@ -55,90 +55,112 @@
   import pageMixin from '../../mixins'
   import {
     hideLoading,
-    showLoading,linkTo
+    showLoading, linkTo
   } from '../../common/fun'
-  import  {ls} from  '../../common/helper'
+  import {ls} from '../../common/helper'
 
-  import  {opShippingTemplate,getTemplateDetail} from '../../api/store'
-
+  import {opShippingTemplate, getTemplateDetail} from '../../api/store'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      listData:{},
-      By_Method:['按重量计费','按件数计费'],
-      status:['禁用','启用'],
-      ind:0,
-      index:0,
-      temp_id:'',//模板id
-      Template_Name:'',//模板名称
+      listData: {},
+      By_Method: ['按重量计费', '按件数计费'],
+      status: ['禁用', '启用'],
+      ind: 0,
+      index: 0,
+      temp_id: '', // 模板id
+      Template_Name: ''// 模板名称
     },
-    onLoad(options){
-      if(options.temp_id){
-        this.temp_id=options.temp_id
+    onLoad(options) {
+      if (options.temp_id) {
+        this.temp_id = options.temp_id
         this.getDetail()
       }
-
     },
-    methods:{
-      goMail(){
-        if(this.temp_id){
-          linkTo('/pages/logistics/LogisticsAddsMail?temp_id='+this.temp_id)
+    methods: {
+      goMail() {
+        if (this.temp_id) {
+          linkTo('/pages/logistics/LogisticsAddsMail?temp_id=' + this.temp_id)
         }
         linkTo('/pages/logistics/LogisticsAddsMail')
       },
-      goMethods(){
-        if(this.temp_id){
-          linkTo('/pages/logistics/LogisticsMethod?temp_id='+this.temp_id)
+      goMethods() {
+        if (this.temp_id) {
+          linkTo('/pages/logistics/LogisticsMethod?temp_id=' + this.temp_id)
         }
-          linkTo('/pages/logistics/LogisticsMethod')
+        linkTo('/pages/logistics/LogisticsMethod')
       },
-      getDetail(){
-        getTemplateDetail({'temp_id':this.temp_id}).then(res=>{
-              this.listData=res.data
-              ls.set('Template_Content',this.listData.Template_Content)
-              ls.set('Free_Content',this.listData.Free_Content)
-              this.Template_Name=this.listData.Template_Name
-              this.index=String(this.listData.Template_Status)
-              this.ind=this.listData.By_Method=='按重量'?'0':'1'
-        })
+      getDetail() {
+        showLoading('加载中')
+        getTemplateDetail({'temp_id': this.temp_id}).then(res => {
+          this.listData = res.data
+          hideLoading()
+          ls.remove('Template_Content')
+          ls.remove('Free_Content')
+          ls.set('Template_Content', this.listData.Template_Content)
+          ls.set('Free_Content', this.listData.Free_Content)
+          this.Template_Name = this.listData.Template_Name
+          this.index = String(this.listData.Template_Status)
+          this.ind = this.listData.By_Method == '按重量' ? '0' : '1'
+        }).catch(e => { hideLoading() })
       },
-      bindPickerChanges(e){
-        this.index=e.$wx.detail.value
+      bindPickerChanges(e) {
+        this.index = e.$wx.detail.value
       },
       bindPickerChange(e) {
-        this.ind=e.$wx.detail.value
+        this.ind = e.$wx.detail.value
       },
-      save(){
+      save() {
         showLoading('保存中')
-        let data={
-          'Template_Name':this.Template_Name,
-          'By_Method':this.ind==0?'by_weight':'by_qty',
-          'status':this.index
+        let arr = ls.get('Free_Content')
+        let arrs = []
+        for (let item of arr) {
+          arrs.push({
+            areas: item.areas,
+            areas_desc: item.areas_desc,
+            designated: item.designated,
+            preferentialQty: item.prefrrendial_qty,
+            preferentialMoney: item.prefrrendial_money
+          })
         }
-        if(this.temp_id){
-          data.temp_id=this.temp_id
+        let data = {
+          'Template_Name': this.Template_Name,
+          'By_Method': this.ind == 0 ? 'by_weight' : 'by_qty',
+          'status': this.index,
+          'special_fee': JSON.stringify(arrs)
         }
 
-        opShippingTemplate(data).then(res=>{
+        let Template_Content = ls.get('Template_Content').express
+        data.express_start = Template_Content.default.start
+        data.express_postage = Template_Content.default.postage
+        data.express_plus = Template_Content.default.plus
+        data.express_postageplus = Template_Content.default.postageplus
+        data.special_temp = JSON.stringify(Template_Content.special_content)
+        if (this.temp_id) {
+          data.temp_id = this.temp_id
+        }
 
-          if(this.temp_id){
+        opShippingTemplate(data).then(res => {
+          if (this.temp_id) {
             wx.showToast({
-              title:'修改成功',
-              icon:"success"
+              title: '修改成功',
+              icon: 'success'
             })
-          }else{
+          } else {
             wx.showToast({
-              title:'新增成功',
-              icon:"success"
+              title: '新增成功',
+              icon: 'success'
             })
           }
-          setTimeout(()=>{
+          ls.remove('Template_Content')
+          ls.remove('Free_Content')
+          setTimeout(() => {
             wx.navigateBack({
               delta: 1
             })
-          },1000)
+          }, 1000)
           hideLoading()
         })
       }
@@ -205,6 +227,7 @@
     position: fixed;
     bottom: 0rpx;
     left: 0rpx;
+    z-index: 9;
   }
 
 </style>

@@ -207,3 +207,29 @@ export const validateFun = (data, rule) => {
   const rt = wx.$validate(data, rule)
   return rt === undefined ? true : rt
 }
+
+/**
+ * 传入一个数组对象和一个符号
+ * @param
+ * @param 返回 组成的字符串
+ * @returns
+ */
+export const getString = (arr, key, mbx = 99) => {
+  if (!Array.isArray(arr)) {
+    throw new Error('数据必传')
+  }
+  if (mbx === 99) {
+    let str = []
+    for (let item of arr) {
+      str.push(item[key])
+    }
+    return str
+  } else {
+    let str = ''
+    for (let item of arr) {
+      str += item[key] + mbx
+    }
+    str = str.substring(0, str.length - 1)
+    return str
+  }
+}
