@@ -70,6 +70,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
+  import  {ls} from  '../../common/helper'
 
   import  {getCityList} from '../../api/store'
 
@@ -77,6 +78,8 @@
     store,
     mixins: [pageMixin],
     data: {
+      temp_id:'',
+      editData:{},
       showSelect:false,
       hasValue:[],
       express_start:'',
@@ -85,7 +88,14 @@
       express_postageplus:'',
     },
     onLoad(options) {
-
+        if(options.temp_id){
+          this.temp_id=options.temp_id
+          this.editData=ls.get('Template_Content')
+          this.express_start=this.editData.express.default.start
+          this.express_postage=this.editData.express.default.postage
+          this.express_plus=this.editData.express.default.plus
+          this.express_postageplus=this.editData.express.default.postageplus
+        }
     },
     methods:{
       edit(){

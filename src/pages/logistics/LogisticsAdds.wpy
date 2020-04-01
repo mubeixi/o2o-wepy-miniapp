@@ -25,7 +25,7 @@
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/logistics/LogisticsAddsMail')">
+    <div class="store-item flex flex-vertical-center flex-justify-between"  @click="goMail">
       <div class="store-title">
         指定包邮条件
       </div>
@@ -57,6 +57,7 @@
     hideLoading,
     showLoading,linkTo
   } from '../../common/fun'
+  import  {ls} from  '../../common/helper'
 
   import  {opShippingTemplate,getTemplateDetail} from '../../api/store'
 
@@ -81,6 +82,12 @@
 
     },
     methods:{
+      goMail(){
+        if(this.temp_id){
+          linkTo('/pages/logistics/LogisticsAddsMail?temp_id='+this.temp_id)
+        }
+        linkTo('/pages/logistics/LogisticsAddsMail')
+      },
       goMethods(){
         if(this.temp_id){
           linkTo('/pages/logistics/LogisticsMethod?temp_id='+this.temp_id)
@@ -90,6 +97,8 @@
       getDetail(){
         getTemplateDetail({'temp_id':this.temp_id}).then(res=>{
               this.listData=res.data
+              ls.set('Template_Content',this.listData.Template_Content)
+              ls.set('Free_Content',this.listData.Free_Content)
               this.Template_Name=this.listData.Template_Name
               this.index=String(this.listData.Template_Status)
               this.ind=this.listData.By_Method=='按重量'?'0':'1'
