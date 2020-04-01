@@ -1,7 +1,6 @@
 <style lang="scss">
   @import "../assets/mixins.scss";
   .page-wrap{
-    /*background: #fff;*/
     height: 100vh;
   }
   .img{
@@ -15,7 +14,6 @@
     &-item{
       width: 220rpx;
       height: 220rpx;
-
       margin-bottom: 20rpx;
       margin-right: 20rpx;
       background-color: #f2f2f2;
