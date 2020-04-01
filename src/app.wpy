@@ -73,6 +73,7 @@ wepy.app({
       "pages/Store/StoreInfo",
       "pages/Store/StoreInfoUpda",
       "pages/Store/SameCityDelivery",
+      "pages/Store/SameCityUpda",
       "pages/ProductManager",
       "pages/StoreMarketing",
       "pages/logistics/LogisticsMain",
