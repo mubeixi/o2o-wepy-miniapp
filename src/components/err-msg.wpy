@@ -53,14 +53,14 @@
     },
     watch: {
       errs(newVal) {
-        console.log(newVal)
+
       }
     },
     methods: {
 
     },
     ready() {
-      console.log(this.errs)
+
     }
   })
 </script>

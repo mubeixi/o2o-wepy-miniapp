@@ -101,7 +101,7 @@ class XHR {
   }
 }
 
-const hookErrorCode = [0]
+const hookErrorCode = [0,66001]
 export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
   let {tip = '', mask = false, timelen = 2000, timeout = 1000, errtip = true} = options
 
@@ -131,6 +131,20 @@ export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
         const {errorCode = 1, msg = '请求未成功'} = res
 
         if (hookErrorCode.indexOf(errorCode) !== -1) {
+
+          if (errorCode === 66001) {
+            error(res.msg)
+
+            //重置用户信息
+
+            setTimeout(() => {
+              uni.navigateTo({
+                url: '/pages/user/login'
+              })
+            }, 500)
+            return;
+          }
+
           resolve(res)
         } else {
           // 配置决定是否显示错误提示
