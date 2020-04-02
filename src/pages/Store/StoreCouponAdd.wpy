@@ -1,0 +1,213 @@
+<template>
+    <div>
+      <div class="counpon-name">
+          <div>
+            优惠券名称
+          </div>
+          <div class="flex1">
+            <input type="text" class="input-input" placeholder="请输入优惠券名称"  placeholder-class="place"/>
+          </div>
+      </div>
+      <div class="line"></div>
+      <div class="coupon-img flex flex-vertical-center">
+        <div class="title">
+          优惠券图片
+        </div>
+      </div>
+      <div class="line"></div>
+      <div class="coupon-method flex-vertical-center flex">
+        <div class="title">
+          优惠方式
+        </div>
+        <div class="money">
+          抵现金¥
+        </div>
+        <input type="text"  class="inputs"/>
+      </div>
+      <div class="line"></div>
+      <div class="coupon-method flex-vertical-center flex">
+        <div class="title">
+          使用条件
+        </div>
+        <div class="money">
+          ¥
+        </div>
+        <input type="text"  class="inputs" />
+        <div class="money-last">
+          消费满一定金额才可以使用
+        </div>
+      </div>
+
+      <div class="line"></div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" >
+        <div class="title">
+          可用次数
+        </div>
+        <div class="store-titles">
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="line"></div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" >
+        <div class="title">
+          等级领取条件
+        </div>
+        <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
+            5
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </picker>
+      </div>
+      <div class="line"></div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" >
+        <div class="title">
+          指定赠送
+        </div>
+        <div class="store-titles">
+          是
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="line"></div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" >
+        <div class="title">
+          适用范围
+        </div>
+        <div class="store-titles">
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="line"></div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" >
+        <div class="title">
+          有效时间
+        </div>
+        <div class="store-titles">
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="line"></div>
+    </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import {getUserLevel} from '../../api/store'
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      vipData: []
+
+    },
+    onLoad(){
+      this.init()
+    },
+    methods: {
+      bindPickerChange(e) {
+          console.log(e.$wx.detail.value)
+      },
+      init() {
+        getUserLevel().then(res => {
+          this.vipData = res.data
+        })
+      },
+      onShow() {
+
+      }
+    }
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .full-img{width: 100%;height: 100%}
+  .flex1{flex: 1}
+  .line{width: 750rpx;height: 20rpx}
+  .title{
+    font-size: 30rpx;color: #333333;
+  }
+  .counpon-name{
+    width: 710rpx;
+    height: 114rpx;
+    line-height: 88rpx;
+    display: flex;
+    align-items: center;
+    font-size: 30rpx;
+    padding: 26rpx 20rpx 0rpx 20rpx;
+    color: #333333;
+    background-color: #FFFFFF;
+  }
+  .place{
+    font-size: 26rpx;
+    color: #CAC8C8;
+  }
+  .input-input{
+    width: 100%;
+    padding-left: 46rpx;
+  }
+  .coupon-img{
+    width: 710rpx;
+    padding: 20rpx;
+    height: 120rpx;
+    background-color: #FFFFFF;
+  }
+  .coupon-method{
+    height: 116rpx;
+    width: 710rpx;
+    padding: 0rpx 20rpx;
+    background-color: #FFFFFF;
+  }
+  .picker-mbx{
+    flex: 1;
+    text-align: right;
+    height: 108rpx;
+    line-height: 108rpx;
+    color: #999999;
+    font-size: 26rpx;
+  }
+  .money{
+    margin-left: 56rpx;
+    font-size: 26rpx;
+    margin-right: 12rpx;
+    color: #888888;
+  }
+  .money-last{
+    font-size: 22rpx;
+    margin-left: 16rpx;
+    color: #B1B1B1;
+  }
+  .inputs{
+    width:190rpx;
+    height:58rpx;
+    line-height: 58rpx;
+    text-align: center;
+    border:1px solid rgba(221,221,221,1);
+  }
+  .store-item{
+    height: 88rpx;
+    width: 710rpx;
+    padding: 0rpx 20rpx;
+    background-color: #FFFFFF;
+  }
+  .store-titles{
+    display: flex;
+    align-items: center;
+    color: #999999;
+    font-size: 26rpx;
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "添加优惠券",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
+  }
+</config>
