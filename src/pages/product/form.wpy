@@ -521,6 +521,13 @@
       closePop(name) {
         this.$refs[name].close()
       },
+      setFeeType(e) {
+        const feeType = parseInt(e.$wx.detail.value)
+        this.formData.fee_type = feeType
+        if (feeType !== 1) {
+          this.shipping_temp = null
+        }
+      },
       setOrderType(e) {
         this.formData.orderType = parseInt(e.$wx.detail.value)
       },

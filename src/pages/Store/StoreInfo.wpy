@@ -119,7 +119,7 @@
         })
       },
       updateInfo(item){
-        let data='/pages/Store/StoreInfoUpda?type='+item
+        let data='/pages/store/StoreInfoUpda?type='+item
         linkTo(data)
       },
       getDetail(){
