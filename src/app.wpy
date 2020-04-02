@@ -18,13 +18,6 @@ require('./common/index')
 // import promisify.js  from '@wepy/use-promisify.js'
 // wepy.use(promisify.js)
 
-import {
-  ls
-} from './common/helper'
-// 测试
-ls.set('users_id', 'wkbq6nc2kc')
-ls.set('biz_id', '3')
-
 wepy.app({
   hooks: {
     // App 级别 hook，对整个 App 生效

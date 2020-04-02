@@ -13,10 +13,22 @@
           <div class="cell-item ">
             <div class="label">商品主图</div>
             <div class="content">
-              <div></div>
               <div class="img-box">
-                <div @click="bindThumbClick(idx,img)" class="img-item img" v-for="(img,idx) in imgTempList" :key="idx" :style="{backgroundImage:'url('+img.path+')'}"><span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span></div>
-                <div class="img-item add" @click="addImg" v-if="imgTempList.length<thumbLimit"><icon color="#ddd" size="40" type="iconupload"></icon></div>
+                <div
+                  @click="bindThumbClick(idx,img)"
+                  class="img-item img"
+                  v-for="(img,idx) in imgTempList"
+                  :key="idx"
+                  :style="{backgroundImage:'url('+img.path+')'}">
+                  <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>
+                </div>
+                <div
+                  class="img-item add"
+                  @click="addImg"
+                  v-if="imgTempList.length<thumbLimit"
+                >
+                  <icon color="#ddd" size="40" type="iconupload"></icon>
+                </div>
               </div>
             </div>
           </div>
@@ -145,7 +157,7 @@
         </div>
 
 
-        <div class="group-cell">
+        <div class="group-cell" @click="openPop('promise')">
           <div class="cell-item">
             <div class="label">商品承诺</div>
             <div class="content"></div>
@@ -168,7 +180,7 @@
               <input placeholder="请输入商品销量" />
             </div>
           </div>
-          <div class="cell-item">
+          <div class="cell-item" @click="openPop('limitBuy')">
             <div class="label">限购</div>
             <div class="content"></div>
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
@@ -188,10 +200,9 @@
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
           </div>
 
-          <div class="cell-item">
+          <div class="cell-item" @click="openPop('fee')">
             <div class="label">运费</div>
             <div class="content">
-
             </div>
             <div class="right">
               <div class="flex-vertical-center flex"><span class="c9 fz-12">设置运费</span><icon type="iconarrowleft" color="#999"></icon></div>
@@ -206,9 +217,78 @@
         <div class="safearea-space"></div>
         <button class="btn action-btn btn-primary">保存数据</button>
       </form>
-
-
     </div>
+
+    <popup-layer title="运费" ref="fee" :autoClose="false">
+      <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
+        <label class="type-item flex flex-vertical-center">
+          <radio color="#00A8FF" value="1" :checked="formData.fee_type === 1"></radio>
+          <div class="label p-10 flex flex-vertical-center">
+            <div class="title m-r-15">固定运费</div>
+            <input v-model="formData.fix_fee" class="bor fz-14 flex1" style="height: 60rpx;box-sizing: border-box;padding-left:30rpx;border-radius: 6rpx;" />
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center">
+          <radio color="#00A8FF" value="2" :checked="formData.fee_type === 2"></radio>
+          <div class="label p-10 flex flex-vertical-center">
+            <div class="title m-r-15">物流模板</div>
+            <picker @change="bindShippingTmplChange" :value="shippingTmplIdx" range-key="Template_Name"  :range="shippingTmplList">
+              <div style="height: 60rpx;border-radius: 6rpx;padding: 0 30rpx;box-sizing: border-box" class="flex bor flex-vertical-center flex-justify-between text-center">
+                <span style="margin-right: 30rpx" class="c8">{{shippingTmplList[shippingTmplIdx].Template_Name}}</span><icon color="#999" size="12" type="icondown"></icon>
+              </div>
+            </picker>
+          </div>
+        </label>
+      </radio-group>
+      <button class="btn btn-primary m-t-35" @click="closePop('fee')">确认</button>
+    </popup-layer>
+
+    <popup-layer title="商品承诺" ref="promise" :autoClose="false">
+      <div class="wrap flex" >
+        <div class="left" >
+          <div v-for="(text,idx) in promiseList" :key="idx" class="p-l-10 m-t-10 flex flex-vertical-center" style="width: 500rpx">
+            <input @focus="focusPromise(idx)" @input="inputPromise" :value="text" class="bor fz-14 flex1" style="height: 60rpx;box-sizing: border-box;padding-left:30rpx;border-radius: 6rpx;" />
+            <icon @click="delPromise(idx)" style="padding-left:20rpx" type="iconminus" color="#F53636"></icon>
+          </div>
+        </div>
+        <div class="right" style="display: flex;flex-direction: column;justify-content: flex-end;padding-left: 30rpx;">
+          <div class="specs-action-box" style="margin:0;">
+            <div class="add-btn" @click="addPromise"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加</span></div>
+          </div>
+        </div>
+      </div>
+      <button  class="btn btn-primary m-t-35" @click="closePop('promise')">确定</button>
+    </popup-layer>
+
+    <popup-layer title="限购"  ref="limitBuy" :autoClose="false">
+      <div class="p-15">
+
+        <div class="flex flex-vertical-center m-b-15">
+          <div class="label p-r-10">开关</div>
+          <div class="content flex1">
+            <switch type="checkbox" checked="{{formData.prod_limit.switch}}" @change="productLimitTaggle" color="#00A8FF" />
+          </div>
+        </div>
+        <div class="flex flex-vertical-center m-b-15">
+          <div class="label p-r-10">周期</div>
+          <div class="content flex1">
+            <picker @change="bindLimitTypeChange" :value="limitBuyIndex" range-key="name"  :range="PROD_LIMIT_TYPE">
+              <div style="width: 270rpx;height: 60rpx;border-radius: 6rpx;padding: 0 30rpx;box-sizing: border-box" class="flex bor flex-vertical-center flex-justify-between text-center">
+                <span class="c8">{{PROD_LIMIT_TYPE[limitBuyIndex].name}}</span><icon color="#999" size="12" type="icondown"></icon>
+              </div>
+            </picker>
+
+          </div>
+        </div>
+        <div class="flex flex-vertical-center">
+          <div class="label p-r-10">数量</div>
+          <div class="content flex1">
+            <input v-model="formData.prod_limit.limit.num" style="width: 270rpx;height: 60rpx;border-radius: 6rpx;padding: 0 30rpx;box-sizing: border-box" class="bor c8" placeholder="请输入限购数量" />
+          </div>
+        </div>
+      </div>
+        <button  class="btn btn-primary m-t-35" @click="closePop('limitBuy')">确定</button>
+    </popup-layer>
 
     <popup-layer title="订单类型" ref="orderType" :autoClose="false">
       <radio-group class="type-list p-l-10 p-r-10"  @change="setOrderType">
@@ -273,7 +353,6 @@
       <button class="btn btn-primary m-t-35" @click="closePop('specailAttr')">确认</button>
     </popup-layer>
 
-
     <popup-layer :full="true"  ref="content" :autoClose="false">
       <div class="editor-wrap">
         <div class="editor-container">
@@ -288,7 +367,7 @@
             <div class="editor-add-btn" @click="addImgByEditor" ><icon color="#ddd" size="40" type="iconupload"></icon></div>
           </div>
         </div>
-        <button style="position: absolute;bottom: 0;" class="btn btn-primary m-t-35" @click="closePop('content')">编辑完成</button>
+        <button style="position: absolute;bottom: 0;left:0;" class="btn btn-primary m-t-35" @click="closePop('content')">编辑完成</button>
       </div>
 
     </popup-layer>
@@ -306,12 +385,21 @@
   import {
     getSystemProdConfig
   } from '../../api/product'
+  import {
+    getShippingTemplate
+  } from '../../api/store'
   import { error } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      shippingTmplIdx: 0,
+      shippingTmplList: [],
+      focusPromiseIdx: 0,
+      promiseList: [''],
+      limitBuyIndex: 0,
+      PROD_LIMIT_TYPE: [],
       _default: null,
       placeholderCotnent: '请输入文字介绍...',
       editorInstance: null,
@@ -323,6 +411,16 @@
       imgs: [],
       specs: [1],
       formData: {
+        fee_type: 1,
+        fix_fee: 0,
+        shipping_temp: null,
+        prod_limit: {
+          switch: 0,
+          limit: {
+            type: 1,
+            num: 0
+          }
+        },
         Products_Name: '',
         orderType: 0,
         Products_SoldOut: 0, // 下架
@@ -342,6 +440,39 @@
       }
     },
     methods: {
+      setFeeType(e) {
+        const feeType = parseInt(e.$wx.detail.value)
+        this.formData.fee_type = feeType
+        if (feeType !== 2) {
+          this.shipping_temp = null
+        }
+      },
+      bindShippingTmplChange(e) {
+        const idx = e.$wx.detail.value
+        this.shippingTmplIdx = idx
+        this.formData.shipping_temp = this.shippingTmplList[idx].Template_ID
+      },
+      delPromise(idx) {
+        this.promiseList.splice(idx, 1)
+      },
+      inputPromise(e) {
+        this.$set(this.promiseList, this.focusPromiseIdx, e.$wx.detail.value)
+      },
+      focusPromise(idx) {
+        this.focusPromiseIdx = idx
+      },
+      addPromise() {
+        this.promiseList.push('')
+      },
+      productLimitTaggle(e) {
+        console.log(e.$wx)
+        this.formData.prod_limit.switch = e.$wx.detail.value ? 1 : 0
+      },
+      bindLimitTypeChange(e) {
+        const idx = e.$wx.detail.value
+        this.limitBuyIndex = idx
+        this.formData.prod_limit.limit.type = this.PROD_LIMIT_TYPE[idx].id
+      },
       async _init() {
 
       },
@@ -562,9 +693,17 @@
         that.editorInstance = res.context
       }).exec()
     },
-    async created(){
-      this._default = await getSystemProdConfig({}).catch(() => {
+    onShow() {
+      getSystemProdConfig({}).then(res => {
+        const {prod_limit_type = []} = res.data
+        this.PROD_LIMIT_TYPE = prod_limit_type
+        this._default = res.data
+      }).catch(() => {
         error('获取商品公共配置失败')
+      })
+
+      getShippingTemplate().then(res => {
+        this.shippingTmplList = res.data
       })
     }
   })

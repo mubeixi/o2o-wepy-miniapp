@@ -39,13 +39,9 @@
 <template>
   <div class="page-wrap">
     <div   class="joinForm text-center" >
-      <view :style="{height:menuButtonInfo.top+'px'}" ></view>
-      <div @click="cancelLoginDialog" class="topTitle" :style="{height:menuButtonInfo.height+'px'}">
-        <view  class="funicon icon icon-fanhui inline-block"></view>
-        <div>返回</div>
-      </div>
-      <image :style="{marginTop:85+'px'}" mode="widthFix" class="logo" :src="initData.ShopLogo"></image>
-      <div class="large line15 font20">「{{initData.ShopName}}」申请获得以下权限</div>
+
+      <image :style="{marginTop:85+'px'}" mode="widthFix" class="logo" src="https://new401t.bafangka.com/uploadfiles/wkbq6nc2kc/image/202003231610328297.jpg"></image>
+      <div class="large line15 font20">「o2o」申请获得以下权限</div>
       <div class="mini graytext2 font14">获得你的公开信息（昵称、头像、地区等）</div>
       <div class="control">
         <button @click="cancelLoginDialog" class="btn reject">拒绝</button>
@@ -60,7 +56,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {
-    chooseImageByPromise, getArrColumn, uploadImages
+    ls
   } from '../../common/helper'
   import { error } from '../../common/fun'
   import { bizLogin } from '../../api/system'
@@ -72,6 +68,9 @@
 
     },
     methods: {
+      cancelLoginDialog() {
+        wx.navigateBack()
+      },
       weixinlogin(e) {
         console.log(e)
         const mock = {
@@ -79,6 +78,11 @@
           password: 123456
         }
         bizLogin(mock).then(res => {
+          const {access_token, Users_id, biz_account, id: biz_id} = res.data
+          ls.set('access_token', access_token)
+          ls.set('users_id', Users_id)
+          ls.set('biz_account', biz_account)
+          ls.set('biz_id', biz_id)
           wx.navigateBack()
         }).catch(() => {})
       }
@@ -93,11 +97,10 @@
 </script>
 <config>
   {
-    "navigationBarTitleText": "demo",
+    "navigationBarTitleText": "登录页面",
     "navigationBarTextStyle": "black",
     "usingComponents": {
-      "icon": "~@/components/icon",
-      "popup-layer": "~@/components/popup-layer"
+      "icon": "~@/components/icon"
     }
   }
 </config>
