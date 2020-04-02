@@ -301,15 +301,19 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {
-    chooseImageByPromise, getArrColumn, uploadImages, validateFun,getDomain
+    chooseImageByPromise, getArrColumn, uploadImages, validateFun, getDomain
   } from '../../common/helper'
+  import {
+    getSystemProdConfig
+  } from '../../api/product'
   import { error } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      placeholderCotnent:'请输入文字介绍...',
+      _default: null,
+      placeholderCotnent: '请输入文字介绍...',
       editorInstance: null,
       thumbLimit: 5,
       formCheckResult: false,
@@ -338,7 +342,10 @@
       }
     },
     methods: {
-      onEditorStatusChange(e){
+      async _init() {
+
+      },
+      onEditorStatusChange(e) {
         console.log(e)
       },
       taggleFormData(key) {
@@ -408,11 +415,11 @@
         // }
         // productInfo.Products_Promise = JSON.stringify(arrPromise)
         //
-              if (this.formData.imgs.length < 1) {
-                error('商品主图不能为空')
-              } else {
-                productInfo.Products_JSON = JSON.stringify({'ImgPath': this.formData.imgs})
-              }
+        if (this.formData.imgs.length < 1) {
+          error('商品主图不能为空')
+        } else {
+          productInfo.Products_JSON = JSON.stringify({'ImgPath': this.formData.imgs})
+        }
         //
         // // 优惠券
         // if (this.selectValue.length > 0) {
@@ -548,17 +555,17 @@
         this._click = false
       }
     },
+
     onReady() {
-
-
       let that = this
       wx.createSelectorQuery().select('#editor').context(function (res) {
         that.editorInstance = res.context
       }).exec()
-
     },
-    onLoad() {
-
+    async created(){
+      this._default = await getSystemProdConfig({}).catch(() => {
+        error('获取商品公共配置失败')
+      })
     }
   })
 </script>

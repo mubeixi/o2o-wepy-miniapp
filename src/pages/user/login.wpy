@@ -1,0 +1,103 @@
+<style lang="scss">
+  .page-wrap{
+    height: 100vh;
+    background: white;
+  }
+  .joinForm{
+    text-align: center;
+    background: white;
+    .logo{
+      width: 130rpx;
+      margin-bottom: 90rpx;
+      overflow: hidden;
+    }
+    .control{
+      margin-top: 76rpx;
+      display: flex;
+      justify-content: center;
+      .btn{
+        width: 290rpx;
+        height: 76rpx;
+        padding: 0;
+        line-height: 76rpx;
+        border-radius: 6rpx;
+        border: none;
+        margin: 0;
+      }
+      .allow{
+        background: #59a228;
+        color: #fff;
+        margin-left: 40rpx;
+      }
+      .reject{
+        background: #f2f2f2;
+        color: #555;
+      }
+    }
+  }
+</style>
+<template>
+  <div class="page-wrap">
+    <div   class="joinForm text-center" >
+      <view :style="{height:menuButtonInfo.top+'px'}" ></view>
+      <div @click="cancelLoginDialog" class="topTitle" :style="{height:menuButtonInfo.height+'px'}">
+        <view  class="funicon icon icon-fanhui inline-block"></view>
+        <div>返回</div>
+      </div>
+      <image :style="{marginTop:85+'px'}" mode="widthFix" class="logo" :src="initData.ShopLogo"></image>
+      <div class="large line15 font20">「{{initData.ShopName}}」申请获得以下权限</div>
+      <div class="mini graytext2 font14">获得你的公开信息（昵称、头像、地区等）</div>
+      <div class="control">
+        <button @click="cancelLoginDialog" class="btn reject">拒绝</button>
+        <button open-type="getUserInfo" @getuserinfo="weixinlogin" class="btn allow">允许</button>
+      </div>
+    </div>
+
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {
+    chooseImageByPromise, getArrColumn, uploadImages
+  } from '../../common/helper'
+  import { error } from '../../common/fun'
+  import { bizLogin } from '../../api/system'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+      weixinlogin(e) {
+        console.log(e)
+        const mock = {
+          account: 18530863000,
+          password: 123456
+        }
+        bizLogin(mock).then(res => {
+          wx.navigateBack()
+        }).catch(() => {})
+      }
+    },
+    onReady() {
+
+    },
+    onLoad() {
+
+    }
+  })
+</script>
+<config>
+  {
+    "navigationBarTitleText": "demo",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "icon": "~@/components/icon",
+      "popup-layer": "~@/components/popup-layer"
+    }
+  }
+</config>

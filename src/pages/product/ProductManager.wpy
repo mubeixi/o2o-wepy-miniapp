@@ -94,15 +94,15 @@
 
 <script>
   import wepy from '@wepy/core'
-  import store from '../store'
-  import pageMixin from '../mixins'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
 
   import {
     getSystemInfo
-  } from '../api/system'
+  } from '../../api/system'
   import {
     toast
-  } from '../common/fun'
+  } from '../../common/fun'
 
   const mockData = [
     {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
@@ -159,8 +159,8 @@ wepy.page({
 
 </script>
 <style lang="scss">
-  @import "../assets/variables.scss";
-  @import "../assets/mixins.scss";
+  @import "../../assets/variables";
+  @import "../../assets/mixins";
 
   /* 底部的操作栏start */
   .handle-box{

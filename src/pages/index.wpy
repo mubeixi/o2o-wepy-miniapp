@@ -48,7 +48,7 @@
             <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
             <div class="grid-item-title">店铺模板</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/ProductManager')">
+          <div class="grid-item" @click="$linkTo('/pages/prduct/ProductManager')">
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
           </div>
@@ -62,7 +62,7 @@
             <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
             <div class="grid-item-title">数据统计</div>
           </div>
-          <div class="grid-item" @click="toMarketing">
+          <div class="grid-item" @click="$linkTo('/pages/Store/StoreMarketing')">
             <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title">推广营销</div>
           </div>
@@ -76,7 +76,7 @@
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
-          <div class="grid-item" @click="toLogistics">
+          <div class="grid-item" @click="$linkTo('/pages/logistics/LogisticsMain')">
             <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
             <div class="grid-item-title">物流管理</div>
           </div>
@@ -134,15 +134,6 @@
         initInfo(datas).then(res => {
           this.info=res.data
         }).catch(err => {})
-      },
-      toLogistics() {
-        linkTo('/pages/logistics/LogisticsMain')
-      },
-      toMarketing() {
-        console.log('toMarketing')
-        wx.navigateTo({
-          url: '/pages/StoreMarketing'
-        })
       }
     },
     created() {
