@@ -275,7 +275,7 @@ export const checkIsLogin = (redirect = 1, tip = 0) => {
     if (redirect) {
       if (!tip) {
         wx.navigateTo({
-          wx: '/pages/user/login'
+          url: '/pages/user/login'
         })
         return
       }

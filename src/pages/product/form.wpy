@@ -225,17 +225,18 @@
           <radio color="#00A8FF" value="1" :checked="formData.fee_type === 1"></radio>
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">固定运费</div>
+            <input v-model="formData.fix_fee" class="bor fz-14 flex1" style="height: 60rpx;box-sizing: border-box;padding-left:30rpx;border-radius: 6rpx;" />
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center">
+          <radio color="#00A8FF" value="2" :checked="formData.fee_type === 2"></radio>
+          <div class="label p-10 flex flex-vertical-center">
+            <div class="title m-r-15">物流模板</div>
             <picker @change="bindShippingTmplChange" :value="shippingTmplIdx" range-key="Template_Name"  :range="shippingTmplList">
               <div style="height: 60rpx;border-radius: 6rpx;padding: 0 30rpx;box-sizing: border-box" class="flex bor flex-vertical-center flex-justify-between text-center">
                 <span style="margin-right: 30rpx" class="c8">{{shippingTmplList[shippingTmplIdx].Template_Name}}</span><icon color="#999" size="12" type="icondown"></icon>
               </div>
             </picker>
-          </div>
-        </label>
-        <label class="type-item flex flex-vertical-center">
-          <radio color="#00A8FF" value="2" :checked="formData.fee_type === 2"></radio>
-          <div class="label p-10">
-            <div class="title">物流模板</div>
           </div>
         </label>
       </radio-group>
@@ -439,6 +440,13 @@
       }
     },
     methods: {
+      setFeeType(e) {
+        const feeType = parseInt(e.$wx.detail.value)
+        this.formData.fee_type = feeType
+        if (feeType !== 2) {
+          this.shipping_temp = null
+        }
+      },
       bindShippingTmplChange(e) {
         const idx = e.$wx.detail.value
         this.shippingTmplIdx = idx

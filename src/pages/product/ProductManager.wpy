@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrap" :style="{paddingBottom:showHandle?'92rpx':'0'}">
     <div class="action">
-      <div class="item">
+      <div class="item" @click="$linkTo('/pages/product/form')">
         <image class="icon" src="/static/goods/add.png"></image>
         <div class="title">添加商品</div>
       </div>

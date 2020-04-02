@@ -140,10 +140,11 @@
 
     },
     onShow(){
-      checkIsLogin(1,1)
+      checkIsLogin(1,0)
+      this.getInit()
     },
     created() {
-      this.getInit()
+
     }
 
   })
