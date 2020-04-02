@@ -12,7 +12,7 @@ import Base64 from './tool/base64.js'
 
 export const getUsersID = () => ls.get('users_id')?ls.get('users_id'):'wkbq6nc2kc'
 
-export const getAccessToken = () => ls.get('access_token')?ls.get('access_token'):'AIbR84a2COk2f5BaeH1HBURuiGSPzJIq'
+export const getAccessToken = () => ls.get('access_token')?ls.get('access_token'):'0dySo5NQMBzpCvwAvZ9Bm4iw5LpEQPMK'
 
 export const getUserID = () => ls.get('user_id') ? ls.get('user_id') : 'null'
 

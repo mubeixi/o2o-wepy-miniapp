@@ -12,16 +12,15 @@
     </div>
 
 
-    <div class="mail-item">
+    <div class="mail-item"  v-for="(item,index) of special_content" :key="index">
       <div class="mail-item-top flex">
         <div class="select-area">
           选择地区
         </div>
         <div class="flex1 area-all">
 
-          北京市,天津市,上海市,河南省,郑州市,开封市,
-          苏州市,杭州市,上海市,云南省,昆明市
-          <span style="color: #00A8FF" @click="edit">编辑</span>
+          {{item.express_desc}}
+          <span style="color: #00A8FF" @click="edit(index)">编辑</span>
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -29,7 +28,7 @@
           按重量
         </div>
         <div class="input-div">
-          <input type="text"  class="input-my" />  kg
+          <input type="text"  class="input-my" v-model="item.express_start"/>  kg
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -37,7 +36,7 @@
           首费
         </div>
         <div class="input-div">
-          <input type="text"  class="input-my" />  元
+          <input type="text"  class="input-my"  v-model="item.express_postage"/>  元
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -45,7 +44,7 @@
           续重量
         </div>
         <div class="input-div">
-          <input type="text"  class="input-my" />  kg
+          <input type="text"  class="input-my"  v-model="item.express_plus"/>  kg
         </div>
       </div>
       <div class="mail-item-bottom flex" style="border-bottom: 0px">
@@ -53,16 +52,21 @@
           续费
         </div>
         <div class="input-div">
-          <input type="text"  class="input-my" />  元
+          <input type="text"  class="input-my"  v-model="item.express_postageplus"/>  元
         </div>
       </div>
     </div>
 
-    <div class="submit-last">
+    <div class="submit-last"  @click="addList">
       为指定区域设置运费
     </div>
-    <city @onConfirm="selectValue"  @close="close"   deep="2"  :show="showSelect"></city>
-<!--    :has="hasValue"-->
+    <city @onConfirm="selectValue" :has="hasValue"  @close="close"   deep="2"  :show="showSelect"></city>
+
+    <div style="height: 86rpx;width: 100%"></div>
+    <div class="submit-main" @click="saveNext">
+      提交
+    </div>
+
   </div>
 </template>
 
@@ -70,42 +74,79 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import  {ls} from  '../../common/helper'
+  import {ls, getString} from '../../common/helper'
 
-  import  {getCityList} from '../../api/store'
+  import {getCityList} from '../../api/store'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      temp_id:'',
-      editData:{},
-      showSelect:false,
-      hasValue:[],
-      express_start:'',
-      express_postage:'',
-      express_plus:'',
-      express_postageplus:'',
+      ind: 0,
+      temp_id: '',
+      editData: {},
+      showSelect: false,
+      hasValue: [],
+      special_content: [{express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''}],
+      express_start: '',
+      express_postage: '',
+      express_plus: '',
+      express_postageplus: ''
     },
     onLoad(options) {
-        if(options.temp_id){
-          this.temp_id=options.temp_id
-          this.editData=ls.get('Template_Content')
-          this.express_start=this.editData.express.default.start
-          this.express_postage=this.editData.express.default.postage
-          this.express_plus=this.editData.express.default.plus
-          this.express_postageplus=this.editData.express.default.postageplus
-        }
+      if (options.temp_id) {
+        this.temp_id = options.temp_id
+      }
+      this.editData = ls.get('Template_Content')
+      this.express_start = this.editData.express.default.start
+      let arr = []
+      for (let item of this.editData.express.special_content) {
+        arr.push({
+          express_areas: item.areas,
+          express_desc: item.desc,
+          express_start: item.start,
+          express_postage: item.postage,
+          express_plus: item.plus,
+          express_postageplus: item.postageplus
+        })
+      }
+      this.special_content = arr
+      this.express_postage = this.editData.express.default.postage
+      this.express_plus = this.editData.express.default.plus
+      this.express_postageplus = this.editData.express.default.postageplus
     },
-    methods:{
-      edit(){
-        this.showSelect=true
+    methods: {
+      // 保存返回
+      saveNext() {
+        let Template_Content = {
+          express: {
+            default: {
+              start: this.express_start,
+              postage: this.express_postage,
+              plus: this.express_plus,
+              postageplus: this.express_postageplus
+            },
+            special_content: this.special_content
+          }
+        }
+        ls.set('Template_Content', Template_Content)
+        console.log(Template_Content)
+        wx.navigateBack({delta: -1})
       },
-      close(){
-        this.showSelect=false
+      addList() {
+        this.special_content.push({express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''})
       },
-      selectValue(value){
-        this.showSelect=false
+      edit(index) {
+        this.ind = index
+        this.showSelect = true
+      },
+      close() {
+        this.showSelect = false
+      },
+      selectValue(value) {
+        this.showSelect = false
+        this.special_content[this.ind].express_desc = getString(value, 'area_name', ',')
+        this.special_content[this.ind].express_areas = getString(value, 'area_code', ',')
         console.log(value)
       }
     }
@@ -204,6 +245,19 @@
     background-color: #FFFFFF;
     margin-left: 16rpx;
     margin-right: 18rpx;
+  }
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
   }
 
 </style>
