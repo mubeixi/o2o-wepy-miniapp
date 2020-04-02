@@ -225,7 +225,7 @@
           <radio color="#00A8FF" value="1" :checked="formData.fee_type === 1"></radio>
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">固定运费</div>
-            <input v-model="formData.fix_fee" class="bor fz-14 flex1" style="height: 60rpx;box-sizing: border-box;padding-left:30rpx;border-radius: 6rpx;" />
+            <input type="number" v-model="formData.fix_fee" class="bor fz-14 flex1" style="height: 60rpx;box-sizing: border-box;padding-left:30rpx;border-radius: 6rpx;" />
           </div>
         </label>
         <label class="type-item flex flex-vertical-center">
@@ -411,6 +411,7 @@
       imgs: [],
       specs: [1],
       formData: {
+        Product_backup:null,
         fee_type: 1,
         fix_fee: 0,
         shipping_temp: null,
@@ -443,8 +444,11 @@
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
         this.formData.fee_type = feeType
-        if (feeType !== 2) {
+        if (feeType === 1) {
           this.shipping_temp = null
+        }
+        if(feeType === 2){
+          this.formData.fix_fee = 0
         }
       },
       bindShippingTmplChange(e) {
