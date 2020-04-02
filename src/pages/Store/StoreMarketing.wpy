@@ -78,8 +78,8 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables";
-  @import "../../assets/mixins";
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
   .page-wrap{
     height: 100vh;
     background: white;

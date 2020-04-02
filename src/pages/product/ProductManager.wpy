@@ -159,8 +159,8 @@ wepy.page({
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables";
-  @import "../../assets/mixins";
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
 
   /* 底部的操作栏start */
   .handle-box{

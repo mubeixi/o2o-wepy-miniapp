@@ -3,9 +3,9 @@
     <div class="head">
       <div class="base">
         <image :src="info.biz_logo" class="store-logo"></image>
-        <span class="store-title">{{info.biz_name}}</span>
+        <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
-      <div class="action" v-if="info.entry_process">
+      <div class="action" >
         <div v-if="info.entry_process.is_auth==1" class="validate"><span class="tip">已认证</span><icon class="iconfont" type="iconrenzheng"></icon></div>
         <div v-else class="no-validate"><span class="tip">未认证</span><icon class="iconrenzheng" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft" class="iconarrowleft"></icon>
@@ -48,7 +48,7 @@
             <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
             <div class="grid-item-title">店铺模板</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/prduct/ProductManager')">
+          <div class="grid-item" @click="$linkTo('/pages/product/ProductManager')">
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
           </div>
@@ -62,7 +62,7 @@
             <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
             <div class="grid-item-title">数据统计</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/Store/StoreMarketing')">
+          <div class="grid-item" @click="$linkTo('/pages/store/StoreMarketing')">
             <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title">推广营销</div>
           </div>
@@ -102,11 +102,14 @@
   import pageMixin from '../mixins'
 
   import {
-    initInfo, bizLogin,bizLogout
+    initInfo, bizLogin, bizLogout
   } from '../api/system'
   import {
     linkTo
   } from '../common/fun'
+  import {
+    checkIsLogin
+  } from '../common/helper'
 
   wepy.page({
     store,
@@ -115,26 +118,29 @@
       storeInfo: {
         volidate: false
       },
-      info:{}
+      info: {}
     },
     methods: {
-      login(){
-        let data={
-          account:18530863000,
-          password:123456
+      login() {
+        let data = {
+          account: 18530863000,
+          password: 123456
         }
-        bizLogin(data).then(res=>{
+        bizLogin(data).then(res => {
 
         })
       },
       getInit() {
-        let datas={
-          biz_id:'3'
-        }
-        initInfo(datas).then(res => {
-          this.info=res.data
+        initInfo().then(res => {
+          this.info = res.data
         }).catch(err => {})
       }
+    },
+    onload(){
+
+    },
+    onShow(){
+      checkIsLogin(1,1)
     },
     created() {
       this.getInit()

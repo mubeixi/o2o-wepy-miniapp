@@ -1,37 +1,30 @@
 <template>
   <div class="coupon-all">
-      <div class="coupon-item flex flex-justify-between"  v-for="(item,index) of couponList" :key="index">
-        <div class="item-left" @click="change(index)">
+      <div class="coupon-item flex flex-justify-between">
+        <div class="item-left">
           <icon
             class="check-icon"
-            :color="item.check?'#F53636':'#999'"
+            color="#F53636"
             size="20"
-            :type="item.check?'iconblchecked':'iconCircle'"
+            type="iconblchecked"
           ></icon>
-
+<!--          class="check-icon"-->
+<!--          :color="product.check?'#F53636':'#999'"-->
+<!--          size="20"-->
+<!--          :type="product.check?'iconblchecked':'iconCircle'"-->
         </div>
         <div class="item-right">
             <image src="/static/coupon.png" class="full-img"></image>
-            <div class="time">有效限：{{item.Coupon_StartTime}}至{{item.Coupon_EndTime}}</div>
+            <div class="time">有效限：2020-03-09至2020-04-30</div>
             <div class="price flex">
               <div class="font-32">¥</div>
-              <div class="font-70">{{item.Coupon_Cash}}</div>
+              <div class="font-70">50</div>
               <div class="newuser">新用户专用</div>
             </div>
-            <div class="right-q">{{item.Coupon_Subject}}</div>
-            <div class="right-w">全场满{{item.Coupon_Condition}}可用</div>
+            <div class="right-q">优惠券</div>
+            <div class="right-w">全场满199可用</div>
         </div>
       </div>
-
-    <div class="submits" @click="goAdd">
-      <icon type="iconadd" color="#00A8FF"  size="20"></icon>
-      添加优惠券
-    </div>
-
-    <div style="height: 80rpx;width: 750rpx"></div>
-    <div class="save">
-      确定
-    </div>
   </div>
 </template>
 
@@ -40,38 +33,17 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getCouponList} from '../../api/store'
-  import {linkTo, showLoading, hideLoading} from '../../common/fun'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      couponList: []
+
     },
     methods: {
-      goAdd() {
-        linkTo('/pages/store/StoreCouponAdd')
-      },
-      change(index) {
-        this.couponList[index].check = !this.couponList[index].check
-      },
-      init() {
-        let data = {
-          status: 1,
-          show: 2
-        }
-        showLoading('加载中')
-        getCouponList(data).then(res => {
-          let arr = res.data
-          this.couponList = arr.map(item => {
-            return {...item, check: false}
-          })
-          hideLoading()
-        }).catch(e => { hideLoading() })
-      }
+
     },
-    onShow() {
-      this.init()
+    created() {
+
     }
 
   })
@@ -85,7 +57,6 @@
   .coupon-all{
     padding-top: 40rpx;
     min-height: 100vh;
-    box-sizing: border-box;
   }
   .coupon-item{
     height: 216rpx;
@@ -152,30 +123,6 @@
     position: absolute;
     top: 100rpx;
     right: 38rpx;
-  }
-  .submits{
-    width: 276rpx;
-    height: 70rpx;
-    display: flex;
-    font-size: 28rpx;
-    color: #00A8FF;
-    margin:40rpx  auto 0rpx;
-    align-items: center;
-    justify-content: center;
-    border:1px solid rgba(0,168,255,1);
-    border-radius:6rpx;
-  }
-  .save{
-    height: 80rpx;
-    line-height: 80rpx;
-    text-align: center;
-    width: 750rpx;
-    background-color: #00A8FF;
-    color: #FFFFFF;
-    font-size: 32rpx;
-    position: fixed;
-    bottom: 0rpx;
-    left: 0rpx;
   }
 
 </style>

@@ -33,8 +33,3 @@ export const bizRegSms = (param, options) => fetch({act: 'bizRegSms', param, opt
 // 获取城市列表
 export const getCityList = (param, options) => fetch({act: 'getCityList', param, options})
 
-// 获取优惠券列表
-export const getCouponList = (param, options) => fetch({act: 'getCouponList', param, options})
-
-// 获取优惠券列表
-export const getUserLevel = (param, options) => fetch({act: 'getUserLevel', param, options})
