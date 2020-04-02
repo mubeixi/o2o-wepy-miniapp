@@ -194,11 +194,25 @@
               <div class="flex-vertical-center flex"><span class="c9 fz-12">不赠送</span><icon type="iconarrowleft" color="#999"></icon></div>
             </div>
           </div>
-          <div class="cell-item">
-            <div class="label">退换货</div>
-            <div class="content"></div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+          <div class="cell-item" @click="openPop('back')">
+              <div class="label">退换货</div>
+              <div class="content flex"></div>
+              <div class="right">
+                <div class="flex-vertical-center flex"><span class="c9 fz-12">{{shopDamageList[shopDamageIdx].Damage_Name || '未设置'}}</span><icon type="iconarrowleft" color="#999"></icon></div>
+              </div>
           </div>
+
+          <popup-layer ref="back">
+            <div class="head flex flex-justify-between flex-vertical-center">
+              <div class="c9 p-15 " @click="closePop('back')">取消</div>
+              <div class="c3 p-15" @click="bindShopDamageChange">确认</div>
+            </div>
+            <picker-view indicator-style="height: 40px;" :style="{ height: shopDamageList.length*40+'px'}" style="width: 100%;" :value="shopDamageIdx"  @change="bindShopDamageIdxChange">
+              <picker-view-column>
+                <view style="line-height: 40px;text-align: center;font-size: 14px;"  v-for="(item,idx) in shopDamageList">{{item.Damage_Name}}年</view>
+              </picker-view-column>
+            </picker-view>
+          </popup-layer>
 
           <div class="cell-item" @click="openPop('fee')">
             <div class="label">运费</div>
@@ -394,6 +408,8 @@
     store,
     mixins: [pageMixin],
     data: {
+      shopDamageIdx: 0,
+      shopDamageList: [],
       shippingTmplIdx: 0,
       shippingTmplList: [],
       focusPromiseIdx: 0,
@@ -411,7 +427,7 @@
       imgs: [],
       specs: [1],
       formData: {
-        Product_backup:null,
+        Product_backup: null,
         fee_type: 1,
         fix_fee: 0,
         shipping_temp: null,
@@ -447,9 +463,19 @@
         if (feeType === 1) {
           this.shipping_temp = null
         }
-        if(feeType === 2){
+        if (feeType === 2) {
           this.formData.fix_fee = 0
         }
+      },
+      bindShopDamageChange(){
+        const idx = this.shopDamageIdx
+        this.formData.Product_backup = this.shopDamageList[idx].Damage_ID
+        this.closePop('back')
+      },
+      bindShopDamageIdxChange(e) {
+        const idx = e.$wx.detail.value
+        this.shopDamageIdx = idx
+        //this.formData.Product_backup = this.shopDamageList[idx].Damage_ID
       },
       bindShippingTmplChange(e) {
         const idx = e.$wx.detail.value
@@ -699,8 +725,9 @@
     },
     onShow() {
       getSystemProdConfig({}).then(res => {
-        const {prod_limit_type = []} = res.data
+        const {prod_limit_type = [], shop_damage = []} = res.data
         this.PROD_LIMIT_TYPE = prod_limit_type
+        this.shopDamageList = shop_damage
         this._default = res.data
       }).catch(() => {
         error('获取商品公共配置失败')
