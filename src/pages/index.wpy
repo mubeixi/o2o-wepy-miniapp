@@ -52,7 +52,7 @@
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/Store/StoreInfo')">
+          <div class="grid-item" @click="$linkTo('/pages/store/StoreInfo')">
             <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
             <div class="grid-item-title">修改资料</div>
           </div>

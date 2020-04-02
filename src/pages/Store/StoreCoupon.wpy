@@ -1,0 +1,137 @@
+<template>
+  <div class="coupon-all">
+      <div class="coupon-item flex flex-justify-between">
+        <div class="item-left">
+          <icon
+            class="check-icon"
+            color="#F53636"
+            size="20"
+            type="iconblchecked"
+          ></icon>
+<!--          class="check-icon"-->
+<!--          :color="product.check?'#F53636':'#999'"-->
+<!--          size="20"-->
+<!--          :type="product.check?'iconblchecked':'iconCircle'"-->
+        </div>
+        <div class="item-right">
+            <image src="/static/coupon.png" class="full-img"></image>
+            <div class="time">有效限：2020-03-09至2020-04-30</div>
+            <div class="price flex">
+              <div class="font-32">¥</div>
+              <div class="font-70">50</div>
+              <div class="newuser">新用户专用</div>
+            </div>
+            <div class="right-q">优惠券</div>
+            <div class="right-w">全场满199可用</div>
+        </div>
+      </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+
+    },
+    created() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .full-img{width: 100%;height: 100%}
+  .coupon-all{
+    padding-top: 40rpx;
+    min-height: 100vh;
+  }
+  .coupon-item{
+    height: 216rpx;
+    margin-bottom: 30rpx;
+    padding-right: 26rpx;
+  }
+  .item-left{
+    width: 90rpx;
+    height: 216rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .item-right{
+    position: relative;
+    width: 634rpx;
+    height: 216rpx;
+    .time{
+      position:absolute;
+      left: 48rpx;
+      bottom: 24rpx;
+      font-size: 24rpx;
+      color: #999999;
+    }
+  }
+  .font-32{
+    font-size: 32rpx;
+    color: #FF0042;
+  }
+  .font-70{
+    font-size: 70rpx;
+    color: #FF0042;
+    line-height: 56rpx;
+    margin-left: 14rpx;
+  }
+  .price{
+    position: absolute;
+    align-items: flex-end;
+    height: 56rpx;
+    left: 48rpx;
+    bottom: 100rpx;
+  }
+  .newuser{
+    font-size: 18rpx;
+    color: #FFA27A;
+    width: 124rpx;
+    height: 34rpx;
+    border: 1px solid #FFA27A;
+    text-align: center;
+    line-height: 34rpx;
+    margin-left: 24rpx;
+    margin-bottom: 20rpx;
+  }
+  .right-q{
+    font-size: 30rpx;
+    color: #1D1D1D;
+    position: absolute;
+    top: 52rpx;
+    right: 38rpx;
+  }
+  .right-w{
+    font-size: 24rpx;
+    color: #999999;
+    position: absolute;
+    top: 100rpx;
+    right: 38rpx;
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "优惠券赠送",
+  "navigationBarTextStyle": "black",
+    "usingComponents": {
+    "icon": "~@/components/icon"
+    }
+  }
+</config>

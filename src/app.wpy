@@ -67,17 +67,17 @@ wepy.app({
 {
     pages: [
       "pages/index",
-      "pages/BusinessStation/BusinessStation",
-      "pages/BusinessStation/SettlementAgreement",
-      "pages/BusinessStation/PersonalCertification",
-      "pages/BusinessStation/CompanyCertification",
-      "pages/BusinessStation/BusinessPay",
-      "pages/Store/StoreSetting",
-      "pages/Store/StoreInfo",
-      "pages/Store/StoreInfoUpda",
-      "pages/Store/SameCityDelivery",
-      "pages/Store/SameCityUpda",
-      "pages/product/ProductManager",
+      "pages/join/BusinessStation",
+      "pages/join/SettlementAgreement",
+      "pages/join/PersonalCertification",
+      "pages/join/CompanyCertification",
+      "pages/join/BusinessPay",
+      "pages/store/StoreSetting",
+      "pages/store/StoreInfo",
+      "pages/store/StoreInfoUpda",
+      "pages/store/SameCityDelivery",
+      "pages/store/SameCityUpda",
+      "pages/store/StoreCoupon",
       "pages/store/StoreMarketing",
       "pages/logistics/LogisticsMain",
       "pages/logistics/LogisticsAdds",
@@ -87,6 +87,7 @@ wepy.app({
       "pages/logistics/LogisticsTmpl",
       "pages/logistics/LogisticsPaperless",
       "pages/logistics/ExpressCompany",
+      "pages/product/ProductManager",
       "pages/product/form",
       "pages/user/login",
       "pages/demo"
@@ -115,7 +116,7 @@ wepy.app({
                 "text": "直播"
             },
             {
-                "pagePath": "pages/Store/StoreSetting",
+                "pagePath": "pages/store/StoreSetting",
                 "iconPath": "/static/tabbar/praise.png",
                 "selectedIconPath": "/static/tabbar/praise.png",
                 "text": "好评"
