@@ -207,11 +207,12 @@ page{
   box-sizing: border-box;
   line-height: 80rpx;
   text-align: center;
-  color: #fff;
+  color: #333;
   font-size: 16px;
   border-radius: 0;
   &-primary{
     background: $fun-blue-color;
+    color: #fff;
   }
 }
 
