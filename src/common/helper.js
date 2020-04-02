@@ -1,8 +1,11 @@
 import {
+  staticUrl
+} from './env'
+import {
   error, toast
 } from './fun'
 import {
-  upload
+  upload, getAccessToken
 } from './request'
 
 export const objTranslate = (obj) => JSON.parse(JSON.stringify(obj))
@@ -233,12 +236,58 @@ export const getString = (arr, key, mbx = 99) => {
     return str
   }
 }
-import {
-  apiBaseUrl as staticUrl
-} from './env'
+
 
 export const getDomain = (url) => {
+
   if (!url) return ''
   if (url.indexOf('http') === -1) return staticUrl + url
   return url
+}
+
+export const confirm = (options) => {
+  return new Promise(function (resolve, reject) {
+    wx.showModal({
+      ...options,
+      success: function (res) {
+        if (res.confirm) {
+          resolve(res)
+        } else if (res.cancel) {
+          reject(res)
+        }
+      },
+      fail: function (res) {
+        reject(res)
+      }
+    })
+  })
+}
+
+/**
+ * 检测是否登录
+ * @param redirect
+ * @return {boolean}
+ */
+export const checkIsLogin = (redirect = 1, tip = 0) => {
+  let access_token = getAccessToken()
+
+  if (!access_token) {
+    if (redirect) {
+      if (!tip) {
+        wx.navigateTo({
+          url: '/pages/user/login'
+        })
+        return
+      }
+
+      confirm({title: '提示', content: '该操作需要登录,请问是否登录?', confirmText: '去登录', cancelText: '暂不登录'}).then(() => {
+        wx.navigateTo({
+          url: '/pages/user/login'
+        })
+      }).catch(() => {})
+    }
+    return false
+  }
+
+  return true
 }

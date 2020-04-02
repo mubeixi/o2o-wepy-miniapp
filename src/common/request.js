@@ -10,11 +10,11 @@ import {
 import {hexMD5} from './tool/md5'
 import Base64 from './tool/base64.js'
 
-export const getUsersID = () => ls.get('users_id')?ls.get('users_id'):'wkbq6nc2kc'
+export const getUsersID = () => ls.get('users_id') ? ls.get('users_id') : 'wkbq6nc2kc'
 
-export const getAccessToken = () => ls.get('access_token')?ls.get('access_token'):'0dySo5NQMBzpCvwAvZ9Bm4iw5LpEQPMK'
+export const getAccessToken = () => ls.get('access_token')
 
-export const getUserID = () => ls.get('user_id') ? ls.get('user_id') : 'null'
+export const getUserID = () => ls.get('user_id')
 
 export const getBizId = () => ls.get('biz_id')
 
@@ -101,7 +101,7 @@ class XHR {
   }
 }
 
-const hookErrorCode = [0,66001]
+const hookErrorCode = [0, 66001]
 export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
   let {tip = '', mask = false, timelen = 2000, timeout = 1000, errtip = true} = options
 
@@ -131,18 +131,17 @@ export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
         const {errorCode = 1, msg = '请求未成功'} = res
 
         if (hookErrorCode.indexOf(errorCode) !== -1) {
-
           if (errorCode === 66001) {
             error(res.msg)
 
-            //重置用户信息
+            // 重置用户信息
 
             setTimeout(() => {
-              uni.navigateTo({
+              wx.navigateTo({
                 url: '/pages/user/login'
               })
             }, 500)
-            return;
+            return
           }
 
           resolve(res)

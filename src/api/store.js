@@ -32,3 +32,4 @@ export const bizRegSms = (param, options) => fetch({act: 'bizRegSms', param, opt
 
 // 获取城市列表
 export const getCityList = (param, options) => fetch({act: 'getCityList', param, options})
+
