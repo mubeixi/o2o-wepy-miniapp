@@ -41,15 +41,15 @@
 
 <script>
   import wepy from '@wepy/core'
-  import store from '../store'
-  import pageMixin from '../mixins'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
 
   import {
     getSystemInfo
-  } from '../api/system'
+  } from '../../api/system'
   import {
     toast
-  } from '../common/fun'
+  } from '../../common/fun'
 
   wepy.page({
     store,
@@ -78,8 +78,8 @@
 
 </script>
 <style lang="scss">
-  @import "../assets/variables.scss";
-  @import "../assets/mixins.scss";
+  @import "../../assets/variables";
+  @import "../../assets/mixins";
   .page-wrap{
     height: 100vh;
     background: white;

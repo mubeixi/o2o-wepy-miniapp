@@ -78,8 +78,7 @@ wepy.app({
       "pages/store/SameCityDelivery",
       "pages/store/SameCityUpda",
       "pages/store/StoreCoupon",
-      "pages/ProductManager",
-      "pages/StoreMarketing",
+      "pages/store/StoreMarketing",
       "pages/logistics/LogisticsMain",
       "pages/logistics/LogisticsAdds",
       "pages/logistics/LogisticsAddsMail",
@@ -88,7 +87,9 @@ wepy.app({
       "pages/logistics/LogisticsTmpl",
       "pages/logistics/LogisticsPaperless",
       "pages/logistics/ExpressCompany",
+      "pages/product/ProductManager",
       "pages/product/form",
+      "pages/user/login",
       "pages/demo"
     ],
     window: {
@@ -109,7 +110,7 @@ wepy.app({
                 "text": "发现"
             },
             {
-                "pagePath": "pages/ProductManager",
+                "pagePath": "pages/product/ProductManager",
                 "iconPath": "/static/tabbar/live.png",
                 "selectedIconPath": "/static/tabbar/live.png",
                 "text": "直播"
