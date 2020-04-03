@@ -25,10 +25,10 @@
       </div>
       <div class="mail-item-bottom flex">
         <div class="select-area">
-          按重量
+          首重
         </div>
         <div class="input-div">
-          <input type="text"  class="input-my" v-model="item.express_start"/>  kg
+          <input type="number"  class="input-my" v-model="item.express_start"/>  kg
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -36,15 +36,15 @@
           首费
         </div>
         <div class="input-div">
-          <input type="text"  class="input-my"  v-model="item.express_postage"/>  元
+          <input type="number"  class="input-my"  v-model="item.express_postage"/>  元
         </div>
       </div>
       <div class="mail-item-bottom flex">
         <div class="select-area">
-          续重量
+          续重
         </div>
         <div class="input-div">
-          <input type="text"  class="input-my"  v-model="item.express_plus"/>  kg
+          <input type="number"  class="input-my"  v-model="item.express_plus"/>  kg
         </div>
       </div>
       <div class="mail-item-bottom flex" style="border-bottom: 0px">
@@ -52,7 +52,7 @@
           续费
         </div>
         <div class="input-div">
-          <input type="text"  class="input-my"  v-model="item.express_postageplus"/>  元
+          <input type="number"  class="input-my"  v-model="item.express_postageplus"/>  元
         </div>
       </div>
     </div>

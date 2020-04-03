@@ -30,13 +30,13 @@
              </div>
              <div class="input-all">
                   <block v-if="item.designated==0">
-                    满 <input type="text" v-model="item.prefrrendial_qty" class="inputs"/>件以上包邮
+                    满 <input type="number" v-model="item.prefrrendial_qty" class="inputs"/>件以上包邮
                   </block>
                  <block v-else-if="item.designated==1">
-                   满 <input type="text" v-model="item.prefrrendial_money" class="inputs"/>元以上包邮
+                   满 <input type="number" v-model="item.prefrrendial_money" class="inputs"/>元以上包邮
                  </block>
                   <block v-else>
-                    满 <input type="text" v-model="item.prefrrendial_qty" class="inputs"/>件，<input v-model="item.prefrrendial_money" type="text" class="inputs"/>元以上包邮
+                    满 <input type="number" v-model="item.prefrrendial_qty" class="inputs"/>件，<input v-model="item.prefrrendial_money" type="text" class="inputs"/>元以上包邮
                   </block>
              </div>
            </div>
