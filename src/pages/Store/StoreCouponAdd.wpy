@@ -97,9 +97,10 @@
         <div class="title">
           优惠券开始时间
         </div>
-        <picker class="picker-mbx" mode="date"  value="{{date}}"   bindchange="bindDateChange">
-          {{date}}
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <picker class="picker-mbx" mode="multiSelector" value="{{dateTime1}}" bindchange="changeDateTime1" bindcolumnchange="changeDateTimeColumn1" range="{{dateTimeArray1}}">
+          <view class="text">
+            {{(dateTimeArray1[0][dateTime1[0]] + '-' + dateTimeArray1[1][dateTime1[1]] + '-' + dateTimeArray1[2][dateTime1[2]] + ' ' + dateTimeArray1[3][dateTime1[3]] + ':' + dateTimeArray1[4][dateTime1[4]])}}
+          </view>
         </picker>
 
       </div>
@@ -141,12 +142,15 @@
     hideLoading,
     linkTo, showLoading, error
   } from '../../common/fun'
+  import {dateTimePicker, getMonthDay} from '../../common/time'
 
   import {getUserLevel} from '../../api/store'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      dateTimeArray1: [],
+      dateTime1: [],
       Coupon_Cash: '',
       Coupon_Condition: '',
       editData: {},
@@ -165,10 +169,24 @@
       if (options.Coupon_ID) {
         this.Coupon_ID = options.Coupon_ID
       }
+      let obj1 = dateTimePicker('', '')
+      this.dateTimeArray1 = obj1.dateTimeArray
+      this.dateTime1 = obj1.dateTime,
 
       this.init()
     },
     methods: {
+      changeDateTime1(e) {
+        console.log(e.$wx.detail.value)
+      },
+      changeDateTimeColumn1(e) {
+        let arr = this.dateTime1
+        let dateArr = this.dateTimeArray1
+        arr[e.$wx.detail.column] = e.$wx.detail.value
+        dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+        this.dateTimeArray1 = dateArr
+        this.dateTime1 = arr
+      },
       saveCoupon() {
         showLoading()
         let data = {
@@ -183,8 +201,8 @@
           Coupon_EndTime: '2020-09-05 12:00:00',
           coupon_prod: '0'
         }
-        if(this.Coupon_ID){
-          data.coupon_id=this.Coupon_ID
+        if (this.Coupon_ID) {
+          data.coupon_id = this.Coupon_ID
         }
         opCoupon(data).then(res => {
           if (this.Coupon_ID) {
