@@ -68,9 +68,7 @@ function dateTimePicker(startYear, endYear, date) {
   var start = startYear || new Date().getFullYear()
   var end = endYear || 2100
   // 默认开始显示数据
-  console.log(date)
   var defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()
-  console.log(defaultDate)
   // 处理联动列表数据
   /* 年月日 时分秒 */
   dateTimeArray[0] = getLoopArray(start, end, '年')
@@ -78,7 +76,7 @@ function dateTimePicker(startYear, endYear, date) {
   dateTimeArray[2] = getMonthDay(defaultDate[0], defaultDate[1])
   dateTimeArray[3] = getLoopArray(0, 23, '时')
   dateTimeArray[4] = getLoopArray(0, 59, '分')
-  // dateTimeArray[5] = getLoopArray(0, 59);
+  dateTimeArray[5] = getLoopArray(0, 59, '秒')
 
   dateTimeArray.forEach((current, index) => {
     dateTime.push(current.indexOf(defaultDate[index]))
@@ -91,5 +89,6 @@ function dateTimePicker(startYear, endYear, date) {
 }
 module.exports = {
   dateTimePicker: dateTimePicker,
-  getMonthDay: getMonthDay
+  getMonthDay: getMonthDay,
+  getNewDateArry: getNewDateArry
 }
