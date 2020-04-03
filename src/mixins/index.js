@@ -1,5 +1,5 @@
 import {
-  linkTo, toast, error
+  linkTo, toast, error, back
 } from '../common/fun'
 
 export default {
@@ -12,6 +12,7 @@ export default {
   },
 
   methods: {
+    $back:back,
     $linkTo: linkTo,
     $toast: toast,
     $error: error,

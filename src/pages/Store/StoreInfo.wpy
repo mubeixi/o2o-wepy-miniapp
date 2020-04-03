@@ -93,7 +93,6 @@
       index:0
     },
     onLoad(){
-      showLoading('加载中')
     },
     methods:{
       repalceImg(){
@@ -132,8 +131,11 @@
         })
       },
       async getBizInfo(){
+        showLoading('加载中')
         await getBizInfo().then(res=>{
             this.info=res.data
+        }).catch(e=>{
+          hideLoading()
         })
         hideLoading()
         await getCityExpressConfig().then(res=>{

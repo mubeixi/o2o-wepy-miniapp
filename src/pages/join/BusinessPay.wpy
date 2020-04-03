@@ -60,7 +60,7 @@
         总计： <text class="color-font font13 pay-bottom-text">¥</text><text class="color-font font15 pay-bottom-text">1000</text>
       </div>
 
-      <div class="pay-button">
+      <div class="pay-button"  @click="$back()">
         立即支付
       </div>
     </div>
