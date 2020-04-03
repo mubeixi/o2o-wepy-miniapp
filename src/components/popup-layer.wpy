@@ -1,7 +1,7 @@
 <template>
   <view v-if="isShow" @touchmove.stop.prevent>
     <view @tap="ableClose" id="mask" class="popup-layer"  ></view>
-    <view :animation="animationData" id="wrap" class="popup-wrap"   @tap.stop="noop" :style="{height:full?'100%':'auto'}" >
+    <view :animation="animationData" id="wrap" class="popup-wrap"   @tap.stop="noop" :style="{height:full?'100%':'auto',backgroundColor:mainBgColor}" >
       <div v-if="title" class="pupup-title">{{title}}</div>
       <slot></slot>
       <div class="safearea-box2"></div>
@@ -34,6 +34,10 @@
       autoClose: {
         type: Boolean,
         default: true
+      },
+      mainBgColor: {
+        type: String,
+        default: '#fff'
       },
       bottomHeight: {
         type: Number || String,
