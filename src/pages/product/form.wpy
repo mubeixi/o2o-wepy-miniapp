@@ -7,7 +7,7 @@
           <div class="cell-item">
             <div class="label">商品名称</div>
             <div class="content">
-              <input name="Products_Name" placeholder="请输入商品名称" />
+              <input v-model="formData.Products_Name" placeholder="请输入商品名称" />
             </div>
           </div>
           <div class="cell-item ">
@@ -55,8 +55,8 @@
             <div class="label">商品价格</div>
             <div class="content">
               <div class="flex flex-justify-center flex-vertical-center">
-                <input class="line-input" style="width: 210rpx" v-model="formData.Products_PriceX" placeholder="请输入商品原价"  />
-                <input class="m-l-15 line-input" style="width: 210rpx" v-model="formData.Products_PriceY" placeholder="请输入商品现价"  />
+                <input class="line-input" style="width: 210rpx" type="number" v-model="formData.Products_PriceY" placeholder="请输入商品原价"  />
+                <input class="m-l-15 line-input" style="width: 210rpx" type="number" v-model="formData.Products_PriceX" placeholder="请输入商品现价"  />
               </div>
             </div>
           </div>
@@ -69,7 +69,7 @@
               <div class="flex">
                 <div class="flex1 flex flex-vertical-center">
                   <span style="white-space: nowrap" class="c3 text-left p-r-10">拼购价</span>
-                  <input class="line-input" v-modal="formData.pintuan_pricex" placeholder="请输入拼购价"  />
+                  <input class="line-input" v-model="formData.pintuan_pricex" placeholder="请输入拼购价"  />
                 </div>
                 <div class="flex1 flex flex-vertical-center" style="margin-left: 30rpx">
                   <span style="white-space: nowrap" class="c3 text-centert p-r-10">成团人数</span>
@@ -89,27 +89,27 @@
           </div>
         </div>
 
-        <div class="bgwhite m-b-15 flex flex-vertical-center" v-for="(item) in specs">
+        <div class="bgwhite m-b-15 flex flex-vertical-center" v-for="(item,idx) in specs" @click="focusSpecItem(idx)">
           <div class="group-cell flex1" style="margin-bottom: 0" >
             <div class="cell-item" style="border-bottom: none">
               <div class="label">规格名</div>
               <div class="content">
-                <input class="line-input" style="width: 450rpx" placeholder="请输入规格名" />
+                <input @input="bindSpecNameInput" class="line-input" style="width: 450rpx" placeholder="请输入规格名" />
               </div>
             </div>
             <div class="cell-item" style="border-bottom: none">
               <div class="label">商品价格</div>
               <div class="content">
                 <div class="flex flex-vertical-center"  style="width: 450rpx">
-                  <input class="line-input" style="width: 210rpx" placeholder="请输入商品原价"  />
-                  <input class="line-input" style="width: 210rpx;margin-left: 30rpx" placeholder="请输入商品现价"  />
+                  <input class="line-input" @input="bindSpecMarketPriceInput" style="width: 210rpx" placeholder="请输入商品原价"  />
+                  <input class="line-input" @input="bindSpecSellingPriceInput" style="width: 210rpx;margin-left: 30rpx" placeholder="请输入商品现价"  />
                 </div>
               </div>
             </div>
             <div class="cell-item">
               <div class="label">库存</div>
               <div class="content">
-                <input class="line-input" style="width: 450rpx" placeholder="请输入商品库存" />
+                <input class="line-input" @input="bindSpecStockInput" style="width: 450rpx" placeholder="请输入商品库存" />
               </div>
             </div>
           </div>
@@ -254,11 +254,10 @@
         </div>
         <div style="height: 100rpx;"></div>
       </div>
-
-      <button @click="subFn" class="btn action-btn btn-primary">保存数据</button>
+      <button @click="closePop('couponPop')" class="btn btn-primary">确定</button>
     </popup-layer>
 
-    <popup-layer ref="bizCatePop" title="平台分类" :autoClose="false">
+    <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false">
       <div v-show="bizProdCateFormShow" style="width: 100%;height: 100%;left: 0;top: 0;position: fixed;background: rgba(0,0,0,.3);z-index:3;">
         <div class="posi" style="width: 426rpx;overflow: hidden;background: white;border-radius: 6rpx;box-sizing: border-box;padding: 20rpx;">
           <div class="text-center c3">添加分类</div>
@@ -292,7 +291,7 @@
       <button class="btn btn-primary m-t-35" @click="setBizCate">确认</button>
     </popup-layer>
 
-    <popup-layer ref="systemCatePop" title="平台分类分类" :autoClose="false">
+    <popup-layer ref="systemCatePop" title="平台分类" :autoClose="false">
       <div v-if="bizIndustryList.length>0">
         <fun-tree
           ele-id="prodSystemCate"
@@ -392,7 +391,7 @@
     </popup-layer>
 
     <popup-layer title="订单类型" ref="orderType" :autoClose="false">
-      <radio-group class="type-list p-l-10 p-r-10"  @change="setprod_order_type">
+      <radio-group class="type-list p-l-10 p-r-10"  @change="setOrderType">
         <label class="type-item flex flex-vertical-center bor-b">
           <radio color="#00A8FF" value="0" :checked="formData.prod_order_type === 0"></radio>
           <div class="label p-10">
@@ -481,13 +480,13 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {
-    chooseImageByPromise, getArrColumn, uploadImages, validateFun, getDomain
+    chooseImageByPromise, getArrColumn, uploadImages, validateFun, getDomain, findArrayIdx
   } from '../../common/helper'
   import {
-    getSystemProdConfig
+    getSystemProdConfig, systemOperateProd
   } from '../../api/product'
   import {
-    getShippingTemplate, bizIndustryList as getBizIndustryList, addBizProdCate, systemOperateProd, getCouponList, getBizProdCateList
+    getShippingTemplate, bizIndustryList as getBizIndustryList, addBizProdCate, getCouponList, getBizProdCateList
   } from '../../api/store'
 
   import { error, toast, modal } from '../../common/fun'
@@ -529,18 +528,19 @@
       imgTempList: [],
       cate_ids: '',
       imgs: [],
-      specs: [1],
+      activeSpecIdx: 0,
+      specs: [],
       couponList: [],
       formData: {
-        Products_Index: 0,
+        Products_Index: 1,
         Products_Name: '',
         Products_Category: '', // 系统商品分类
         Products_BizCategory: '', // 商家商品分类
         Products_Sales: 0, // 销量
         Products_PriceY: 0, // 原价
         Products_PriceX: 0, // 现价,
-        pintuan_pricex: 0, // 拼团人数，>=2的整数
         pintuan_pricex: 0, // 拼团价格
+        pintuan_people: 2, // 拼团人数，>=2的整数
         Products_Profit: 0, // 产品利润
         Products_BriefDescription: '', // 产品描述
         Products_Count: 0, // 库存
@@ -556,7 +556,6 @@
         Products_IsHot: 0, // 热卖
         Products_IsRecommend: 0, // 推荐
         one_hour_send: 0, // 一小时达
-
         prod_limit: {
           switch: 0,
           limit: {
@@ -564,135 +563,164 @@
             num: 0
           }
         },
-
         prod_order_type: 0// 订单类型
 
       }
     },
     watch: {
-      formData: {
-        deep: true,
-        handler(newVal) {
-          console.log(newVal)
-        }
-      }
+      // formData: {
+      //   deep: true,
+      //   handler(newVal) {
+      //     console.log(newVal)
+      //   }
+      // }
     },
     methods: {
       subFn() {
-      // if (this.cate_ids === '') {
-      //   error('请选择商品分类')
-      //   return
-      // }
-      // if (this.ruleForm.Products_Type == '' && this.ruleForm.Products_Type != 0) {
-      //   error('请选择商品类型')
-      //   return
-      // }
-        let productInfo = {
-          ...this.formData,
-          Products_Category: this.systemCateHas.join(','), // 平台分类
-          Products_BizCategory: this.bizProdCateList.join(','), // 商家自定义分类
-          Products_JSON: {ImgPath: this.imgs}, // 产品图片，json，格式：{"ImgPath":["....","...."]}
-          Products_Promise: this.promiseList.map(item => {
-            return {name: item}
-          })// 产品承诺
 
-        // pintuan_flag: this.formData.pintuan_flag ? '1' : '0', // 是否拼团
-        // Products_BriefDescription: this.formData.Products_BriefDescription, // 产品简介
-        // Products_Count: this.formData.Products_Count, // 库存
-        // Products_Type: this.formData.Products_Type, // 商品类型id
-        // Products_Weight: this.formData.Products_Weight, // 商品重量
-        // fee_type: this.formData.goods, // 运费选择
-        // prod_order_type: this.formData.orderType, // 订单类型
-        // Products_Description: this.editorText, // 富文本类型
-        // Product_backup: this.formData.refund, // 退货id
-        // platForm_Income_Reward: this.platForm_Income_Reward,
-        // nobi_ratio: this.nobi_ratio,
-        // area_Proxy_Reward: this.area_Proxy_Reward,
-        // sha_Reward: this.sha_Reward,
-        // commission_ratio: this.commission_ratio,
-        // manage_Reward: this.manage_Reward
+        const rule = {
+          Products_Name: { ismust: {label: '产品名称'} },
+          Products_Category: {ismust: {label: '平台分类'} },
+          Products_PriceY: {
+            ismust: {label: '原价'},
+            numericality: {
+              notValid: '原价必须为数字',
+              greaterThan: 0,
+              notGreaterThan: '原价必须大于0'
+            }
+          },
+          Products_PriceX: (value, attributes, attributeName, options, constraints) => {
+            if (parseFloat(value) >= parseFloat(attributes.Products_PriceY)) {
+              return {
+                errtip: {message: '现价必须小于原价'}
+              }
+            }
+            return {
+              ismust: {label: '现价'},
+              numericality: {
+                notValid: '现价必须为数字',
+                greaterThan: 0,
+                notGreaterThan: '现价必须大于0'
+              }
+            }
+          },
+          pintuan_people: {
+            ismust: {label: '拼团人数'},
+            numericality: {
+              onlyInteger: true,
+              greaterThanOrEqualTo: 2,
+              notGreaterThanOrEqualTo: '拼团人数不得少于2人'
+            }
+          },
+          pintuan_pricex: (value, attributes, key, options, constraints) => {
+            if (parseFloat(value) >= parseFloat(attributes.Products_PriceY)) {
+              return {
+                errtip: {message: '拼团价格必须小于原价'}
+              }
+            }
+
+            return {
+              ismust: {label: '拼团价格'},
+              numericality: {
+                notValid: '拼团价格必须为数字',
+                greaterThan: 0,
+                notGreaterThan: '拼团价格必须大于0'
+              }
+            }
+          },
+          Products_Profit: { ismust: {label: '利润'} },
+          fee_type: { ismust: {label: '运费计算方式'} },
+          fix_fee: (value, attributes, key, options, constraints) => {
+            if (attributes.fee_type === 1) {
+              return {
+                ismust: {label: '固定运费'},
+                numericality: {
+                  greaterThanOrEqualTo: 0,
+                  notGreaterThanOrEqualTo: '固定运费必须大于等于0'
+                }
+              }
+            }
+            return undefined
+          },
+          shipping_temp: (value, attributes, key, options, constraints) => {
+            if (attributes.fee_type === 2) {
+              return {
+                ismust: {label: '物流模板ID'}
+              }
+            }
+            return undefined
+          },
+          Products_JSON: (value, attributes, key, options, constraints) => {
+            const {ImgPath = []} = JSON.parse(value)
+            if (ImgPath.length < 1) {
+              return {
+                errtip: {message: '至少上传一张缩略图'}
+              }
+            }
+            return undefined
+          },
+          Products_Weight: (value, attributes, key, options, constraints) => {
+            const num = parseFloat(value)
+
+            // 实物订单
+            if (attributes.prod_order_type === 0 && wx.$validate.isNumber(num) && num > 0) {
+              return undefined
+            }
+            return {
+              errtip: {message: '实物订单必须设置重量'}
+            }
+          }
         }
 
+        let Products_Description = ''
         this.editorInstance.getContents({
           success: (res) => {
-            productInfo.Products_Description = res.html
+            Products_Description = res.html
           },
           fail: (err) => {
             modal('获取商品详情失败:' + err.errMsg)
           }
         })
-        console.log(productInfo); return
 
-    // if (this.formData.orderType === 2) {
-    //   let arr = []
-    //   for (let item of this.multipleSelection) {
-    //     arr.push(item.Card_Id)
-    //   }
-    //   productInfo.virtual_card_ids = JSON.stringify(arr)
-    // }
-    // if (id) {
-    //   productInfo.prod_id = id
-    // }
-    // let arrPromise = []
-    // for (let item of this.Products_Promise) {
-    //   arrPromise.push({'name': item})
-    // }
-    // productInfo.Products_Promise = JSON.stringify(arrPromise)
-    //
-        if (this.formData.imgs.length < 1) {
-          error('商品主图不能为空')
-        } else {
-          productInfo.Products_JSON = JSON.stringify({'ImgPath': this.formData.imgs})
-        }
+        const coupon_present = getArrColumn(this.couponList.filter(item => item.check), 'Coupon_ID').join(',')
+        const Products_Category = this.systemCateHas.join(',') // 平台分类
+        const Products_BizCategory = this.bizProdCateList.join(',') // 商家自定义分类
+        const Products_JSON = JSON.stringify({ImgPath: this.imgs})// 产品图片，json，格式：{"ImgPath":["....","...."]}
+        const Products_Promise = this.promiseList.map(item => {
+          return {name: item}
+        })
 
-      // 优惠券
-        if (this.selectValue.length > 0) {
-          productInfo.coupon_present = this.selectValue.join(',')
-        }
+        const {mobile_prod_attr_name} = this._default
 
-        productInfo.video_url = this.video ? this.video : ''
-        productInfo.cover_url = this.imgs ? this.imgs : ''
-
-        for (let item of this.formData.otherAttributes) {
-          if (item === '下架') productInfo.Products_SoldOut = 1
-          if (item === '新品')productInfo.Products_IsNew = 1
-          if (item === '热卖')productInfo.Products_IsHot = 1
-          if (item === '推荐')productInfo.Products_IsRecommend = 1
-        }
-
-        if (this.formData.goods == 1) {
-        // 如果是免运费的话
-          productInfo.fix_fee = this.fix_fee
-        } else if (this.formData.goods == 2 && this.yunfei.length > 0) {
-          if (!this.shipping_temp) {
-            this.$message({
-              type: 'error',
-              message: `物流模板不能为空`
-            })
-            this.isLoading = false
+        const specAttrValue = this.specs.map(item => {
+          return {
+            Attr_Value: { [mobile_prod_attr_name]: item.name },
+            ...item
           }
-          productInfo.shipping_temp = this.shipping_temp
+        })
+        const attrs = {
+          [mobile_prod_attr_name]: getArrColumn(this.specs, 'name')
         }
 
-        if (this.prodConfig.Payment_RmainderEnabled) {
-        // 如果可以设置余额支付
-          productInfo.Products_IsPaysBalance = this.formData.Products_IsPaysBalance ? '1' : '0'
+        let prod_attrval = JSON.stringify({attrs, values: specAttrValue})
+
+        let productInfo = {
+          ...this.formData,
+          Products_Category,
+          Products_BizCategory,
+          Products_JSON,
+          Products_Promise,
+          coupon_present,
+          Products_Description,
+          prod_attrval
+
         }
 
-        if (this.formData.pintuan_flag) {
-        // 是拼团商品
-        // 转化时间
-          var d = new Date(this.formData.pintuan_end_time)
-          var date = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
-          productInfo.pintuan_people = this.formData.pintuan_people
-          productInfo.pintuan_pricex = this.formData.pintuan_pricex
-          productInfo.pintuan_end_time = date
+        const formCheckResult = validateFun(productInfo, rule)
+        if (formCheckResult !== true) {
+          this.formCheckResult = formCheckResult
+          return
         }
-
-        productInfo.prod_limit = JSON.stringify(prodObj)
-        productInfo.self_commi = this.self_commi
-        productInfo.parent_commi = this.parent_commi
-        productInfo.manage_commi = this.manage_commi
 
         systemOperateProd(productInfo, {tip: '保存商品'}).then(res => {
           toast('商品发布成功')
@@ -700,6 +728,29 @@
           const {msg: errMsg = ''} = err
           modal(errMsg, '商品发布失败')
         })
+      },
+      focusSpecItem(idx) {
+        this.activeSpecIdx = idx
+      },
+      bindSpecNameInput(e) {
+        const idx = this.activeSpecIdx
+        const val = e.$wx.detail.value
+        this.$set(this.specs[idx], 'name', val)
+      },
+      bindSpecMarketPriceInput(e) {
+        const idx = this.activeSpecIdx
+        const val = e.$wx.detail.value
+        this.$set(this.specs[idx], 'Supply_Price', val)
+      },
+      bindSpecSellingPriceInput(e) {
+        const idx = this.activeSpecIdx
+        const val = e.$wx.detail.value
+        this.$set(this.specs[idx], 'Attr_Price', val)
+      },
+      bindSpecStockInput(e) {
+        const idx = this.activeSpecIdx
+        const val = e.$wx.detail.value
+        this.$set(this.specs[idx], 'Property_count', val)
       },
       couponChange(idx) {
         this.$set(this.couponList[idx], 'check', !this.couponList[idx].check)
@@ -735,7 +786,7 @@
         const checkNodeList = this.$refs.systemCateTree.getCheckedNodes()
         console.log(checkNodeList)
         this.closePop('systemCatePop')
-        this.formData.systemCateHas = getArrColumn(checkNodeList, 'id')
+        this.systemCateHas = getArrColumn(checkNodeList, 'id')
       },
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
@@ -812,7 +863,12 @@
         this.formData.prod_order_type = parseInt(e.$wx.detail.value)
       },
       addSpecsRow() {
-        this.specs.push(null)
+        this.specs.push({
+          Attr_Price: 0,
+          Supply_Price: 0,
+          Property_count: 0,
+          name: ''
+        })
       },
       bindThumbClick(idx, img) {
         wx.showActionSheet({
@@ -841,16 +897,17 @@
           return
         }
         const files = await chooseImageByPromise({count: 9}).catch(err => {
-          wx.showModal({
-            title: '请选择图片',
-            content: JSON.stringify(err)
-          })
+          // wx.showModal({
+          //   title: '请选择图片',
+          //   content: JSON.stringify(err)
+          // })
           return []
         })
+        if (files.length < 1) return
 
-        // const arr1 = files.map(file => {
-        //   return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
-        // })
+      // const arr1 = files.map(file => {
+      //   return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+      // })
 
         const imgs = getArrColumn(files, 'path')
         const ossUrls = await uploadImages({imgs}).catch(err => {
@@ -927,6 +984,8 @@
         getCouponList().then(res => {
           this.couponList = res.data
         })
+
+        this.addSpecsRow()
       }
     },
     onReady() {

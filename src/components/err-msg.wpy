@@ -10,9 +10,9 @@
     background: $fun-red-color;
     color: #fff;
     font-size: 12px;
-    padding: 4px 10px;
+    padding: 10px 15px;
     box-sizing: border-box;
-    text-align: center;
+    text-align: left;
   }
   .item{
     margin-bottom: 10px;
@@ -33,12 +33,17 @@
   }
 </style>
 <template>
-  <div class="err-msg" v-if="errs && errs.length>0">
-    <div v-for="(row,idx) in errs" class="item" :key="idx">
+  <div class="err-msg" v-if="show && errs && errs.length>0" @click="hide">
+<!--    <div v-for="(row,idx) in errs" class="item" :key="idx">-->
 <!--      <div class="label">{{idx}}:</div>-->
-      <div class="content">
-        <div class="row" v-for="(msg,idx2) in row" :key="idx2"><span class="p-r-4">*</span><span>{{msg}}</span></div>
-      </div>
+<!--      <div class="content">-->
+<!--        <div class="row" v-for="(msg,idx2) in row" :key="idx2"><span class="p-r-4">*</span><span>{{msg}}</span></div>-->
+<!--      </div>-->
+<!--    </div>-->
+    <div v-for="(row,idx) in errs" class="item" :key="idx">
+
+        <div class="row" ><span class="p-r-4">*</span><span>{{row}}</span></div>
+
     </div>
   </div>
 </template>
@@ -51,13 +56,23 @@
         require: true
       }
     },
+    data: {
+      show: false
+    },
     watch: {
       errs(newVal) {
-
+        if (this.errs && Array.isArray(newVal) && newVal.length > 0) {
+          this.show = true
+          setTimeout(() => {
+            this.show = false
+          }, 4000)
+        }
       }
     },
     methods: {
-
+      hide(){
+        this.show = false
+      }
     },
     ready() {
 

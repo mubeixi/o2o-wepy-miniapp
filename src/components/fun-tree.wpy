@@ -92,7 +92,7 @@
     watch: {
 
       treeData(newVal) {
-        console.log(newVal)
+        // console.log(newVal)
         this.tree = newVal
         // this.store.setData(newVal)
       }
@@ -103,7 +103,7 @@
       }
     },
     ready() {
-      console.log(this.nodeKey)
+      // console.log(this.nodeKey)
       this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has})
     }
   })
