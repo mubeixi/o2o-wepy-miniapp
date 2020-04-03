@@ -2,7 +2,7 @@
   <div class="page-wrap">
     <div class="head">
       <div class="base">
-        <image :src="info.biz_logo" class="store-logo"></image>
+        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
         <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
       <div class="action" >
@@ -72,7 +72,7 @@
           </div>
         </div>
         <div class="grid-row">
-          <div class="grid-item"  @click="login">
+          <div class="grid-item"  @click="$linkTo('/pages/logistics/StoreSetting')">
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
@@ -100,6 +100,9 @@
   import wepy from '@wepy/core'
   import store from '../store'
   import pageMixin from '../mixins'
+  import {
+    spaceImg
+  } from '../common/env'
 
   import {
     initInfo, bizLogin, bizLogout
@@ -121,6 +124,9 @@
       info: {}
     },
     methods: {
+      repalceImg(){
+        this.info.biz_logo = spaceImg
+      },
       login() {
         let data = {
           account: 18530863000,
@@ -136,11 +142,11 @@
         }).catch(err => {})
       }
     },
-    onload(){
+    onload() {
 
     },
-    onShow(){
-      checkIsLogin(1,0)
+    onShow() {
+      if (!checkIsLogin(1, 0)) return
       this.getInit()
     },
     created() {

@@ -59,7 +59,7 @@
         type: Boolean,
         default: false
       },
-      radius:{
+      radius: {
         type: String,
         default: '0px'
       },
@@ -72,17 +72,17 @@
       ifshow: false
     },
     ready() {
-      console.log(this.positions)
+      // console.log(this.positions)
       if (this.showPop) {
         this.show()
       }
     },
     watch: {
       positions(newVal) {
-        console.log(newVal)
+        // console.log(newVal)
       },
       showPop(value) {
-        console.log(value)
+        // console.log(value)
         if (value) {
           this.show()
         } else {

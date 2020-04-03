@@ -5,7 +5,7 @@
         店铺logo
       </div>
       <div class="store-titles">
-        <image :src="info.biz_logo"  style="width: 102rpx;height: 102rpx;margin-left: 20rpx;"></image>
+        <image :src="info.biz_logo"  @error="repalceImg"  style="width: 102rpx;height: 102rpx;margin-left: 20rpx;"></image>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -83,6 +83,7 @@
     linkTo, showLoading
   } from '../../common/fun'
   import {chooseImageByPromise,uploadImages} from '../../common/helper'
+  import { spaceImg } from '../../common/env'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -95,6 +96,9 @@
       showLoading('加载中')
     },
     methods:{
+      repalceImg(){
+        this.info.biz_logo = spaceImg
+      },
       async updaImg(){
         let temp_file_list=[]
         let that=this
