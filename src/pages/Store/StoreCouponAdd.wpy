@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="all">
       <div class="counpon-name">
           <div>
             优惠券名称
@@ -99,7 +99,21 @@
         </div>
         <picker class="picker-mbx" mode="multiSelector" value="{{dateTime1}}" bindchange="changeDateTime1" bindcolumnchange="changeDateTimeColumn1" range="{{dateTimeArray1}}">
           <view class="text">
-            {{(dateTimeArray1[0][dateTime1[0]] + '-' + dateTimeArray1[1][dateTime1[1]] + '-' + dateTimeArray1[2][dateTime1[2]] + ' ' + dateTimeArray1[3][dateTime1[3]] + ':' + dateTimeArray1[4][dateTime1[4]])}}
+            {{startTime.length>0?(dateTimeArray1[0][dateTime1[0]] + '-' + dateTimeArray1[1][dateTime1[1]] + '-' + dateTimeArray1[2][dateTime1[2]] + ' ' + dateTimeArray1[3][dateTime1[3]] + ':' + dateTimeArray1[4][dateTime1[4]]+ ':' + dateTimeArray1[5][dateTime1[5]]):'请选择开始时间'}}
+            <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          </view>
+        </picker>
+
+      </div>
+      <div class="line"></div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" >
+        <div class="title">
+          优惠券结束时间
+        </div>
+        <picker class="picker-mbx" mode="multiSelector" value="{{dateTime2}}" bindchange="changeDateTime2" bindcolumnchange="changeDateTimeColumn2" range="{{dateTimeArray2}}">
+          <view class="text">
+            {{endTime.length>0?(dateTimeArray2[0][dateTime2[0]] + '-' + dateTimeArray2[1][dateTime2[1]] + '-' + dateTimeArray2[2][dateTime2[2]] + ' ' + dateTimeArray2[3][dateTime2[3]] + ':' + dateTimeArray2[4][dateTime2[4]]+ ':' + dateTimeArray2[5][dateTime2[5]]):'请选择结束时间'}}
+            <icon  type="iconarrowleft" size="16"  color="#999"></icon>
           </view>
         </picker>
 
@@ -142,7 +156,7 @@
     hideLoading,
     linkTo, showLoading, error
   } from '../../common/fun'
-  import {dateTimePicker, getMonthDay} from '../../common/time'
+  import {dateTimePicker, getMonthDay, getNewDateArry, getArr} from '../../common/time'
 
   import {getUserLevel} from '../../api/store'
   wepy.page({
@@ -150,7 +164,11 @@
     mixins: [pageMixin],
     data: {
       dateTimeArray1: [],
-      dateTime1: [],
+      dateTime1: [0, 0, 0, 0],
+      startTime: [],
+      dateTimeArray2: [],
+      dateTime2: [0, 0, 0, 0],
+      endTime: [],
       Coupon_Cash: '',
       Coupon_Condition: '',
       editData: {},
@@ -166,18 +184,35 @@
       Coupon_UserLevel: ''
     },
     onLoad(options) {
+
       if (options.Coupon_ID) {
         this.Coupon_ID = options.Coupon_ID
       }
       let obj1 = dateTimePicker('', '')
       this.dateTimeArray1 = obj1.dateTimeArray
-      this.dateTime1 = obj1.dateTime,
-
+      this.dateTime1 = obj1.dateTime
+      this.dateTimeArray2 = obj1.dateTimeArray
+      this.dateTime2 = obj1.dateTime
       this.init()
     },
     methods: {
+      changeDateTime2(e) {
+        console.log(e.$wx.detail.value)
+        this.endTime = e.$wx.detail.value
+        this.dateTime2 = e.$wx.detail.value
+      },
+      changeDateTimeColumn2(e) {
+        let arr = this.dateTime2
+        let dateArr = this.dateTimeArray2
+        arr[e.$wx.detail.column] = e.$wx.detail.value
+        dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+        this.dateTimeArray2 = dateArr
+        this.dateTime2 = arr
+      },
       changeDateTime1(e) {
         console.log(e.$wx.detail.value)
+        this.startTime = e.$wx.detail.value
+        this.dateTime1 = e.$wx.detail.value
       },
       changeDateTimeColumn1(e) {
         let arr = this.dateTime1
@@ -189,6 +224,10 @@
       },
       saveCoupon() {
         showLoading()
+        let startTime = this.dateTimeArray1[0][this.dateTime1[0]].substr(0, this.dateTimeArray1[0][this.dateTime1[0]].length - 1) + '-' + this.dateTimeArray1[1][this.dateTime1[1]].substr(0, this.dateTimeArray1[1][this.dateTime1[1]].length - 1) + '-' + this.dateTimeArray1[2][this.dateTime1[2]].substr(0, this.dateTimeArray1[2][this.dateTime1[2]].length - 1) + ' ' + this.dateTimeArray1[3][this.dateTime1[3]].substr(0, this.dateTimeArray1[3][this.dateTime1[3]].length - 1) + ':' + this.dateTimeArray1[4][this.dateTime1[4]].substr(0, this.dateTimeArray1[4][this.dateTime1[4]].length - 1) + ':' + this.dateTimeArray1[5][this.dateTime1[5]].substr(0, this.dateTimeArray1[5][this.dateTime2[5]].length - 1)
+
+        let endTime = this.dateTimeArray2[0][this.dateTime2[0]].substr(0, this.dateTimeArray2[0][this.dateTime2[0]].length - 1) + '-' + this.dateTimeArray2[1][this.dateTime2[1]].substr(0, this.dateTimeArray2[1][this.dateTime2[1]].length - 1) + '-' + this.dateTimeArray2[2][this.dateTime2[2]].substr(0, this.dateTimeArray2[2][this.dateTime2[2]].length - 1) + ' ' + this.dateTimeArray2[3][this.dateTime2[3]].substr(0, this.dateTimeArray2[3][this.dateTime2[3]].length - 1) + ':' + this.dateTimeArray2[4][this.dateTime2[4]].substr(0, this.dateTimeArray2[4][this.dateTime2[4]].length - 1) + ':' + this.dateTimeArray2[5][this.dateTime2[5]].substr(0, this.dateTimeArray2[5][this.dateTime2[5]].length - 1)
+
         let data = {
           Coupon_Subject: this.Coupon_Subject,
           Coupon_PhotoPath: this.imgs[0],
@@ -197,8 +236,8 @@
           Coupon_UsedTimes: this.canUse[this.index].id,
           Coupon_UserLevel: this.vipData[this.ind].id,
           front_show: this.front_show,
-          Coupon_StartTime: '2020-01-05 12:00:00',
-          Coupon_EndTime: '2020-09-05 12:00:00',
+          Coupon_StartTime: startTime,
+          Coupon_EndTime: endTime,
           coupon_prod: '0'
         }
         if (this.Coupon_ID) {
@@ -338,6 +377,7 @@
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
 
+  .all{width: 750rpx;overflow: hidden}
   .full-img{width: 100%;height: 100%}
   .flex1{flex: 1}
   .line{width: 750rpx;height: 20rpx}

@@ -53,7 +53,7 @@
       },
       positions: {
         type: String,
-        default: 'top'
+        default: 'bottom'
       },
       showPop: {
         type: Boolean,
