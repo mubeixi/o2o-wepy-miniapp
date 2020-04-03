@@ -5,7 +5,6 @@
   <div :style="{paddingLeft:val.pid === 0 ? 0:indent+'px'}" class="m-t-15  p-l-10 p-r-10">
     <div class="flex" @tap.stop="clickFn(val)">
       <div v-show="(!checkOnlyLeaf || isLeaf)">
-
         <icon :type="isCheck?'iconcheckbox-check':'iconcheckbox'" :color="isCheck?'#F53636':'#ccc'"></icon>
       </div>
       <div class="flex1 p-l-10 fz-14 c6">{{ labelText }}</div>
@@ -101,10 +100,12 @@
     },
     methods: {
       clickFn(item) {
+        console.log(item)
         if (!this.checkOnlyLeaf || this.isLeaf) {
           if (!item.hasOwnProperty(this.nodeKey)) {
             throw new Error('nodeKey参数有误')
           }
+          console.log(this.isCheck)
           this.isCheck = !this.isCheck
           if (this.isCheck) {
             TreeHub.addCheck(this.eid, item, this.nodeKey)

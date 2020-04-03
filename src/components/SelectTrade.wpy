@@ -33,9 +33,9 @@
 
   wepy.component({
     props: {
-      has:{
-        type:Array,
-        default:[]
+      has: {
+        type: Array,
+        default: []
       },
       show: {
         type: Boolean,
@@ -62,7 +62,7 @@
         // icon:'iconname',
         children: 'child', // 指定子树为节点对象的某个属性值
         label: 'industry_name', // 指定节点标签为节点对象的某个属性值
-        disabled: 'disabled' //	指定节点选择框是否禁用为节点对象的某个属性值
+        disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
       }
     },
     watch: {
