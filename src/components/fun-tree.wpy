@@ -50,7 +50,8 @@
         default: 'id'
       },
       has: {
-        type: Array
+        type: Array,
+        default: []
       },
       // 是否最后一层叶子节点才显示单选/多选框
       checkOnlyLeaf: {
@@ -103,7 +104,7 @@
     },
     ready() {
       console.log(this.nodeKey)
-      this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName:this.conf.children,treeData: objTranslate(this.treeData), nodeKey: this.nodeKey,has:this.has})
+      this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has})
     }
   })
 </script>

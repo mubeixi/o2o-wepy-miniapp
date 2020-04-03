@@ -214,10 +214,21 @@ page{
     background: $fun-blue-color;
     color: #fff;
   }
+  &-cancel{
+    background: $fun-gray-color;
+    color: #fff;
+  }
 }
 
 .safearea-box{
   height: constant(safe-area-inset-bottom);
   height: env(safe-area-inset-bottom);
   width: 100%;
+}
+
+.posi{
+  position: absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%)
 }
