@@ -4,8 +4,8 @@
           <div>
             优惠券名称
           </div>
-          <div class="flex1">
-            <input type="text" class="input-input" placeholder="请输入优惠券名称"  placeholder-class="place"/>
+          <div class="flex1" >
+            <input type="text" v-model="Coupon_Subject" class="input-input" placeholder="请输入优惠券名称"  placeholder-class="place"/>
           </div>
       </div>
       <div class="line"></div>
@@ -13,6 +13,21 @@
         <div class="title">
           优惠券图片
         </div>
+        <div
+          @click="bindThumbClick(idx,img)"
+          class="img-item img"
+          v-for="(img,idx) in imgTempList"
+          :key="idx"
+          :style="{backgroundImage:'url('+img.path+')'}">
+          <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>
+        </div>
+        <div  @click="addImg"
+          class="img-item add"
+              v-if="imgTempList.length<1"
+        >
+          <icon color="#ddd" size="40" type="iconupload"></icon>
+        </div>
+
       </div>
       <div class="line"></div>
       <div class="coupon-method flex-vertical-center flex">
@@ -22,7 +37,7 @@
         <div class="money">
           抵现金¥
         </div>
-        <input type="text"  class="inputs"/>
+        <input type="number"  class="inputs" v-model="Coupon_Cash"/>
       </div>
       <div class="line"></div>
       <div class="coupon-method flex-vertical-center flex">
@@ -32,7 +47,7 @@
         <div class="money">
           ¥
         </div>
-        <input type="text"  class="inputs" />
+        <input type="number"  class="inputs" v-model="Coupon_Condition"/>
         <div class="money-last">
           消费满一定金额才可以使用
         </div>
@@ -43,9 +58,10 @@
         <div class="title">
           可用次数
         </div>
-        <div class="store-titles">
+        <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{canUse}}"   range-key="name">
+          {{canUse[index].name}}
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-        </div>
+        </picker>
       </div>
       <div class="line"></div>
       <div class="store-item flex flex-vertical-center flex-justify-between" >
@@ -53,18 +69,18 @@
           等级领取条件
         </div>
         <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
-            5
+            {{vipData[ind].level_name}}
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </picker>
       </div>
       <div class="line"></div>
-      <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="selectUse">
         <div class="title">
           指定赠送
         </div>
         <div class="store-titles">
-          是
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          {{front_show==2?'是':'否'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"  style="margin-left: 10rpx"></icon>
         </div>
       </div>
       <div class="line"></div>
@@ -79,13 +95,39 @@
       <div class="line"></div>
       <div class="store-item flex flex-vertical-center flex-justify-between" >
         <div class="title">
-          有效时间
+          优惠券开始时间
         </div>
-        <div class="store-titles">
+        <picker class="picker-mbx" mode="date"  value="{{date}}"   bindchange="bindDateChange">
+          {{date}}
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-        </div>
+        </picker>
+
       </div>
       <div class="line"></div>
+
+      <div style="height: 86rpx;width: 100%"></div>
+      <div class="submit-main" @click="saveCoupon">
+        {{Coupon_ID?'保存':'新增'}}
+      </div>
+
+      <modal ref="myModal">
+        <div >
+          <div class="wzw-title">
+            适用范围
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content">
+            <div>
+              开启
+            </div>
+            <div>
+              <switch :checked="front_show==2" bindchange="switch1Change" style="transform: scale(.8)"></switch>
+            </div>
+          </div>
+          <div class="wzw-info">
+            若选择赠送则只能赠送用户优惠券的时候才会显示，前端将不显示
+          </div>
+        </div>
+      </modal>
     </div>
 </template>
 
@@ -93,25 +135,178 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
+  import {opCoupon, getCouponList} from '../../api/store'
+  import {chooseImageByPromise, uploadImages, getArrColumn} from '../../common/helper'
+  import {
+    hideLoading,
+    linkTo, showLoading, error
+  } from '../../common/fun'
 
   import {getUserLevel} from '../../api/store'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      vipData: []
-
+      Coupon_Cash: '',
+      Coupon_Condition: '',
+      editData: {},
+      Coupon_ID: '',
+      Coupon_Subject: '',
+      vipData: [],
+      imgTempList: [],
+      imgs: [],
+      ind: 0,
+      canUse: [{id: '-1', name: '不限'}, {id: '1', name: '1'}, {id: '2', name: '2'}, {id: '3', name: '3'}, {id: '4', name: '4'}, {id: '5', name: '5'}, {id: '6', name: '6'}, {id: '7', name: '7'}, {id: '8', name: '8'}, {id: '9', name: '9'}, {id: '10', name: '10'}],
+      index: 0,
+      front_show: 1,
+      Coupon_UserLevel: ''
     },
-    onLoad(){
+    onLoad(options) {
+      if (options.Coupon_ID) {
+        this.Coupon_ID = options.Coupon_ID
+      }
+
       this.init()
     },
     methods: {
-      bindPickerChange(e) {
-          console.log(e.$wx.detail.value)
+      saveCoupon() {
+        showLoading()
+        let data = {
+          Coupon_Subject: this.Coupon_Subject,
+          Coupon_PhotoPath: this.imgs[0],
+          Coupon_Cash: this.Coupon_Cash,
+          Coupon_Condition: this.Coupon_Condition,
+          Coupon_UsedTimes: this.canUse[this.index].id,
+          Coupon_UserLevel: this.vipData[this.ind].id,
+          front_show: this.front_show,
+          Coupon_StartTime: '2020-01-05 12:00:00',
+          Coupon_EndTime: '2020-09-05 12:00:00',
+          coupon_prod: '0'
+        }
+        if(this.Coupon_ID){
+          data.coupon_id=this.Coupon_ID
+        }
+        opCoupon(data).then(res => {
+          if (this.Coupon_ID) {
+            wx.showToast({
+              title: '修改成功',
+              icon: 'success'
+            })
+            setTimeout(() => {
+              wx.navigateBack({
+                delta: 1
+              })
+            })
+          } else {
+            wx.showToast({
+              title: '新增成功',
+              icon: 'success'
+            })
+            setTimeout(() => {
+              wx.navigateBack({
+                delta: 1
+              })
+            })
+          }
+          hideLoading()
+        }).catch(e => { hideLoading() })
       },
-      init() {
-        getUserLevel().then(res => {
+      bindDateChange(e) {
+        let boo = e.$wx.detail.value
+      },
+      switch1Change(e) {
+        let boo = e.$wx.detail.value
+
+        if (boo) {
+          this.front_show = 2
+        } else {
+          this.front_show = 1
+        }
+      },
+      selectUse() {
+        this.$refs.myModal.show()
+      },
+      bindThumbClick(idx, img) {
+        wx.showActionSheet({
+          itemList: ['预览图片', '移除图片'],
+          success: (res) => {
+            const {tapIndex} = res
+
+            if (tapIndex === 0) {
+              wx.previewImage({
+                urls: [img.path]
+              })
+            }
+            if (tapIndex === 1) {
+              this.imgTempList = []
+              this.imgs = []
+            }
+          },
+          fail (res) {
+
+          }
+        })
+      },
+      async addImg() {
+        // if (this._click) {
+        //   error('操作过快')
+        //   return
+        // }
+        const files = await chooseImageByPromise().catch(err => {
+          wx.showModal({
+            title: '请选择图片',
+            content: JSON.stringify(err)
+          })
+          return []
+        })
+        const arr1 = files.map(file => {
+          return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+        })
+        this.imgTempList = this.imgTempList.concat(arr1)
+        const imgs = getArrColumn(files, 'path')
+        const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch(err => {
+          wx.showModal({
+            title: '文件批量上传失败',
+            content: JSON.stringify(err)
+          })
+        })
+
+        this.imgs = this.imgs.concat(ossUrls)
+      },
+      bindPickerChanges(e) {
+        this.index = e.$wx.detail.value
+      },
+      bindPickerChange(e) {
+        this.ind = e.$wx.detail.value
+        console.log(e.$wx.detail.value)
+      },
+      async init() {
+        let that = this
+        if (this.Coupon_ID) {
+          getCouponList().then(res => {
+            let arr = res.data
+            for (let item of arr) {
+              if (item.Coupon_ID == this.Coupon_ID) {
+                that.editData = item
+                this.Coupon_Subject = item.Coupon_Subject
+                this.imgs[0] = item.Coupon_PhotoPath
+                this.Coupon_Cash = item.Coupon_Cash
+                this.Coupon_Condition = item.Coupon_Condition
+                this.index = String(item.Coupon_UsedTimes)
+                this.Coupon_UserLevel = String(item.Coupon_UserLevel)
+                this.front_show = item.front_show
+              }
+            }
+          })
+        }
+        await getUserLevel().then(res => {
           this.vipData = res.data
+          this.vipData.unshift({id: '-1', level_name: '不限'})
+          for (let i = 0; i < this.vipData.length; i++) {
+            if (this.vipData[i].id == this.Coupon_UserLevel) {
+              this.ind = String(i)
+            }
+          }
         })
       },
       onShow() {
@@ -201,13 +396,88 @@
     font-size: 26rpx;
   }
 
+
+  .add{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+    box-sizing: border-box;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+  .img-item{
+    width: 120rpx;
+    height: 120rpx;
+    margin-left: 48rpx;
+    position: relative;
+  }
+  .wzw-title{
+    width: 750rpx;
+    text-align: center;
+    height: 30rpx;
+    line-height: 30rpx;
+    font-size: 32rpx;
+    color: #333333;
+    padding-top: 30rpx;
+    padding-bottom: 90rpx;
+  }
+  .wzw-content{
+    width: 690rpx;
+    margin: 0 auto;
+    height: 44rpx;
+    line-height: 44rpx;
+    margin-bottom: 26rpx;
+  }
+  .wzw-info{
+    font-size: 22rpx;
+    color: #999999;
+    width: 690rpx;
+    margin: 0 auto;
+    height: 20rpx;
+    line-height: 20rpx;
+    margin-bottom: 86rpx;
+  }
+  .list-item{
+    width: 710rpx;
+    margin: 0 auto;
+    height: 118rpx;
+    border-bottom: 1px solid #E6E6E6;
+    box-sizing: border-box;
+  }
+  .list-item-q{
+    width: 150rpx;
+    height: 118rpx;
+    line-height: 118rpx;
+    font-size: 28rpx;
+    color: #333333;
+  }
+  .font-wzw{
+    font-size: 26rpx;
+    color: #777777;
+  }
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
+  }
 </style>
 <config>
   {
   "navigationBarTitleText": "添加优惠券",
   "navigationBarTextStyle": "black",
   "usingComponents": {
-  "icon": "~@/components/icon"
+  "icon": "~@/components/icon",
+  "modal": "~@/components/ModelComponents"
   }
   }
 </config>

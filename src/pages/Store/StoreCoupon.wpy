@@ -1,62 +1,87 @@
 <template>
   <div class="coupon-all">
-      <div class="coupon-item flex flex-justify-between">
-        <div class="item-left">
-          <icon
-            class="check-icon"
-            color="#F53636"
-            size="20"
-            type="iconblchecked"
-          ></icon>
-<!--          class="check-icon"-->
-<!--          :color="product.check?'#F53636':'#999'"-->
-<!--          size="20"-->
-<!--          :type="product.check?'iconblchecked':'iconCircle'"-->
-        </div>
-        <div class="item-right">
-            <image src="/static/coupon.png" class="full-img"></image>
-            <div class="time">有效限：2020-03-09至2020-04-30</div>
-            <div class="price flex">
-              <div class="font-32">¥</div>
-              <div class="font-70">50</div>
-              <div class="newuser">新用户专用</div>
-            </div>
-            <div class="right-q">优惠券</div>
-            <div class="right-w">全场满199可用</div>
-        </div>
+    <div class="coupon-item flex flex-justify-between"  v-for="(item,index) of couponList" :key="index">
+      <div class="item-left" @click="change(index)">
+        <icon
+          class="check-icon"
+          :color="item.check?'#F53636':'#999'"
+          size="20"
+          :type="item.check?'iconblchecked':'iconCircle'"
+        ></icon>
       </div>
+      <div class="item-right" @click="goEdit(item)">
+        <image src="/static/coupon.png" class="full-img"></image>
+        <div class="time">有效限：{{item.Coupon_StartTime}}至{{item.Coupon_EndTime}}</div>
+        <div class="price flex">
+          <div class="font-32">¥</div>
+          <div class="font-70">{{item.Coupon_Cash}}</div>
+          <div class="newuser">新用户专用</div>
+        </div>
+        <div class="right-q">{{item.Coupon_Subject}}</div>
+        <div class="right-w">全场满{{item.Coupon_Condition}}可用</div>
+      </div>
+    </div>
+    <div class="submits" @click="goAdd">
+      <icon type="iconadd" color="#00A8FF"  size="20"></icon>
+      添加优惠券
+    </div>
+    <div style="height: 80rpx;width: 750rpx"></div>
+    <div class="save">
+      确定
+    </div>
   </div>
 </template>
-
 <script>
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-
+  import {getCouponList} from '../../api/store'
+  import {linkTo, showLoading, hideLoading} from '../../common/fun'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      couponList: []
     },
     methods: {
-
+      goEdit(item){
+        let url='/pages/store/StoreCouponAdd?Coupon_ID='+item.Coupon_ID
+        linkTo(url)
+      },
+      goAdd() {
+        linkTo('/pages/store/StoreCouponAdd')
+      },
+      change(index) {
+        this.couponList[index].check = !this.couponList[index].check
+      },
+      init() {
+        let data = {
+          status: 1,
+          show: 2
+        }
+        showLoading('加载中')
+        getCouponList(data).then(res => {
+          let arr = res.data
+          this.couponList = arr.map(item => {
+            return {...item, check: false}
+          })
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      }
     },
-    created() {
-
+    onShow() {
+      this.init()
     }
-
   })
-
 </script>
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
   .full-img{width: 100%;height: 100%}
   .coupon-all{
     padding-top: 40rpx;
     min-height: 100vh;
+    box-sizing: border-box;
   }
   .coupon-item{
     height: 216rpx;
@@ -124,14 +149,39 @@
     top: 100rpx;
     right: 38rpx;
   }
+  .submits{
+    width: 276rpx;
+    height: 70rpx;
+    display: flex;
+    font-size: 28rpx;
+    color: #00A8FF;
+    margin:40rpx  auto 0rpx;
+    align-items: center;
+    justify-content: center;
+    border:1px solid rgba(0,168,255,1);
+    border-radius:6rpx;
+    margin-bottom: 80rpx;
+  }
+  .save{
+    height: 80rpx;
+    line-height: 80rpx;
+    text-align: center;
+    width: 750rpx;
+    background-color: #00A8FF;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+  }
 
 </style>
 <config>
   {
   "navigationBarTitleText": "优惠券赠送",
   "navigationBarTextStyle": "black",
-    "usingComponents": {
-    "icon": "~@/components/icon"
-    }
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
   }
 </config>
