@@ -55,8 +55,8 @@
             <div class="label">商品价格</div>
             <div class="content">
               <div class="flex flex-justify-center flex-vertical-center">
-                <input class="line-input" style="width: 210rpx" name="Products_PriceX" placeholder="请输入商品原价"  />
-                <input class="m-l-15 line-input" style="width: 210rpx" name="Products_PriceY" placeholder="请输入商品现价"  />
+                <input class="line-input" style="width: 210rpx" v-model="formData.Products_PriceX" placeholder="请输入商品原价"  />
+                <input class="m-l-15 line-input" style="width: 210rpx" v-model="formData.Products_PriceY" placeholder="请输入商品现价"  />
               </div>
             </div>
           </div>
@@ -69,11 +69,11 @@
               <div class="flex">
                 <div class="flex1 flex flex-vertical-center">
                   <span style="white-space: nowrap" class="c3 text-left p-r-10">拼购价</span>
-                  <input class="line-input" name="pintuan_pricex" placeholder="请输入拼购价"  />
+                  <input class="line-input" v-modal="formData.pintuan_pricex" placeholder="请输入拼购价"  />
                 </div>
                 <div class="flex1 flex flex-vertical-center" style="margin-left: 30rpx">
                   <span style="white-space: nowrap" class="c3 text-centert p-r-10">成团人数</span>
-                  <input class="line-input" name="pintuan_people" placeholder="请输入成团人数"  />
+                  <input class="line-input" v-model="formData.pintuan_people" placeholder="请输入成团人数"  />
                 </div>
               </div>
             </div>
@@ -84,7 +84,7 @@
           <div class="cell-item">
             <div class="label">库存</div>
             <div class="content">
-              <input name="Products_Count" placeholder="请输入商品库存" />
+              <input v-model="formData.Products_Count" placeholder="请输入商品库存" />
             </div>
           </div>
         </div>
@@ -122,21 +122,31 @@
           <div class="add-btn" @click="addSpecsRow"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加规格</span></div>
         </div>
 
-        <div class="group-cell">
+        <div class="group-cell" @click="openPop('descModel')">
           <div class="cell-item">
             <div class="label">产品简介</div>
-            <div class="content"></div>
+            <div class="content">
+
+            </div>
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
           </div>
         </div>
+
+        <modal ref="descModel" positions="top" radius="12rpx" :autoClose="false" >
+          <div class="p-20" style="width:600rpx;box-sizing: border-box;overflow: hidden;">
+            <textarea class="bor p-10" style="box-sizing: border-box;height:200px;width: 100%;" bindblur="bindDescAreaBlur" placeholder="请输入描述" />
+            <div style="width: 240rpx;height: 66rpx;line-height: 66rpx;border-radius: 6rpx; margin: 25px auto 0;" @click="closePop('descModel')" class="btn-primary text-center">保存数据</div>
+          </div>
+        </modal>
 
         <div class="group-cell">
           <div class="cell-item">
             <div class="label">重量</div>
             <div class="content">
-              <div class="flex flex-vertical-center"><input class="line-input" style="width: 210rpx" placeholder="请输入商品库存" /><span class="c9 fz-12 p-l-8">kg</span></div>
+              <div class="flex flex-vertical-center">
+                <input v-model="formData.Products_Weight" class="line-input" style="width: 210rpx" placeholder="请输入重量" /><span class="c9 fz-12 p-l-8">kg</span>
+              </div>
             </div>
-
           </div>
         </div>
 
@@ -176,7 +186,7 @@
           <div class="cell-item">
             <div class="label">销量</div>
             <div class="content">
-              <input placeholder="请输入商品销量" />
+              <input v-model="formData.Products_Sales" placeholder="请输入商品销量" />
             </div>
           </div>
           <div class="cell-item" @click="openPop('limitBuy')">
@@ -184,10 +194,9 @@
             <div class="content"></div>
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
           </div>
-          <div class="cell-item">
+          <div class="cell-item" @click="openPop('couponPop')">
             <div class="label">优惠券赠送</div>
             <div class="content">
-
             </div>
             <div class="right">
               <div class="flex-vertical-center flex"><span class="c9 fz-12">不赠送</span><icon type="iconarrowleft" color="#999"></icon></div>
@@ -216,9 +225,38 @@
           </div>
         </div>
         <div class="safearea-space"></div>
-        <button class="btn action-btn btn-primary">保存数据</button>
+        <button @click="subFn" class="btn action-btn btn-primary">保存数据</button>
       </form>
     </div>
+
+    <popup-layer ref="couponPop" title="选择优惠券" mainBgColor="#F7F4F8" >
+      <div class="coupon-wrap" style="overflow-y: scroll;box-sizing: border-box;" :style="{maxHeight: systemInfo.windowHeight-150+'px'}">
+        <div class="coupon-item flex flex-justify-between" @click="couponChange(index)"  v-for="(item,index) of couponList" :key="index">
+          <div class="item-left" >
+            <icon
+              class="check-icon"
+              :color="item.check?'#F53636':'#999'"
+              size="20"
+              :type="item.check?'iconblchecked':'iconCircle'"
+            ></icon>
+          </div>
+          <div class="item-right" >
+            <image src="/static/coupon.png" class="full-img"></image>
+            <div class="time">有效限：{{item.Coupon_StartTime}}至{{item.Coupon_EndTime}}</div>
+            <div class="price flex">
+              <div class="font-32">¥</div>
+              <div class="font-70">{{item.Coupon_Cash}}</div>
+              <div class="newuser">新用户专用</div>
+            </div>
+            <div class="right-q">{{item.Coupon_Subject}}</div>
+            <div class="right-w">全场满{{item.Coupon_Condition}}可用</div>
+          </div>
+        </div>
+        <div style="height: 100rpx;"></div>
+      </div>
+
+      <button @click="subFn" class="btn action-btn btn-primary">保存数据</button>
+    </popup-layer>
 
     <popup-layer ref="bizCatePop" title="平台分类" :autoClose="false">
       <div v-show="bizProdCateFormShow" style="width: 100%;height: 100%;left: 0;top: 0;position: fixed;background: rgba(0,0,0,.3);z-index:3;">
@@ -246,15 +284,13 @@
         >
         </fun-tree>
       </div>
-      <div>
+      <div class="p-t-10" style="display: flex;justify-content: center;">
         <div class="specs-action-box" style="margin:0;">
           <div class="add-btn" @click="bizProdCateFormShow=true"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4">添加</span></div>
         </div>
       </div>
       <button class="btn btn-primary m-t-35" @click="setBizCate">确认</button>
     </popup-layer>
-
-
 
     <popup-layer ref="systemCatePop" title="平台分类分类" :autoClose="false">
       <div v-if="bizIndustryList.length>0">
@@ -356,23 +392,23 @@
     </popup-layer>
 
     <popup-layer title="订单类型" ref="orderType" :autoClose="false">
-      <radio-group class="type-list p-l-10 p-r-10"  @change="setOrderType">
+      <radio-group class="type-list p-l-10 p-r-10"  @change="setprod_order_type">
         <label class="type-item flex flex-vertical-center bor-b">
-          <radio color="#00A8FF" value="0" :checked="formData.orderType === 0"></radio>
+          <radio color="#00A8FF" value="0" :checked="formData.prod_order_type === 0"></radio>
           <div class="label p-10">
             <div class="title m-b-4">实物订单</div>
             <div class="desc fz-12 c9">买家下单-买家付款-商家发货-买家收货-订单完成</div>
           </div>
         </label>
         <label class="type-item flex flex-vertical-center bor-b">
-          <radio color="#00A8FF" value="1" :checked="formData.orderType === 1"></radio>
+          <radio color="#00A8FF" value="1" :checked="formData.prod_order_type === 1"></radio>
           <div class="label p-10">
             <div class="title m-b-4">虚拟订单</div>
             <div class="desc fz-12 c9">买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成</div>
           </div>
         </label>
         <label class="type-item flex flex-vertical-center bor-b">
-          <radio color="#00A8FF" value="2" :checked="formData.orderType === 2"></radio>
+          <radio color="#00A8FF" value="2" :checked="formData.prod_order_type === 2"></radio>
           <div class="label p-10">
             <div class="title m-b-4">其他</div>
             <div class="desc fz-12 c9">买家下单-买家付款-订单完成</div>
@@ -426,7 +462,7 @@
             showImgSize
             showImgToolbar
             showImgResize
-            bindstatuschange="onEditorStatusChange"
+            @statuschange="onEditorStatusChange"
             :style="{maxHeight:systemInfo.windowHeight-150+'px'}" class="editor-instance" id="editor"></editor>
           <div>
             <div class="editor-add-btn" @click="addImgByEditor" ><icon color="#ddd" size="40" type="iconupload"></icon></div>
@@ -451,12 +487,10 @@
     getSystemProdConfig
   } from '../../api/product'
   import {
-    getShippingTemplate, bizIndustryList as getBizIndustryList, addBizProdCate
+    getShippingTemplate, bizIndustryList as getBizIndustryList, addBizProdCate, systemOperateProd, getCouponList, getBizProdCateList
   } from '../../api/store'
-  import {
-    getBizProdCateList
-  } from '../../api/store'
-  import { error, toast } from '../../common/fun'
+
+  import { error, toast, modal } from '../../common/fun'
 
   wepy.page({
     store,
@@ -470,6 +504,8 @@
         label: 'industry_name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
       },
+      systemCateHas: [], // 系统商品分类
+      bizCategoryHas: [], // 商家商品分类
       bizProdCateList: [],
       bizCateConf: {
         children: 'child', // 指定子树为节点对象的某个属性值
@@ -494,11 +530,33 @@
       cate_ids: '',
       imgs: [],
       specs: [1],
+      couponList: [],
       formData: {
+        Products_Index: 0,
+        Products_Name: '',
+        Products_Category: '', // 系统商品分类
+        Products_BizCategory: '', // 商家商品分类
+        Products_Sales: 0, // 销量
+        Products_PriceY: 0, // 原价
+        Products_PriceX: 0, // 现价,
+        pintuan_pricex: 0, // 拼团人数，>=2的整数
+        pintuan_pricex: 0, // 拼团价格
+        Products_Profit: 0, // 产品利润
+        Products_BriefDescription: '', // 产品描述
+        Products_Count: 0, // 库存
         Product_backup: null,
+        // 运费
         fee_type: 1,
         fix_fee: 0,
         shipping_temp: null,
+        Products_Weight: 0, // 重量
+        // 特殊属性
+        Products_SoldOut: 0, // 下架
+        Products_IsNew: 0, // 新品
+        Products_IsHot: 0, // 热卖
+        Products_IsRecommend: 0, // 推荐
+        one_hour_send: 0, // 一小时达
+
         prod_limit: {
           switch: 0,
           limit: {
@@ -506,13 +564,8 @@
             num: 0
           }
         },
-        Products_Name: '',
-        orderType: 0,
-        Products_SoldOut: 0, // 下架
-        Products_IsNew: 0, // 新品
-        Products_IsHot: 0, // 热卖
-        Products_IsRecommend: 0, // 推荐
-        one_hour_send: 0 // 一小时达
+
+        prod_order_type: 0// 订单类型
 
       }
     },
@@ -525,6 +578,136 @@
       }
     },
     methods: {
+      subFn() {
+      // if (this.cate_ids === '') {
+      //   error('请选择商品分类')
+      //   return
+      // }
+      // if (this.ruleForm.Products_Type == '' && this.ruleForm.Products_Type != 0) {
+      //   error('请选择商品类型')
+      //   return
+      // }
+        let productInfo = {
+          ...this.formData,
+          Products_Category: this.systemCateHas.join(','), // 平台分类
+          Products_BizCategory: this.bizProdCateList.join(','), // 商家自定义分类
+          Products_JSON: {ImgPath: this.imgs}, // 产品图片，json，格式：{"ImgPath":["....","...."]}
+          Products_Promise: this.promiseList.map(item => {
+            return {name: item}
+          })// 产品承诺
+
+        // pintuan_flag: this.formData.pintuan_flag ? '1' : '0', // 是否拼团
+        // Products_BriefDescription: this.formData.Products_BriefDescription, // 产品简介
+        // Products_Count: this.formData.Products_Count, // 库存
+        // Products_Type: this.formData.Products_Type, // 商品类型id
+        // Products_Weight: this.formData.Products_Weight, // 商品重量
+        // fee_type: this.formData.goods, // 运费选择
+        // prod_order_type: this.formData.orderType, // 订单类型
+        // Products_Description: this.editorText, // 富文本类型
+        // Product_backup: this.formData.refund, // 退货id
+        // platForm_Income_Reward: this.platForm_Income_Reward,
+        // nobi_ratio: this.nobi_ratio,
+        // area_Proxy_Reward: this.area_Proxy_Reward,
+        // sha_Reward: this.sha_Reward,
+        // commission_ratio: this.commission_ratio,
+        // manage_Reward: this.manage_Reward
+        }
+
+        this.editorInstance.getContents({
+          success: (res) => {
+            productInfo.Products_Description = res.html
+          },
+          fail: (err) => {
+            modal('获取商品详情失败:' + err.errMsg)
+          }
+        })
+        console.log(productInfo); return
+
+    // if (this.formData.orderType === 2) {
+    //   let arr = []
+    //   for (let item of this.multipleSelection) {
+    //     arr.push(item.Card_Id)
+    //   }
+    //   productInfo.virtual_card_ids = JSON.stringify(arr)
+    // }
+    // if (id) {
+    //   productInfo.prod_id = id
+    // }
+    // let arrPromise = []
+    // for (let item of this.Products_Promise) {
+    //   arrPromise.push({'name': item})
+    // }
+    // productInfo.Products_Promise = JSON.stringify(arrPromise)
+    //
+        if (this.formData.imgs.length < 1) {
+          error('商品主图不能为空')
+        } else {
+          productInfo.Products_JSON = JSON.stringify({'ImgPath': this.formData.imgs})
+        }
+
+      // 优惠券
+        if (this.selectValue.length > 0) {
+          productInfo.coupon_present = this.selectValue.join(',')
+        }
+
+        productInfo.video_url = this.video ? this.video : ''
+        productInfo.cover_url = this.imgs ? this.imgs : ''
+
+        for (let item of this.formData.otherAttributes) {
+          if (item === '下架') productInfo.Products_SoldOut = 1
+          if (item === '新品')productInfo.Products_IsNew = 1
+          if (item === '热卖')productInfo.Products_IsHot = 1
+          if (item === '推荐')productInfo.Products_IsRecommend = 1
+        }
+
+        if (this.formData.goods == 1) {
+        // 如果是免运费的话
+          productInfo.fix_fee = this.fix_fee
+        } else if (this.formData.goods == 2 && this.yunfei.length > 0) {
+          if (!this.shipping_temp) {
+            this.$message({
+              type: 'error',
+              message: `物流模板不能为空`
+            })
+            this.isLoading = false
+          }
+          productInfo.shipping_temp = this.shipping_temp
+        }
+
+        if (this.prodConfig.Payment_RmainderEnabled) {
+        // 如果可以设置余额支付
+          productInfo.Products_IsPaysBalance = this.formData.Products_IsPaysBalance ? '1' : '0'
+        }
+
+        if (this.formData.pintuan_flag) {
+        // 是拼团商品
+        // 转化时间
+          var d = new Date(this.formData.pintuan_end_time)
+          var date = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+          productInfo.pintuan_people = this.formData.pintuan_people
+          productInfo.pintuan_pricex = this.formData.pintuan_pricex
+          productInfo.pintuan_end_time = date
+        }
+
+        productInfo.prod_limit = JSON.stringify(prodObj)
+        productInfo.self_commi = this.self_commi
+        productInfo.parent_commi = this.parent_commi
+        productInfo.manage_commi = this.manage_commi
+
+        systemOperateProd(productInfo, {tip: '保存商品'}).then(res => {
+          toast('商品发布成功')
+        }).catch((err) => {
+          const {msg: errMsg = ''} = err
+          modal(errMsg, '商品发布失败')
+        })
+      },
+      couponChange(idx) {
+        this.$set(this.couponList[idx], 'check', !this.couponList[idx].check)
+      },
+      bindDescAreaBlur(e) {
+        const txt = e.$wx.detail.value
+        this.formData.Products_BriefDescription = txt
+      },
       addBizProdCate() {
         // this.$refs.addBizProdCate.show()
         if (!this.newBizProdCateText) {
@@ -542,15 +725,17 @@
           this._initBizProdCate()
         })
       },
-      setBizCate(){
+      setBizCate() {
         const checkNodeList = this.$refs.bizCateTree.getCheckedNodes()
         console.log(checkNodeList)
         this.closePop('bizCatePop')
+        this.formData.bizCategoryHas = getArrColumn(checkNodeList, 'id')
       },
       setSystemCate() {
         const checkNodeList = this.$refs.systemCateTree.getCheckedNodes()
         console.log(checkNodeList)
         this.closePop('systemCatePop')
+        this.formData.systemCateHas = getArrColumn(checkNodeList, 'id')
       },
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
@@ -624,115 +809,10 @@
         }
       },
       setOrderType(e) {
-        this.formData.orderType = parseInt(e.$wx.detail.value)
+        this.formData.prod_order_type = parseInt(e.$wx.detail.value)
       },
       addSpecsRow() {
         this.specs.push(null)
-      },
-      subFn() {
-        if (this.cate_ids === '') {
-          error('请选择商品分类')
-          return
-        }
-        if (this.ruleForm.Products_Type == '' && this.ruleForm.Products_Type != 0) {
-          error('请选择商品类型')
-          return
-        }
-        let productInfo = {
-    // Products_Index: this.formData.Products_Index, // 商品排序
-          Products_Name: this.formData.Products_Name, // 商品名称
-          Products_Category: this.cate_ids // 商品分类
-    // Products_Sales: this.formData.Products_Sales, // 虚拟销量
-    // Products_PriceY: this.formData.Products_PriceY, // 原价
-    // Products_PriceX: this.formData.Products_PriceX, // 现价
-    // pintuan_flag: this.formData.pintuan_flag ? '1' : '0', // 是否拼团
-    // Products_Profit: this.formData.Products_Profit, // 产品利润
-    // Products_BriefDescription: this.formData.Products_BriefDescription, // 产品简介
-    // Products_Count: this.formData.Products_Count, // 库存
-    // Products_Type: this.formData.Products_Type, // 商品类型id
-    // Products_Weight: this.formData.Products_Weight, // 商品重量
-    // fee_type: this.formData.goods, // 运费选择
-    // prod_order_type: this.formData.orderType, // 订单类型
-    // Products_Description: this.editorText, // 富文本类型
-    // Product_backup: this.formData.refund, // 退货id
-    // platForm_Income_Reward: this.platForm_Income_Reward,
-    // nobi_ratio: this.nobi_ratio,
-    // area_Proxy_Reward: this.area_Proxy_Reward,
-    // sha_Reward: this.sha_Reward,
-    // commission_ratio: this.commission_ratio,
-    // manage_Reward: this.manage_Reward
-        }
-        // if (this.formData.orderType === 2) {
-        //   let arr = []
-        //   for (let item of this.multipleSelection) {
-        //     arr.push(item.Card_Id)
-        //   }
-        //   productInfo.virtual_card_ids = JSON.stringify(arr)
-        // }
-        // if (id) {
-        //   productInfo.prod_id = id
-        // }
-        // let arrPromise = []
-        // for (let item of this.Products_Promise) {
-        //   arrPromise.push({'name': item})
-        // }
-        // productInfo.Products_Promise = JSON.stringify(arrPromise)
-        //
-        if (this.formData.imgs.length < 1) {
-          error('商品主图不能为空')
-        } else {
-          productInfo.Products_JSON = JSON.stringify({'ImgPath': this.formData.imgs})
-        }
-        //
-        // // 优惠券
-        // if (this.selectValue.length > 0) {
-        //   productInfo.coupon_present = this.selectValue.join(',')
-        // }
-        //
-        // productInfo.video_url = this.video ? this.video : ''
-        // productInfo.cover_url = this.imgs ? this.imgs : ''
-        //
-        // for (let item of this.formData.otherAttributes) {
-        //   if (item == '下架') productInfo.Products_SoldOut = 1
-        //   if (item == '新品')productInfo.Products_IsNew = 1
-        //   if (item == '热卖')productInfo.Products_IsHot = 1
-        //   if (item == '推荐')productInfo.Products_IsRecommend = 1
-        // }
-        //
-        // if (this.formData.goods == 1) {
-        //   // 如果是免运费的话
-        //   productInfo.fix_fee = this.fix_fee
-        // } else if (this.formData.goods == 2 && this.yunfei.length > 0) {
-        //   if (!this.shipping_temp) {
-        //     this.$message({
-        //       type: 'error',
-        //       message: `物流模板不能为空`
-        //     })
-        //     this.isLoading = false
-        //     return
-        //   }
-        //   productInfo.shipping_temp = this.shipping_temp
-        // }
-        //
-        // if (this.prodConfig.Payment_RmainderEnabled) {
-        //   // 如果可以设置余额支付
-        //   productInfo.Products_IsPaysBalance = this.formData.Products_IsPaysBalance ? '1' : '0'
-        // }
-        //
-        // if (this.formData.pintuan_flag) {
-        //   // 是拼团商品
-        //   // 转化时间
-        //   var d = new Date(this.formData.pintuan_end_time)
-        //   var date = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
-        //   productInfo.pintuan_people = this.formData.pintuan_people
-        //   productInfo.pintuan_pricex = this.formData.pintuan_pricex
-        //   productInfo.pintuan_end_time = date
-        // }
-        //
-        // productInfo.prod_limit = JSON.stringify(prodObj)
-        // productInfo.self_commi = this.self_commi
-        // productInfo.parent_commi = this.parent_commi
-        // productInfo.manage_commi = this.manage_commi
       },
       bindThumbClick(idx, img) {
         wx.showActionSheet({
@@ -843,9 +923,12 @@
         }).then(res => {
           this.bizIndustryList = res.data
         })
+
+        getCouponList().then(res => {
+          this.couponList = res.data
+        })
       }
     },
-
     onReady() {
       let that = this
       wx.createSelectorQuery().select('#editor').context(function (res) {
@@ -993,6 +1076,76 @@
   }
 
 
+  .coupon-wrap{
+    .full-img{width: 100%;height: 100%}
+    .coupon-item{
+      height: 216rpx;
+      margin-bottom: 30rpx;
+      padding-right: 26rpx;
+    }
+    .item-left{
+      width: 90rpx;
+      height: 216rpx;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .item-right{
+      position: relative;
+      width: 634rpx;
+      height: 216rpx;
+      .time{
+        position:absolute;
+        left: 48rpx;
+        bottom: 24rpx;
+        font-size: 24rpx;
+        color: #999999;
+      }
+    }
+    .font-32{
+      font-size: 32rpx;
+      color: #FF0042;
+    }
+    .font-70{
+      font-size: 70rpx;
+      color: #FF0042;
+      line-height: 56rpx;
+      margin-left: 14rpx;
+    }
+    .price{
+      position: absolute;
+      align-items: flex-end;
+      height: 56rpx;
+      left: 48rpx;
+      bottom: 100rpx;
+    }
+    .newuser{
+      font-size: 18rpx;
+      color: #FFA27A;
+      width: 124rpx;
+      height: 34rpx;
+      border: 1px solid #FFA27A;
+      text-align: center;
+      line-height: 34rpx;
+      margin-left: 24rpx;
+      margin-bottom: 20rpx;
+    }
+    .right-q{
+      font-size: 30rpx;
+      color: #1D1D1D;
+      position: absolute;
+      top: 52rpx;
+      right: 38rpx;
+    }
+    .right-w{
+      font-size: 24rpx;
+      color: #999999;
+      position: absolute;
+      top: 100rpx;
+      right: 38rpx;
+    }
+
+  }
 
 </style>
 <config>

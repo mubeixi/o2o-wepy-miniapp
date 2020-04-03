@@ -11,23 +11,19 @@
   }
 
   .popup-content {
-    //padding: 10px;
     position: fixed;
     z-index: 100;
-    /*background-color: #FFFFFF;*/
-    //transition: all .3s ease;
     overflow: hidden;
-    // border:1px solid red;
-    //border-radius: 6px;
-    /*left: 0;*/
   }
   .center {
     top: 50%;
+    left:50%;
     transform: translate(-50%, -50%);
   }
 
   .top {
     top: 10%;
+    left:50%;
     transform: translate(-50%);
   }
   .bottom{
@@ -36,13 +32,9 @@
 
 </style>
 <template>
-  <div>
-    <div v-show="ifshow" @tap="ableClose" @touchmove.stop.prevent class="popup-layer"
-          :style="{backgroundColor:bgColor}"></div>
-    <div @touchmove.stop.prevent v-show="ifshow"
-          :class="[positions==='top'?'top':'center']"
-          :style="{backgroundColor:mainBgColor}"
-          ref="popRef" class="popup-content bottom" @tap.stop="stopEvent">
+  <div v-if="ifshow">
+    <div  @tap="ableClose" @touchmove.stop.prevent class="popup-layer" :style="{backgroundColor:bgColor}"></div>
+    <div @touchmove.stop.prevent :class="[positions]" :style="{backgroundColor:mainBgColor,borderRadius:radius?radius:''}" ref="popRef" class="popup-content" @tap.stop="stopEvent">
       <slot></slot>
     </div>
   </div>
@@ -67,20 +59,28 @@
         type: Boolean,
         default: false
       },
+      radius:{
+        type: String,
+        default: '0px'
+      },
       autoClose: {
         type: Boolean,
         default: true
       }
     },
     data: {
-      ifshow:false
+      ifshow: false
     },
-    mounted() {
+    ready() {
+      console.log(this.positions)
       if (this.showPop) {
         this.show()
       }
     },
     watch: {
+      positions(newVal) {
+        console.log(newVal)
+      },
       showPop(value) {
         console.log(value)
         if (value) {
