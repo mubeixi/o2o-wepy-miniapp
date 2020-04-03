@@ -212,6 +212,16 @@ export const validateFun = (data, rule) => {
   const rt = wx.$validate(data, rule)
   return rt === undefined ? true : rt
 }
+/**
+ * 简单值校验
+ * @param data
+ * @param rule
+ * @returns {*}
+ */
+export const validateSignFun = (val, rule) => {
+  const rt = wx.$validate.single(val, rule)
+  return rt === undefined ? true : rt
+}
 
 /**
  * 传入一个数组对象和一个符号
