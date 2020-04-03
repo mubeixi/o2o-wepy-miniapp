@@ -201,7 +201,7 @@
         </div>
       </div>
 
-      <button class="actions-subbtn">提交</button>
+      <button class="actions-subbtn"  @click="$back()">提交</button>
 
     </form>
 
