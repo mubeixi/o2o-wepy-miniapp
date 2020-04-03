@@ -8,7 +8,7 @@
         </div>
         <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>
       </div>
-      <div class="channel-item" @click="$linkTo('/pages/Store/SameCityDelivery')">
+      <div class="channel-item" @click="$linkTo('/pages/store/SameCityDelivery')">
         <div class="content">
           <image src="/static/logistics/cheng.png" class="img"></image>
           <div class="title">同城配送</div>

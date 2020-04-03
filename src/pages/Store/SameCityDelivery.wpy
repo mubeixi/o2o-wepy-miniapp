@@ -206,7 +206,7 @@
     },
     methods: {
       goUpda(item) {
-        let url = '/pages/Store/SameCityUpda?type=' + item
+        let url = '/pages/store/SameCityUpda?type=' + item
         linkTo(url)
       },
       switch1Changes(item, it) {
