@@ -10,7 +10,6 @@ export class TreeHub {
   ENV = null
   eid = ''
   constructor(options) {
-    console.log(options)
     const {treeData, nodeKey, eid, has = [],childrenName} = options
     if (!nodeKey) {
       throw Error('nodeKey必须设置')
@@ -27,7 +26,6 @@ export class TreeHub {
     //has
     if (has.length > 0) {
       for (let i in nodes) {
-        console.log(nodes[i][nodeKey])
         if (has.includes(nodes[i][nodeKey])) {
           nodes[i].check = true
         }
@@ -46,9 +44,7 @@ export class TreeHub {
 
   static addCheck(eid, item, key) {
     let nodes = ls.get(eid)
-
     const idx = findArrayIdx(nodes, {[key]: item[key]})
-
     // 得不存在，才能加入
     if (idx !== false) {
       nodes[idx].check = true

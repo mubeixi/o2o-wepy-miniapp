@@ -42,7 +42,7 @@
           </div>
         </div>
 
-        <div class="group-cell">
+        <div class="group-cell" @click="openPop('systemCatePop')">
           <div class="cell-item">
             <div class="label">平台分类</div>
             <div class="content"></div>
@@ -148,14 +148,13 @@
           </div>
         </div>
 
-        <div class="group-cell">
+        <div class="group-cell" @click="openPop('bizCatePop')">
           <div class="cell-item">
             <div class="label">自定义分类</div>
             <div class="content"></div>
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
           </div>
         </div>
-
 
         <div class="group-cell" @click="openPop('promise')">
           <div class="cell-item">
@@ -202,18 +201,6 @@
               </div>
           </div>
 
-          <popup-layer ref="back">
-            <div class="head flex flex-justify-between flex-vertical-center">
-              <div class="c9 p-15 " @click="closePop('back')">取消</div>
-              <div class="c3 p-15" @click="bindShopDamageChange">确认</div>
-            </div>
-            <picker-view indicator-style="height: 40px;" :style="{ height: shopDamageList.length*40+'px'}" style="width: 100%;" :value="shopDamageIdx"  @change="bindShopDamageIdxChange">
-              <picker-view-column>
-                <view style="line-height: 40px;text-align: center;font-size: 14px;"  v-for="(item,idx) in shopDamageList">{{item.Damage_Name}}年</view>
-              </picker-view-column>
-            </picker-view>
-          </popup-layer>
-
           <div class="cell-item" @click="openPop('fee')">
             <div class="label">运费</div>
             <div class="content">
@@ -232,6 +219,70 @@
         <button class="btn action-btn btn-primary">保存数据</button>
       </form>
     </div>
+
+    <popup-layer ref="bizCatePop" title="平台分类" :autoClose="false">
+      <div v-show="bizProdCateFormShow" style="width: 100%;height: 100%;left: 0;top: 0;position: fixed;background: rgba(0,0,0,.3);z-index:3;">
+        <div class="posi" style="width: 426rpx;overflow: hidden;background: white;border-radius: 6rpx;box-sizing: border-box;padding: 20rpx;">
+          <div class="text-center c3">添加分类</div>
+          <div style="margin: 48rpx auto;">
+            <input style="width: 340rpx;height: 66rpx;padding: 0 20rpx;box-sizing: border-box;line-height: 66rpx;" class="bor fz-14" v-model="newBizProdCateText" placeholder="请填写新分类名称" />
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between">
+            <div @click="bizProdCateFormShow=false" style="width: 144rpx;height: 50rpx;line-height: 50rpx;border-radius: 25rpx;" class="btn-cancel text-center fz-14">取消</div>
+            <div @click="addBizProdCate" style="width: 144rpx;height: 50rpx;line-height: 50rpx;border-radius: 25rpx;" class="btn-primary text-center fz-14">确定</div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="bizProdCateList.length>0">
+        <fun-tree
+          ele-id="prodBizCate"
+          ref="bizCateTree"
+          :conf="bizCateConf"
+          :show-checkbox="true"
+          :check-only-leaf="true"
+          :tree-data="bizProdCateList"
+          nodeKey="id"
+        >
+        </fun-tree>
+      </div>
+      <div>
+        <div class="specs-action-box" style="margin:0;">
+          <div class="add-btn" @click="bizProdCateFormShow=true"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4">添加</span></div>
+        </div>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="setBizCate">确认</button>
+    </popup-layer>
+
+
+
+    <popup-layer ref="systemCatePop" title="平台分类分类" :autoClose="false">
+      <div v-if="bizIndustryList.length>0">
+        <fun-tree
+          ele-id="prodSystemCate"
+          ref="systemCateTree"
+          :conf="systemCateConf"
+          :show-checkbox="true"
+          :check-only-leaf="true"
+          :tree-data="bizIndustryList"
+          nodeKey="id"
+        >
+        </fun-tree>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="setSystemCate">确认</button>
+    </popup-layer>
+
+    <popup-layer ref="back">
+      <div class="head flex flex-justify-between flex-vertical-center">
+        <div class="c9 p-15 " @click="closePop('back')">取消</div>
+        <div class="c3 p-15" @click="bindShopDamageChange">确认</div>
+      </div>
+      <picker-view indicator-style="height: 40px;" :style="{ height: shopDamageList.length*40+'px'}" style="width: 100%;" :value="shopDamageIdx"  @change="bindShopDamageIdxChange">
+        <picker-view-column>
+          <view style="line-height: 40px;text-align: center;font-size: 14px;"  v-for="(item,idx) in shopDamageList">{{item.Damage_Name}}年</view>
+        </picker-view-column>
+      </picker-view>
+    </popup-layer>
 
     <popup-layer title="运费" ref="fee" :autoClose="false">
       <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
@@ -400,14 +451,31 @@
     getSystemProdConfig
   } from '../../api/product'
   import {
-    getShippingTemplate
+    getShippingTemplate, bizIndustryList as getBizIndustryList, addBizProdCate
   } from '../../api/store'
-  import { error } from '../../common/fun'
+  import {
+    getBizProdCateList
+  } from '../../api/store'
+  import { error, toast } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      bizProdCateFormShow: false,
+      newBizProdCateText: '',
+      bizIndustryList: [],
+      systemCateConf: {
+        children: 'child', // 指定子树为节点对象的某个属性值
+        label: 'industry_name', // 指定节点标签为节点对象的某个属性值
+        disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
+      },
+      bizProdCateList: [],
+      bizCateConf: {
+        children: 'child', // 指定子树为节点对象的某个属性值
+        label: 'cate_name', // 指定节点标签为节点对象的某个属性值
+        disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
+      },
       shopDamageIdx: 0,
       shopDamageList: [],
       shippingTmplIdx: 0,
@@ -457,6 +525,33 @@
       }
     },
     methods: {
+      addBizProdCate() {
+        // this.$refs.addBizProdCate.show()
+        if (!this.newBizProdCateText) {
+          error('标题名不为空')
+          return
+        }
+        const data = {
+          pid: 0, // 这个页面只支持新增一级
+          cate_name: this.newBizProdCateText
+        }
+        addBizProdCate(data).then(res => {
+          toast('添加成功')
+          this.newBizProdCateText = ''
+          this.bizProdCateFormShow = false
+          this._initBizProdCate()
+        })
+      },
+      setBizCate(){
+        const checkNodeList = this.$refs.bizCateTree.getCheckedNodes()
+        console.log(checkNodeList)
+        this.closePop('bizCatePop')
+      },
+      setSystemCate() {
+        const checkNodeList = this.$refs.systemCateTree.getCheckedNodes()
+        console.log(checkNodeList)
+        this.closePop('systemCatePop')
+      },
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
         this.formData.fee_type = feeType
@@ -467,7 +562,7 @@
           this.formData.fix_fee = 0
         }
       },
-      bindShopDamageChange(){
+      bindShopDamageChange() {
         const idx = this.shopDamageIdx
         this.formData.Product_backup = this.shopDamageList[idx].Damage_ID
         this.closePop('back')
@@ -475,7 +570,7 @@
       bindShopDamageIdxChange(e) {
         const idx = e.$wx.detail.value
         this.shopDamageIdx = idx
-        //this.formData.Product_backup = this.shopDamageList[idx].Damage_ID
+        // this.formData.Product_backup = this.shopDamageList[idx].Damage_ID
       },
       bindShippingTmplChange(e) {
         const idx = e.$wx.detail.value
@@ -714,6 +809,33 @@
         this.imgs = this.imgs.concat(ossUrls)
 
         this._click = false
+      },
+      _initBizProdCate() {
+        getBizProdCateList({return_type: 'tree'}, {tip: '获取商家分类'}).then(res => {
+          this.bizProdCateList = res.data
+        })
+      },
+      async _init_func() {
+        getSystemProdConfig({}).then(res => {
+          const {prod_limit_type = [], shop_damage = []} = res.data
+          this.PROD_LIMIT_TYPE = prod_limit_type
+          this.shopDamageList = shop_damage
+          this._default = res.data
+        }).catch(() => {
+          error('获取商品公共配置失败')
+        })
+
+        getShippingTemplate().then(res => {
+          this.shippingTmplList = res.data
+        })
+
+        this._initBizProdCate()
+
+        getBizIndustryList({
+          return_type: 'tree'
+        }).then(res => {
+          this.bizIndustryList = res.data
+        })
       }
     },
 
@@ -724,18 +846,7 @@
       }).exec()
     },
     onShow() {
-      getSystemProdConfig({}).then(res => {
-        const {prod_limit_type = [], shop_damage = []} = res.data
-        this.PROD_LIMIT_TYPE = prod_limit_type
-        this.shopDamageList = shop_damage
-        this._default = res.data
-      }).catch(() => {
-        error('获取商品公共配置失败')
-      })
-
-      getShippingTemplate().then(res => {
-        this.shippingTmplList = res.data
-      })
+      this._init_func()
     }
   })
 </script>
@@ -884,7 +995,9 @@
     "usingComponents": {
       "err-msg": "~@/components/err-msg",
       "icon": "~@/components/icon",
-      "popup-layer": "~@/components/popup-layer"
+      "fun-tree": "~@/components/fun-tree",
+      "popup-layer": "~@/components/popup-layer",
+      "modal": "~@/components/ModelComponents"
     }
   }
 </config>

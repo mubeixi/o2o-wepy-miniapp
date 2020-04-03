@@ -38,3 +38,8 @@ export const getCouponList = (param, options) => fetch({act: 'getCouponList', pa
 
 // 获取优惠券列表
 export const getUserLevel = (param, options) => fetch({act: 'getUserLevel', param, options})
+
+// 获取商家自定义分类
+export const getBizProdCateList = (param, options) => fetch({act: 'bizProdCateList', param, options})
+
+export const addBizProdCate = (param, options) => fetch({act: 'addBizProdCate', param, options})
