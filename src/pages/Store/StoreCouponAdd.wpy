@@ -185,6 +185,7 @@
     },
     onLoad(options) {
 
+
       if (options.Coupon_ID) {
         this.Coupon_ID = options.Coupon_ID
       }
@@ -194,6 +195,9 @@
       this.dateTimeArray2 = obj1.dateTimeArray
       this.dateTime2 = obj1.dateTime
       this.init()
+
+
+
     },
     methods: {
       changeDateTime2(e) {
@@ -224,9 +228,8 @@
       },
       saveCoupon() {
         showLoading()
-        let startTime = this.dateTimeArray1[0][this.dateTime1[0]].substr(0, this.dateTimeArray1[0][this.dateTime1[0]].length - 1) + '-' + this.dateTimeArray1[1][this.dateTime1[1]].substr(0, this.dateTimeArray1[1][this.dateTime1[1]].length - 1) + '-' + this.dateTimeArray1[2][this.dateTime1[2]].substr(0, this.dateTimeArray1[2][this.dateTime1[2]].length - 1) + ' ' + this.dateTimeArray1[3][this.dateTime1[3]].substr(0, this.dateTimeArray1[3][this.dateTime1[3]].length - 1) + ':' + this.dateTimeArray1[4][this.dateTime1[4]].substr(0, this.dateTimeArray1[4][this.dateTime1[4]].length - 1) + ':' + this.dateTimeArray1[5][this.dateTime1[5]].substr(0, this.dateTimeArray1[5][this.dateTime2[5]].length - 1)
-
-        let endTime = this.dateTimeArray2[0][this.dateTime2[0]].substr(0, this.dateTimeArray2[0][this.dateTime2[0]].length - 1) + '-' + this.dateTimeArray2[1][this.dateTime2[1]].substr(0, this.dateTimeArray2[1][this.dateTime2[1]].length - 1) + '-' + this.dateTimeArray2[2][this.dateTime2[2]].substr(0, this.dateTimeArray2[2][this.dateTime2[2]].length - 1) + ' ' + this.dateTimeArray2[3][this.dateTime2[3]].substr(0, this.dateTimeArray2[3][this.dateTime2[3]].length - 1) + ':' + this.dateTimeArray2[4][this.dateTime2[4]].substr(0, this.dateTimeArray2[4][this.dateTime2[4]].length - 1) + ':' + this.dateTimeArray2[5][this.dateTime2[5]].substr(0, this.dateTimeArray2[5][this.dateTime2[5]].length - 1)
+        let startTime = parseInt(this.dateTimeArray1[0][this.dateTime1[0]]) + '-' + parseInt(this.dateTimeArray1[1][this.dateTime1[1]]) + '-' + parseInt(this.dateTimeArray1[2][this.dateTime1[2]]) + ' ' + parseInt(this.dateTimeArray1[3][this.dateTime1[3]]) + ':' + parseInt(this.dateTimeArray1[4][this.dateTime1[4]]) + ':' + parseInt(this.dateTimeArray1[5][this.dateTime1[5]])
+        let endTime = parseInt(this.dateTimeArray2[0][this.dateTime2[0]]) + '-' + parseInt(this.dateTimeArray2[1][this.dateTime2[1]]) + '-' + parseInt(this.dateTimeArray2[2][this.dateTime2[2]]) + ' ' + parseInt(this.dateTimeArray2[3][this.dateTime2[3]]) + ':' + parseInt(this.dateTimeArray2[4][this.dateTime2[4]]) + ':' + parseInt(this.dateTimeArray2[5][this.dateTime2[5]])
 
         let data = {
           Coupon_Subject: this.Coupon_Subject,
@@ -352,6 +355,38 @@
                 this.index = String(item.Coupon_UsedTimes)
                 this.Coupon_UserLevel = String(item.Coupon_UserLevel)
                 this.front_show = item.front_show
+
+                //初始化开始时间
+                let date =item.Coupon_StartTime
+                var defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()
+                let arr = []
+                for (let j = 0; j < this.dateTimeArray1.length; j++) {
+                  for (let i = 0; i < this.dateTimeArray1[j].length; i++) {
+                    if (parseInt(this.dateTimeArray1[j][i]) == defaultDate[j]) {
+                      arr.push(i)
+                    }
+                  }
+                }
+                //初始化结束时间
+                let dates =item.Coupon_EndTime
+                var defaultDates = dates ? [...dates.split(' ')[0].split('-'), ...dates.split(' ')[1].split(':')] : getNewDateArry()
+                let arrs = []
+                for (let j = 0; j < this.dateTimeArray2.length; j++) {
+                  for (let i = 0; i < this.dateTimeArray2[j].length; i++) {
+                    if (parseInt(this.dateTimeArray2[j][i]) == defaultDate[j]) {
+                      arrs.push(i)
+                    }
+                  }
+                }
+
+                this.startTime=arr
+                this.dateTime1=arr
+                this.endTime=arrs
+                this.dateTime2=arrs
+                console.log(arr,arrs,"sss")
+
+
+
               }
             }
           })
