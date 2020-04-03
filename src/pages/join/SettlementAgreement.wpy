@@ -9,7 +9,7 @@
     </div>
 
 
-    <div class="submit">
+    <div class="submit" @click="$back()">
       签署
     </div>
 

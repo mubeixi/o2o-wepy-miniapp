@@ -126,25 +126,25 @@ wepy.app({
                 "text": "发现"
             },
             {
-                "pagePath": "pages/product/ProductManager",
+                "pagePath": "pages/index",
                 "iconPath": "/static/tabbar/live.png",
                 "selectedIconPath": "/static/tabbar/live.png",
                 "text": "商品管理"
             },
             {
-                "pagePath": "pages/store/StoreSetting",
+                "pagePath": "pages/index",
                 "iconPath": "/static/tabbar/praise.png",
                 "selectedIconPath": "/static/tabbar/praise.png",
                 "text": "店铺设置"
             },
             {
-                "pagePath": "pages/join/BusinessStation",
+                "pagePath": "pages/index",
                 "iconPath": "/static/tabbar/notify.png",
                 "selectedIconPath": "/static/tabbar/notify.png",
                 "text": "入驻"
             },
             {
-                "pagePath": "pages/store/StoreInfo",
+                "pagePath": "pages/index",
                 "iconPath": "/static/tabbar/user.png",
                 "selectedIconPath": "/static/tabbar/user.png",
                 "text": "店铺信息"

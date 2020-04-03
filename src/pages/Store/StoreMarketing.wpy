@@ -10,7 +10,7 @@
           <image src="/static/marketing/kill.png" class="img"></image>
           <div class="title">秒杀</div>
         </div>
-        <div class="feature-item">
+        <div class="feature-item" @click="$linkTo('/pages/store/StoreCoupon')">
           <image src="/static/marketing/coupon.png" class="img"></image>
           <div class="title">优惠券</div>
         </div>

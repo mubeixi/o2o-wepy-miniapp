@@ -32,6 +32,8 @@ export const modal = (content = '', title = '提示') => {
   })
 }
 
+export const back = () => wx.navigateBack()
+
 export const linkTo = (url, type = 'default') => {
   if (type === 'default') {
     wx.navigateTo({
