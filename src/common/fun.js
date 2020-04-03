@@ -25,6 +25,13 @@ export const error = (title, icon, duration) => {
   }
 }
 
+export const modal = (content = '', title = '提示') => {
+  wx.showModal({
+    title: title,
+    content: content
+  })
+}
+
 export const linkTo = (url, type = 'default') => {
   if (type === 'default') {
     wx.navigateTo({
