@@ -20,6 +20,7 @@
     "@wepy/x": "^2.0.2",
     "miniprogram-slide-view": "0.0.3",
     "moment": "^2.24.0",
+    "validate": "^5.1.0",
     "validate.js": "^0.13.1"
   },
   "devDependencies": {

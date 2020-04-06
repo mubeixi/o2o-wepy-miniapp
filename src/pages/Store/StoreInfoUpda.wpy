@@ -66,139 +66,138 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getBizInfo,opBizInfo,bizRegSms} from  '../../api/store'
-  import  {showLoading,hideLoading} from '../../common/fun'
+  import {getBizInfo, opBizInfo, bizRegSms} from '../../api/store'
+  import {showLoading, hideLoading} from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-        info:{},
-        type:-1,
-      biz_shop_name:'',
-      biz_name:'',
-      mobile:'',
-      biz_mobile:'',//手机号
-      sms_code:'',//验证码
+      info: {},
+      type: -1,
+      biz_shop_name: '',
+      biz_name: '',
+      mobile: '',
+      biz_mobile: '', // 手机号
+      sms_code: '', // 验证码
       countdownStatus: false, // 是否开启倒计时了
-      countdownNum: 60,
+      countdownNum: 60
     },
-    onLoad(options){
-      this.type=options.type
-      if(this.type==1){
+    onLoad(options) {
+      this.type = options.type
+      if (this.type == 1) {
         wx.setNavigationBarTitle({
           title: '修改店铺名称'
         })
       }
-      if(this.type==3){
+      if (this.type == 3) {
         wx.setNavigationBarTitle({
           title: '修改店铺地址'
         })
       }
-      if(this.type==4){
+      if (this.type == 4) {
         wx.setNavigationBarTitle({
           title: '修改联系人'
         })
       }
-      if(this.type==5){
+      if (this.type == 5) {
         wx.setNavigationBarTitle({
           title: '修改手机号码'
         })
       }
       showLoading('加载中')
     },
-    methods:{
-      //保存信息
-      saveAll(){
-        let data={
-          biz_shop_name:this.biz_shop_name,
-          biz_name:this.biz_name
+    methods: {
+      // 保存信息
+      saveAll() {
+        let data = {
+          biz_shop_name: this.biz_shop_name,
+          biz_name: this.biz_name
         }
-        opBizInfo(data).then(res=>{
+        opBizInfo(data).then(res => {
           wx.showToast({
-            title:'修改成功',
-            icon:"success"
+            title: '修改成功',
+            icon: 'success'
           })
-          setTimeout(()=>{
+          setTimeout(() => {
             wx.navigateBack({
               delta: 1
             })
-          },1000)
-
+          }, 1000)
         })
       },
-      confirms(){
-        if(!(/^1[3456789]\d{9}$/.test(this.biz_mobile))){
+      confirms() {
+        if (!(/^1[3456789]\d{9}$/.test(this.biz_mobile))) {
           wx.showToast({
-            title:'手机号输入错误，请重新输入',
-            icon:"none"
+            title: '手机号输入错误，请重新输入',
+            icon: 'none'
           })
-          return;
+          return
         }
-        if(!this.sms_code){
+        if (!this.sms_code) {
           wx.showToast({
-            title:'验证码不能为空',
-            icon:"none"
+            title: '验证码不能为空',
+            icon: 'none'
           })
-          return;
+          return
         }
-        let data={
-          biz_mobile:this.biz_mobile,
-          sms_code:this.sms_code
+        let data = {
+          biz_mobile: this.biz_mobile,
+          sms_code: this.sms_code
         }
-        opBizInfo(data).then(res=>{
+        opBizInfo(data).then(res => {
           wx.showToast({
-            title:'修改成功',
-            icon:"success"
+            title: '修改成功',
+            icon: 'success'
           })
-          setTimeout(()=>{
+          setTimeout(() => {
             wx.navigateBack({
               delta: 1
             })
-          },1000)
+          }, 1000)
         })
       },
       startCountdown() {
-        //倒计时
-        this.countdownStatus = true;
+        // 倒计时
+        this.countdownStatus = true
         const countdownInterval = setInterval(() => {
-          if (this.countdownNum > 0) this.countdownNum--;
+          if (this.countdownNum > 0) this.countdownNum--
           else {
-            clearInterval(countdownInterval);
-            this.countdownNum = 60;
-            this.countdownStatus = false;
+            clearInterval(countdownInterval)
+            this.countdownNum = 60
+            this.countdownStatus = false
           }
-        }, 1000);
+        }, 1000)
       },
       // 获取验证码
-      getCode(){
-        if(this.countdownStatus) {return;}
-        console.log("ssss")
-        let isMobileOK = /^1(3|5|6|7|8|9)[0-9]{9}$/.test(this.biz_mobile);
-        if(!isMobileOK) {
+      getCode() {
+        if (this.countdownStatus) { return }
+        console.log('ssss')
+        let isMobileOK = /^1(3|5|6|7|8|9)[0-9]{9}$/.test(this.biz_mobile)
+        if (!isMobileOK) {
           wx.showToast({
             title: '手机号格式不正确',
             icon: 'none'
-          });
-          return;
+          })
+          return
         }
         bizRegSms({
           mobile: this.biz_mobile
-        }).then(res=>{
+        }).then(res => {
           wx.showToast({
             title: '验证码已发送',
             icon: 'success'
-          });
-          this.startCountdown();
+          })
+          this.startCountdown()
         })
       },
-      getBizInfo(){
-        getBizInfo().then(res=>{
+      getBizInfo() {
+        getBizInfo().then(res => {
           hideLoading()
-          this.info=res.data
-          this.biz_shop_name=this.info.biz_shop_name
-          this.biz_name=this.info.biz_name
-          this.mobile=this.info.biz_mobile
+          this.info = res.data
+          this.biz_shop_name = this.info.biz_shop_name
+          this.biz_name = this.info.biz_name
+          this.mobile = this.info.biz_mobile
         })
       }
     },

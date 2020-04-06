@@ -42,7 +42,7 @@
 <!--    </div>-->
     <div v-for="(row,idx) in errs" class="item" :key="idx">
 
-        <div class="row" ><span class="p-r-4">*</span><span>{{row}}</span></div>
+        <div class="row" ><span class="p-r-4">*</span><span>{{row.message || row}}</span></div>
 
     </div>
   </div>
@@ -61,6 +61,7 @@
     },
     watch: {
       errs(newVal) {
+        // console.log(JSON.stringify(newVal))
         if (this.errs && Array.isArray(newVal) && newVal.length > 0) {
           this.show = true
           setTimeout(() => {
