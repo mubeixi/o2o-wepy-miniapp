@@ -47,3 +47,6 @@ export const addBizProdCate = (param, options) => fetch({act: 'addBizProdCate', 
 
 // 商家注册
 export const bizReg = (param, options) => fetch({act: 'bizReg', param, options})
+
+// 获取商家配置
+export const getBizConfig = (param, options) => fetch({act: 'getBizConfig', param, options})
