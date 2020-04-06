@@ -9,3 +9,4 @@ export const bizLogin = (param, options) => fetch({act: 'bizLogin', param, optio
 
 // 用户登出
 export const bizLogout = (param, options) => fetch({act: 'bizLogout', param, options})
+

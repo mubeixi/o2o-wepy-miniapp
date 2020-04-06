@@ -6,9 +6,9 @@
         <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
       <div class="action" >
-        <div v-if="info.entry_process.is_auth==1" class="validate"><span class="tip">已认证</span><icon class="iconfont" type="iconrenzheng"></icon></div>
-        <div v-else class="no-validate"><span class="tip">未认证</span><icon class="iconrenzheng" type="iconrenzheng"></icon></div>
-        <icon type="iconarrowleft" class="iconarrowleft"></icon>
+        <div v-if="info.entry_process.is_auth==1" class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
+        <div v-else class="no-validate"><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+        <icon type="iconarrowleft"  class="iconarrowleft"></icon>
       </div>
     </div>
 

@@ -10,30 +10,7 @@ import wepy from '@wepy/core'
 import vuex from '@wepy/x'
 wepy.use(vuex)
 
-const validate = require('validate.js')
-validate.options = {
-  format: 'flat', // 简单模式返回错误信息
-  fullMessages: false // 不要在错误提示前面自动加变量名
-}
-validate.validators.ismust =  function(value, options, key, attributes) {
-  // console.log(value)
-  // console.log(options)
-  // console.log(key)
-  // console.log(attributes)
-  if (validate.isEmpty(value)) {
-    let {label = ''} = options
-    if (!label)label = key
-    return `${label}不能为空`
-  }
 
-  return undefined
-}
-// 必报错，方便爆出错误
-validate.validators.errtip = function(value, options, key, attributes) {
-  const {message = `${key}}属性错误`} = options
-  return message
-}
-wx.$validate = validate
 
 require('./common/index')
 

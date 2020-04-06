@@ -1,53 +1,149 @@
 <style lang="scss">
-  .page-wrap{
-    height: 100vh;
-    background: white;
+  @import "../../assets/variables.scss";
+  .form{
+    .form-item{
+      margin: 0 50rpx;
+      border-bottom: 1px solid #e7e7e7;
+      height: 80rpx;
+      display: flex;
+      margin-bottom: 30rpx;
+      align-items: center;
+      .sendCaptcha{
+
+        .text{
+          color: #999;
+          opacity: 1;
+          &.active{
+            color: $fun-primary-color;
+          }
+        }
+      }
+      .fun-input{
+        flex: 1;
+        height: 80rpx;
+        line-height: 80rpx;
+        font-size: 14px;
+        color: #444;
+        text-align: left;
+
+      }
+
+    }
+    .action{
+      margin-top: 25px;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+  }
+  .placeholder{
+    color: #fff;
   }
   .joinForm{
+    width: 500rpx;
     text-align: center;
-    background: white;
-    .logo{
-      width: 130rpx;
-      margin-bottom: 90rpx;
-      overflow: hidden;
+    .input{
+      border: 1px solid #e7e7e7;line-height: 36px;height:36px;font-size: 14px;
+      text-align: left;
+      padding: 0 10px;
     }
-    .control{
-      margin-top: 76rpx;
+
+    .numbox{
       display: flex;
-      justify-content: center;
-      .btn{
-        width: 290rpx;
-        height: 76rpx;
-        padding: 0;
-        line-height: 76rpx;
-        border-radius: 6rpx;
-        border: none;
-        margin: 0;
+      justify-content: center;//x轴排列
+    }
+  }
+
+  .pwd-wrap{
+    height: 100vh;
+    box-sizing: border-box;
+    padding-top: 25px;
+  }
+  .wrap{
+    text-align: center;
+    padding-top: 10%;
+    height: 100vh;
+    color: 333;
+    box-sizing: border-box;
+  }
+  .img{
+
+    width: 70px;
+    margin: 50rpx 0 100rpx;
+
+  }
+  .snslogin{
+    position: absolute;
+    bottom: 60rpx;
+    width: 750rpx;
+    .tip{
+      position: relative;
+      margin: 0 auto;
+      width: 60px;
+      text-align: center;
+      .after,.before{
+        position: absolute;
+        height: 1px;
+        background: #ccc;
+        width: 40px;
+        top: 50%;
       }
-      .allow{
-        background: #59a228;
-        color: #fff;
-        margin-left: 40rpx;
+      .after{
+        left: 0;
+        transform: translateX(-100%);
       }
-      .reject{
-        background: #f2f2f2;
-        color: #555;
+      .before{
+        right: 0;
+        transform: translateX(100%);
       }
+
+    }
+    .list{
+      margin: 15px auto;
+      width: 300px;
+      text-align: center;
     }
   }
 </style>
 <template>
-  <div class="page-wrap">
-    <div   class="joinForm text-center" >
+  <div class="wrap">
+    <err-msg :errs="formCheckResult"></err-msg>
+    <image class="img" mode="widthFix" src="/static/copyright.png"></image>
 
-      <image :style="{marginTop:85+'px'}" mode="widthFix" class="logo" src="https://new401t.bafangka.com/uploadfiles/wkbq6nc2kc/image/202003231610328297.jpg"></image>
-      <div class="large line15 font20">「o2o」申请获得以下权限</div>
-      <div class="mini graytext2 font14">获得你的公开信息（昵称、头像、地区等）</div>
-      <div class="control">
-        <button @click="cancelLoginDialog" class="btn reject">拒绝</button>
-        <button open-type="getUserInfo" @getuserinfo="weixinlogin" class="btn allow">允许</button>
-      </div>
+    <div class="form">
+      <form @submit="formSubmit" @reset="formReset">
+        <view class="form-item uni-column">
+          <input @input="inputPhone" class="fun-input" name="input" placeholder="请输入手机号码" />
+        </view>
+        <view class="form-item uni-column">
+          <input @input="inputCaptcha" class="fun-input" name="captcha" placeholder="请输入短信验证码" />
+          <div class="sendCaptcha" @click="sendCaptcha">
+            <span class="text" v-if="!captchaSend">获取验证码</span><span class="text active" v-else>{{s}}s</span>
+          </div>
+        </view>
+        <view class="form-item action">
+          <button form-type="submit" class="sub-btn m-b-15" type="primary" >立即登录</button>
+          <div><button @click="cancel" class="sub-btn m-b-15" >暂不登录</button></div>
+          <div class="fz-12">登录及表示您已阅读并接受<span class="color-primary">《用户服务协议》</span></div>
+        </view>
+      </form>
     </div>
+
+    <popup-layer ref="pwd" :autoClose="false">
+      <div class="form pwd-wrap">
+        <view class="form-item uni-column">
+          <input v-model="pwd" class="fun-input" placeholder="请输入不少于6位的密码" />
+        </view>
+        <view class="form-item uni-column">
+          <input v-model="pwdConfirm" class="fun-input" placeholder="请确认密码" />
+        </view>
+        <view class="form-item action">
+          <button @click="setPwd" class="sub-btn m-b-15" type="primary" >设置密码</button>
+          <button @click="cancelPwd" class="sub-btn m-b-15" >暂不设置</button>
+        </view>
+      </div>
+    </popup-layer>
+
 
   </div>
 </template>
@@ -56,20 +152,144 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {
-    ls
+    ls, emptyObject, validateFun
   } from '../../common/helper'
-  import { error } from '../../common/fun'
-  import { bizLogin } from '../../api/system'
+  import { error, toast } from '../../common/fun'
+  import {
+    bizRegSms, opBizInfo
+  } from '../../api/store'
+  import {
+    bizLogin
+  } from '../../api/system'
+  import {
+    regPhone
+  } from '../../common/regs'
+
+  import Schema from 'validate'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      setintervalInstance: null,
+      phone: '',
+      captcha: '',
+      s: 120,
+      formCheckResult: false,
+      smsid: null,
+      pwd: '',
+      pwdConfirm: '',
+      captchaSend: false
     },
     methods: {
-      cancelLoginDialog() {
+      cancel() {
         wx.navigateBack()
+      },
+      formReset() {
+
+      },
+      minusFn() {
+        if (this.s > 1) {
+          this.s--
+          return
+        }
+        clearInterval(this.setintervalInstance)
+        this.captchaSend = false
+      },
+      sendCaptcha() {
+        if (!this.phone) {
+          error('发送验证码失败')
+          return
+        }
+        bizRegSms({mobile: this.phone}).then(res => {
+          this.captchaSend = true
+          this.s = 120
+          this.setintervalInstance = setInterval(this.minusFn, 1000)
+        }).catch(() => {})
+      },
+      inputCaptcha(e) {
+        this.captcha = e.$wx.detail.value
+      },
+      inputPhone(e) {
+        this.phone = e.$wx.detail.value
+      },
+      formSubmit() {
+        let postData = {account: this.phone, code: this.captcha, BizId: this.smsid}
+
+        const rule = {
+          account: {
+            type: String,
+            match: regPhone,
+            required: true,
+            length: 11
+          },
+          code: {
+            type: String,
+            required: true,
+            length: 4
+          }
+        }
+
+        const checkRt = validateFun(postData, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
+
+        bizLogin(postData, {reqHeader: true}).then(res => {
+          this.loginCall(res.data)
+        })
+      },
+      cancelPwd() {
+        this.$refs.pwd.close()
+        wx.navigateBack()
+      },
+      setPwd() {
+        const postData = {biz_passwd: this.pwd, color: 'fsdsfds'}
+
+        const rule = {
+          biz_passwd: {
+            type: String,
+            required: true,
+            length: {min: 6},
+            use: {
+              confimPwd: pwd => this.pwdConfirm === pwd // 校验重复密码
+            },
+            message: {
+              type: '密码必须是字符串',
+              required: '密码必填',
+              length: '密码不得少于六位数',
+              confimPwd: pwd => `两次密码不一致.`
+            }
+          }
+        }
+        const checkRt = validateFun(postData, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
+        opBizInfo(postData).then(res => {
+          this.cancelPwd()
+        }).catch(() => {})
+        this.$refs.pwd.hide()
+      },
+      loginCall(userData) {
+
+        const {access_token, Users_id, biz_account, id: biz_id} = userData
+        ls.set('access_token', access_token)
+        ls.set('users_id', Users_id)
+        ls.set('biz_account', biz_account)
+        ls.set('biz_id', biz_id)
+
+        // 需要设置密码
+        if (userData.hasOwnProperty('biz_passwd')) {
+          this.$refs.pwd.show()
+          return
+        }
+        // this.setUserInfo(userData.userInfo)
+        setTimeout(function() {
+          wx.navigateBack()
+        }, 200)
       },
       weixinlogin(e) {
         console.log(e)
@@ -100,7 +320,9 @@
     "navigationBarTitleText": "登录页面",
     "navigationBarTextStyle": "black",
     "usingComponents": {
-      "icon": "~@/components/icon"
+      "icon": "~@/components/icon",
+      "err-msg": "~@/components/err-msg",
+      "popup-layer": "~@/components/popup-layer"
     }
   }
 </config>
