@@ -10,3 +10,5 @@ export const getProductDetail = (param, options) => fetch({act: 'prod_detail', p
 export const getProductList = (param, options) => fetch({act: 'get_prod', param, options})
 
 export const bizProdDel = (param, options) => fetch({act: 'bizProdDel', param, options})
+
+export const bizProdList = (param, options) => fetch({act: 'bizProdList', param, options})

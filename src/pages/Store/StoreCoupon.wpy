@@ -15,7 +15,7 @@
         <div class="price flex">
           <div class="font-32">¥</div>
           <div class="font-70">{{item.Coupon_Cash}}</div>
-          <div class="newuser">新用户专用</div>
+<!--          <div class="newuser">新用户专用</div>-->
         </div>
         <div class="right-q">{{item.Coupon_Subject}}</div>
         <div class="right-w">全场满{{item.Coupon_Condition}}可用</div>
@@ -56,8 +56,10 @@
       },
       init() {
         let data = {
-          status: 1,
-          show: 2
+          page:1,
+          pageSize:999,
+          status: 1
+          // show: 2
         }
         showLoading('加载中')
         getCouponList(data).then(res => {

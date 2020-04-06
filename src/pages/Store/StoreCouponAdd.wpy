@@ -84,11 +84,12 @@
         </div>
       </div>
       <div class="line"></div>
-      <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="openPop('useFan')">
         <div class="title">
           适用范围
         </div>
         <div class="store-titles">
+          {{useCan==0?'全部商品':'指定商品'}}
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
@@ -125,10 +126,66 @@
         {{Coupon_ID?'保存':'新增'}}
       </div>
 
+
+      <popup-layer title="选择商品" ref="pro" :autoClose="true">
+        <div class="product-list">
+          <div class="product-item" v-for="(product,idx) in proData" :key="idx">
+            <div class="info-box" @click="taggleProductCheck(idx)">
+              <div class="check"   >
+                <icon
+                  class="check-icon"
+                  :color="product.check?'#F53636':'#999'"
+                  size="20"
+                  :type="product.check?'iconblchecked':'iconCircle'"
+                ></icon>
+              </div>
+              <image class="thumb" :src="product.ImgPath"></image>
+              <div class="info">
+                <div class="title">{{product.Products_Name}}</div>
+                <div class="price-box">
+                  <span class="sign">￥</span>
+                  <span>{{product.Products_PriceY}}</span>
+                  <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
+                  <span class="sign">￥</span>
+                  <span>{{product.Products_PriceX}}</span>
+                </div>
+                <div class="stock-box">
+                  <span class="stock">库存:{{product.Products_Count}}</span>
+                  <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
+      </popup-layer>
+
+      <popup-layer title="适用范围" ref="useFan" :autoClose="true">
+      <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
+        <label class="type-item flex flex-vertical-center">
+          <radio color="#00A8FF" value="0" :checked="useCan === 0"></radio>
+          <div class="label p-10 flex flex-vertical-center">
+            <div class="title m-r-15">全部商品</div>
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center">
+          <radio color="#00A8FF" value="1" :checked="useCan === 1"></radio>
+          <div class="label p-10 flex flex-vertical-center">
+            <div class="title m-r-15">指定商品</div>
+            <div class="select-pro" @click="selectPro">
+              选择商品
+            </div>
+          </div>
+        </label>
+      </radio-group>
+      <button class="btn btn-primary m-t-35" @click="closePop('useFan')">确认</button>
+    </popup-layer>
+
+
       <modal ref="myModal">
         <div >
           <div class="wzw-title">
-            适用范围
+            指定赠送
           </div>
           <div class="flex flex-vertical-center flex-justify-between wzw-content">
             <div>
@@ -151,6 +208,8 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {opCoupon, getCouponList} from '../../api/store'
+  import {bizProdList} from '../../api/product'
+
   import {chooseImageByPromise, uploadImages, getArrColumn} from '../../common/helper'
   import {
     hideLoading,
@@ -163,6 +222,8 @@
     store,
     mixins: [pageMixin],
     data: {
+      proData: [],
+      useCan: 0,
       dateTimeArray1: [],
       dateTime1: [0, 0, 0, 0],
       startTime: [],
@@ -181,11 +242,10 @@
       canUse: [{id: '-1', name: '不限'}, {id: '1', name: '1'}, {id: '2', name: '2'}, {id: '3', name: '3'}, {id: '4', name: '4'}, {id: '5', name: '5'}, {id: '6', name: '6'}, {id: '7', name: '7'}, {id: '8', name: '8'}, {id: '9', name: '9'}, {id: '10', name: '10'}],
       index: 0,
       front_show: 1,
-      Coupon_UserLevel: ''
+      Coupon_UserLevel: '',
+      coupon_prod: ''
     },
     onLoad(options) {
-
-
       if (options.Coupon_ID) {
         this.Coupon_ID = options.Coupon_ID
       }
@@ -195,11 +255,35 @@
       this.dateTimeArray2 = obj1.dateTimeArray
       this.dateTime2 = obj1.dateTime
       this.init()
-
-
-
     },
     methods: {
+      surePro() {
+        this.closePop('pro')
+        this.coupon_prod = ''
+        for (let item of this.proData) {
+          if (item.check) {
+            this.coupon_prod += item.Products_ID + ','
+          }
+        }
+        this.coupon_prod = this.coupon_prod.substring(0, this.coupon_prod.length - 1)
+      },
+      taggleProductCheck(idx) {
+        this.proData[idx].check = !this.proData[idx].check
+      },
+      selectPro() {
+        this.closePop('useFan')
+        this.openPop('pro')
+      },
+      setFeeType(e) {
+        const feeType = parseInt(e.$wx.detail.value)
+        this.useCan = feeType
+      },
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      },
       changeDateTime2(e) {
         console.log(e.$wx.detail.value)
         this.endTime = e.$wx.detail.value
@@ -240,8 +324,12 @@
           Coupon_UserLevel: this.vipData[this.ind].id,
           front_show: this.front_show,
           Coupon_StartTime: startTime,
-          Coupon_EndTime: endTime,
-          coupon_prod: '0'
+          Coupon_EndTime: endTime
+        }
+        if(this.useCan===1){
+            data.coupon_prod=this.coupon_prod
+        }else{
+          data.coupon_prod=this.coupon_prod
         }
         if (this.Coupon_ID) {
           data.coupon_id = this.Coupon_ID
@@ -356,9 +444,9 @@
                 this.Coupon_UserLevel = String(item.Coupon_UserLevel)
                 this.front_show = item.front_show
 
-                //初始化开始时间
-                let date =item.Coupon_StartTime
-                var defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()
+                // 初始化开始时间
+                let date = item.Coupon_StartTime
+                let defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()
                 let arr = []
                 for (let j = 0; j < this.dateTimeArray1.length; j++) {
                   for (let i = 0; i < this.dateTimeArray1[j].length; i++) {
@@ -367,26 +455,23 @@
                     }
                   }
                 }
-                //初始化结束时间
-                let dates =item.Coupon_EndTime
-                var defaultDates = dates ? [...dates.split(' ')[0].split('-'), ...dates.split(' ')[1].split(':')] : getNewDateArry()
+                // 初始化结束时间
+                let dates = item.Coupon_EndTime
+                let defaultDates = dates ? [...dates.split(' ')[0].split('-'), ...dates.split(' ')[1].split(':')] : getNewDateArry()
                 let arrs = []
                 for (let j = 0; j < this.dateTimeArray2.length; j++) {
                   for (let i = 0; i < this.dateTimeArray2[j].length; i++) {
-                    if (parseInt(this.dateTimeArray2[j][i]) == defaultDate[j]) {
+                    if (parseInt(this.dateTimeArray2[j][i]) == defaultDates[j]) {
                       arrs.push(i)
                     }
                   }
                 }
 
-                this.startTime=arr
-                this.dateTime1=arr
-                this.endTime=arrs
-                this.dateTime2=arrs
-                console.log(arr,arrs,"sss")
-
-
-
+                this.startTime = arr
+                this.dateTime1 = arr
+                this.endTime = arrs
+                this.dateTime2 = arrs
+                console.log(arr, arrs, 'sss')
               }
             }
           })
@@ -399,6 +484,12 @@
               this.ind = String(i)
             }
           }
+        })
+
+        await bizProdList({page: 1, pageSize: 999}).then(res => {
+          this.proData = res.data.map(item => {
+            return {...item, check: false}
+          })
         })
       },
       onShow() {
@@ -563,6 +654,85 @@
     left: 0rpx;
     z-index: 9;
   }
+  .select-pro{
+    font-size: 24rpx;
+    color: #00A8FF;
+  }
+
+  /*商品列表 start*/
+  .product-list{
+      height: 800rpx;
+    overflow: scroll;
+  }
+  .product-item{
+    padding: 30rpx 0;
+    background: white;
+    margin-bottom: 20rpx;
+    .info-box{
+      padding: 0 20rpx;
+      display: flex;
+      font-size: 14px;
+      height: 176rpx;
+      .check{
+        padding-right: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .check-icon{
+
+        }
+      }
+      .thumb{
+        width: 176rpx;
+        height: 176rpx;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          color: #333;
+          font-size: 14px;
+          /*font-weight: bold;*/
+          line-height: 20px;
+          height: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+        .price-box{
+          color: $fun-red-color;
+          margin-bottom: 10px;
+          font-size: 14px;
+        }
+        .stock-box{
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .actions{
+      margin-top: 30rpx;
+      font-size: 12px;
+      display: flex;
+      .action{
+        justify-content: center;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: #888;
+        border-right: 1rpx solid #e7e7e7;
+        &:last-child{
+          border-right: none;
+        }
+        .title{
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  /*商品列表 end*/
 </style>
 <config>
   {
@@ -570,7 +740,8 @@
   "navigationBarTextStyle": "black",
   "usingComponents": {
   "icon": "~@/components/icon",
-  "modal": "~@/components/ModelComponents"
+  "modal": "~@/components/ModelComponents",
+  "popup-layer": "~@/components/popup-layer",
   }
   }
 </config>
