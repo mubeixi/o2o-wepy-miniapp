@@ -8,6 +8,8 @@ import {
   upload, getAccessToken
 } from './request'
 
+import Schema from 'validate'
+
 export const objTranslate = (obj) => JSON.parse(JSON.stringify(obj))
 
 export const ls = {
@@ -209,8 +211,11 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = []}) =>
  * @returns {boolean}
  */
 export const validateFun = (data, rule) => {
-  const rt = wx.$validate(data, rule)
-  return rt === undefined ? true : rt
+
+  const rules = new Schema(rule)
+  const errors = rules.validate(data)
+  const rt = errors.map(item => item.message)
+  return JSON.stringify(rt) === '[]' ? true : rt
 }
 
 /**

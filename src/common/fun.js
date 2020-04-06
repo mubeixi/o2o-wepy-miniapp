@@ -1,5 +1,4 @@
-import apiBaseUrl from './env'
-import {createToken} from './request'
+
 export const toast = (title, icon, image, duration) => {
   wx.showToast({
     title,

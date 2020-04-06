@@ -44,3 +44,6 @@ export const opCoupon = (param, options) => fetch({act: 'opCoupon', param, optio
 export const getBizProdCateList = (param, options) => fetch({act: 'bizProdCateList', param, options})
 
 export const addBizProdCate = (param, options) => fetch({act: 'addBizProdCate', param, options})
+
+// 商家注册
+export const bizReg = (param, options) => fetch({act: 'bizReg', param, options})
