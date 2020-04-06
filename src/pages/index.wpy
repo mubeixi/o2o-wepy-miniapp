@@ -6,7 +6,7 @@
         <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
       <div class="action" >
-        <div v-if="info.entry_process.is_auth==1" class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
+        <div v-if="status==1" class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
         <div v-else class="no-validate"><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft"  class="iconarrowleft"></icon>
       </div>
@@ -112,7 +112,7 @@
     linkTo
   } from '../common/fun'
   import {
-    checkIsLogin
+    checkIsLogin, ls
   } from '../common/helper'
 
   wepy.page({
@@ -122,7 +122,8 @@
       storeInfo: {
         volidate: false
       },
-      info: {}
+      info: {},
+      status:1
     },
     methods: {
       repalceImg() {
@@ -140,6 +141,15 @@
       getInit() {
         initInfo().then(res => {
           this.info = res.data
+          if (!this.info.entry_process) {
+            wx.showModal({
+              title: '提示',
+              content: '你还未入驻成功，即将前往入驻页面',
+              success (res) {
+                linkTo('/pages/join/BusinessStation')
+              }
+            })
+          }
           // this.is_auth = this.info.entry_process.is_auth
           // if (1 || this.is_auth !== 1) {
           //   linkTo('/pages/join/BusinessStation')
@@ -151,6 +161,7 @@
 
     },
     onShow() {
+      this.status=ls.get('status')
       if (!checkIsLogin(1, 0)) return
       this.getInit()
     },

@@ -20,7 +20,7 @@
           <image src="/static/marketing/deduct.png" class="img"></image>
           <div class="title">满减</div>
         </div>
-        <div class="feature-item">
+        <div class="feature-item" @click="$linkTo('/pages/store/StoreVip')">
           <image src="/static/marketing/vip.png" class="img"></image>
           <div class="title">店铺会员</div>
         </div>

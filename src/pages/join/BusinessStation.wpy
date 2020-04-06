@@ -28,22 +28,27 @@
           <div class="station-title-sub">快速一键注册</div>
         </div>
 
-        <div class="station-button" @click="$linkTo('/pages/user/login')">
-          未完成
+        <div class="station-button" >
+          已完成
         </div>
       </div>
 
-      <div class="rectangle flex flex-justify-between flex-vertical-center"  @click="$linkTo('/pages/join/SettlementAgreement')">
+      <div class="rectangle flex flex-justify-between flex-vertical-center" >
         <div>
           <div class="station-title">签署入驻协议</div>
           <div class="station-title-sub">在线签署商家入住协议</div>
         </div>
-        <div class="right-div"  >
+        <div class="right-div"  v-if="info.is_agree">
           <div class="station-button"  >
             已完成
           </div>
-          <div class="look-info">
+          <div class="look-info" @click="$linkTo('/pages/join/SettlementAgreement')">
             查看资料
+          </div>
+        </div>
+        <div class="right-div"  v-else>
+          <div class="station-button active"   @click="$linkTo('/pages/join/SettlementAgreement')">
+            去提交
           </div>
         </div>
 
@@ -101,16 +106,24 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-
+  import {getBizInfo} from '../../api/store'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      info:{}
     },
-    created() {
-
+    onShow() {
+      this.getBizInfo()
+    },
+    methods: {
+      getBizInfo() {
+        getBizInfo().then(res => {
+          let entry_process = res.data.entry_process
+          this.info = entry_process
+        })
+      }
     }
 
   })

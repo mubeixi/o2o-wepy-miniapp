@@ -1,15 +1,18 @@
 <template>
   <div class="all">
-        <textarea class="edit"  auto-height="true" contenteditable="true" maxlength="-1" placeholder="请输入入驻协议" placeholder-style="place" >
+        <textarea class="edit" :value="info" disabled  auto-height="true" contenteditable="true" maxlength="-1" placeholder="请输入入驻协议" placeholder-style="place" >
         </textarea>
 
     <div class="checks flex flex-vertical-center" >
-      <radio  style="transform:scale(0.7)"/>
-      我已阅读、同意并接受《admin的微商城网络交易平台服务协议》
+      <checkbox-group  bindchange="checkboxChange">
+        <checkbox value="1" >我已阅读、同意并接受《admin的微商城网络交易平台服务协议》</checkbox>
+      </checkbox-group>
+
+
     </div>
 
 
-    <div class="submit" @click="$back()">
+    <div class="submit" @click="agree">
       签署
     </div>
 
@@ -21,16 +24,39 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-
+  import { getBizConfig, opBizInfo } from '../../api/store'
+  import { back, hideLoading, showLoading, toast } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      show: [],
+      info: ''
     },
-    created() {
-
+    onLoad() {
+      this.getBizConfig()
+    },
+    methods: {
+      agree() {
+        if (this.show.length <= 0) {
+          toast('请勾选同意协议')
+          return
+        }
+        showLoading()
+        opBizInfo({'is_agree': 1}).then(res => {
+          back()
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      },
+      checkboxChange(e) {
+        this.show = e.$wx.detail.value
+      },
+      getBizConfig() {
+        getBizConfig().then(res => {
+          this.info = res.data.entry_agreement
+        })
+      }
     }
 
   })

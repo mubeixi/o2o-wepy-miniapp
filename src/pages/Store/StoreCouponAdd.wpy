@@ -213,7 +213,7 @@
   import {chooseImageByPromise, uploadImages, getArrColumn} from '../../common/helper'
   import {
     hideLoading,
-    linkTo, showLoading, error
+    linkTo, showLoading, error, toast
   } from '../../common/fun'
   import {dateTimePicker, getMonthDay, getNewDateArry, getArr} from '../../common/time'
 
@@ -277,6 +277,10 @@
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
         this.useCan = feeType
+        if(feeType===1){
+          this.closePop('useFan')
+          this.openPop('pro')
+        }
       },
       openPop(name) {
         this.$refs[name].show()
@@ -326,10 +330,14 @@
           Coupon_StartTime: startTime,
           Coupon_EndTime: endTime
         }
-        if(this.useCan===1){
-            data.coupon_prod=this.coupon_prod
-        }else{
-          data.coupon_prod=this.coupon_prod
+        if (this.useCan === 1) {
+          if(!this.coupon_prod){
+            error('你还没有选择指定商品')
+            return
+          }
+          data.coupon_prod = this.coupon_prod
+        } else {
+          data.coupon_prod = '0'
         }
         if (this.Coupon_ID) {
           data.coupon_id = this.Coupon_ID
@@ -436,6 +444,10 @@
             for (let item of arr) {
               if (item.Coupon_ID == this.Coupon_ID) {
                 that.editData = item
+                this.useCan = item.coupon_prod == 0 ? 0 : 1
+                if (this.useCan === 1) {
+                  this.coupon_prod = item.coupon_prod
+                }
                 this.Coupon_Subject = item.Coupon_Subject
                 this.imgs[0] = item.Coupon_PhotoPath
                 this.Coupon_Cash = item.Coupon_Cash
@@ -490,6 +502,23 @@
           this.proData = res.data.map(item => {
             return {...item, check: false}
           })
+
+          let arr = this.coupon_prod.split(',')
+
+          this.proData.map(item => {
+            for (let it of arr) {
+              if (item.Products_ID == it) {
+                item.check = true
+              }
+            }
+          })
+          // for (let its of this.proData) {
+          //   for (let it of arr) {
+          //     if (its.Products_ID == it) {
+          //       its.check = true
+          //     }
+          //   }
+          // }
         })
       },
       onShow() {

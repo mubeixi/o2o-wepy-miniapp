@@ -275,12 +275,12 @@
       },
       loginCall(userData) {
 
-        const {access_token, Users_id, biz_account, id: biz_id} = userData
+        const {access_token, status,Users_id, biz_account, id: biz_id} = userData
         ls.set('access_token', access_token)
         ls.set('users_id', Users_id)
         ls.set('biz_account', biz_account)
         ls.set('biz_id', biz_id)
-
+        ls.set('status', status)
         // 需要设置密码
         if (userData.hasOwnProperty('biz_passwd')) {
           this.$refs.pwd.show()

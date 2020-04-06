@@ -26,19 +26,19 @@
                   :type="product.check?'iconblchecked':'iconCircle'"
                 ></icon>
               </div>
-              <image class="thumb" :src="product.thumb"></image>
+              <image class="thumb" :src="product.ImgPath"></image>
               <div class="info">
-                <div class="title">{{product.title}}</div>
+                <div class="title">{{product.Products_Name}}</div>
                 <div class="price-box">
                   <span class="sign">￥</span>
-                  <span>{{product.selling_price}}</span>
+                  <span>{{product.Products_PriceY}}</span>
                   <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
                   <span class="sign">￥</span>
-                  <span>{{product.group_price}}</span>
+                  <span>{{product.Products_PriceX}}</span>
                 </div>
                 <div class="stock-box">
-                  <span class="stock">库存:{{product.stock}}</span>
-                  <span class="sale p-l-40">销量:{{product.sale}}</span>
+                  <span class="stock">库存:{{product.Products_Count}}</span>
+                  <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
                 </div>
               </div>
             </div>
@@ -98,20 +98,20 @@
   import pageMixin from '../../mixins'
 
   import {
-    getProductList
+    bizProdList
   } from '../../api/product'
   import {
     toast
   } from '../../common/fun'
-  const mockData = [
-    {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
-    {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 0},
-    {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
-    {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
-    {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 0},
-    {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
-    {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1}
-  ]
+  // const mockData = [
+  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
+  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 0},
+  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
+  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
+  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 0},
+  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
+  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1}
+  // ]
 wepy.page({
     store,
     mixins: [pageMixin],
@@ -122,10 +122,12 @@ wepy.page({
     },
     methods: {
       _init_func() {
-        this.productList = mockData
-        // getProductList().then(res => {
-        //   this.productList = res.data
-        // })
+        // this.productList = mockData
+        bizProdList({page: 1, pageSize: 999}).then(res => {
+          this.productList = res.data.map(item => {
+            return {...item, check: false}
+          })
+        })
       },
       taggleAllCheck() {
         const check = !this.allCheck

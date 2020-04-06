@@ -68,6 +68,7 @@ wepy.app({
       "pages/store/StoreInfo",
       "pages/store/StoreInfoUpda",
       "pages/store/SameCityDelivery",
+      "pages/store/StoreVip",
       "pages/store/SameCityUpda",
       "pages/store/StoreCoupon",
       "pages/store/StoreCouponAdd",

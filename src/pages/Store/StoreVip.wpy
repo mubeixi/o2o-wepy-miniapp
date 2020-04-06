@@ -1,0 +1,162 @@
+<template>
+  <div class="store-vip">
+    <div class="store-item flex flex-vertical-center "  style="padding-top: 20rpx;height: 108rpx">
+      <div class="store-title">
+        会员名称
+      </div>
+
+      <input type="text" placeholder="请输入会员名称"  style="margin-left: 34rpx"/>
+
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between"  style="height: 116rpx;">
+      <div class="store-title">
+        价格
+      </div>
+      <div class="store-titles">
+        <input type="text" class="price-input" />
+        元
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="openPop('quanyi')">
+      <div class="store-title">
+        权益
+      </div>
+      <div class="store-titles">
+                <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-title">
+        赠送礼包
+      </div>
+      <div class="store-titles">
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </div>
+    </div>
+    <div class="line"></div>
+
+
+
+    <popup-layer title="权益" ref="quanyi" :autoClose="true">
+      <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
+        <label class="type-item flex flex-vertical-center">
+          <radio color="#00A8FF" value="0" :checked="useCan === 0"></radio>
+          <div class="label p-10 flex flex-vertical-center">
+            <div class="title ">包邮</div>
+          </div>
+        </label>
+        <label class="type-item flex flex-vertical-center">
+          <radio color="#00A8FF" value="1" :checked="useCan === 1"></radio>
+          <div class="label p-10 flex flex-vertical-center">
+            <div class="title flex flex-vertical-center">
+              消费折扣
+              <input type="text"  class="zhe"/>
+              折
+            </div>
+          </div>
+        </label>
+      </radio-group>
+      <button class="btn btn-primary m-t-35" @click="closePop('useFan')">确认</button>
+    </popup-layer>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import { getBizConfig, opBizInfo } from '../../api/store'
+  import { back, hideLoading, showLoading, toast } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    onLoad() {
+
+    },
+    methods: {
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      },
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .store-vip{
+    min-height: 100vh;
+    width: 750rpx;
+    background-color: #FFFFFF;
+  }
+  .store-item{
+    height: 88rpx;
+    box-sizing: border-box;
+    width: 750rpx;
+    padding: 0rpx 20rpx;
+    box-sizing: border-box;
+  }
+  .item-last{
+    height: 150rpx;
+  }
+  .store-title{
+    color: #333333;
+    font-size: 32rpx;
+  }
+  .store-titles{
+    display: flex;
+    align-items: center;
+    color: #999999;
+    font-size: 28rpx;
+  }
+  .line{
+    width: 750rpx;
+    height: 20rpx;
+    background-color: #F7F7F7;
+  }
+  .price-input{
+    width: 484rpx;
+    height: 56rpx;
+    line-height: 56rpx;
+    border: 1px solid #DDDDDD;
+    margin-right: 22rpx;
+    box-sizing: border-box;
+    padding-left: 20rpx;
+  }
+  .type-item{
+    border-bottom: 1px solid  #E6E6E6;
+    padding: 30rpx 0rpx;
+    font-style: 28rpx;
+  }
+  .zhe{
+    width: 440rpx;
+    height: 56rpx;
+    margin-left: 30rpx;
+    padding-left: 20rpx;
+    margin-right: 10rpx;
+    box-sizing: border-box;
+    border: 1px solid #DDDDDD;
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "店铺会员",
+  "usingComponents": {
+    "icon": "~@/components/icon",
+  "popup-layer": "~@/components/popup-layer",
+  }
+  }
+</config>
