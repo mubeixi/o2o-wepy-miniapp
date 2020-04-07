@@ -578,58 +578,116 @@
     methods: {
       subFn() {
 
+
         const rule = {
-          Products_Name: { ismust: {label: '产品名称'} },
-          Products_Category: {ismust: {label: '平台分类'} },
+          Products_Name: {
+            type: String,
+            required: true,
+            length: {min: 1, max: 100},
+            message: {
+              required: '商品名称必填',
+              length: '商品名称不超过100个字'
+            }
+          },
+          Products_Category: {
+            required: true,
+            message: {
+              required: '平台分类必填'
+            }
+          },
           Products_PriceY: {
-            ismust: {label: '原价'},
-            numericality: {
-              notValid: '原价必须为数字',
-              greaterThan: 0,
-              notGreaterThan: '原价必须大于0'
-            }
-          },
-          Products_PriceX: (value, attributes, attributeName, options, constraints) => {
-            if (parseFloat(value) >= parseFloat(attributes.Products_PriceY)) {
-              return {
-                errtip: {message: '现价必须小于原价'}
-              }
-            }
-            return {
-              ismust: {label: '现价'},
-              numericality: {
-                notValid: '现价必须为数字',
-                greaterThan: 0,
-                notGreaterThan: '现价必须大于0'
-              }
-            }
-          },
-          pintuan_people: {
-            ismust: {label: '拼团人数'},
-            numericality: {
-              onlyInteger: true,
-              greaterThanOrEqualTo: 2,
-              notGreaterThanOrEqualTo: '拼团人数不得少于2人'
-            }
-          },
-          pintuan_pricex: (value, attributes, key, options, constraints) => {
-            if (parseFloat(value) >= parseFloat(attributes.Products_PriceY)) {
-              return {
-                errtip: {message: '拼团价格必须小于原价'}
-              }
+            type: Number,
+            required: true,
+            size: {min: 0.01},
+            message: {
+              required: '原价必填',
+              type: '原价必须为数字',
+              size: '原价必须大于0'
             }
 
-            return {
-              ismust: {label: '拼团价格'},
-              numericality: {
-                notValid: '拼团价格必须为数字',
-                greaterThan: 0,
-                notGreaterThan: '拼团价格必须大于0'
+          },
+          Products_PriceX: {
+            type: Number,
+            required: true,
+            size: {min: 0.01},
+            use: {
+              compareMarketPrice:(val,row) => {
+                return val < row.Products_PriceY
               }
+            },
+            message: {
+              required: '现价必填',
+              type: '现价必须为数字',
+              size: '现价必须大于0',
+              compareMarketPrice: '现价必须小于原价'
             }
           },
-          Products_Profit: { ismust: {label: '利润'} },
-          fee_type: { ismust: {label: '运费计算方式'} },
+          pintuan_people:{
+            type: Number,
+            required: true,
+            size: {min: 2},
+            message: {
+              required: '拼团人数必填',
+              type: '拼团人数必须为数字',
+              size: '拼团人数必须大于2'
+            }
+          },
+          pintuan_pricex: {
+            type: Number,
+            required: true,
+            size: {min: 0.01},
+            use: {
+              compareMarketPrice:(val,row) => {
+                return val < row.Products_PriceY
+              }
+            },
+            message: {
+              required: '拼团价必填',
+              type: '拼团价必须为数字',
+              size: '拼团价必须大于0',
+              compareMarketPrice: '拼团价必须小于原价'
+            }
+          },
+          Products_Profit:{
+            type: Number,
+            required: true,
+            size: {min: 0},
+            message: {
+              required: '利润必填',
+              type: '利润必须为数字',
+              size: '利润必须大于0'
+            }
+          },
+          fee_type:{
+            required: true,
+            message: {
+              required: '运费计算方式必填'
+            }
+          },
+          fix_fee:{
+            type: Number,
+            required: true,
+            size: {min: 0},
+            use: {
+              limit:(val,row) => {
+                if(row.fee_type ===1){
+                  return val>=0
+                }
+                return true
+              }
+            },
+            message: {
+              limit: '固定运费为不小于的数值',
+              type: '固定运费为数字',
+              size: '固定运费必须不小于0'
+            }
+          },
+
+        }
+
+
+        const rule2 = {
+
           fix_fee: (value, attributes, key, options, constraints) => {
             if (attributes.fee_type === 1) {
               return {
@@ -715,10 +773,11 @@
           prod_attrval
 
         }
+        console.log(productInfo)
 
-        const formCheckResult = validateFun(productInfo, rule)
-        if (formCheckResult !== true) {
-          this.formCheckResult = formCheckResult
+        const checkRt = validateFun(productInfo, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
           return
         }
 
