@@ -2,15 +2,6 @@
     <div class="store-all">
       <div class="store-item flex flex-vertical-center flex-justify-between">
         <div class="store-title">
-          绑定会员
-        </div>
-        <div class="store-titles">
-            肖战
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-        </div>
-      </div>
-      <div class="store-item flex flex-vertical-center flex-justify-between">
-        <div class="store-title">
           到店自提
         </div>
         <div class="store-titles">
