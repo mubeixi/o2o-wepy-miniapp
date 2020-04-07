@@ -117,9 +117,9 @@
           <icon  type="iconarrowleft" size="16"  color="#666"></icon>
         </div>
       </div>
-      <div v-if="item.type==='img'" class="form-upload-item" style="display: flex;">
+      <div v-if="item.type==='img'" class="form-upload-item">
         <div class="form-upload-item__label">{{item.label}}</div>
-        <div class="form-upload-item__content" style="padding-left: 15px;">
+        <div class="form-upload-item__content">
             <upload-image
               :limit="1"
               :ext="idx"

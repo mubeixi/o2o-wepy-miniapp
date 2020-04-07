@@ -12,6 +12,7 @@
           ele-id="select_treade"
           ref="tree"
           :has="has"
+          :single="single"
           :conf="propsConf"
           :tree-data="treeData"
           :show-checkbox="true"
@@ -36,6 +37,11 @@
       has: {
         type: Array,
         default: []
+      },
+      // 单选
+      single: {
+        type: Boolean,
+        default: false
       },
       show: {
         type: Boolean,

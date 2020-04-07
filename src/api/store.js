@@ -50,3 +50,5 @@ export const bizReg = (param, options) => fetch({act: 'bizReg', param, options})
 
 // 获取商家配置
 export const getBizConfig = (param, options) => fetch({act: 'getBizConfig', param, options})
+
+export const bizIndustryDetail = (param, options) => fetch({act: 'bizIndustryDetail', param, options})
