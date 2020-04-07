@@ -133,53 +133,10 @@
           <div class="form-title__text">资质信息</div>
         </div>
         <div class="form-cell">
-          <diy-form ref="company" :forms="companyForms"></diy-form>
+          <diy-form ref="permissions" :forms="permissionsForms"></diy-form>
         </div>
       </div>
 
-<!--      <div class="form-panel">-->
-<!--        <div class="form-title">-->
-<!--          <div class="form-title__place"></div>-->
-<!--          <div class="form-title__text">账户信息</div>-->
-<!--        </div>-->
-<!--        <div class="form-cell">-->
-<!--          <div class="form-cell-item">-->
-<!--            <div class="form-cell-item__label">提现方式</div>-->
-<!--            <div class="form-cell-item__content">-->
-<!--              <div class="__placeholder">请选择提现方式</div>-->
-<!--              &lt;!&ndash;                            <div v-if="trade.label">{{trade.label}}</div>&ndash;&gt;-->
-<!--            </div>-->
-<!--            <div class="form-cell-item__right">-->
-<!--              <icon  type="iconarrowleft" size="16"  color="#666"></icon>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="form-cell-item">-->
-<!--            <div class="form-cell-item__label">开户城市</div>-->
-<!--            <div class="form-cell-item__content">-->
-<!--              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户城市" />-->
-<!--            </div>-->
-<!--          </div>-->
-
-<!--          <div class="form-cell-item">-->
-<!--            <div class="form-cell-item__label">开户银行</div>-->
-<!--            <div class="form-cell-item__content">-->
-<!--              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户银行" />-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="form-cell-item">-->
-<!--            <div class="form-cell-item__label">开户姓名</div>-->
-<!--            <div class="form-cell-item__content">-->
-<!--              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户姓名" />-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="form-cell-item">-->
-<!--            <div class="form-cell-item__label">银行卡号</div>-->
-<!--            <div class="form-cell-item__content">-->
-<!--              <input placeholder-class="__placeholder" class="input" placeholder="请输入银行卡号" />-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
 
       <button @click="sub" class="actions-subbtn">提交</button>
 
@@ -196,7 +153,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getBizConfig } from '../../api/store'
+  import { getBizConfig, bizIndustryDetail } from '../../api/store'
 
   wepy.page({
     store,
@@ -208,18 +165,16 @@
         list: []
       },
       personForms: [],
-      companyForms: [],
-      info: {
-        principal_type: 2, // 2为个人，1为企业
-        biz_name: '',
-        biz_mobile: '',
-        sms_code: '',
-        biz_logo: '',
-        biz_address: '',
-        biz_province: '',
-        biz_city: '',
-        biz_area: '',
-        biz_town: ''
+      permissionsForms: [],
+      biz_id: ''
+    },
+    watch: {
+      biz_id(newVal) {
+        if (newVal) {
+          bizIndustryDetail({industry_id: newVal}).then(res => {
+            this.permissionsForms = res.data.industry_form
+          })
+        }
       }
     },
     methods: {
@@ -227,10 +182,18 @@
         const person = this.$refs.person.getData()
         // 用这种方式来做表单校验
         if (person === false) return
-        const company = this.$refs.company.getData()
+        const permissions = this.$refs.permissions.getData()
         // 用这种方式来做表单校验
-        if (company === false) return
-        console.log(company)
+        if (permissions === false) return
+        console.log(permissions)
+
+        const biz_id = this.biz_id
+
+        const postData = {
+          biz_id,
+          permissions,
+          material: person
+        }
       },
       openTradeSelect() {
         this.showTrade = true
