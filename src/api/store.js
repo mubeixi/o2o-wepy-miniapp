@@ -50,3 +50,13 @@ export const bizReg = (param, options) => fetch({act: 'bizReg', param, options})
 
 // 获取商家配置
 export const getBizConfig = (param, options) => fetch({act: 'getBizConfig', param, options})
+
+// 获取分类保证金
+export const proCate = (param, options) => fetch({act: 'pro_cate', param, options})
+
+// 获取保证金以及支付金额
+export const getBizPayAmount = (param, options) => fetch({act: 'getBizPayAmount', param, options})
+// 商家入驻订单提交
+export const addBizOrder = (param, options) => fetch({act: 'addBizOrder', param, options})
+// 商家入驻订单支付
+export const bizOrderPay = (param, options) => fetch({act: 'bizOrderPay', param, options})

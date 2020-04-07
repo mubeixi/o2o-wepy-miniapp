@@ -214,28 +214,28 @@
         this.phone = e.$wx.detail.value
       },
       formSubmit() {
-        let postData = {account: this.phone, code: this.captcha, BizId: this.smsid}
+        let postData = {account: this.phone, password: this.captcha, BizId: this.smsid}
 
-        const rule = {
-          account: {
-            type: String,
-            match: regPhone,
-            required: true,
-            length: 11
-          },
-          code: {
-            type: String,
-            required: true,
-            length: 4
-          }
-        }
-
-        const checkRt = validateFun(postData, rule)
-        if (checkRt !== true) {
-          this.formCheckResult = checkRt
-          return
-        }
-
+        // const rule = {
+        //   account: {
+        //     type: String,
+        //     match: regPhone,
+        //     required: true,
+        //     length: 11
+        //   },
+        //   code: {
+        //     type: String,
+        //     required: true,
+        //     length: 4
+        //   }
+        // }
+        //
+        // const checkRt = validateFun(postData, rule)
+        // if (checkRt !== true) {
+        //   this.formCheckResult = checkRt
+        //   return
+        // }
+        postData.login_method='mobile_login'
         bizLogin(postData, {reqHeader: true}).then(res => {
           this.loginCall(res.data)
         })
