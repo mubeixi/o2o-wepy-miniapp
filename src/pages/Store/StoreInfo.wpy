@@ -41,7 +41,7 @@
         店铺地址
       </div>
       <div class="store-titles">
-        {{info.detail_address}}{{info.biz_address}}
+        {{info.biz_address}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
