@@ -1,236 +1,3 @@
-<template>
-  <div class="page-wrap">
-    <form class="form" @submit="formSubmit" @reset="formReset">
-
-      <div class="form-panel">
-        <div class="form-title">
-          <div class="form-title__place"></div>
-          <div class="form-title__text">基本信息</div>
-        </div>
-        <div class="form-cell">
-          <div class="form-cell-item" @click="openTradeSelect">
-            <div class="form-cell-item__label">商家行业</div>
-            <div class="form-cell-item__content">
-              <div class="__placeholder" v-if="!trade.label">请选择商家行业</div>
-              <div v-if="trade.label">{{trade.label}}</div>
-            </div>
-            <div class="form-cell-item__right">
-              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">公司名称</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入门店名称" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">公司主体</div>
-            <div class="form-cell-item__content">
-
-            </div>
-            <div class="form-cell-item__right">
-              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">公司固话</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="格式如021-12345678" />
-            </div>
-          </div>
-          <div class="form-cell-item" @click="openAddressChoose">
-            <div class="form-cell-item__label">企业所在地</div>
-            <div class="form-cell-item__content">
-              <div class="__placeholder" v-if="!addressInfo.label">请选择企业所在地</div>
-              <div v-if="addressInfo.label">{{addressInfo.label}}</div>
-            </div>
-            <div class="form-cell-item__right">
-              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">详细地址</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入详细地址" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">主营商品</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入主营商品，多个商品间用逗号隔开" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">联系人</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入联系人姓名" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">手机</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入手机号" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">邮箱地址</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入邮箱地址" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-panel">
-        <div class="form-title">
-          <div class="form-title__place"></div>
-          <div class="form-title__text">资质信息</div>
-        </div>
-        <div class="form-cell">
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">企业类型</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请选择企业类型" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">企业住所</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入企业住所" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">注册资金</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入注册资金" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">营业执照注册号或统一社会信用代码</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">法人姓名</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入法人姓名" />
-            </div>
-          </div>
-          <div class="form-upload-item">
-            <div class="form-upload-item__label">法人身份证正面扫描件</div>
-            <div class="form-upload-item__content">
-<!--              <upload-image-->
-<!--                :limit="1"-->
-<!--                @onUpSuccess="idcardUploadSuccess"-->
-<!--              ></upload-image>-->
-            </div>
-          </div>
-          <div class="form-upload-item">
-            <div class="form-upload-item__label">法人身份证反面扫描件</div>
-            <div class="form-upload-item__content">
-<!--              <upload-image-->
-<!--                :limit="1"-->
-<!--                @onUpSuccess="idcardBackUploadSuccess"-->
-<!--              ></upload-image>-->
-            </div>
-          </div>
-          <div class="form-upload-item">
-            <div class="form-upload-item__label">营业执照影印件</div>
-            <div class="form-upload-item__content">
-<!--              <upload-image-->
-<!--                :limit="1"-->
-<!--                @onUpSuccess="businessLicenseUploadSuccess"-->
-<!--              ></upload-image>-->
-            </div>
-          </div>
-          <div class="form-upload-item">
-            <div class="form-upload-item__label">税务登记证扫描件</div>
-            <div class="form-upload-item__content">
-<!--              <upload-image-->
-<!--                :limit="1"-->
-<!--                @onUpSuccess="taxUploadSuccess"-->
-<!--              ></upload-image>-->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-panel">
-        <div class="form-title">
-          <div class="form-title__place"></div>
-          <div class="form-title__text">账户信息</div>
-        </div>
-        <div class="form-cell">
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">提现方式</div>
-            <div class="form-cell-item__content">
-              <div class="__placeholder">请选择提现方式</div>
-              <!--                            <div v-if="trade.label">{{trade.label}}</div>-->
-            </div>
-            <div class="form-cell-item__right">
-              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">开户城市</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户城市" />
-            </div>
-          </div>
-
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">开户银行</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户银行" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">开户姓名</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入开户姓名" />
-            </div>
-          </div>
-          <div class="form-cell-item">
-            <div class="form-cell-item__label">银行卡号</div>
-            <div class="form-cell-item__content">
-              <input placeholder-class="__placeholder" class="input" placeholder="请输入银行卡号" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button class="actions-subbtn"  @click="$back()">提交</button>
-
-    </form>
-
-    <div style="height: 50px"></div>
-
-
-  </div>
-</template>
-
-<script>
-  import wepy from '@wepy/core'
-  import store from '../../store'
-  import pageMixin from '../../mixins'
-
-
-
-  wepy.page({
-    store,
-    mixins: [pageMixin],
-    data: {
-
-    },
-    created() {
-
-    }
-
-  })
-
-</script>
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
@@ -328,17 +95,212 @@
       background: #00A8FF;
       color: #fff;
       border: none;
-      z-index: 9999;
+      z-index: 2;
     }
   }
 
 
 </style>
+<template>
+  <div class="page-wrap">
+    <err-msg :errs="formCheckResult"></err-msg>
+    <form class="form" @submit="formSubmit" @reset="formReset">
+
+      <div class="form-panel">
+        <div class="form-title">
+          <div class="form-title__place"></div>
+          <div class="form-title__text">基本信息</div>
+        </div>
+        <div class="form-cell">
+          <div class="form-cell-item" @click="openTradeSelect">
+            <div class="form-cell-item__label">商家行业</div>
+            <div class="form-cell-item__content">
+              <div class="__placeholder" v-if="!trade.label">请选择所在行业</div>
+              <div v-if="trade.label">{{trade.label}}</div>
+            </div>
+            <div class="form-cell-item__right">
+              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
+            </div>
+          </div>
+          <template v-if="materialForms.length>0">
+            <diy-form @update="upMaterial"  eid="material" ref="material" :forms="materialForms"></diy-form>
+          </template>
+
+
+        </div>
+      </div>
+
+      <div class="form-panel">
+        <div class="form-title">
+          <div class="form-title__place"></div>
+          <div class="form-title__text">资质信息</div>
+        </div>
+        <div class="form-cell">
+          <template v-if="permissionsForms.length>0">
+            <diy-form2 @update="upPermissions" eid="permissions" ref="permissions" :forms="permissionsForms"></diy-form2>
+          </template>
+
+        </div>
+      </div>
+      <button @click="sub" class="actions-subbtn">提交</button>
+    </form>
+
+    <div style="height: 50px"></div>
+
+    <select-trade :single="true" :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { getBizConfig, bizIndustryDetail, bizApply } from '../../api/store'
+  import { objTranslate, validateFun } from '../../common/helper'
+  import { error } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      showTrade: false,
+      formCheckResult: false,
+      trade: {
+        label: '',
+        list: []
+      },
+      materialForms: [],
+      permissionsForms: [],
+      industry_id: '',
+      auth_info: {
+        permissions: [],
+        material: []
+      }
+    },
+    watch: {
+      industry_id(newVal) {
+        if (newVal) {
+          bizIndustryDetail({industry_id: newVal}, {tip: '加载所需资质'}).then(res => {
+            const {person = []} = res.data.industry_form
+            this.permissionsForms = person
+            this.upPermissions([])
+          })
+        }
+      }
+    },
+    methods: {
+      upMaterial(data) {
+        this.auth_info.material = objTranslate(data)
+      },
+      upPermissions(data) {
+        this.auth_info.permissions = objTranslate(data)
+      },
+      sub() {
+        const industry_id = this.industry_id
+
+        // const permissions = this.$refs.permissions.getData()
+        // const material = this.$refs.material.getData
+
+        const {permissions=[],material=[]} = this.auth_info
+
+        console.log(permissions, material)
+        for (let item of permissions) {
+          if (item.require && !item.value) {
+            this.formCheckResult = [`资质许可-${item.label}必填`]
+
+            return
+          }
+        }
+
+        for (let item of material) {
+          if (item.require && !item.value) {
+            this.formCheckResult = [`基本信息-${item.label}必填`]
+            return
+          }
+        }
+
+        let postData = {
+          industry_id,
+          principal_type: 1, // 1企业 2个人
+          auth_info: JSON.stringify(this.auth_info) // 方便校验，就先不动了
+        }
+        const rule = {
+          industry_id: {
+            required: true,
+            message: {
+              required: '类别必选'
+            }
+          },
+          principal_type: {
+            required: true,
+            message: {
+              required: '认证类型必选'
+            }
+          },
+          auth_info: {
+            required: true,
+            type: String
+          }
+
+        }
+        const checkRT = validateFun(postData, rule)
+        if (checkRT !== true) {
+          this.formCheckResult = checkRT
+          return
+        }
+
+        bizApply(postData, {tip: '提交资料', mask: 1}).then(res => {
+
+        }).catch(() => {})
+      },
+      openTradeSelect() {
+        this.showTrade = true
+      },
+      handleTradeSelectClose() {
+        this.showTrade = false
+      },
+      handleTradeSelect(select_trade_list) {
+        if (Array.isArray(select_trade_list) && select_trade_list.length > 0) {
+          let trade_names = [], trade_ids = []
+          for (let trade of select_trade_list) {
+            trade_names.push(trade.industry_name)
+            trade_ids.push(trade.id)
+          }
+          this.trade.label = trade_names.join(',')
+          this.trade.list = trade_ids
+
+          this.industry_id = select_trade_list[0].id
+        }
+        this.handleTradeSelectClose()
+      },
+      _init_func() {
+        getBizConfig().then(res => {
+          const {person = [], company = []} = res.data.industry_form
+          this.materialForms = company
+        })
+      }
+    },
+    onShow() {
+      this._init_func()
+    },
+    created() {
+
+    }
+
+  })
+
+</script>
+
 <config>
   {
-  "navigationBarTitleText": "企业认证",
-  "usingComponents": {
-    "icon": "~@/components/icon"
-  }
+    "navigationBarTitleText": "个人认证",
+    "usingComponents": {
+      "diy-form": "~@/components/diy-form",
+      "diy-form2": "~@/components/diy-form",
+      "icon": "~@/components/icon",
+      "err-msg": "~@/components/err-msg",
+      "select-trade": "~@/components/SelectTrade"
+    }
   }
 </config>

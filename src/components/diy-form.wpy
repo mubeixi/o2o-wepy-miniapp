@@ -98,8 +98,8 @@
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
           <picker :range="item.options" @change="pickerChange">
-            <div class="__placeholder" v-if="item.value">{{item.value}}</div>
-            <div class="" v-else>{{item.desc}}</div>
+            <div class="" v-if="item.value">{{item.value}}</div>
+            <div class="__placeholder" v-else>{{item.desc}}</div>
           </picker>
 
         </div>
@@ -121,6 +121,7 @@
         <div class="form-upload-item__label">{{item.label}}</div>
         <div class="form-upload-item__content">
             <upload-image
+              :key="idx"
               :limit="1"
               :ext="idx"
               @done="upImgSuccess"
@@ -141,6 +142,10 @@
 
   wepy.component({
     props: {
+      eid: {
+        type: String,
+        require: true
+      },
       forms: {
         type: Array,
         require: true
@@ -153,36 +158,36 @@
     watch: {
       formList: {
         deep: true,
-        handler(newVal) {
-          console.log(`formData change`, newVal)
-        }
-      },
-      forms: {
         immediate: true,
-        deep: true,
         handler(newVal) {
-          const _arr = objTranslate(newVal)
-        // 我也太聪明了
-          if (Array.isArray(_arr) && _arr.length > 0) {
-            this.formList = _arr.map(row => {
-              // 只有picker是要特殊处理的
-              if (row.type === 'picker') {
-                row.options = row.value.split('|')
-                row.value = ''
-              }
-              return row
-            })
-            // console.log(this.formList)
+          //console.log(`${this.eid} formData change`, newVal)
+          if (Array.isArray(newVal) && newVal.length > 0) {
+            this.$emit('update', objTranslate(newVal))
           }
         }
       }
     },
+
     ready() {
 
+      const _arr = objTranslate(this.forms)
+      // 我也太聪明了
+      if (Array.isArray(_arr) && _arr.length > 0) {
+        this.formList = _arr.map(row => {
+          // 只有picker是要特殊处理的
+          if (row.type === 'picker') {
+            row.options = row.value.split('|')
+            row.value = ''
+          }
+          return row
+        })
+
+      }
     },
     methods: {
       getData() {
-        return objTranslate(this.formList)
+        // console.log('formList is', this.formList)
+        // return objTranslate(this.formList)
       },
       openAddressChoose() {
         const rt = {province: '北京', city: '北京', area: '西山', town: '香山公园'}
