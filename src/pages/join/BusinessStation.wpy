@@ -108,6 +108,7 @@
   import pageMixin from '../../mixins'
 
   import {getBizInfo} from '../../api/store'
+  import { linkTo } from '../../common/fun'
 
   wepy.page({
     store,
@@ -120,15 +121,16 @@
     },
     methods: {
       goShow() {
-        if (this.info.principal_type == 0) {
+        if (this.info.principal_type != 0) {
           wx.showActionSheet({
             itemList: ['个人认证', '企业认证'],
             success: (res) => {
               const {tapIndex} = res
-
+              console.log(tapIndex)
               if (tapIndex === 0) {
                 linkTo('/pages/join/PersonalCertification')
-              } else {
+              }
+              if (tapIndex === 1) {
                 linkTo('/pages/join/CompanyCertification')
               }
             },

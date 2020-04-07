@@ -216,32 +216,30 @@
       formSubmit() {
         let postData = {account: this.phone, password: this.captcha, BizId: this.smsid, login_method: 'sms_login'}
 
-        // const rule = {
-        //   login_method: {
-        //     required: true,
-        //     type: String
-        //   },
-        //   account: {
-        //     type: String,
-        //     match: regPhone,
-        //     required: true,
-        //     length: 11
-        //   },
-        //   code: {
-        //     type: String,
-        //     required: true,
-        //     length: 4
-        //   }
-        // }
+        const rule = {
+          login_method: {
+            required: true,
+            type: String
+          },
+          account: {
+            type: String,
+            match: regPhone,
+            required: true,
+            length: 11
+          },
+          code: {
+            type: String,
+            required: true,
+            length: 4
+          }
+        }
 
-        // const checkRt = validateFun(postData, rule)
-        // if (checkRt !== true) {
-        //   this.formCheckResult = checkRt
-        //   return
-        // }
+        const checkRt = validateFun(postData, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
 
-
-        postData.login_method='mobile_login'
         bizLogin(postData, {reqHeader: true}).then(res => {
           this.loginCall(res.data)
         })
