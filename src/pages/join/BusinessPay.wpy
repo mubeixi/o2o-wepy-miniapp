@@ -63,6 +63,7 @@
       <div class="pay-button"  @click="payLast">
         {{submitName}}
       </div>
+<!--      <button class="pay-button"  open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="payLast">{{submitName}}</button>-->
     </div>
 
     <popup-layer ref="systemCate" title="选择分类" :autoClose="false" >
@@ -89,15 +90,15 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {proCate, getBizPayAmount, getBizConfig, addBizOrder, bizOrderPay} from '../../api/store'
+  import {proCate, getBizPayAmount, getBizConfig, addBizOrder, bizOrderPay, code2Session} from '../../api/store'
 
   import {getArrColumn} from '../../common/helper'
-  import { error, toast } from '../../common/fun'
+  import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      submitName: '立即提交',
+      submitName: '立即支付',
       systemCateConf: {
         children: 'child', // 指定子树为节点对象的某个属性值
         label: 'Category_Name', // 指定节点标签为节点对象的某个属性值
@@ -119,45 +120,71 @@
       await this.proCate()
     },
     methods: {
-      payLast() {
+      async payLast(e) {
         if (!this.bondMoney) {
           error('请先选择分类')
           return
         }
-        if (this.submitName == '立即提交') {
-          let data = {
-            year: this.year_fee[this.ind].name,
-            bond_money: this.bondMoney,
-            pay_type: 1
+        let that = this
+        showLoading('提交中')
+        wx.login({
+          success (res) {
+            if (res.code) {
+              let code = res.code
+              code2Session({code: code}).then(res => {
+                hideLoading()
+                if (!res.data.openid) {
+                  error('获取支付信息失败')
+                  return
+                }
+                let open = res.data.openid
+                that.pay(open)
+              })
+            } else {
+              hideLoading()
+            }
+          },
+          fail() {
+            hideLoading()
           }
-          addBizOrder(data).then(res => {
-            this.order_id = res.data.order_id
-            this.submitName = '立即支付'
-          })
-        } else {
-          let data = {
+        })
+      },
+      async pay(open) {
+        let data = {
+          year: this.year_fee[this.ind].name,
+          bond_money: this.bondMoney,
+          pay_type: 1
+        }
+        showLoading('提交中')
+        await addBizOrder(data).then(res => {
+          this.order_id = res.data.order_id
+          let datas = {
             pay_method: 'wx_lp',
-            order_id: this.order_id
+            order_id: this.order_id,
+            open_id: open
           }
-
-          bizOrderPay(data).then(res => {
-            let obj=res.data
-            let timeStamp=obj.timeStamp
-            let nonceStr=obj.nonceStr
-            let package=obj.package
-            let paySign=obj.paySign
-
+          bizOrderPay(datas).then(res => {
+            hideLoading()
+            let obj = res.data
+            let {timeStamp, nonceStr, paySign} = obj || {}
+            let packages = obj.package
             wx.requestPayment({
               timeStamp: timeStamp,
-              nonceStr:nonceStr,
-              package: package,
+              nonceStr: nonceStr,
+              package: packages,
               signType: 'MD5',
               paySign: paySign,
-              success (res) { },
-              fail (res) { }
+              success (res) {
+                linkTo('/pages/index')
+              },
+              fail (res) {
+                console.log(res, 'ss')
+              }
             })
-          })
-        }
+          }).catch(e => { hideLoading() })
+        }).catch(e => {
+          hideLoading()
+        })
       },
       changeIndex(ind) {
         this.year_fee = this.year_fee.map(item => {

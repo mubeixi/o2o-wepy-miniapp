@@ -66,3 +66,5 @@ export const bizOrderPay = (param, options) => fetch({act: 'bizOrderPay', param,
 export const bizIndustryDetail = (param, options) => fetch({act: 'bizIndustryDetail', param, options})
 
 export const bizApply = (param, options) => fetch({act: 'bizApply', param, options})
+//通过小程序code换取openid接口
+export const code2Session = (param, options) => fetch({act: 'code2Session', param, options})
