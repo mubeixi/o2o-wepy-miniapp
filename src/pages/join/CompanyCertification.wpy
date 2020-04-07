@@ -294,7 +294,7 @@
 
 <config>
   {
-    "navigationBarTitleText": "个人认证",
+    "navigationBarTitleText": "企业认证",
     "usingComponents": {
       "diy-form": "~@/components/diy-form",
       "diy-form2": "~@/components/diy-form",

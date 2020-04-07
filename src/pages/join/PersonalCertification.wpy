@@ -222,7 +222,7 @@
 
         let postData = {
           industry_id,
-          principal_type: 1, // 1企业 2个人
+          principal_type: 2, // 1企业 2个人
           auth_info: JSON.stringify(this.auth_info) // 方便校验，就先不动了
         }
         const rule = {
