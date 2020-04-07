@@ -194,6 +194,7 @@
           permissions,
           material: person
         }
+        console.log(postData)
       },
       openTradeSelect() {
         this.showTrade = true
