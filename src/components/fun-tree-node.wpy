@@ -100,12 +100,12 @@
     },
     methods: {
       clickFn(item) {
-        console.log(item)
+        //console.log(item)
         if (!this.checkOnlyLeaf || this.isLeaf) {
           if (!item.hasOwnProperty(this.nodeKey)) {
             throw new Error('nodeKey参数有误')
           }
-          console.log(this.isCheck)
+          //console.log(this.isCheck)
           this.isCheck = !this.isCheck
           if (this.isCheck) {
             TreeHub.addCheck(this.eid, item, this.nodeKey)

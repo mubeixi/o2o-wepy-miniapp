@@ -107,8 +107,6 @@ export const findArrayIdx = (arr, keyValArr, full = false) => {
   return false
 }
 
-
-
 /**
  * 查看对象1中的所有属性在obj2中都有
  * @param obj1
@@ -183,7 +181,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  */
 export const uploadImages = ({imgs, name = 'image', data, progressList = []}) => {
   let taskList = []
-  console.log(imgs, 'ssss')
+  // console.log(imgs, 'ssss')
   for (let i = 0; i < imgs.length; i++) {
     let taskItem = upload({
       filePath: imgs[i],
@@ -211,7 +209,6 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = []}) =>
  * @returns {boolean}
  */
 export const validateFun = (data, rule) => {
-
   const rules = new Schema(rule)
   const errors = rules.validate(data)
   const rt = errors.map(item => item.message)
@@ -244,9 +241,7 @@ export const getString = (arr, key, mbx = 99) => {
   }
 }
 
-
 export const getDomain = (url) => {
-
   if (!url) return ''
   if (url.indexOf('http') === -1) return staticUrl + url
   return url
@@ -297,4 +292,20 @@ export const checkIsLogin = (redirect = 1, tip = 0) => {
   }
 
   return true
+}
+
+/**
+ * 切割字符串，可以有多个
+ * @param str
+ * @param separator
+ * @returns {*|string[]}
+ */
+export const strSplit = (str, separator = /|,|，|;|；|\||-|/) => {
+  return str.split(separator)
+}
+
+export function sleep (fn, par, time = 3000) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(fn(par)), time)
+  })
 }
