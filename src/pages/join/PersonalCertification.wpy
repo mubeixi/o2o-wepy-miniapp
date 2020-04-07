@@ -144,7 +144,7 @@
 
     <div style="height: 50px"></div>
 
-    <select-trade :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
+    <select-trade :single="true" :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
 
   </div>
 </template>
