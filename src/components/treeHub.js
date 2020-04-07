@@ -10,7 +10,7 @@ export class TreeHub {
   ENV = null
   eid = ''
   constructor(options) {
-    const {treeData, nodeKey, eid, has = [],childrenName} = options
+    const {treeData, nodeKey, eid, has = [], childrenName} = options
     if (!nodeKey) {
       throw Error('nodeKey必须设置')
     }
@@ -23,7 +23,7 @@ export class TreeHub {
     let nodes = []
     plainArray(treeData, childrenName, nodes)
 
-    //has
+    // has
     if (has.length > 0) {
       for (let i in nodes) {
         if (has.includes(nodes[i][nodeKey])) {
@@ -60,5 +60,13 @@ export class TreeHub {
       nodes[idx].check = false
       ls.set(eid, nodes)
     }
+  }
+
+  static removeAllCheck(eid, key) {
+    let nodes = ls.get(eid)
+    for (let idx in nodes) {
+      nodes[idx].check = false
+    }
+    ls.set(eid, nodes)
   }
 }

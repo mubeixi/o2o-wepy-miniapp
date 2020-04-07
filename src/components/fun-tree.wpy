@@ -8,7 +8,10 @@
       <template v-for="item in tree">
         <fun-tree-node
           :val="item"
+          @clear="clearFn"
+          :ref="'item'+item.id"
           :has="has"
+          :single="single"
           :eid="'tree_'+eleId"
           :show-checkbox="showCheckbox"
           :show-radio="showRadio"
@@ -39,7 +42,11 @@
     props: {
       // 展示数据
       treeData: Array,
-
+      // 单选
+      single: {
+        type: Boolean,
+        default: false
+      },
       // 自主控制loading加载，避免数据还没获取到的空档出现“暂无数据”字样
       ready: {
         type: Boolean,
@@ -93,11 +100,19 @@
 
       treeData(newVal) {
         // console.log(newVal)
-        this.tree = newVal
+        this.tree = objTranslate(newVal)
         // this.store.setData(newVal)
       }
     },
     methods: {
+      // 重新生成
+      clearFn({item, nodeKey}) {
+        console.log('clearFn', item, nodeKey,this.$refs)
+        // this.tree = objTranslate(this.treeData)
+        for (let i in this.$refs) {
+          this.$refs[i].restCheck({item, nodeKey})
+        }
+      },
       getCheckedNodes() {
         return TreeHub.getCHeckList('tree_' + this.eleId)
       }

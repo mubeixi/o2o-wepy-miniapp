@@ -214,7 +214,31 @@
         this.phone = e.$wx.detail.value
       },
       formSubmit() {
-        let postData = {account: this.phone, password: this.captcha, BizId: this.smsid}
+        let postData = {account: this.phone, code: this.captcha, BizId: this.smsid, login_method: 'sms_login'}
+
+        const rule = {
+          login_method: {
+            required: true,
+            type: String
+          },
+          account: {
+            type: String,
+            match: regPhone,
+            required: true,
+            length: 11
+          },
+          code: {
+            type: String,
+            required: true,
+            length: 4
+          }
+        }
+
+        const checkRt = validateFun(postData, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
 
         // const rule = {
         //   account: {
@@ -274,8 +298,7 @@
         this.$refs.pwd.hide()
       },
       loginCall(userData) {
-
-        const {access_token, status,Users_id, biz_account, id: biz_id} = userData
+        const {access_token, status, Users_id, biz_account, id: biz_id} = userData
         ls.set('access_token', access_token)
         ls.set('users_id', Users_id)
         ls.set('biz_account', biz_account)
