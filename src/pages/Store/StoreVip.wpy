@@ -1,5 +1,6 @@
 <template>
   <div class="store-vip">
+    <err-msg :errs="formCheckResult"></err-msg>
     <div class="store-item flex flex-vertical-center "  style="padding-top: 20rpx;height: 108rpx">
       <div class="store-title">
         会员名称
@@ -38,7 +39,7 @@
     </div>
     <div class="line"></div>
 
-    <div class="submit-main">
+    <div class="submit-main"  @click="saveVip">
       保存
     </div>
 
@@ -46,13 +47,13 @@
     <popup-layer title="权益" ref="quanyi" :autoClose="false">
       <checkbox-group class="type-list p-l-10 p-r-10"   bindchange="checkboxChange" >
         <label class="type-item flex flex-vertical-center">
-          <checkbox color="#00A8FF" value="0"  :checked="shipping.value>0"></checkbox>
+          <checkbox color="#00A8FF" value="0"  :checked="basic_rights.shipping.value>0"></checkbox>
           <div class="label p-10 flex flex-vertical-center">
             <div class="title ">包邮</div>
           </div>
         </label>
         <div class="type-item flex flex-vertical-center">
-          <checkbox color="#00A8FF" value="1" :checked="discount.value>0">
+          <checkbox color="#00A8FF" value="1" :checked="basic_rights.discount.value>0">
             <div class="label p-10 flex flex-vertical-center">
               <div class="title flex flex-vertical-center">
                 消费折扣
@@ -60,7 +61,7 @@
             </div>
           </checkbox>
 
-          <input type="text"  class="zhe" v-model="discount.value"/>
+          <input type="text"  class="zhe" v-model="basic_rights.discount.value"/>
           折
         </div>
       </checkbox-group>
@@ -74,41 +75,125 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {regDiscount} from '../../common/regs'
-  import { getBizConfig } from '../../api/store'
+  import { opBizUserLevel, getUserLevel} from '../../api/store'
   import { back, error, hideLoading, showLoading, toast } from '../../common/fun'
+  import { ls, validateFun } from '../../common/helper'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      basic_rights: {},
-      upgrade_rights: {},
+      vipData: [],
+      id: '',
+      formCheckResult: '',
+      upgrade_rights: {
+        coupon: {
+          name: '赠送优惠券',
+          value: ''
+        },
+        product: {
+          name: '赠送商品',
+          value: ''
+        }
+      },
       level_name: '', // 名称
       price: '', // 价格
       selectValue: [],
-      shipping: {
-        name: '包邮',
-        value: 0
-      },
-      discount: {
-        name: '消费折扣',
-        value: ''
+      basic_rights: {
+        shipping: {
+          name: '包邮',
+          value: 0
+        },
+        discount: {
+          name: '消费折扣',
+          value: ''
+        }
       }
-    },
-    onLoad() {
 
     },
+    onLoad(options) {
+      if (options.id) {
+        this.id = options.id
+        this.getDetail()
+      }
+    },
+    onUnload(){
+      ls.remove('coupon_prod')
+      ls.remove('pro_prod')
+    },
+    onShow() {
+      this.upgrade_rights.product.value = ls.get('pro_prod')
+      this.upgrade_rights.coupon.value = ls.get('coupon_prod')
+    },
     methods: {
+      getDetail() {
+        getUserLevel().then(res => {
+          let arr = res.data
+          arr.map(item => {
+            if (item.id == this.id) {
+              this.vipData = item
+            }
+          })
+          this.level_name = this.vipData.level_name
+          this.price = this.vipData.price
+          this.basic_rights = this.vipData.basic_rights
+          this.upgrade_rights = this.vipData.upgrade_rights
+          ls.set('coupon_prod', this.upgrade_rights.coupon.value)
+          ls.set('pro_prod', this.upgrade_rights.product.value)
+        })
+      },
+      saveVip() {
+        let postData = {level_name: this.level_name, price: this.price, basic_rights: JSON.stringify(this.basic_rights), upgrade_rights: JSON.stringify(this.upgrade_rights)}
+        const rule = {
+          level_name: {
+            required: true,
+            type: String,
+            message: {
+              required: '请输入会员名'
+            }
+          },
+          basic_rights: {
+
+          },
+          upgrade_rights: {
+
+          },
+          price: {
+            type: String,
+            required: true,
+            message: {
+              required: '请输入会员价格'
+            }
+          }
+        }
+
+        const checkRt = validateFun(postData, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
+        if (this.id) {
+          postData.id = this.id
+        }
+        opBizUserLevel(postData).then(res => {
+          toast('保存成功')
+          ls.remove('coupon_prod')
+          ls.remove('pro_prod')
+          setTimeout(function() {
+            back()
+          }, 1000)
+        })
+      },
       sure() {
         if (this.selectValue.length === 2 || this.selectValue[0] == 1) {
-          let num = parseFloat(this.discount.value)
+          let num = parseFloat(this.basic_rights.discount.value)
           if (num <= 0 || num >= 10 || isNaN(num)) {
             error('输入的折扣错误，请重新输入')
             return
           }
         }
         if (this.selectValue.length === 2 || this.selectValue[0] == 0) {
-          this.shipping.value = 1
+          this.basic_rights.shipping.value = 1
         }
 
         this.closePop('quanyi')
