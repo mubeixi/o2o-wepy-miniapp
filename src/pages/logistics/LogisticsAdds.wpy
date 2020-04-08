@@ -73,6 +73,10 @@
       temp_id: '', // 模板id
       Template_Name: ''// 模板名称
     },
+    onUnload(){
+      ls.remove('Template_Content')
+      ls.remove('Free_Content')
+    },
     onLoad(options) {
       if (options.temp_id) {
         this.temp_id = options.temp_id
