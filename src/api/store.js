@@ -71,3 +71,12 @@ export const bizIndustryDetail = (param, options) => fetch({act: 'bizIndustryDet
 export const bizApply = (param, options) => fetch({act: 'bizApply', param, options})
 //通过小程序code换取openid接口
 export const code2Session = (param, options) => fetch({act: 'code2Session', param, options})
+
+//新增限时抢购
+export const bizAddSpike = (param, options) => fetch({act: 'bizAddSpike', param, options})
+
+//限时抢购列表
+export const bizSpikeList = (param, options) => fetch({act: 'bizSpikeList', param, options})
+
+//限时抢购列表
+export const bizCancelSpike = (param, options) => fetch({act: 'bizSpikeList', param, options})

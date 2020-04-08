@@ -8,7 +8,7 @@
       background: white;
       .cell-item{
         .label{
-          width: 220rpx;
+          width: 240rpx;
         }
         .content{
           padding-right: 20rpx;
@@ -66,6 +66,7 @@
       .thumb{
         width: 176rpx;
         height: 176rpx;
+        background: #f2f2f2;
       }
       .info{
         flex: 1;
@@ -201,7 +202,7 @@
 <!--        </div>-->
       </div>
 
-      <div class="m-t-20 m-b-20 flex flex-vertical-center" @click="$openPop('product')">
+      <div class="m-t-20 m-b-20 flex flex-vertical-center" @click="openproductPop">
         <span class="fz-16 c3  m-l-20">选择商品</span>
         <div class="add-btn m-l-20"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加商品</span></div>
       </div>
@@ -240,16 +241,27 @@
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
           <div class="info-box" @click="taggleProductCheck(idx)">
             <div class="check"   >
-              <icon
-                class="check-icon"
-                :color="product.check?'#F53636':'#999'"
-                size="20"
-                :type="product.check?'iconblchecked':'iconCircle'"
-              ></icon>
+              <div v-show="!product.disalbed">
+                <icon
+                  class="check-icon"
+                  :color="product.check?'#F53636':'#999'"
+                  size="20"
+                  :type="product.check?'iconblchecked':'iconCircle'"
+                ></icon>
+              </div>
+              <div v-show="product.disalbed">
+                <icon
+                  class="check-icon"
+                  color="#eee"
+                  size="20"
+                  type="iconblchecked"
+                ></icon>
+              </div>
+
             </div>
             <image class="thumb" :src="product.ImgPath"></image>
             <div class="info">
-              <div class="title">{{product.Products_Name}}</div>
+              <div class="title">{{product.Products_Name}}{{product.Products_ID}}</div>
               <div class="price-box">
                 <span class="sign">￥</span>
                 <span>{{product.Products_PriceY}}</span>
@@ -275,7 +287,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {
-    ls, confirm, validateFun, objTranslate, getArrColumn
+    ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
   } from '../../common/helper'
   import { error, toast } from '../../common/fun'
   import { bizProdList } from '../../api/product'
@@ -302,7 +314,6 @@
     },
     methods: {
       sub() {
-
         const rule = {
           name: {
             required: true,
@@ -356,9 +367,9 @@
           select_prod: {
             required: true,
             use: {
-              discount:(str)=>{
+              discount: (str) => {
                 let val = JSON.parse(str)
-                console.log(str,val)
+                console.log(str, val)
                 for (let item of val) {
                   if (item.discount >= 0.1 && item.discount <= 9.9) {
 
@@ -372,7 +383,7 @@
             },
             message: {
               required: '活动商品必选',
-              discount: '商品折扣只能在0.1到9.9之间',
+              discount: '商品折扣只能在0.1到9.9之间'
             }
           }
         }
@@ -424,21 +435,48 @@
       taggleDistributor(e) {
         this.formData.is_distribute = e.$wx.detail.value ? 1 : 0
       },
+      openproductPop() {
+      // 先把已经选中的放进来
+        for (let goods of this.proData) {
+          for (let item of this.select_prod) {
+            if (item.Products_ID === goods.Products_ID) {
+              console.log(goods.Products_ID)
+              goods.disalbed = true
+              // goods.check = true
+              // goods.discount = item.discount
+            }
+          }
+        }
+
+        this.$openPop('product')
+      },
       surePro() {
         this.$closePop('product')
         const selects = this.proData.filter(item => item.check).map(item => {
           return {...item, prod_id: item.Products_ID, discount: ''}
         })
-        this.select_prod = this.select_prod.concat(selects)
+
+        // 不能加已经存在的
+        for (let item of selects) {
+          if (findArrayIdx(this.select_prod, {Products_ID: item.Products_ID}) === false) {
+            this.select_prod.push(item)
+          }
+        }
+
       },
       delPro(idx) {
-        confirm({
-          content: '是否移除该商品'
-        }).then(() => {
-          this.select_prod.splice(idx, 1)
-        }).catch(() => {})
+        this.select_prod.splice(idx, 1)
+        // confirm({
+        //   content: '是否移除该商品'
+        // }).then(() => {
+        //   this.select_prod.splice(idx, 1)
+        // }).catch(() => {})
       },
       taggleProductCheck(idx) {
+        if (this.proData[idx].disalbed) {
+          error('该商品已经选中')
+          return
+        }
         this.proData[idx].check = !this.proData[idx].check
       },
       async _init_func() {
@@ -446,6 +484,7 @@
         const hasGoodsIds = getArrColumn(this.select_prod, 'prod_id')
         this.proData = reqData.data.map(item => {
           item.check = hasGoodsIds.includes(item.Products_ID)
+          item.disalbed =false
           return {...item}
         })
       }
