@@ -214,7 +214,7 @@
         this.phone = e.$wx.detail.value
       },
       formSubmit() {
-        let postData = {account: this.phone, password: this.captcha, BizId: this.smsid, login_method: 'sms_login'}
+        let postData = {account: this.phone, code: this.captcha, BizId: this.smsid, login_method: 'sms_login'}
 
         const rule = {
           login_method: {
