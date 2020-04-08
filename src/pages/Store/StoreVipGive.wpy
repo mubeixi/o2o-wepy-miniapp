@@ -1,0 +1,376 @@
+<template>
+  <div class="store-all">
+
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="openPop('couponPop')">
+      <div class="store-title">
+        赠送优惠券
+      </div>
+      <div class="store-titles">
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </div>
+    </div>
+
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="openPop('pros')">
+      <div class="store-title">
+        赠送商品
+      </div>
+      <div class="store-titles">
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </div>
+    </div>
+
+    <div class="submit-main">
+      保存
+    </div>
+
+
+    <popup-layer title="选择商品" ref="pros" :autoClose="false">
+      <div class="product-list" v-if="proData.length>0">
+        <div class="product-item" v-for="(product,idx) in proData" :key="idx">
+          <div class="info-box" @click="taggleProductCheck(idx)">
+            <div class="check"   >
+              <icon
+                class="check-icon"
+                :color="product.check?'#F53636':'#999'"
+                size="20"
+                :type="product.check?'iconblchecked':'iconCircle'"
+              ></icon>
+            </div>
+            <image class="thumb" :src="product.ImgPath"></image>
+            <div class="info">
+              <div class="title">{{product.Products_Name}}</div>
+              <div class="price-box">
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceY}}</span>
+                <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceX}}</span>
+              </div>
+              <div class="stock-box">
+                <span class="stock">库存:{{product.Products_Count}}</span>
+                <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
+    </popup-layer>
+
+
+
+    <popup-layer ref="couponPop" title="选择优惠券" mainBgColor="#F7F4F8" >
+      <div class="coupon-wrap" style="overflow-y: scroll;box-sizing: border-box;" :style="{maxHeight: systemInfo.windowHeight-150+'px'}">
+        <div class="coupon-item flex flex-justify-between" @click="couponChange(index)"  v-for="(item,index) of couponList" :key="index">
+          <div class="item-left" >
+            <icon
+              class="check-icon"
+              :color="item.check?'#F53636':'#999'"
+              size="20"
+              :type="item.check?'iconblchecked':'iconCircle'"
+            ></icon>
+          </div>
+          <div class="item-right" >
+            <image src="/static/coupon.png" class="full-img"></image>
+            <div class="time">有效限：{{item.Coupon_StartTime}}至{{item.Coupon_EndTime}}</div>
+            <div class="price flex">
+              <div class="font-32">¥</div>
+              <div class="font-70">{{item.Coupon_Cash}}</div>
+              <div class="newuser">新用户专用</div>
+            </div>
+            <div class="right-q">{{item.Coupon_Subject}}</div>
+            <div class="right-w">全场满{{item.Coupon_Condition}}可用</div>
+          </div>
+        </div>
+        <div style="height: 100rpx;"></div>
+      </div>
+      <button @click="sureCoupon" class="btn btn-primary">确定</button>
+    </popup-layer>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import {bizProdList} from '../../api/product'
+  import {getCouponList} from '../../api/store'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      proData: [],
+      couponList:[],
+      pro_prod: '',
+      coupon_prod:''
+    },
+    onLoad() {
+      this.getList()
+    },
+    methods: {
+      sureCoupon(){
+        this.closePop('couponPop')
+        this.coupon_prod = ''
+        for (let item of this.couponList) {
+          if (item.check) {
+            this.coupon_prod += item.Coupon_ID + ','
+          }
+        }
+        this.coupon_prod = this.coupon_prod.substring(0, this.coupon_prod.length - 1)
+      },
+      couponChange(idx) {
+        this.$set(this.couponList[idx], 'check', !this.couponList[idx].check)
+      },
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      },
+      surePro() {
+        this.closePop('pros')
+        this.pro_prod = ''
+        for (let item of this.proData) {
+          if (item.check) {
+            this.pro_prod += item.Products_ID + ','
+          }
+        }
+        this.pro_prod = this.pro_prod.substring(0, this.pro_prod.length - 1)
+      },
+      taggleProductCheck(idx) {
+        this.proData[idx].check = !this.proData[idx].check
+      },
+      getList() {
+        getCouponList().then(res => {
+          this.couponList = res.data
+        })
+        bizProdList({page: 1, pageSize: 999}).then(res => {
+          this.proData = res.data.map(item => {
+            return {...item, check: false}
+          })
+
+          let arr = this.pro_prod.split(',')
+
+          this.proData.map(item => {
+            for (let it of arr) {
+              if (item.Products_ID == it) {
+                item.check = true
+              }
+            }
+          })
+        })
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
+  }
+
+  .store-all{
+    background-color: #FFFFFF;
+    height: 100vh;
+    .store-item{
+      height: 108rpx;
+      border-bottom: 1px solid #EBEBEB;
+      box-sizing: border-box;
+      width: 710rpx;
+      margin: 0 auto;
+    }
+    .item-last{
+      height: 150rpx;
+    }
+    .store-title{
+      color: #333333;
+      font-size: 30rpx;
+    }
+    .store-titles{
+      display: flex;
+      align-items: center;
+      color: #999999;
+      font-size: 26rpx;
+    }
+  }
+  .picker-mbx{
+    flex: 1;
+    text-align: right;
+    height: 108rpx;
+    line-height: 108rpx;
+    color: #999999;
+    font-size: 26rpx;
+  }
+  /*商品列表 start*/
+  .product-list{
+    height: 800rpx;
+    overflow: scroll;
+  }
+  .product-item{
+    padding: 30rpx 0;
+    background: white;
+    margin-bottom: 20rpx;
+    .info-box{
+      padding: 0 20rpx;
+      display: flex;
+      font-size: 14px;
+      height: 176rpx;
+      .check{
+        padding-right: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .check-icon{
+
+        }
+      }
+      .thumb{
+        width: 176rpx;
+        height: 176rpx;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          color: #333;
+          font-size: 14px;
+          /*font-weight: bold;*/
+          line-height: 20px;
+          height: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+        .price-box{
+          color: $fun-red-color;
+          margin-bottom: 10px;
+          font-size: 14px;
+        }
+        .stock-box{
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .actions{
+      margin-top: 30rpx;
+      font-size: 12px;
+      display: flex;
+      .action{
+        justify-content: center;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: #888;
+        border-right: 1rpx solid #e7e7e7;
+        &:last-child{
+          border-right: none;
+        }
+        .title{
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  /*商品列表 end*/
+
+  /*选择优惠券start*/
+  .coupon-wrap{
+    .full-img{width: 100%;height: 100%}
+    .coupon-item{
+      height: 216rpx;
+      margin-bottom: 30rpx;
+      padding-right: 26rpx;
+    }
+    .item-left{
+      width: 90rpx;
+      height: 216rpx;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .item-right{
+      position: relative;
+      width: 634rpx;
+      height: 216rpx;
+      .time{
+        position:absolute;
+        left: 48rpx;
+        bottom: 24rpx;
+        font-size: 24rpx;
+        color: #999999;
+      }
+    }
+    .font-32{
+      font-size: 32rpx;
+      color: #FF0042;
+    }
+    .font-70{
+      font-size: 70rpx;
+      color: #FF0042;
+      line-height: 56rpx;
+      margin-left: 14rpx;
+    }
+    .price{
+      position: absolute;
+      align-items: flex-end;
+      height: 56rpx;
+      left: 48rpx;
+      bottom: 100rpx;
+    }
+    .newuser{
+      font-size: 18rpx;
+      color: #FFA27A;
+      width: 124rpx;
+      height: 34rpx;
+      border: 1px solid #FFA27A;
+      text-align: center;
+      line-height: 34rpx;
+      margin-left: 24rpx;
+      margin-bottom: 20rpx;
+    }
+    .right-q{
+      font-size: 30rpx;
+      color: #1D1D1D;
+      position: absolute;
+      top: 52rpx;
+      right: 38rpx;
+    }
+    .right-w{
+      font-size: 24rpx;
+      color: #999999;
+      position: absolute;
+      top: 100rpx;
+      right: 38rpx;
+    }
+
+  }
+/*选择优惠券结束*/
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "赠送礼包",
+  "usingComponents": {
+  "popup-layer": "~@/components/popup-layer",
+  "icon": "~@/components/icon"
+  }
+  }
+</config>
