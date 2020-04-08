@@ -1,0 +1,81 @@
+<style lang="scss">
+
+</style>
+<template>
+  <picker class="picker-mbx" mode="multiSelector" value="{{dateTime}}" bindchange="changeDateTime" bindcolumnchange="changeDateTimeColumn" range="{{dateTimeArray}}">
+    <view class="text">
+      <div v-if="selected">{{strTime}}</div>
+      <div v-else><slot></slot></div>
+    </view>
+  </picker>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  const moment = require('moment')
+  import { dateTimePicker, getMonthDay } from '../common/time'
+  const cutTimeStr = (str)=>str.substring(0,str.length-1)
+  wepy.component({
+    props: {
+      label: {
+        default: '请选择结束时间'
+      }
+
+    },
+    watch: {
+      strTime: {
+        deep: true,
+        handler(val) {
+          console.log(val)
+          if (val) {
+            this.$emit('uptime', val)
+          }
+        }
+      }
+    },
+    computed: {
+      strTime() {
+        try {
+          let dateTimeArray = this.dateTimeArray, dateTime = this.dateTime
+
+          return cutTimeStr(dateTimeArray[0][dateTime[0]]) + '-' + cutTimeStr(dateTimeArray[1][dateTime[1]]) + '-' + cutTimeStr(dateTimeArray[2][dateTime[2]]) + ' ' + cutTimeStr(dateTimeArray[3][dateTime[3]]) + ':' + cutTimeStr(dateTimeArray[4][dateTime[4]]) + ':' + cutTimeStr(dateTimeArray[5][dateTime[5]])
+        } catch (e) {
+          return ''
+        }
+      }
+    },
+    data: {
+      selected:false,
+      dateTimeArray: [],
+      dateTime: [0, 0, 0, 0,0,0]
+    },
+    ready() {
+      const {dateTimeArray, dateTime} = dateTimePicker('', '')
+      this.dateTimeArray = dateTimeArray
+      this.dateTime = dateTime
+    },
+    methods: {
+      changeDateTime(e) {
+        const val = e.$wx.detail.value
+        console.log(val)
+        this.dateTime = val
+        this.selected = true
+      },
+      changeDateTimeColumn(e) {
+        const val = e.$wx.detail.value
+        let arr = this.dateTime
+        let dateArr = this.dateTimeArray
+        arr[e.$wx.detail.column] = val
+        dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+        this.dateTimeArray = dateArr
+        this.dateTime = arr
+      }
+    }
+  })
+</script>
+<config>
+  {
+    "usingComponents": {
+      "icon": "~@/components/icon"
+    }
+  }
+</config>
