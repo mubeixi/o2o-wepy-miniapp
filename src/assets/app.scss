@@ -79,11 +79,29 @@
 
 page{
   background: #f8f8f8;
+
 }
 
 
 .page-wrap{
   //min-height: 100vh;
+  &.safearea{
+    margin-bottom: constant(safe-area-inset-bottom);
+    margin-bottom: env(safe-area-inset-bottom);
+  }
+  &.bottom-btn{
+    padding-bottom: 100rpx;
+  }
+  .safearea-box{
+    background: white;
+  }
+  .action-btn{
+    position: fixed;
+    left: 0;
+    z-index: 3;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
+  }
 
 }
 

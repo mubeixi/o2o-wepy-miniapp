@@ -16,6 +16,12 @@ export default {
     $linkTo: linkTo,
     $toast: toast,
     $error: error,
+    $openPop(name) {
+      this.$refs[name].show()
+    },
+    $closePop(name) {
+      this.$refs[name].close()
+    },
     mixintap () {
       this.mixin = 'MixinText' + (Math.random() + '').substring(3, 7)
       // console.log('mixin method tap')
