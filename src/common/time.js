@@ -3,17 +3,18 @@ function withData(param) {
   return param < 10 ? '0' + param : '' + param
 }
 function getLoopArray(start, end, unit = '') {
-  var start = start || 0
-  var end = end || 1
+  var _start = start || 0
+  var _end = end || 1
   var array = []
-  for (var i = start; i <= end; i++) {
+  for (var i = _start; i <= _end; i++) {
     array.push(withData(i + unit))
   }
   return array
 }
 function getMonthDay(year, month) {
-  var flag = year % 400 == 0 || (year % 4 == 0 && year % 100 != 0), array = null
-  console.log(month)
+  let flag = year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0)
+  let array = null
+  // console.log(month)
   switch (month) {
     case '01':
     case '03':
@@ -53,7 +54,7 @@ function getMonthDay(year, month) {
 function getNewDateArry() {
   // 当前时间的处理
   var newDate = new Date()
-  var year = withData(newDate.getFullYear()),
+  const year = withData(newDate.getFullYear()),
     mont = withData(newDate.getMonth() + 1),
     date = withData(newDate.getDate()),
     hour = withData(newDate.getHours()),
@@ -62,24 +63,45 @@ function getNewDateArry() {
 
   return [year, mont, date, hour, minu]
 }
+
+/**
+ * 多了单位
+ * @returns {string[]}
+ */
+function getNewDateArryByStr() {
+  // 当前时间的处理
+  var newDate = new Date()
+  var year = newDate.getFullYear() + '年',
+    mont = (newDate.getMonth() + 1) + '月',
+    date = newDate.getDate() + '日',
+    hour = newDate.getHours() + '时',
+    minu = newDate.getMinutes() + '分',
+    seco = newDate.getSeconds() + '秒'
+
+  return [year, mont, date, hour, minu,seco]
+}
+const cutTimeStr = (str) => str.substring(0, str.length - 1)
 function dateTimePicker(startYear, endYear, date) {
   // 返回默认显示的数组和联动数组的声明
   var dateTime = [], dateTimeArray = [[], [], [], [], []]
   var start = startYear || new Date().getFullYear()
   var end = endYear || 2100
   // 默认开始显示数据
-  var defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()
+  var defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArryByStr()
+  console.log('defaultDate is', defaultDate)
   // 处理联动列表数据
   /* 年月日 时分秒 */
   dateTimeArray[0] = getLoopArray(start, end, '年')
   dateTimeArray[1] = getLoopArray(1, 12, '月')
-  dateTimeArray[2] = getMonthDay(defaultDate[0], defaultDate[1])
+  const tempTime = getNewDateArry()
+  dateTimeArray[2] = getMonthDay(tempTime[0], tempTime[1])
   dateTimeArray[3] = getLoopArray(0, 23, '时')
   dateTimeArray[4] = getLoopArray(0, 59, '分')
   dateTimeArray[5] = getLoopArray(0, 59, '秒')
-
+  // console.log(dateTimeArray)
   dateTimeArray.forEach((current, index) => {
-    dateTime.push(current.indexOf(defaultDate[index]))
+    const idx = current.indexOf(defaultDate[index]) ? current.indexOf(defaultDate[index]) : 0
+    dateTime.push(idx)
   })
 
   return {
