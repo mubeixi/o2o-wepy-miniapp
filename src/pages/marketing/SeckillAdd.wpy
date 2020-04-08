@@ -1,0 +1,156 @@
+<template>
+  <div class="seckill-add">
+      <div style="width: 750rpx;height: 50rpx;"></div>
+      <div class="submits flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/SeckillAdd')">
+        <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
+        添加秒杀
+      </div>
+
+    <div class="store-item flex flex-vertical-center">
+      <div  class="title">
+        秒杀价格
+      </div>
+      <div class="flex flex1 fz-13" >
+        <input type="number"  class="flex flex1 p-l-26" placeholder="请输入秒杀价格"  placeholder-class="place"/>
+        元
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center">
+      <div  class="title">
+        活动库存
+      </div>
+      <div class="flex flex1 fz-13" >
+        <input type="number"  class="flex flex1 p-l-26" placeholder="请输入活动库存"  placeholder-class="place"/>
+        件
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="title">
+        开始时间
+      </div>
+      <picker class="picker-mbx c9 fz-14" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
+        请选择
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </picker>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="title">
+        结束时间
+      </div>
+      <picker class="picker-mbx c9 fz-14" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
+        请选择
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </picker>
+    </div>
+    <div class="store-item flex flex-vertical-center">
+      <div  class="title">
+        每人限购
+      </div>
+      <div class="flex flex1 fz-13" >
+        <input type="number"  class="flex flex1 p-l-26" placeholder="请输入限购"  placeholder-class="place"/>
+        件
+      </div>
+    </div>
+
+
+    <div style="height: 86rpx;width: 750rpx"></div>
+    <div class="submitLast fz-16">
+      确定
+    </div>
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+
+
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+      init(){
+
+      }
+    },
+    onShow() {
+
+    },
+    onLoad() {
+      this.init()
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .seckill-add{
+    height: 100vh;
+    background-color: #FFFFFF;
+  }
+  .submits{
+    margin: 0rpx auto 50rpx;
+    width: 320rpx;
+    height: 60rpx;
+    background-color: #FFFFFF;
+    border: 1px solid #00A8FF;
+    border-radius: 6rpx;
+    color: #00A8FF;
+    font-size: 28rpx;
+    line-height: 60rpx;
+  }
+  .store-item{
+    height: 110rpx;
+    width: 710rpx;
+    padding: 0rpx 20rpx;
+    border-bottom: 1px solid #EBEBEB;
+  }
+  .title{
+    font-size: 28rpx;
+    color: #333333;
+  }
+  .place{
+    color: #CAC8C8;
+  }
+  .store-titles{
+    display: flex;
+    align-items: center;
+    color: #999999;
+    font-size: 26rpx;
+  }
+  .submitLast{
+    width: 750rpx;
+    height: 86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #00A8FF;
+    color: #FFFFFF;
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "添加秒杀",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
+  }
+</config>

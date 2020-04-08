@@ -86,7 +86,9 @@ wepy.app({
       "pages/product/ProductManager",
       "pages/product/form",
       "pages/user/login",
-      "pages/demo"
+      "pages/demo",
+      "pages/marketing/Seckill",
+      "pages/marketing/SeckillAdd"
     ],
     window: {
         backgroundTextStyle: "light",
