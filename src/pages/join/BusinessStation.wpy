@@ -89,7 +89,7 @@
         </div>
 
         <div class="station-button active"  @click="$linkTo('/pages/index')">
-          去提交
+          已完成
         </div>
 
       </div>
