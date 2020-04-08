@@ -127,7 +127,7 @@
       </div>
 
 
-      <popup-layer title="选择商品" ref="pro" :autoClose="true">
+      <popup-layer title="选择商品" ref="pro" :autoClose="false">
         <div class="product-list">
           <div class="product-item" v-for="(product,idx) in proData" :key="idx">
             <div class="info-box" @click="taggleProductCheck(idx)">
@@ -512,13 +512,6 @@
               }
             }
           })
-          // for (let its of this.proData) {
-          //   for (let it of arr) {
-          //     if (its.Products_ID == it) {
-          //       its.check = true
-          //     }
-          //   }
-          // }
         })
       },
       onShow() {
