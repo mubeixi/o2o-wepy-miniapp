@@ -1,0 +1,64 @@
+<style lang="scss">
+  @import "../../assets/mixins.scss";
+  .page-wrap{
+    padding-bottom: 100rpx;
+  }
+  .action-btn{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+</style>
+<template>
+  <div class="page-wrap">
+    <div class="container">
+
+    </div>
+    <div class="btn action-btn btn-primary" @click="$linkTo('/pages/marketing/FlashSaleForm')">
+      <icon type="iconadd1" color="#fff" size="16"></icon>
+      <span class="p-l-10">添加限时折扣</span>
+    </div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {
+    chooseImageByPromise, getArrColumn, uploadImages
+  } from '../../common/helper'
+  import { error } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+      sub(){
+
+      },
+    },
+    onReady() {
+
+    },
+    onLoad() {
+
+    }
+  })
+</script>
+<config>
+  {
+    "navigationBarTitleText": "限时抢购",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "icon": "~@/components/icon",
+      "popup-layer": "~@/components/popup-layer"
+    }
+  }
+</config>
