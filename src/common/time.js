@@ -14,7 +14,6 @@ function getLoopArray(start, end, unit = '') {
 function getMonthDay(year, month) {
   let flag = year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0)
   let array = null
-  // console.log(month)
   switch (month) {
     case '01':
     case '03':
@@ -88,7 +87,7 @@ function dateTimePicker(startYear, endYear, date) {
   var end = endYear || 2100
   // 默认开始显示数据
   var defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArryByStr()
-  console.log('defaultDate is', defaultDate)
+
   // 处理联动列表数据
   /* 年月日 时分秒 */
   dateTimeArray[0] = getLoopArray(start, end, '年')
@@ -98,7 +97,7 @@ function dateTimePicker(startYear, endYear, date) {
   dateTimeArray[3] = getLoopArray(0, 23, '时')
   dateTimeArray[4] = getLoopArray(0, 59, '分')
   dateTimeArray[5] = getLoopArray(0, 59, '秒')
-  // console.log(dateTimeArray)
+
   dateTimeArray.forEach((current, index) => {
     const idx = current.indexOf(defaultDate[index]) ? current.indexOf(defaultDate[index]) : 0
     dateTime.push(idx)
