@@ -1,11 +1,12 @@
 <template>
   <div class="store-vip">
+    <err-msg :errs="formCheckResult"></err-msg>
     <div class="store-item flex flex-vertical-center "  style="padding-top: 20rpx;height: 108rpx">
       <div class="store-title">
         会员名称
       </div>
 
-      <input type="text" placeholder="请输入会员名称"  style="margin-left: 34rpx"/>
+      <input type="text" placeholder="请输入会员名称" v-model="level_name"  style="margin-left: 34rpx"/>
 
     </div>
     <div class="line"></div>
@@ -14,7 +15,7 @@
         价格
       </div>
       <div class="store-titles">
-        <input type="text" class="price-input" />
+        <input type="number" class="price-input" placeholder="请输入价格" v-model="price"/>
         元
       </div>
     </div>
@@ -28,7 +29,7 @@
       </div>
     </div>
     <div class="line"></div>
-    <div class="store-item flex flex-vertical-center flex-justify-between">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="$linkTo('/pages/store/StoreVipGive')">
       <div class="store-title">
         赠送礼包
       </div>
@@ -38,28 +39,33 @@
     </div>
     <div class="line"></div>
 
+    <div class="submit-main"  @click="saveVip">
+      保存
+    </div>
 
 
-    <popup-layer title="权益" ref="quanyi" :autoClose="true">
-      <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
+    <popup-layer title="权益" ref="quanyi" :autoClose="false">
+      <checkbox-group class="type-list p-l-10 p-r-10"   bindchange="checkboxChange" >
         <label class="type-item flex flex-vertical-center">
-          <radio color="#00A8FF" value="0" :checked="useCan === 0"></radio>
+          <checkbox color="#00A8FF" value="0"  :checked="basic_rights.shipping.value>0"></checkbox>
           <div class="label p-10 flex flex-vertical-center">
             <div class="title ">包邮</div>
           </div>
         </label>
-        <label class="type-item flex flex-vertical-center">
-          <radio color="#00A8FF" value="1" :checked="useCan === 1"></radio>
-          <div class="label p-10 flex flex-vertical-center">
-            <div class="title flex flex-vertical-center">
-              消费折扣
-              <input type="text"  class="zhe"/>
-              折
+        <div class="type-item flex flex-vertical-center">
+          <checkbox color="#00A8FF" value="1" :checked="basic_rights.discount.value>0">
+            <div class="label p-10 flex flex-vertical-center">
+              <div class="title flex flex-vertical-center">
+                消费折扣
+              </div>
             </div>
-          </div>
-        </label>
-      </radio-group>
-      <button class="btn btn-primary m-t-35" @click="closePop('useFan')">确认</button>
+          </checkbox>
+
+          <input type="text"  class="zhe" v-model="basic_rights.discount.value"/>
+          折
+        </div>
+      </checkbox-group>
+      <button class="btn btn-primary m-t-35" @click="sure">确认</button>
     </popup-layer>
   </div>
 </template>
@@ -68,26 +74,139 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-
-  import { getBizConfig, opBizInfo } from '../../api/store'
-  import { back, hideLoading, showLoading, toast } from '../../common/fun'
+  import {regDiscount} from '../../common/regs'
+  import { opBizUserLevel, getUserLevel} from '../../api/store'
+  import { back, error, hideLoading, showLoading, toast } from '../../common/fun'
+  import { ls, validateFun } from '../../common/helper'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      vipData: [],
+      id: '',
+      formCheckResult: '',
+      upgrade_rights: {
+        coupon: {
+          name: '赠送优惠券',
+          value: ''
+        },
+        product: {
+          name: '赠送商品',
+          value: ''
+        }
+      },
+      level_name: '', // 名称
+      price: '', // 价格
+      selectValue: [],
+      basic_rights: {
+        shipping: {
+          name: '包邮',
+          value: 0
+        },
+        discount: {
+          name: '消费折扣',
+          value: ''
+        }
+      }
 
     },
-    onLoad() {
-
+    onLoad(options) {
+      if (options.id) {
+        this.id = options.id
+        this.getDetail()
+      }
+    },
+    onUnload(){
+      ls.remove('coupon_prod')
+      ls.remove('pro_prod')
+    },
+    onShow() {
+      this.upgrade_rights.product.value = ls.get('pro_prod')
+      this.upgrade_rights.coupon.value = ls.get('coupon_prod')
     },
     methods: {
+      getDetail() {
+        getUserLevel().then(res => {
+          let arr = res.data
+          arr.map(item => {
+            if (item.id == this.id) {
+              this.vipData = item
+            }
+          })
+          this.level_name = this.vipData.level_name
+          this.price = this.vipData.price
+          this.basic_rights = this.vipData.basic_rights
+          this.upgrade_rights = this.vipData.upgrade_rights
+          ls.set('coupon_prod', this.upgrade_rights.coupon.value)
+          ls.set('pro_prod', this.upgrade_rights.product.value)
+        })
+      },
+      saveVip() {
+        let postData = {level_name: this.level_name, price: this.price, basic_rights: JSON.stringify(this.basic_rights), upgrade_rights: JSON.stringify(this.upgrade_rights)}
+        const rule = {
+          level_name: {
+            required: true,
+            type: String,
+            message: {
+              required: '请输入会员名'
+            }
+          },
+          basic_rights: {
+
+          },
+          upgrade_rights: {
+
+          },
+          price: {
+            type: String,
+            required: true,
+            message: {
+              required: '请输入会员价格'
+            }
+          }
+        }
+
+        const checkRt = validateFun(postData, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
+        if (this.id) {
+          postData.id = this.id
+        }
+        opBizUserLevel(postData).then(res => {
+          toast('保存成功')
+          ls.remove('coupon_prod')
+          ls.remove('pro_prod')
+          setTimeout(function() {
+            back()
+          }, 1000)
+        })
+      },
+      sure() {
+        if (this.selectValue.length === 2 || this.selectValue[0] == 1) {
+          let num = parseFloat(this.basic_rights.discount.value)
+          if (num <= 0 || num >= 10 || isNaN(num)) {
+            error('输入的折扣错误，请重新输入')
+            return
+          }
+        }
+        if (this.selectValue.length === 2 || this.selectValue[0] == 0) {
+          this.basic_rights.shipping.value = 1
+        }
+
+        this.closePop('quanyi')
+      },
+      checkboxChange(e) {
+        this.selectValue = e.$wx.detail.value
+      },
       openPop(name) {
         this.$refs[name].show()
       },
       closePop(name) {
         this.$refs[name].close()
-      },
+      }
     }
 
   })
@@ -150,13 +269,27 @@
     border: 1px solid #DDDDDD;
   }
 
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
+  }
 </style>
 <config>
   {
   "navigationBarTitleText": "店铺会员",
   "usingComponents": {
     "icon": "~@/components/icon",
-  "popup-layer": "~@/components/popup-layer",
+    "popup-layer": "~@/components/popup-layer",
+    "err-msg": "~@/components/err-msg"
   }
   }
 </config>

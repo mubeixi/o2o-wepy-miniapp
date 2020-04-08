@@ -34,6 +34,9 @@ export const getCityList = (param, options) => fetch({act: 'getCityList', param,
 // 获取会员等级列表
 export const getUserLevel = (param, options) => fetch({act: 'getUserLevel', param, options})
 
+// 添加编辑会员等级列表
+export const opBizUserLevel = (param, options) => fetch({act: 'opBizUserLevel', param, options})
+
 // 获取优惠券列表
 export const getCouponList = (param, options) => fetch({act: 'getCouponList', param, options})
 
