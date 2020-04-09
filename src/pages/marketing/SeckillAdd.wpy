@@ -53,7 +53,10 @@
         开始时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
-        <time @uptime="upStartTime" :val="start_time"><span class="fz-12 c9">请选择时间</span></time>
+        <time @uptime="upStartTime" :val="start_time">
+          <span class="fz-14" v-if="start_time">{{start_time}}</span>
+          <span class="fz-14 c9" v-else>请选择开始时间</span>
+        </time>
         <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
       </div>
     </div>
@@ -62,7 +65,10 @@
         结束时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
-        <time @uptime="upEndTime" :val="end_time"><span class="fz-12 c9">请选择时间</span></time>
+        <time @uptime="upEndTime" :val="end_time">
+          <span class="fz-14" v-if="end_time">{{end_time}}</span>
+          <span class="fz-14 c9" v-else>请选择结束时间</span>
+        </time>
         <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
       </div>
     </div>
@@ -145,6 +151,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      mbx: [],
       formCheckResult: '',
       id: '',
       price: '',
@@ -168,22 +175,24 @@
           end_time: this.end_time,
           limits: this.limit
         }
-        if (this.id) {
-          data.flashsale_id = this.id
-        }
         if (this.selectValue.Products_Type != 0) {
           let arr = []
-          for (let it in skuvaljosn) {
-            if (skuvaljosn[it].check) {
-              let obj = {
-                id: skuvaljosn[it].Product_Attr_ID,
-                name: skuvaljosn[it].Attr_Value.mobile_prod_attr_name,
-                price: skuvaljosn[it].price,
-                count: skuvaljosn[it].count
+          if (skuvaljosn) {
+            for (let it in skuvaljosn) {
+              if (skuvaljosn[it].check) {
+                let obj = {
+                  id: skuvaljosn[it].Product_Attr_ID,
+                  name: skuvaljosn[it].Attr_Value.mobile_prod_attr_name,
+                  price: skuvaljosn[it].price,
+                  count: skuvaljosn[it].count
+                }
+                arr.push(obj)
               }
-              arr.push(obj)
             }
+          } else {
+            arr = this.mbx
           }
+
           let mbx = {
             prod_id: this.pro_id,
             data: arr
@@ -254,6 +263,10 @@
           }
         }
 
+        if (this.id) {
+          data.flashsale_id = this.id
+        }
+        console.log(data, this.id, 'sss')
         bizOperateFlashsale(data).then(res => {
           if (this.id) {
             toast('保存成功')
@@ -329,6 +342,7 @@
         this.$refs[name].close()
       },
       getMbx() {
+        showLoading('加载中')
         bizFlashsaleDetail({flashsale_id: this.id }).then(res => {
           this.editData = res.data
           this.price = this.editData.attr_json.price
@@ -336,6 +350,9 @@
           this.limit = this.editData.limits
           this.start_time = moment(this.editData.start_time).format('YYYY-MM-DD HH:mm:ss')
           this.end_time = moment(this.editData.end_time).format('YYYY-MM-DD HH:mm:ss')
+          if (this.editData.Products_Type != 0) {
+            this.mbx = this.editData.attr_json.data
+          }
 
           for (let item of this.proData) {
             if (item.Products_ID == this.editData.Products_ID) {
@@ -344,11 +361,12 @@
               this.pro_id = item.Products_ID
             }
           }
-        }).catch(e => {})
+          hideLoading()
+        }).catch(e => { hideLoading() })
       },
       async init() {
+        showLoading('加载中')
         let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => {})
-
         this.proData = reqData.data.map(item => {
           return {...item, check: false}
         })

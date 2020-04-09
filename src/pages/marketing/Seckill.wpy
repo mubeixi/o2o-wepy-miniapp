@@ -35,10 +35,12 @@
             <icon type="iconbianji1"></icon>
             <span class="title">编辑</span>
           </div>
-          <div class="action">
+          <div class="action"   @click="del(product.id,product.status,idx)">
             <icon size="18" type="iconshanchu"></icon>
-            <span class="title">删除</span>
+            <span class="title" v-if="product.status==1">禁用</span>
+            <span class="title" v-else>已失效</span>
           </div>
+
           <div class="action">
             <template v-if="product.status">
               <icon type="iconxiajia"></icon>
@@ -70,8 +72,8 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {bizFlashsaleList} from '../../api/product'
-  import { linkTo } from '../../common/fun'
+  import {bizFlashsaleList, bizFlashsaleStatus} from '../../api/product'
+  import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
 
   wepy.page({
     store,
@@ -80,6 +82,18 @@
       seckillData: []
     },
     methods: {
+      del(id, status, idx) {
+        showLoading('修改中')
+        let data = {
+          flashsale_id: id,
+          status: status == 1 ? 2 : 1
+        }
+        bizFlashsaleStatus(data).then(res => {
+          toast('修改成功')
+          this.seckillData[idx].status = status == 1 ? 2 : 1
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      },
       edit(id) {
         let data = '/pages/marketing/SeckillAdd?id=' + id
         linkTo(data)
@@ -91,10 +105,10 @@
       }
     },
     onShow() {
-
+      this.init()
     },
     onLoad() {
-      this.init()
+
     }
 
   })
