@@ -12,45 +12,105 @@
     overflow: hidden;
     padding: 20rpx;
     box-sizing: border-box;
+    .title{
+      .before{
+        width: 6rpx;
+        height: 32rpx;
+        background: $fun-blue-color;
+      }
+      .text{
+        font-weight: bold;
+        color: #333333;
+      }
+    }
+  }
+  .tab{
+
+    &-list{
+      margin: 30rpx 0;
+      display: flex;
+    }
+    &-item{
+      position: relative;
+      color: #333333;
+      font-size: 12px;
+      flex: 1;
+      text-align: center;
+      background: #F0FAFF;
+      padding: 30rpx 0;
+      &.active{
+        background: rgba(255,255,255,.2);
+        color: $fun-blue-color;
+      }
+      .underline{
+        position: absolute;
+        width: 100%;
+        top: 2px;
+        height: 2px;
+        background: $fun-blue-color;
+      }
+      .label{
+        margin-bottom: 24rpx;
+      }
+    }
+  }
+  .swiper-echarts{
+    display: block;
+    width: 670rpx;
+    height: 400rpx;
   }
 </style>
 <template>
   <div class="page-wrap">
-    <div class="scetion">
-      <div class="title"><span class="before"></span>实时数据</div>
+    <div class="section">
+      <div class="title"><span class="before"></span><span class="text">实时数据</span></div>
       <div class="main">
-        <div class="tablist">
-          <div class="tabitem"><div class="label">访客人数</div><div class="val">888</div></div>
-          <div class="tabitem"><div class="label">访客人数</div><div class="val">888</div></div>
-          <div class="tabitem"><div class="label">访客人数</div><div class="val">888</div></div>
-          <div class="tabitem"><div class="label">访客人数</div><div class="val">888</div></div>
-          <div class="tabitem"><div class="label">访客人数</div><div class="val">888</div></div>
+        <div class="tab-list">
+          <div class="tab-item" :class="{active:tabActiveIdx===0}" @click="tabIdx(0)">
+            <div v-if="tabActiveIdx===0" class="underline"></div>
+            <div class="label">{{tabData.view_person_count.name}}</div><div class="val">{{tabData.view_person_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===1}" @click="tabIdx(1)">
+            <div v-if="tabActiveIdx===1" class="underline"></div>
+            <div class="label">{{tabData.order_count.name}}</div><div class="val">{{tabData.order_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===2}" @click="tabIdx(2)">
+            <div v-if="tabActiveIdx===2" class="underline"></div>
+            <div class="label">{{tabData.order_pay_count.name}}</div><div class="val">{{tabData.order_pay_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===3}" @click="tabIdx(3)">
+            <div v-if="tabActiveIdx===3" class="underline">
+            </div><div class="label">{{tabData.order_pay_money.name}}</div><div class="val">{{tabData.order_pay_money.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===4}" @click="tabIdx(4)">
+            <div v-if="tabActiveIdx===4" class="underline"></div>
+            <div class="label">{{tabData.order_pay_person_count.name}}</div><div class="val">{{tabData.order_pay_person_count.value}}</div>
+          </div>
         </div>
-        <swiper class="swiper">
-          <swiper-item class="swiper-item"><echarts class="swiper-echarts" :onInit="onInitChart" /></swiper-item>
-<!--          <swiper-item class="swiper-item"><echarts class="swiper-echarts" :onInit="onInitChart" /></swiper-item>-->
-<!--          <swiper-item class="swiper-item"><echarts class="swiper-echarts" :onInit="onInitChart" /></swiper-item>-->
-<!--          <swiper-item class="swiper-item"><echarts class="swiper-echarts" :onInit="onInitChart" /></swiper-item>-->
-<!--          <swiper-item class="swiper-item"><echarts class="swiper-echarts" :onInit="onInitChart" /></swiper-item>-->
-        </swiper>
+
+
+        <echarts :propData="charts[5].data" :conf="charts[5].conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
+
+
+
       </div>
     </div>
 
 
-    <div class="scetion">
-      <div class="title"><span class="before"></span>客户分析</div>
+    <div class="section">
+      <div class="title"><span class="before"></span><span class="text">客户分析</span></div>
       <div class="main">
       </div>
     </div>
 
-    <div class="scetion">
-      <div class="title"><span class="before"></span>商品分析</div>
+    <div class="section">
+      <div class="title"><span class="before"></span><span class="text">商品分析</span></div>
       <div class="main">
       </div>
     </div>
 
-    <div class="scetion">
-      <div class="title"><span class="before"></span>交易分析</div>
+    <div class="section">
+      <div class="title"><span class="before"></span><span class="text">交易分析</span></div>
       <div class="main">
       </div>
     </div>
@@ -65,38 +125,45 @@
     chooseImageByPromise, getArrColumn, uploadImages
   } from '../../common/helper'
   import { error } from '../../common/fun'
+  import {
+    getTradeStatistic
+  } from '../../api/store'
+  const moment = require('moment')
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      onInitChart(F2, config) {
+      chartReady: false,
+      tabData: {},
+      titles: [],
+      time_list: [],
+      charts: [],
+      max_num: 0,
+      max_rate: 0,
+      tradeStatistic: {},
+      tabActiveIdx: 0,
+      onInitChart1(F2, config, data) {
         if (!F2) return
         const chart = new F2.Chart(config)
-        const data = [
-          { value: 63.4, city: 'New York', date: '2011-10-01' },
-          { value: 62.7, city: 'Alaska', date: '2011-10-01' },
-          { value: 72.2, city: 'Austin', date: '2011-10-01' },
-          { value: 58, city: 'New York', date: '2011-10-02' },
-          { value: 59.9, city: 'Alaska', date: '2011-10-02' },
-          { value: 67.7, city: 'Austin', date: '2011-10-02' },
-          { value: 53.3, city: 'New York', date: '2011-10-03' },
-          { value: 59.1, city: 'Alaska', date: '2011-10-03' },
-          { value: 69.4, city: 'Austin', date: '2011-10-03' }
-        ]
-        chart.source(data, {
+        const _data = data
+
+        chart.source(_data, {
           date: {
             range: [0, 1],
             type: 'timeCat',
-            mask: 'MM-DD'
+            mask: 'HH'
           },
           value: {
-            max: 300,
+            min: config.min,
+            max: config.max,
             tickCount: 4
           }
         })
-        chart.area().position('date*value').color('city').adjust('stack')
-        chart.line().position('date*value').color('city').adjust('stack')
+
+
+        chart.area().position('date*value').color('label').adjust('stack')
+        chart.line().position('date*value').color('label').adjust('stack')
         chart.render()
 
         // 注意：需要把chart return 出来
@@ -107,7 +174,40 @@
 
     },
     methods: {
+      tabIdx(idx) {
+        this.tabActiveIdx = idx
+      },
+      async _init_func() {
+        try {
+          const {data: tradeStatistic} = await getTradeStatistic().catch(() => { throw new Error('获取统计失败') })
+          const {data: tabData = {}, titles = [], time_list = [], charts = [], max_num = 0, max_rate = 0} = tradeStatistic
+          this.tabData = tabData
+          this.titles = titles
+          this.time_list = time_list.map(item => {
+            return moment(`${item}:00:00`).format('YYYY-MM-DD HH:mm:ss')
+            // return item.split(' ')[1]
+          })
 
+          for (let item of charts) {
+            item.conf = {
+              max: Math.max.apply(null, item.data),
+              min: Math.min.apply(null, item.data)
+            }
+            for (let i in item.data) {
+              item.data[i] = {value: item.data[i] + parseInt(Math.random() * 100) + 1, label: item.name, date: this.time_list[i]}
+            }
+          }
+          this.charts = charts
+          this.max_num = max_num
+          this.max_rate = max_rate
+          this.chartReady = true
+        } catch (e) {
+
+        }
+      }
+    },
+    onShow() {
+      this._init_func()
     },
     onReady() {
 

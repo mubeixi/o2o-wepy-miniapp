@@ -17,7 +17,7 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import WxCanvas from '../lib/WxCanvas'
+
   import F2 from '@antv/f2'
   function wrapEvent(e) {
     if (!e) return
@@ -32,38 +32,57 @@
         type: 'Function',
         value: () => {}
       },
+      propData: {
+        require: true
+      },
+      conf: {
+        require: true
+      },
       lazyLoad: {
         type: Boolean,
         default: false
+      }
+    },
+    watch: {
+      lazyLoad: {
+        handler(val) {
+          console.log(val)
+          if (val) {
+            this._init_func()
+          }
+        }
       }
     },
     data: {
 
     },
     ready() {
-      const query = wx.createSelectorQuery().in(this.$wx)
-      query.select('.f2-canvas')
-        .fields({
-          node: true,
-          size: true
-        })
-        .exec(res => {
-          const { node, width, height } = res[0]
-          const context = node.getContext('2d')
-          const pixelRatio = wx.getSystemInfoSync().pixelRatio
-          // 高清设置
-          node.width = width * pixelRatio
-          node.height = height * pixelRatio
 
-          const config = { context, width, height, pixelRatio }
-          const chart = this.onInit(F2, config)
-          if (chart) {
-            this.chart = chart
-            this.canvasEl = chart.get('el')
-          }
-        })
     },
     methods: {
+      _init_func() {
+        const query = wx.createSelectorQuery().in(this.$wx)
+        query.select('.f2-canvas')
+          .fields({
+            node: true,
+            size: true
+          })
+          .exec(res => {
+            const { node, width, height } = res[0]
+            const context = node.getContext('2d')
+            const pixelRatio = wx.getSystemInfoSync().pixelRatio
+            // 高清设置
+            node.width = width * pixelRatio
+            node.height = height * pixelRatio
+
+            const config = { context, width, height, pixelRatio, ...this.conf }
+            const chart = this.onInit(F2, config, this.propData)
+            if (chart) {
+              this.chart = chart
+              this.canvasEl = chart.get('el')
+            }
+          })
+      },
       touchStart(e) {
         const canvasEl = this.canvasEl
         if (!canvasEl) {
