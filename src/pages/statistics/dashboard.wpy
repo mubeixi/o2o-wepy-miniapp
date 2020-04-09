@@ -1,0 +1,230 @@
+<style lang="scss">
+  @import "../../assets/app.scss";
+  @import "../../assets/variables.scss";
+  .page-wrap{
+
+  }
+  .section{
+    width: 710rpx;
+    margin: 30rpx auto 0;
+    background: white;
+    border-radius: 10rpx;
+    overflow: hidden;
+    padding: 20rpx;
+    box-sizing: border-box;
+    .title{
+      .before{
+        width: 6rpx;
+        height: 32rpx;
+        background: $fun-blue-color;
+      }
+      .text{
+        font-weight: bold;
+        color: #333333;
+      }
+    }
+  }
+  .tab{
+
+    &-list{
+      margin: 30rpx 0;
+      display: flex;
+    }
+    &-item{
+      position: relative;
+      color: #333333;
+      font-size: 12px;
+      flex: 1;
+      text-align: center;
+      background: #F0FAFF;
+      padding: 30rpx 0;
+      &.active{
+        background: rgba(255,255,255,.2);
+        color: $fun-blue-color;
+      }
+      .underline{
+        position: absolute;
+        width: 100%;
+        top: 2px;
+        height: 2px;
+        background: $fun-blue-color;
+      }
+      .label{
+        margin-bottom: 24rpx;
+      }
+    }
+  }
+  .swiper-echarts{
+    display: block;
+    width: 670rpx;
+    height: 400rpx;
+  }
+</style>
+<template>
+  <div class="page-wrap">
+    <div class="section">
+      <div class="title"><span class="before"></span><span class="text">实时数据</span></div>
+      <div class="main">
+        <div class="tab-list">
+          <div class="tab-item" :class="{active:tabActiveIdx===0}" @click="tabIdx(0)">
+            <div v-if="tabActiveIdx===0" class="underline"></div>
+            <div class="label">{{tabData.view_person_count.name}}</div><div class="val">{{tabData.view_person_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===1}" @click="tabIdx(1)">
+            <div v-if="tabActiveIdx===1" class="underline"></div>
+            <div class="label">{{tabData.order_count.name}}</div><div class="val">{{tabData.order_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===2}" @click="tabIdx(2)">
+            <div v-if="tabActiveIdx===2" class="underline"></div>
+            <div class="label">{{tabData.order_pay_count.name}}</div><div class="val">{{tabData.order_pay_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===3}" @click="tabIdx(3)">
+            <div v-if="tabActiveIdx===3" class="underline">
+            </div><div class="label">{{tabData.order_pay_money.name}}</div><div class="val">{{tabData.order_pay_money.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===4}" @click="tabIdx(4)">
+            <div v-if="tabActiveIdx===4" class="underline"></div>
+            <div class="label">{{tabData.order_pay_person_count.name}}</div><div class="val">{{tabData.order_pay_person_count.value}}</div>
+          </div>
+        </div>
+
+
+        <echarts :propData="charts[5].data" :conf="charts[5].conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
+
+
+
+      </div>
+    </div>
+
+
+    <div class="section">
+      <div class="title"><span class="before"></span><span class="text">客户分析</span></div>
+      <div class="main">
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="title"><span class="before"></span><span class="text">商品分析</span></div>
+      <div class="main">
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="title"><span class="before"></span><span class="text">交易分析</span></div>
+      <div class="main">
+      </div>
+    </div>
+
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {
+    chooseImageByPromise, getArrColumn, uploadImages
+  } from '../../common/helper'
+  import { error } from '../../common/fun'
+  import {
+    getTradeStatistic
+  } from '../../api/store'
+  const moment = require('moment')
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      chartReady: false,
+      tabData: {},
+      titles: [],
+      time_list: [],
+      charts: [],
+      max_num: 0,
+      max_rate: 0,
+      tradeStatistic: {},
+      tabActiveIdx: 0,
+      onInitChart1(F2, config, data) {
+        if (!F2) return
+        const chart = new F2.Chart(config)
+        const _data = data
+
+        chart.source(_data, {
+          date: {
+            range: [0, 1],
+            type: 'timeCat',
+            mask: 'HH'
+          },
+          value: {
+            min: config.min,
+            max: config.max,
+            tickCount: 4
+          }
+        })
+
+
+        chart.area().position('date*value').color('label').adjust('stack')
+        chart.line().position('date*value').color('label').adjust('stack')
+        chart.render()
+
+        // 注意：需要把chart return 出来
+        return chart
+      }
+    },
+    computed() {
+
+    },
+    methods: {
+      tabIdx(idx) {
+        this.tabActiveIdx = idx
+      },
+      async _init_func() {
+        try {
+          const {data: tradeStatistic} = await getTradeStatistic().catch(() => { throw new Error('获取统计失败') })
+          const {data: tabData = {}, titles = [], time_list = [], charts = [], max_num = 0, max_rate = 0} = tradeStatistic
+          this.tabData = tabData
+          this.titles = titles
+          this.time_list = time_list.map(item => {
+            return moment(`${item}:00:00`).format('YYYY-MM-DD HH:mm:ss')
+            // return item.split(' ')[1]
+          })
+
+          for (let item of charts) {
+            item.conf = {
+              max: Math.max.apply(null, item.data),
+              min: Math.min.apply(null, item.data)
+            }
+            for (let i in item.data) {
+              item.data[i] = {value: item.data[i] + parseInt(Math.random() * 100) + 1, label: item.name, date: this.time_list[i]}
+            }
+          }
+          this.charts = charts
+          this.max_num = max_num
+          this.max_rate = max_rate
+          this.chartReady = true
+        } catch (e) {
+
+        }
+      }
+    },
+    onShow() {
+      this._init_func()
+    },
+    onReady() {
+
+    },
+    onLoad() {
+
+    }
+  })
+</script>
+<config>
+  {
+    "navigationBarTitleText": "数据统计",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "echarts": "~@/components/echarts",
+      "icon": "~@/components/icon",
+      "popup-layer": "~@/components/popup-layer"
+    }
+  }
+</config>

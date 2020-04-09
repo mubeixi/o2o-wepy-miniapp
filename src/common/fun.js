@@ -40,7 +40,8 @@ export const linkTo = (url, type = 'default') => {
       fail(err) {
         console.log(err)
         wx.switchTab({
-          url
+          url,
+          fail(e) { modal(e.errMsg) }
         })
       }
     })

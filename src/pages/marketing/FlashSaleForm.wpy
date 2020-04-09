@@ -180,7 +180,10 @@
         <div class="cell-item">
           <div class="label">开始时间</div>
           <div class="content">
-            <time @uptime="upStartTime"><span class="fz-14 c9">请选择时间</span></time>
+            <time v-if="timeReady" @uptime="upStartTime" :val="formData.start_time">
+              <span class="fz-14" v-if="formData.start_time">{{formData.start_time}}</span>
+              <span class="fz-14 c9" v-else>请选择</span>
+            </time>
           </div>
           <div class="right">
             <icon type="iconarrowleft" size="14" color="#999"></icon>
@@ -189,7 +192,10 @@
         <div class="cell-item">
           <div class="label">结束时间</div>
           <div class="content">
-            <time @uptime="upEndTime"><span class="fz-14 c9">请选择</span></time>
+            <time v-if="timeReady" @uptime="upEndTime" :val="formData.end_time">
+              <span class="fz-14" v-if="formData.end_time">{{formData.end_time}}</span>
+              <span class="fz-14 c9" v-else>请选择</span>
+            </time>
           </div>
           <div class="right">
             <icon type="iconarrowleft" size="14" color="#999"></icon>
@@ -225,7 +231,7 @@
           </div>
           <div class="flex flex-vertical-center p-t-10 fz-14">
             <span>折扣</span>
-            <input class="bor m-l-10 m-r-10 w140 fz-12 p-l-4 p-r-4" placeholder="请输入数字 0.1-9.9" type="number" min="0.1" max="9.9" @input="bindDiscountInput" /><span>折</span>
+            <input :value="product.discount"  class="bor m-l-10 m-r-10 w140 fz-12 p-l-4 p-r-4" placeholder="请输入数字 0.1-9.9" type="number" min="0.1" max="9.9" @input="bindDiscountInput" /><span>折</span>
           </div>
         </div>
       </div>
@@ -291,9 +297,9 @@
   import {
     ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
   } from '../../common/helper'
-  import { error, toast } from '../../common/fun'
+  import { error, modal, toast } from '../../common/fun'
   import { bizProdList } from '../../api/product'
-  import { bizAddSpike } from '../../api/store'
+  import { bizAddSpike, bizSpikeDetail } from '../../api/store'
 
   const moment = require('moment')
 
@@ -302,10 +308,11 @@
     mixins: [pageMixin],
     data: {
       actIdx: 0,
+      timeReady: false,
       formCheckResult: [],
       proData: [],
       select_prod: [],
-      spike_id:'',
+      spike_id: '',
       formData: {
         name: '',
         start_time: '',
@@ -339,12 +346,12 @@
             required: true,
             type: String,
             use: {
-              after: (val, row) => moment(val).isAfter()
+              // after: (val, row) => moment(val).isAfter()
             },
             message: {
               required: '开始时间必选',
-              type: '开始时间必须为字符串',
-              after: '开始时间必须大于现在时间'
+              type: '开始时间必须为字符串'
+              // after: '开始时间必须大于现在时间'
             }
           },
           // is_distribute: {
@@ -388,6 +395,12 @@
               required: '活动商品必选',
               discount: '商品折扣只能在0.1到9.9之间'
             }
+          },
+          spike_id: this.spike_id ? {} : {
+            required: true,
+            message: {
+              required: '编辑模式下spike_id必填'
+            }
           }
         }
 
@@ -401,11 +414,12 @@
         })
 
         console.log(select_prod)
-        const postData = {
+        let postData = {
           ...this.formData,
           select_prod: JSON.stringify(select_prod)
         }
-        console.log(postData)
+
+        if (this.spike_id)postData.spike_id = this.spike_id
 
         const checkRt = validateFun(postData, rule)
         if (checkRt !== true) {
@@ -429,12 +443,10 @@
       },
       upStartTime(val) {
         const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
-        console.log(`${val}开始时间${formatRt}`)
         this.formData.start_time = formatRt
       },
       upEndTime(val) {
         const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
-        console.log(`${val}结束时间${formatRt}`)
         this.formData.end_time = formatRt
       },
       taggleDistributor(e) {
@@ -467,7 +479,6 @@
             this.select_prod.push(item)
           }
         }
-
       },
       delPro(idx) {
         this.select_prod.splice(idx, 1)
@@ -485,17 +496,34 @@
         this.proData[idx].check = !this.proData[idx].check
       },
       async _init_func() {
-        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => {})
+        if (this.spike_id) {
+          try {
+            let {data: info} = await bizSpikeDetail({spike_id: this.spike_id}).catch(() => { throw new Error('初始化参数失败') })
+            // let {start_time,end_time,name,limits,biz_id} = info
+            info.start_time = moment(info.start_time * 1000).format('YYYY-MM-DD HH:mm:ss')
+            info.end_time = moment(info.end_time * 1000).format('YYYY-MM-DD HH:mm:ss')
+            Object.assign(this.formData, info)
+
+            // 初始化商品
+            this.select_prod = info.spike_goods
+          } catch (e) {
+            console.log(e)
+          }
+        }
+        this.timeReady = true
+
+        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => { throw new Error('获取商品列表错误') })
         const hasGoodsIds = getArrColumn(this.select_prod, 'prod_id')
         this.proData = reqData.data.map(item => {
           item.check = hasGoodsIds.includes(item.Products_ID)
-          item.disalbed =false
+          item.disalbed = false
           return {...item}
         })
       }
     },
-    onLoad(options){
+    onLoad(options) {
       console.log(options)
+      this.spike_id = options.spike_id
     },
     onShow() {
       this._init_func()
@@ -508,9 +536,6 @@
 
       this.animation = animation
       animation.scale(0.7).step()
-    },
-    onLoad() {
-
     }
   })
 </script>
