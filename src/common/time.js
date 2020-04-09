@@ -67,9 +67,9 @@ function getNewDateArry() {
  * 多了单位
  * @returns {string[]}
  */
-function getNewDateArryByStr() {
+function getNewDateArryByStr(dateObj) {
   // 当前时间的处理
-  var newDate = new Date()
+  var newDate = dateObj || new Date()
   var year = newDate.getFullYear() + '年',
     mont = (newDate.getMonth() + 1) + '月',
     date = newDate.getDate() + '日',
@@ -77,16 +77,17 @@ function getNewDateArryByStr() {
     minu = newDate.getMinutes() + '分',
     seco = newDate.getSeconds() + '秒'
 
-  return [year, mont, date, hour, minu,seco]
+  return [year, mont, date, hour, minu, seco]
 }
 const cutTimeStr = (str) => str.substring(0, str.length - 1)
+
 function dateTimePicker(startYear, endYear, date) {
   // 返回默认显示的数组和联动数组的声明
   var dateTime = [], dateTimeArray = [[], [], [], [], []]
   var start = startYear || new Date().getFullYear()
   var end = endYear || 2100
   // 默认开始显示数据
-  var defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArryByStr()
+  var defaultDate = date || getNewDateArryByStr()
 
   // 处理联动列表数据
   /* 年月日 时分秒 */
@@ -109,6 +110,8 @@ function dateTimePicker(startYear, endYear, date) {
   }
 }
 module.exports = {
+  withData,
+  getNewDateArryByStr,
   dateTimePicker: dateTimePicker,
   getMonthDay: getMonthDay,
   getNewDateArry: getNewDateArry
