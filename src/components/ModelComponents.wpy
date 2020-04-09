@@ -20,6 +20,11 @@
     left:50%;
     transform: translate(-50%, -50%);
   }
+  .top-center {
+    top: 20%;
+    left:50%;
+    transform: translate(-50%);
+  }
 
   .top {
     top: 10%;

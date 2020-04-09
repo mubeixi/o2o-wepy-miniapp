@@ -6,7 +6,7 @@
           <image src="/static/marketing/discount.png" class="img"></image>
           <div class="title">限时折扣</div>
         </div>
-        <div class="feature-item">
+        <div class="feature-item" @click="$linkTo('/pages/marketing/Seckill')">
           <image src="/static/marketing/kill.png" class="img"></image>
           <div class="title">秒杀</div>
         </div>

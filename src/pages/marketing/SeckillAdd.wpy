@@ -1,63 +1,130 @@
 <template>
   <div class="seckill-add">
-      <div style="width: 750rpx;height: 50rpx;"></div>
-      <div class="submits flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/SeckillAdd')">
-        <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
-        添加秒杀
-      </div>
+      <block v-if="pro_id">
+        <div  class="flex  product-mbx" @click="openPop('product')">
+            <div class="thumbs" :style="{backgroundImage:'url('+selectValue.ImgPath+')'}">
+            </div>
+            <div class="info">
+              <div class="title-my">
+                {{selectValue.Products_Name}}
+              </div>
+              <div class="fz-13 c6">
+                原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">199.00</span>
+              </div>
+            </div>
+        </div>
+      </block>
+      <block v-else>
+        <div style="width: 750rpx;height: 50rpx;"></div>
+        <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
+          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
+          添加秒杀
+        </div>
+      </block>
+      <block v-if="pro_id&&selectValue.Products_Type!==0">
+        <div class="submitq flex flex-vertical-center flex-justify-center" @click="goAdd">
+          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-2"></icon>
+          设置参与秒杀的型号
+        </div>
+      </block>
 
-    <div class="store-item flex flex-vertical-center">
-      <div  class="title">
+
+    <div class="store-item flex flex-vertical-center" v-if="selectValue.Products_Type===0||!pro_id">
+      <div  class="titles">
         秒杀价格
       </div>
       <div class="flex flex1 fz-13" >
-        <input type="number"  class="flex flex1 p-l-26" placeholder="请输入秒杀价格"  placeholder-class="place"/>
+        <input type="number" v-model="price"  class="flex flex1 p-l-26" placeholder="请输入秒杀价格"  placeholder-class="place"/>
         元
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center">
-      <div  class="title">
+    <div class="store-item flex flex-vertical-center"  v-if="selectValue.Products_Type===0||!pro_id">
+      <div  class="titles">
         活动库存
       </div>
       <div class="flex flex1 fz-13" >
-        <input type="number"  class="flex flex1 p-l-26" placeholder="请输入活动库存"  placeholder-class="place"/>
+        <input type="number" v-model="count"  class="flex flex1 p-l-26" placeholder="请输入活动库存"  placeholder-class="place"/>
         件
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between" >
-      <div class="title">
+      <div class="titles">
         开始时间
       </div>
-      <picker class="picker-mbx c9 fz-14" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
-        请选择
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-      </picker>
+      <div class="content fz-14 c9 flex flex-vertical-center">
+        <time @uptime="upStartTime"><span class="fz-12 c9">请选择时间</span></time>
+        <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
+      </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between" >
-      <div class="title">
+      <div class="titles">
         结束时间
       </div>
-      <picker class="picker-mbx c9 fz-14" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
-        请选择
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-      </picker>
+      <div class="content fz-14 c9 flex flex-vertical-center">
+        <time @uptime="upEndTime"><span class="fz-12 c9">请选择时间</span></time>
+        <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
+      </div>
     </div>
     <div class="store-item flex flex-vertical-center">
-      <div  class="title">
+      <div  class="titles">
         每人限购
       </div>
       <div class="flex flex1 fz-13" >
-        <input type="number"  class="flex flex1 p-l-26" placeholder="请输入限购"  placeholder-class="place"/>
+        <input type="number"  v-model="limit" class="flex flex1 p-l-26" placeholder="请输入限购,0为不限购"  placeholder-class="place"/>
         件
       </div>
     </div>
 
 
     <div style="height: 86rpx;width: 750rpx"></div>
-    <div class="submitLast fz-16">
+    <div class="submitLast fz-16"  @click="addSeckill">
       确定
     </div>
 
+
+    <popup-layer title="选择商品" ref="product" :autoClose="false" @maskClicked="closePopup">
+      <div class="product-list">
+        <div class="product-item" v-for="(product,idx) in proData" :key="idx">
+          <div class="info-box" @click="taggleProductCheck(idx)">
+            <div class="check"   >
+              <div v-show="!product.disalbed">
+                <icon
+                  class="check-icon"
+                  :color="product.check?'#F53636':'#999'"
+                  size="20"
+                  :type="product.check?'iconblchecked':'iconCircle'"
+                ></icon>
+              </div>
+              <div v-show="product.disalbed">
+                <icon
+                  class="check-icon"
+                  color="#eee"
+                  size="20"
+                  type="iconblchecked"
+                ></icon>
+              </div>
+
+            </div>
+            <image class="thumb" :src="product.ImgPath"></image>
+            <div class="info">
+              <div class="title">{{product.Products_Name}}{{product.Products_ID}}</div>
+              <div class="price-box">
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceY}}</span>
+                <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceX}}</span>
+              </div>
+              <div class="stock-box">
+                <span class="stock">库存:{{product.Products_Count}}</span>
+                <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
+    </popup-layer>
 
   </div>
 </template>
@@ -66,25 +133,173 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-
-
-
+  import {
+    ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
+  } from '../../common/helper'
+  import { bizProdList, bizOperateFlashsale, bizFlashsaleDetail } from '../../api/product'
+  import { back, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  const moment = require('moment')
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      id: '',
+      price: '',
+      count: '',
+      limit: '',
+      proData: [],
+      pro_id: '',
+      selectValue: [],
+      end_time: '',
+      start_time: '',
+      editData: {}
+    },
+    onUnload() {
+      ls.remove('skuvaljosn')
     },
     methods: {
-      init(){
+      addSeckill() {
+        let skuvaljosn = ls.get('skuvaljosn')
+        let data = {
+          start_time: this.start_time,
+          end_time: this.end_time,
+          limit: this.limit
+        }
+        if (this.id) {
+          data.flashsale_id = this.id
+        }
+        if (this.selectValue.Products_Type != 0) {
+          let arr = []
+          for (let it in skuvaljosn) {
+            if (skuvaljosn[it].check) {
+              let obj = {
+                id: skuvaljosn[it].Product_Attr_ID,
+                name: skuvaljosn[it].Attr_Value.mobile_prod_attr_name,
+                price: skuvaljosn[it].price,
+                count: skuvaljosn[it].count
+              }
+              arr.push(obj)
+            }
+          }
+          let mbx = {
+            prod_id: this.pro_id,
+            data: arr
+          }
+          data.select_prod = JSON.stringify(mbx)
+        } else {
+          let mbx = {
+            prod_id: this.pro_id,
+            price: this.price,
+            count: this.count
+          }
+          data.select_prod = JSON.stringify(mbx)
+        }
 
+        bizOperateFlashsale(data).then(res => {
+          if (this.id) {
+            toast('保存成功')
+          } else {
+            toast('编辑成功')
+          }
+          ls.remove('skuvaljosn')
+          setTimeout(function() {
+            back()
+          }, 1000)
+        }).catch(e => {
+
+        })
+      },
+      goAdd() {
+        let arr = ls.get('skuvaljosn')
+        if (!arr) {
+          if (this.editData.Products_Type) {
+            for (let item of this.editData.attr_json.data) {
+              for (let it in this.selectValue.skuvaljosn) {
+                if (this.selectValue.skuvaljosn[it].Product_Attr_ID == item.id) {
+                  this.selectValue.skuvaljosn[it].price = item.price
+                  this.selectValue.skuvaljosn[it].count = item.count
+                  this.selectValue.skuvaljosn[it].check = true
+                }
+              }
+            }
+          }
+
+          ls.set('skuvaljosn', this.selectValue.skuvaljosn)
+        }
+
+        linkTo('/pages/marketing/SeckillAddSelect')
+      },
+      upStartTime(val) {
+        const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
+        this.start_time = formatRt
+      },
+      upEndTime(val) {
+        const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
+        this.end_time = formatRt
+      },
+      closePopup() {
+        this.closePop('product')
+        this.proData = this.proData.map(item => {
+          return {...item, check: false}
+        })
+        this.pro_id = ''
+      },
+      surePro() {
+        this.closePop('product')
+        let that = this
+        this.proData.map(item => {
+          if (item.check) {
+            that.selectValue = item
+            if (item.Products_ID != that.pro_id) {
+              ls.remove('skuvaljosn')
+            }
+            that.pro_id = item.Products_ID
+          }
+        })
+      },
+      taggleProductCheck(idx) {
+        this.proData = this.proData.map(item => {
+          return {...item, check: false}
+        })
+        this.proData[idx].check = true
+      },
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      },
+      getMbx() {
+        bizFlashsaleDetail({flashsale_id: this.id }).then(res => {
+          this.editData = res.data
+          this.price = this.editData.attr_json.price
+          this.count = this.editData.attr_json.count
+          this.limit = this.editData.limits
+          for (let item of this.proData) {
+            if (item.Products_ID == this.editData.Products_ID) {
+              this.selectValue = item
+              item.check = true
+              this.pro_id = item.Products_ID
+            }
+          }
+        }).catch(e => {})
+      },
+      async init() {
+        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => {})
+
+        this.proData = reqData.data.map(item => {
+          return {...item, check: false}
+        })
+        if (this.id) {
+          this.getMbx()
+        }
       }
     },
-    onShow() {
-
-    },
-    onLoad() {
+    onLoad(options) {
+      if (options.id) {
+        this.id = options.id
+      }
       this.init()
     }
 
@@ -100,8 +315,19 @@
     background-color: #FFFFFF;
   }
   .submits{
-    margin: 0rpx auto 50rpx;
-    width: 320rpx;
+     margin: 0rpx auto 50rpx;
+     width: 320rpx;
+     height: 60rpx;
+     background-color: #FFFFFF;
+     border: 1px solid #00A8FF;
+     border-radius: 6rpx;
+     color: #00A8FF;
+     font-size: 28rpx;
+     line-height: 60rpx;
+   }
+  .submitq{
+    margin: 60rpx auto;
+    width: 360rpx;
     height: 60rpx;
     background-color: #FFFFFF;
     border: 1px solid #00A8FF;
@@ -116,7 +342,7 @@
     padding: 0rpx 20rpx;
     border-bottom: 1px solid #EBEBEB;
   }
-  .title{
+  .titles{
     font-size: 28rpx;
     color: #333333;
   }
@@ -140,6 +366,112 @@
     background-color: #00A8FF;
     color: #FFFFFF;
   }
+  .product-mbx{
+    width: 750rpx;
+    box-sizing: border-box;
+    height: 230rpx;
+    padding: 40rpx 20rpx;
+  }
+  .thumbs{
+    width: 150rpx;
+    height: 150rpx;
+    margin-right: 24rpx;
+  }
+  .color-my{
+    color: #FF0000;
+  }
+  .title-my{
+    color: #333;
+    font-size: 14px;
+    /*font-weight: bold;*/
+    line-height: 20px;
+    height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 38rpx;
+  }
+  .content{
+
+    text-align: left;
+    height: 110rpx;
+    line-height: 110rpx;
+  }
+  /*商品列表 start*/
+  .product-list{
+    height: 800rpx;
+    overflow: scroll;
+  }
+  .product-item{
+    padding: 30rpx 0;
+    background: white;
+    margin-bottom: 20rpx;
+    .info-box{
+      padding: 0 20rpx;
+      display: flex;
+      font-size: 14px;
+      height: 176rpx;
+      .check{
+        padding-right: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .check-icon{
+
+        }
+      }
+      .thumb{
+        width: 176rpx;
+        height: 176rpx;
+        background: #f2f2f2;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          color: #333;
+          font-size: 14px;
+          /*font-weight: bold;*/
+          line-height: 20px;
+          height: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+        .price-box{
+          color: $fun-red-color;
+          margin-bottom: 10px;
+          font-size: 14px;
+        }
+        .stock-box{
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .actions{
+      margin-top: 30rpx;
+      font-size: 12px;
+      display: flex;
+      .action{
+        justify-content: center;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: #888;
+        border-right: 1rpx solid #e7e7e7;
+        &:last-child{
+          border-right: none;
+        }
+        .title{
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  /*商品列表 end*/
+
 
 </style>
 <config>
@@ -148,9 +480,9 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
-  "copyright": "~@/components/copyright",
-  "icon": "~@/components/icon",
-  "ad": "~@/components/ad"
+    "icon": "~@/components/icon",
+    "popup-layer": "~@/components/popup-layer",
+    "time": "~@/components/time",
   }
   }
 </config>

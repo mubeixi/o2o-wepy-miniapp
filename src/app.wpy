@@ -89,6 +89,7 @@ wepy.app({
       "pages/statistics/dashboard",
       "pages/marketing/Seckill",
       "pages/marketing/SeckillAdd",
+      "pages/marketing/SeckillAddSelect",
       "pages/marketing/FlashSale",
       "pages/marketing/FlashSaleForm",
       "pages/demo"
