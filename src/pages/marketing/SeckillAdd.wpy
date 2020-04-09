@@ -1,13 +1,36 @@
 <template>
   <div class="seckill-add">
-      <div style="width: 750rpx;height: 50rpx;"></div>
-      <div class="submits flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/SeckillAdd')">
-        <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
-        添加秒杀
-      </div>
+      <block v-if="pro_id">
+        <div  class="flex  product-mbx" @click="openPop('product')">
+            <div class="thumbs" :style="{backgroundImage:'url('+selectValue.ImgPath+')'}">
+            </div>
+            <div class="info">
+              <div class="title-my">
+                {{selectValue.Products_Name}}
+              </div>
+              <div class="fz-13 c6">
+                原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">199.00</span>
+              </div>
+            </div>
+        </div>
+      </block>
+      <block v-else>
+        <div style="width: 750rpx;height: 50rpx;"></div>
+        <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
+          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
+          添加秒杀
+        </div>
+      </block>
+      <block v-if="pro_id&&selectValue.Products_Type!==0">
+        <div class="submitq flex flex-vertical-center flex-justify-center" >
+          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-2"></icon>
+          设置参与秒杀的型号
+        </div>
+      </block>
 
-    <div class="store-item flex flex-vertical-center">
-      <div  class="title">
+
+    <div class="store-item flex flex-vertical-center" v-if="selectValue.Products_Type===0||!pro_id">
+      <div  class="titles">
         秒杀价格
       </div>
       <div class="flex flex1 fz-13" >
@@ -15,8 +38,8 @@
         元
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center">
-      <div  class="title">
+    <div class="store-item flex flex-vertical-center"  v-if="selectValue.Products_Type===0||!pro_id">
+      <div  class="titles">
         活动库存
       </div>
       <div class="flex flex1 fz-13" >
@@ -25,7 +48,7 @@
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between" >
-      <div class="title">
+      <div class="titles">
         开始时间
       </div>
       <picker class="picker-mbx c9 fz-14" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
@@ -34,7 +57,7 @@
       </picker>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between" >
-      <div class="title">
+      <div class="titles">
         结束时间
       </div>
       <picker class="picker-mbx c9 fz-14" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
@@ -43,7 +66,7 @@
       </picker>
     </div>
     <div class="store-item flex flex-vertical-center">
-      <div  class="title">
+      <div  class="titles">
         每人限购
       </div>
       <div class="flex flex1 fz-13" >
@@ -59,6 +82,50 @@
     </div>
 
 
+    <popup-layer title="选择商品" ref="product" :autoClose="false" @maskClicked="closePopup">
+      <div class="product-list">
+        <div class="product-item" v-for="(product,idx) in proData" :key="idx">
+          <div class="info-box" @click="taggleProductCheck(idx)">
+            <div class="check"   >
+              <div v-show="!product.disalbed">
+                <icon
+                  class="check-icon"
+                  :color="product.check?'#F53636':'#999'"
+                  size="20"
+                  :type="product.check?'iconblchecked':'iconCircle'"
+                ></icon>
+              </div>
+              <div v-show="product.disalbed">
+                <icon
+                  class="check-icon"
+                  color="#eee"
+                  size="20"
+                  type="iconblchecked"
+                ></icon>
+              </div>
+
+            </div>
+            <image class="thumb" :src="product.ImgPath"></image>
+            <div class="info">
+              <div class="title">{{product.Products_Name}}{{product.Products_ID}}</div>
+              <div class="price-box">
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceY}}</span>
+                <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceX}}</span>
+              </div>
+              <div class="stock-box">
+                <span class="stock">库存:{{product.Products_Count}}</span>
+                <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
+    </popup-layer>
+
   </div>
 </template>
 
@@ -66,19 +133,55 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-
-
-
+  import {
+    ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
+  } from '../../common/helper'
+  import { bizProdList } from '../../api/product'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      proData: [],
+      pro_id: '',
+      selectValue:[],
     },
     methods: {
-      init(){
+      closePopup() {
+        this.closePop('product')
+        this.proData = this.proData.map(item => {
+          return {...item, check: false}
+        })
+        this.pro_id=''
+      },
+      surePro() {
+        this.closePop('product')
+        let that = this
+        this.proData.map(item => {
+          if(item.check){
+            that.selectValue=item
+            that.pro_id = item.Products_ID
+          }
+        })
+      },
+      taggleProductCheck(idx) {
+        this.proData = this.proData.map(item => {
+          return {...item, check: false}
+        })
+        this.proData[idx].check = true
+      },
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      },
+      async init() {
+        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => {})
 
+        this.proData = reqData.data.map(item => {
+          return {...item, check: false}
+        })
       }
     },
     onShow() {
@@ -100,8 +203,19 @@
     background-color: #FFFFFF;
   }
   .submits{
-    margin: 0rpx auto 50rpx;
-    width: 320rpx;
+     margin: 0rpx auto 50rpx;
+     width: 320rpx;
+     height: 60rpx;
+     background-color: #FFFFFF;
+     border: 1px solid #00A8FF;
+     border-radius: 6rpx;
+     color: #00A8FF;
+     font-size: 28rpx;
+     line-height: 60rpx;
+   }
+  .submitq{
+    margin: 60rpx auto;
+    width: 360rpx;
     height: 60rpx;
     background-color: #FFFFFF;
     border: 1px solid #00A8FF;
@@ -116,7 +230,7 @@
     padding: 0rpx 20rpx;
     border-bottom: 1px solid #EBEBEB;
   }
-  .title{
+  .titles{
     font-size: 28rpx;
     color: #333333;
   }
@@ -140,6 +254,106 @@
     background-color: #00A8FF;
     color: #FFFFFF;
   }
+  .product-mbx{
+    width: 750rpx;
+    box-sizing: border-box;
+    height: 230rpx;
+    padding: 40rpx 20rpx;
+  }
+  .thumbs{
+    width: 150rpx;
+    height: 150rpx;
+    margin-right: 24rpx;
+  }
+  .color-my{
+    color: #FF0000;
+  }
+  .title-my{
+    color: #333;
+    font-size: 14px;
+    /*font-weight: bold;*/
+    line-height: 20px;
+    height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 38rpx;
+  }
+  /*商品列表 start*/
+  .product-list{
+    height: 800rpx;
+    overflow: scroll;
+  }
+  .product-item{
+    padding: 30rpx 0;
+    background: white;
+    margin-bottom: 20rpx;
+    .info-box{
+      padding: 0 20rpx;
+      display: flex;
+      font-size: 14px;
+      height: 176rpx;
+      .check{
+        padding-right: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .check-icon{
+
+        }
+      }
+      .thumb{
+        width: 176rpx;
+        height: 176rpx;
+        background: #f2f2f2;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          color: #333;
+          font-size: 14px;
+          /*font-weight: bold;*/
+          line-height: 20px;
+          height: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+        .price-box{
+          color: $fun-red-color;
+          margin-bottom: 10px;
+          font-size: 14px;
+        }
+        .stock-box{
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .actions{
+      margin-top: 30rpx;
+      font-size: 12px;
+      display: flex;
+      .action{
+        justify-content: center;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: #888;
+        border-right: 1rpx solid #e7e7e7;
+        &:last-child{
+          border-right: none;
+        }
+        .title{
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  /*商品列表 end*/
+
 
 </style>
 <config>
@@ -148,9 +362,8 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
-  "copyright": "~@/components/copyright",
-  "icon": "~@/components/icon",
-  "ad": "~@/components/ad"
+    "icon": "~@/components/icon",
+    "popup-layer": "~@/components/popup-layer"
   }
   }
 </config>
