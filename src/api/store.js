@@ -74,7 +74,7 @@ export const bizApply = (param, options) => fetch({act: 'bizApply', param, optio
 export const code2Session = (param, options) => fetch({act: 'code2Session', param, options})
 
 // 新增限时抢购
-export const bizAddSpike = (param, options) => fetch({act: 'bizAddSpike', param, options})
+export const bizAddSpike = (param, options) => fetch({act: 'bizOperateSpike', param, options})
 
 // 限时抢购列表
 export const bizSpikeList = (param, options) => fetch({act: 'bizSpikeList', param, options})
@@ -82,4 +82,17 @@ export const bizSpikeList = (param, options) => fetch({act: 'bizSpikeList', para
 // 限时抢购列表
 export const bizCancelSpike = (param, options) => fetch({act: 'bizSpikeList', param, options})
 
+// 获取限时抢购详情
 export const bizSpikeDetail = (param, options) => fetch({act: 'bizSpikeDetail', param, options})
+
+// 交易数据统计
+export const getTradeStatistic = (param, options) => fetch({act: 'getTradeStatistic', param, options})
+
+// 订单统计（数量、销售额）
+export const system_order_count = (param, options) => fetch({act: 'system_order_count', param, options})
+
+// 新老客户交易统计
+export const getNewOldTradeStatistic = (param, options) => fetch({act: 'getNewOldTradeStatistic', param, options})
+
+// 商品销售情况统计
+export const systemProdSales = (param, options) => fetch({act: 'systemProdSales', param, options})

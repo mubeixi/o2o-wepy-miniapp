@@ -58,7 +58,7 @@
           </div>
         </div>
         <div class="grid-row">
-          <div class="grid-item">
+          <div class="grid-item" @click="$linkTo('/pages/statistics/dashboard')">
             <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
             <div class="grid-item-title">数据统计</div>
           </div>

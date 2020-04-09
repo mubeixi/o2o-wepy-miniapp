@@ -17,6 +17,7 @@
   "author": "junxiang wang <function@wzw.com>",
   "license": "MIT",
   "dependencies": {
+    "@antv/wx-f2": "^2.1.0",
     "@wepy/core": "^2.0.0-alpha.9",
     "@wepy/x": "^2.0.2",
     "miniprogram-slide-view": "0.0.3",

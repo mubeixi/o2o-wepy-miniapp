@@ -1,61 +1,22 @@
 <style lang="scss">
-  @import "../assets/mixins.scss";
-  .page-wrap{
-    height: 100vh;
-  }
-  .img{
-    @include cover-img();
-    &-box{
-      width: 700rpx;
-      padding: 25rpx;
-      display: flex;
-      flex-wrap: wrap;
-    }
-    &-item{
-      width: 220rpx;
-      height: 220rpx;
-      margin-bottom: 20rpx;
-      margin-right: 20rpx;
-      background-color: #f2f2f2;
-      position: relative;
-      .progress{
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        line-height: 220rpx;
-        color: white;
-        background: rgba(0,0,0,.3);
-      }
-      &:nth-child(3n+0){
-        margin-right: 0;
-      }
-    }
-  }
-  .add{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px dashed #999;
-    box-sizing: border-box;
+  .container {
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    box-sizing:border-box;
   }
 </style>
 <template>
   <div class="page-wrap">
-    <div class="img-box">
-      <div class="img-item img" v-for="(img,idx) in imgs" :key="idx" :style="{backgroundImage:'url('+img+')'}"></div>
-      <div class="img-item add" @click="addImg" v-show="imgs.length<9"><icon color="#ddd" size="40" type="iconadd"></icon></div>
-    </div>
-    <div style="height: 50px"></div>
-    <div class="img-box">
-      <div class="img-item img" v-for="(img,idx) in imgs2" :key="idx" :style="{backgroundImage:'url('+img.path+')'}"><span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span></div>
-      <div class="img-item add" @click="addImg2" v-show="imgs.length<9"><icon color="#ddd" size="40" type="iconadd"></icon></div>
-    </div>
-
-    <popup-layer title="商品承诺" ref="form1" :showPop="showPopup">
-
-    </popup-layer>
+    <view class="container" id="container" >
+      <echarts style="width: 400px;height: 300px;" :onInit="onInitChart" />
+    </view>
   </div>
 </template>
 <script>
@@ -71,65 +32,47 @@
     store,
     mixins: [pageMixin],
     data: {
-      _click: false,
-      imgs: [],
-      _click2: false,
-      imgs2: [],
-      showPopup:false
-    },
-    methods: {
-      async addImg() {
-        if (this._click) {
-          error('操作过快')
-          return
-        }
-        const files = await chooseImageByPromise({count: 3}).catch(err => {
-          wx.showModal({
-            title: '请选择图片',
-            content: JSON.stringify(err)
-          })
+      onInitChart(F2, config) {
+        if (!F2) return
+        const chart = new F2.Chart(config)
+        const data = [
+          { value: 63.4, city: 'New York', date: '2011-10-01' },
+          { value: 62.7, city: 'Alaska', date: '2011-10-01' },
+          { value: 72.2, city: 'Austin', date: '2011-10-01' },
+          { value: 58, city: 'New York', date: '2011-10-02' },
+          { value: 59.9, city: 'Alaska', date: '2011-10-02' },
+          { value: 67.7, city: 'Austin', date: '2011-10-02' },
+          { value: 53.3, city: 'New York', date: '2011-10-03' },
+          { value: 59.1, city: 'Alaska', date: '2011-10-03' },
+          { value: 69.4, city: 'Austin', date: '2011-10-03' }
+        ]
+        chart.source(data, {
+          date: {
+            range: [0, 1],
+            type: 'timeCat',
+            mask: 'MM-DD'
+          },
+          value: {
+            max: 300,
+            tickCount: 4
+          }
         })
-        const imgs = getArrColumn(files, 'path')
-        this.imgs = imgs
-        const ossUrls = await uploadImages({imgs}).catch(err => {
-          wx.showModal({
-            title: '文件批量上传失败',
-            content: JSON.stringify(err)
-          })
-        })
-        console.log(ossUrls)
+        chart.area().position('date*value').color('city').adjust('stack')
+        chart.line().position('date*value').color('city').adjust('stack')
+        chart.render()
 
-        this._click = false
-      },
-      async addImg2() {
-        if (this._click2) {
-          error('操作过快')
-          return
-        }
-        const files = await chooseImageByPromise({count: 9}).catch(err => {
-          wx.showModal({
-            title: '请选择图片',
-            content: JSON.stringify(err)
-          })
-        })
-
-        this.imgs2 = files.map(file => {
-          return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
-        })
-        const imgs = getArrColumn(files, 'path')
-        const ossUrls = await uploadImages({imgs, progressList: this.imgs2}).catch(err => {
-          wx.showModal({
-            title: '文件批量上传失败',
-            content: JSON.stringify(err)
-          })
-        })
-        console.log(ossUrls)
-
-        this._click2 = false
+      // 注意：需要把chart return 出来
+        return chart
       }
     },
+    computed() {
+
+    },
+    methods: {
+
+    },
     onReady() {
-      this.$refs.form1.show()
+
     },
     onLoad() {
 
@@ -141,6 +84,7 @@
     "navigationBarTitleText": "demo",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "echarts": "~@/components/echarts",//npm组件
       "icon": "~@/components/icon",
       "popup-layer": "~@/components/popup-layer"
     }
