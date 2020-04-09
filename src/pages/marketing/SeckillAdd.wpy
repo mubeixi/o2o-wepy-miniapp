@@ -1,5 +1,6 @@
 <template>
   <div class="seckill-add">
+    <err-msg :errs="formCheckResult"></err-msg>
       <block v-if="pro_id">
         <div  class="flex  product-mbx" @click="openPop('product')">
             <div class="thumbs" :style="{backgroundImage:'url('+selectValue.ImgPath+')'}">
@@ -52,7 +53,7 @@
         开始时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
-        <time @uptime="upStartTime"><span class="fz-12 c9">请选择时间</span></time>
+        <time @uptime="upStartTime" :val="start_time"><span class="fz-12 c9">请选择时间</span></time>
         <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
       </div>
     </div>
@@ -61,7 +62,7 @@
         结束时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
-        <time @uptime="upEndTime"><span class="fz-12 c9">请选择时间</span></time>
+        <time @uptime="upEndTime" :val="end_time"><span class="fz-12 c9">请选择时间</span></time>
         <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
       </div>
     </div>
@@ -144,6 +145,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      formCheckResult: '',
       id: '',
       price: '',
       count: '',
@@ -164,7 +166,7 @@
         let data = {
           start_time: this.start_time,
           end_time: this.end_time,
-          limit: this.limit
+          limits: this.limit
         }
         if (this.id) {
           data.flashsale_id = this.id
@@ -194,6 +196,62 @@
             count: this.count
           }
           data.select_prod = JSON.stringify(mbx)
+        }
+        const rule = {
+          select_prod: {
+            required: false
+          },
+          limits: {
+            required: true,
+            match: /^\d+$/,
+            message: {
+              required: '限购数量必填',
+              match: '限购数量必须大于等于0'
+            }
+          },
+          start_time: {
+            required: true,
+            type: String,
+            use: {
+              after: (val, row) => moment(val).isAfter()
+            },
+            message: {
+              required: '开始时间必选',
+              type: '开始时间必须为字符串',
+              after: '开始时间必须大于现在时间'
+            }
+          },
+          end_time: {
+            required: true,
+            type: String,
+            use: {
+              after: (val, row) => moment(val).isAfter(row.start_time)
+            },
+            message: {
+              required: '结束时间必选',
+              type: '结束时间必须为字符串',
+              after: '结束时间必须在开始时间之后'
+            }
+          }
+        }
+        const checkRt = validateFun(data, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
+        if (!this.pro_id) {
+          this.formCheckResult = ['请选择秒杀商品']
+          return
+        }
+        if (this.selectValue.Products_Type == 0) {
+          if (!this.price) {
+            this.formCheckResult = ['请输入秒杀价格']
+            return
+          }
+          if (!this.count) {
+            this.formCheckResult = ['请输入秒杀库存']
+            return
+          }
         }
 
         bizOperateFlashsale(data).then(res => {
@@ -276,6 +334,9 @@
           this.price = this.editData.attr_json.price
           this.count = this.editData.attr_json.count
           this.limit = this.editData.limits
+          this.start_time = moment(this.editData.start_time).format('YYYY-MM-DD HH:mm:ss')
+          this.end_time = moment(this.editData.end_time).format('YYYY-MM-DD HH:mm:ss')
+
           for (let item of this.proData) {
             if (item.Products_ID == this.editData.Products_ID) {
               this.selectValue = item
@@ -480,6 +541,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
+  "err-msg": "~@/components/err-msg",
     "icon": "~@/components/icon",
     "popup-layer": "~@/components/popup-layer",
     "time": "~@/components/time",
