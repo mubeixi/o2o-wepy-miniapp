@@ -31,7 +31,7 @@
           {{product.start_time}} 至 {{product.end_time}}
         </div>
         <div class="actions">
-          <div class="action">
+          <div class="action" @click="edit(product.id)">
             <icon type="iconbianji1"></icon>
             <span class="title">编辑</span>
           </div>
@@ -70,21 +70,25 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import  {bizFlashsaleList} from '../../api/product'
-
+  import {bizFlashsaleList} from '../../api/product'
+  import { linkTo } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      seckillData:[]
+      seckillData: []
     },
     methods: {
-        init(){
-          bizFlashsaleList().then(res=>{
-            this.seckillData=res.data
-          })
-        }
+      edit(id) {
+        let data = '/pages/marketing/SeckillAdd?id=' + id
+        linkTo(data)
+      },
+      init() {
+        bizFlashsaleList().then(res => {
+          this.seckillData = res.data
+        })
+      }
     },
     onShow() {
 

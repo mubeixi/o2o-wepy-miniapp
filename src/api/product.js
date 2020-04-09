@@ -17,3 +17,8 @@ export const getShopGiftList = (param, options) => fetch({act: 'getShopGiftList'
 
 //获取秒杀列表
 export const bizFlashsaleList = (param, options) => fetch({act: 'bizFlashsaleList', param, options})
+//添加和编辑秒杀
+export const bizOperateFlashsale = (param, options) => fetch({act: 'bizOperateFlashsale', param, options})
+
+//获取秒杀详情
+export const bizFlashsaleDetail = (param, options) => fetch({act: 'bizFlashsaleDetail', param, options})
