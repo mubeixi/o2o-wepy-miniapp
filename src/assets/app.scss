@@ -90,11 +90,9 @@ page{
     margin-bottom: env(safe-area-inset-bottom);
   }
   &.bottom-btn{
-    padding-bottom: 100rpx;
+    padding-bottom: 50px;
   }
-  .safearea-box{
-    background: white;
-  }
+
   .action-btn{
     position: fixed;
     left: 0;
@@ -110,6 +108,9 @@ page{
 }
 .color-primary{
   color: $fun-primary-color;
+}
+.color-red{
+  color: $fun-red-color;
 }
 
 .text-left{
@@ -220,10 +221,10 @@ page{
 }
 
 .btn{
-  height: 80rpx;
+  height: 44px;
   width: 750rpx;
   box-sizing: border-box;
-  line-height: 80rpx;
+  line-height: 44px;
   text-align: center;
   color: #333;
   font-size: 16px;
@@ -242,6 +243,11 @@ page{
   height: constant(safe-area-inset-bottom);
   height: env(safe-area-inset-bottom);
   width: 100%;
+  &.fixed{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
 }
 
 .posi{
