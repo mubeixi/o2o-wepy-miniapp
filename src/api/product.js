@@ -14,3 +14,6 @@ export const bizProdList = (param, options) => fetch({act: 'bizProdList', param,
 
 //获取赠品列表
 export const getShopGiftList = (param, options) => fetch({act: 'getShopGiftList', param, options})
+
+//获取秒杀列表
+export const bizFlashsaleList = (param, options) => fetch({act: 'bizFlashsaleList', param, options})
