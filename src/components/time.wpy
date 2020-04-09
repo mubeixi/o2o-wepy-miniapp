@@ -13,7 +13,7 @@
   import wepy from '@wepy/core'
   const moment = require('moment')
   import { dateTimePicker, getMonthDay } from '../common/time'
-  const cutTimeStr = (str)=>str.substring(0,str.length-1)
+  const cutTimeStr = (str) => str.substring(0, str.length - 1)
   wepy.component({
     props: {
       label: {
@@ -26,7 +26,7 @@
         deep: true,
         handler(val) {
           console.log(val)
-          if (val) {
+          if (val && this.selected) {
             this.$emit('uptime', val)
           }
         }
@@ -44,9 +44,9 @@
       }
     },
     data: {
-      selected:false,
+      selected: false,
       dateTimeArray: [],
-      dateTime: [0, 0, 0, 0,0,0]
+      dateTime: [0, 0, 0, 0, 0, 0]
     },
     ready() {
       const {dateTimeArray, dateTime} = dateTimePicker('', '')

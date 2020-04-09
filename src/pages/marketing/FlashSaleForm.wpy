@@ -8,7 +8,7 @@
       background: white;
       .cell-item{
         .label{
-          width: 240rpx;
+
         }
         .content{
           padding-right: 20rpx;
@@ -167,19 +167,20 @@
         <div class="cell-item">
           <div class="label">活动名称</div>
           <div class="content">
-            <input type="text" v-model="formData.name" placeholder="请输入活动名称" />
+            <input class="fz-14" type="text" v-model="formData.name" placeholder="请输入活动名称" />
           </div>
         </div>
         <div class="cell-item">
-          <div class="label">每人限购(件)</div>
+          <div class="label">每人限购</div>
           <div class="content">
-            <input type="number" v-model="formData.limits" placeholder="请输入限购数量,0则代表不限制" />
+            <input class="fz-14" type="number" v-model="formData.limits" placeholder="请输入限购数量,0则代表不限制" />
           </div>
+          <div class="right">(件)</div>
         </div>
         <div class="cell-item">
           <div class="label">开始时间</div>
           <div class="content">
-            <time @uptime="upStartTime"><span class="fz-12 c9">请选择时间</span></time>
+            <time @uptime="upStartTime"><span class="fz-14 c9">请选择时间</span></time>
           </div>
           <div class="right">
             <icon type="iconarrowleft" size="14" color="#999"></icon>
@@ -188,7 +189,7 @@
         <div class="cell-item">
           <div class="label">结束时间</div>
           <div class="content">
-            <time @uptime="upEndTime"><span class="fz-12 c9">请选择</span></time>
+            <time @uptime="upEndTime"><span class="fz-14 c9">请选择</span></time>
           </div>
           <div class="right">
             <icon type="iconarrowleft" size="14" color="#999"></icon>
@@ -203,7 +204,7 @@
       </div>
 
       <div class="m-t-20 m-b-20 flex flex-vertical-center" @click="openproductPop">
-        <span class="fz-16 c3  m-l-20">选择商品</span>
+        <span class="fz-16 c3  m-l-10">选择商品</span>
         <div class="add-btn m-l-20"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加商品</span></div>
       </div>
 
@@ -232,6 +233,8 @@
 
     </div>
 
+    <div class="safearea-box fixed bgwhite"></div>
+    <div class="safearea-box"></div>
     <div class="btn action-btn btn-primary" @click="sub">
       <span class="p-l-10">确定</span>
     </div>
@@ -265,9 +268,8 @@
               <div class="price-box">
                 <span class="sign">￥</span>
                 <span>{{product.Products_PriceY}}</span>
-                <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
-                <span class="sign">￥</span>
-                <span>{{product.Products_PriceX}}</span>
+                <span style="text-decoration: line-through" class="sign m-l-10 color-gray">￥</span>
+                <span style="text-decoration: line-through" class="color-gray">{{product.Products_PriceX}}</span>
               </div>
               <div class="stock-box">
                 <span class="stock">库存:{{product.Products_Count}}</span>
@@ -303,6 +305,7 @@
       formCheckResult: [],
       proData: [],
       select_prod: [],
+      spike_id:'',
       formData: {
         name: '',
         start_time: '',
@@ -426,10 +429,12 @@
       },
       upStartTime(val) {
         const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
+        console.log(`${val}开始时间${formatRt}`)
         this.formData.start_time = formatRt
       },
       upEndTime(val) {
         const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
+        console.log(`${val}结束时间${formatRt}`)
         this.formData.end_time = formatRt
       },
       taggleDistributor(e) {
@@ -488,6 +493,9 @@
           return {...item}
         })
       }
+    },
+    onLoad(options){
+      console.log(options)
     },
     onShow() {
       this._init_func()
