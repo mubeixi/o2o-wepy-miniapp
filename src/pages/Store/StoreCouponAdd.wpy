@@ -209,6 +209,7 @@
   import pageMixin from '../../mixins'
   import {opCoupon, getCouponList} from '../../api/store'
   import {bizProdList} from '../../api/product'
+  const moment = require('moment')
 
   import {chooseImageByPromise, uploadImages, getArrColumn} from '../../common/helper'
   import {
@@ -277,7 +278,7 @@
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
         this.useCan = feeType
-        if(feeType===1){
+        if (feeType === 1) {
           this.closePop('useFan')
           this.openPop('pro')
         }
@@ -319,7 +320,12 @@
         let startTime = parseInt(this.dateTimeArray1[0][this.dateTime1[0]]) + '-' + parseInt(this.dateTimeArray1[1][this.dateTime1[1]]) + '-' + parseInt(this.dateTimeArray1[2][this.dateTime1[2]]) + ' ' + parseInt(this.dateTimeArray1[3][this.dateTime1[3]]) + ':' + parseInt(this.dateTimeArray1[4][this.dateTime1[4]]) + ':' + parseInt(this.dateTimeArray1[5][this.dateTime1[5]])
         let endTime = parseInt(this.dateTimeArray2[0][this.dateTime2[0]]) + '-' + parseInt(this.dateTimeArray2[1][this.dateTime2[1]]) + '-' + parseInt(this.dateTimeArray2[2][this.dateTime2[2]]) + ' ' + parseInt(this.dateTimeArray2[3][this.dateTime2[3]]) + ':' + parseInt(this.dateTimeArray2[4][this.dateTime2[4]]) + ':' + parseInt(this.dateTimeArray2[5][this.dateTime2[5]])
 
-
+        let boo = moment(endTime).isAfter(startTime)
+        if (!boo) {
+          hideLoading()
+          error('结束时间必须大于开始时间')
+          return
+        }
 
         let data = {
           Coupon_Subject: this.Coupon_Subject,
@@ -333,7 +339,7 @@
           Coupon_EndTime: endTime
         }
         if (this.useCan === 1) {
-          if(!this.coupon_prod){
+          if (!this.coupon_prod) {
             error('你还没有选择指定商品')
             return
           }
