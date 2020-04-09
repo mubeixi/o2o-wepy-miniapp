@@ -22,3 +22,7 @@ export const bizOperateFlashsale = (param, options) => fetch({act: 'bizOperateFl
 
 //获取秒杀详情
 export const bizFlashsaleDetail = (param, options) => fetch({act: 'bizFlashsaleDetail', param, options})
+
+
+//修改秒杀活动（产品）状态
+export const bizFlashsaleStatus = (param, options) => fetch({act: 'bizFlashsaleStatus', param, options})
