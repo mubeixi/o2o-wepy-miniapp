@@ -4,15 +4,29 @@
   .page-wrap{
 
   }
+  .customer{
+    .main{
+      padding-top: 30rpx !important;
+      padding-bottom: 20rpx !important;
+    }
+    &-info{
+      color: #666;
+    }
+    &-row{
+      font-size: 12px;
+      line-height: 24px;
+    }
+  }
   .section{
     width: 710rpx;
     margin: 30rpx auto 0;
     background: white;
     border-radius: 10rpx;
     overflow: hidden;
-    padding: 20rpx;
+    padding: 20rpx 0;
     box-sizing: border-box;
     .title{
+      padding: 0 20rpx;
       .before{
         width: 6rpx;
         height: 32rpx;
@@ -22,6 +36,19 @@
         font-weight: bold;
         color: #333333;
       }
+    }
+    .main{
+      padding: 0 20rpx;
+    }
+    .foot{
+      border-top: 1px solid #DADADA;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      color: #666;
+      padding: 20rpx 20rpx 0;
     }
   }
   .tab{
@@ -62,6 +89,7 @@
 </style>
 <template>
   <div class="page-wrap">
+
     <div class="section">
       <div class="title"><span class="before"></span><span class="text">实时数据</span></div>
       <div class="main">
@@ -89,17 +117,32 @@
         </div>
 
 
-        <echarts :propData="charts[5].data" :conf="charts[5].conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
-
+        <echarts :propData="charts[tabActiveIdx].data" :conf="charts[tabActiveIdx].conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
+        <div class="foot">
+          <span>查看详情</span>
+          <icon type="iconarrowleft" size="14" color="#999"></icon>
+        </div>
 
 
       </div>
     </div>
 
-
-    <div class="section">
+    <div class="section customer">
       <div class="title"><span class="before"></span><span class="text">客户分析</span></div>
       <div class="main">
+        <div class="customer-info">
+          <div class="customer-row">{{tabData.view_person_count.name}}：{{tabData.view_person_count.value}} </div>
+          <div class="customer-row">{{tabData.order_person_count.name}}：{{tabData.order_person_count.value}}</div>
+          <div class="customer-row">{{tabData.order_pay_person_count.name}}：{{tabData.order_pay_person_count.value}}</div>
+          <div class="customer-row">{{tabData.order_avg_money.name}}：￥{{tabData.order_avg_money.value}}</div>
+        </div>
+        <div class="customer-chart">
+          <echarts :propData="newOldTradeStatistic.circles" :lazyLoad="pieChartReady" class="pie-echarts" :onInit="onInitChartPie" ></echarts>
+        </div>
+      </div>
+      <div class="foot">
+        <span>查看详情</span>
+        <icon type="iconarrowleft" size="14" color="#999"></icon>
       </div>
     </div>
 
@@ -126,15 +169,33 @@
   } from '../../common/helper'
   import { error } from '../../common/fun'
   import {
-    getTradeStatistic
+    getTradeStatistic, getNewOldTradeStatistic
   } from '../../api/store'
   const moment = require('moment')
+
+  /**
+   * 求某个对象组成数组中，某个对象的值占百分比。方便配合f2-chart做饼图
+   * @param item
+   * @param arr
+   * @param key
+   * @returns {*}
+   */
+  function getPercent(item, arr, key = 'value') {
+    console.log(item, arr, key)
+    let arrSum = 0
+    for(let row of arr){
+      arrSum += row[key]
+    }
+    return arrSum === 0 ? 0 : (parseInt(item / arrSum * 100) / 100 + '%')
+  }
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      pieChartReady: false,
       chartReady: false,
+      newOldTradeStatistic: {},
       tabData: {},
       titles: [],
       time_list: [],
@@ -143,6 +204,31 @@
       max_rate: 0,
       tradeStatistic: {},
       tabActiveIdx: 0,
+      onInitChartPie(F2, config, data) {
+        if (!F2) return
+        const chart = new F2.Chart(config)
+        const _data = data
+
+        chart.source(_data, {
+          date: {
+            range: [0, 1],
+            type: 'timeCat',
+            mask: 'HH'
+          },
+          value: {
+            min: config.min,
+            max: config.max
+            // tickCount: 4
+          }
+        })
+
+        chart.area().position('date*value').color('label').adjust('stack')
+        chart.line().position('date*value').color('label').adjust('stack')
+        chart.render()
+
+        // 注意：需要把chart return 出来
+        return chart
+      },
       onInitChart1(F2, config, data) {
         if (!F2) return
         const chart = new F2.Chart(config)
@@ -156,11 +242,10 @@
           },
           value: {
             min: config.min,
-            max: config.max,
-            tickCount: 4
+            max: config.max
+            // tickCount: 4
           }
         })
-
 
         chart.area().position('date*value').color('label').adjust('stack')
         chart.line().position('date*value').color('label').adjust('stack')
@@ -176,6 +261,10 @@
     methods: {
       tabIdx(idx) {
         this.tabActiveIdx = idx
+        this.chartReady = false
+        setTimeout(() => {
+          this.chartReady = true
+        })
       },
       async _init_func() {
         try {
@@ -201,6 +290,17 @@
           this.max_num = max_num
           this.max_rate = max_rate
           this.chartReady = true
+
+          const {data: newOldTradeStatistic} = await getNewOldTradeStatistic().catch(() => { throw new Error('获取统计失败') })
+          const circles = newOldTradeStatistic.circles.map(item => {
+            // 绘制饼图时，数据集中的每一条记录中必须包含一个常量字段（并且必须是字符串类型）
+            return {...item, a: '1', percent: getPercent(item, newOldTradeStatistic.circles)}
+          })
+
+          this.newOldTradeStatistic = newOldTradeStatistic
+          this.newOldTradeStatistic.circles = circles
+
+          this.pieChartReady = true
         } catch (e) {
 
         }
