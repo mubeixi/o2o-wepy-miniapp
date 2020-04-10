@@ -1,5 +1,5 @@
-import Renderer from '../lib/f2-canvas/lib/renderer'
-import F2 from '../lib/f2-canvas/lib/f2'
+import Renderer from '../lib/f2-canvas/renderer'
+import F2 from '../lib/f2-canvas/f2'
 
 F2.Util.addEventListener = function(source, type, listener) {
   source.addListener(type, listener)
