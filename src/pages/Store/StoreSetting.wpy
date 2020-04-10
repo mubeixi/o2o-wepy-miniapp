@@ -1,5 +1,13 @@
 <template>
     <div class="store-all">
+      <div class="store-item flex flex-vertical-center flex-justify-between" >
+        <div class="store-title">
+          门店管理
+        </div>
+        <div class="store-titles">
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
       <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('store-setting')">
         <div class="store-title">
           到店自提
@@ -9,12 +17,20 @@
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
-      <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$linkTo('/pages/store/StoreSettingConfig')">
         <div class="store-title">
-          结算配置
+          提现配置
         </div>
         <div class="store-titles">
-          未配置
+          {{infoData.settle_config?'已配置':'未配置'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('dayin')">
+        <div class="store-title">
+          打印机设置
+        </div>
+        <div class="store-titles">
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
@@ -22,8 +38,13 @@
         <div class="store-title">
           营业时间
         </div>
-        <div class="store-titles">
-          <time @uptime="upEndTime" mode='time' :val="end_time">
+        <div class="store-titles flex flex-vertical-center">
+          <time class="time-select" @uptime="upStartTime" mode='time' :val="start_time">
+            <span class="fz-14" v-if="start_time">{{start_time}}</span>
+            <span class="fz-14 c9" v-else>请选择开始时间</span>
+          </time>
+          <span class="m-l-10 m-r-10">-</span>
+          <time class="time-select" @uptime="upEndTime" mode='time' :val="end_time">
             <span class="fz-14" v-if="end_time">{{end_time}}</span>
             <span class="fz-14 c9" v-else>请选择结束时间</span>
           </time>
@@ -32,6 +53,22 @@
       </div>
 
 
+      <model ref="dayin">
+        <div class="wzw-title">
+          打印机设置
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content">
+          <div>
+            是否开启自动打印
+          </div>
+          <div>
+            <switch :checked="arrive_get==1" bindchange="switch1Change" style="transform: scale(.8)"></switch>
+          </div>
+        </div>
+        <div class="wzw-info">
+          开启此开关后，消费者付款完成后会自动打印小票
+        </div>
+      </model>
 
       <model ref="store-setting">
           <div class="wzw-title">
@@ -46,7 +83,7 @@
             </div>
           </div>
           <div class="wzw-info">
-            平台设置的各种免运费权益是否适用于同城配送
+            开启此开关后，消费者在下订单时可以选择直接到店里提取上去，无需发货
           </div>
       </model>
 
@@ -57,18 +94,63 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { hideLoading, showLoading } from '../../common/fun'
-  import {opBizInfo} from '../../api/store'
-
+  import { error, hideLoading, showLoading, toast } from '../../common/fun'
+  import {opBizInfo, getBizInfo} from '../../api/store'
+  const moment = require('moment')
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      arrive_get: 0
+      infoData: {},
+      arrive_get: 0,
+      start_time: '',
+      end_time: ''
+    },
+    onShow() {
+      this.init()
     },
     methods: {
+      init() {
+        getBizInfo().then(res => {
+          this.infoData = res.data
+          this.arrive_get = this.infoData.arrive_get
+          this.start_time = this.infoData.business_start
+          this.end_time = this.infoData.business_end
+        })
+      },
+      upStartTime(e) {
+        this.start_time = e
+        let data = {
+          business_start: this.start_time
+        }
+        showLoading('保存中')
+        opBizInfo(data).then(res => {
+          toast('保存成功')
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      },
       upEndTime(e) {
-        console.log(e, 'ss')
+        this.end_time = e
+        let start = '2000-10-1 ' + this.start_time
+        let end = '2000-10-1 ' + this.end_time
+        let boo = moment(end).isAfter(start)
+        if (!boo) {
+          error('结束时间必须大于开始时间')
+          return
+        }
+
+        let data = {
+          business_end: this.end_time
+        }
+        showLoading('保存中')
+        opBizInfo(data).then(res => {
+          toast('保存成功')
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
       },
       switch1Change(e) {
         let boo = e.$wx.detail.value
@@ -148,6 +230,10 @@
     margin-bottom: 86rpx;
   }
 /* 到店自提*/
+  .time-select{
+    height: 108rpx;
+    line-height: 108rpx;
+  }
 </style>
 <config>
   {

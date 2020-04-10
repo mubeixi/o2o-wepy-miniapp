@@ -21,7 +21,7 @@
     </block>
 
     <block v-if="type==3">
-      <view class="dizhi">
+      <view class="dizhi" >
         <view class="section">
           <picker mode="multiSelector"  @change="bindMultiPickerChange" @columnchange="bindMultiPickerColumnChange" :value="change_multiIndex" :range="change_objectMultiArray" range-key="name">
             <view class="picker">
@@ -54,6 +54,8 @@
     </block>
 
 
+    <address show=true ></address>
+
     <div class="button" @click="saveAll"  v-if="type!=5">
       保存
     </div>
@@ -67,6 +69,7 @@
   import pageMixin from '../../mixins'
 
   import {getBizInfo, opBizInfo, bizRegSms} from '../../api/store'
+
   import {showLoading, hideLoading} from '../../common/fun'
 
   wepy.page({
@@ -290,7 +293,9 @@
   {
   "navigationBarTitleText": "修改资料",
   "usingComponents": {
-  "icon": "~@/components/icon"
+    "popup-layer": "~@/components/popup-layer",
+    "icon": "~@/components/icon",
+    "address": "~@/components/address"
   }
   }
 </config>

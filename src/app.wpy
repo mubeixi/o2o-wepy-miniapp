@@ -65,6 +65,8 @@ wepy.app({
       "pages/join/CompanyCertification",
       "pages/join/BusinessPay",
       "pages/store/StoreSetting",
+      "pages/store/StoreSettingConfig",
+      "pages/store/StoreSettingAdd",
       "pages/store/StoreInfo",
       "pages/store/StoreInfoUpda",
       "pages/store/SameCityDelivery",

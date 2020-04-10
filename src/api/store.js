@@ -1,5 +1,7 @@
 import { fetch } from '../common/request'
 
+//获取平台提现方式
+export const getWithdrawMethods = (param, options) => fetch({act: 'getWithdrawMethods', param, options})
 // 获取商家入驻行业列表
 export const bizIndustryList = (param, options) => fetch({act: 'bizIndustryList', param, options})
 

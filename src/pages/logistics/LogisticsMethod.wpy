@@ -98,22 +98,24 @@
         this.temp_id = options.temp_id
       }
       this.editData = ls.get('Template_Content')
-      this.express_start = this.editData.express.default.start
-      let arr = []
-      for (let item of this.editData.express.special_content) {
-        arr.push({
-          express_areas: item.areas,
-          express_desc: item.desc,
-          express_start: item.start,
-          express_postage: item.postage,
-          express_plus: item.plus,
-          express_postageplus: item.postageplus
-        })
+      if (this.editData) {
+        this.express_start = this.editData.express.default.start
+        let arr = []
+        for (let item of this.editData.express.special_content) {
+          arr.push({
+            express_areas: item.areas,
+            express_desc: item.desc,
+            express_start: item.start,
+            express_postage: item.postage,
+            express_plus: item.plus,
+            express_postageplus: item.postageplus
+          })
+        }
+        this.special_content = arr
+        this.express_postage = this.editData.express.default.postage
+        this.express_plus = this.editData.express.default.plus
+        this.express_postageplus = this.editData.express.default.postageplus
       }
-      this.special_content = arr
-      this.express_postage = this.editData.express.default.postage
-      this.express_plus = this.editData.express.default.plus
-      this.express_postageplus = this.editData.express.default.postageplus
     },
     methods: {
       // 保存返回

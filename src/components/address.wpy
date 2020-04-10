@@ -1,0 +1,143 @@
+<template>
+    <div  @touchmove.prevent.stop="noop">
+      <div class="masks" @click="close" ></div>
+      <div class="wraps" >
+        <div class="titles">
+          <div class="texts">选择城市</div>
+          <div @click="subFn" class="btns">确认</div>
+        </div>
+        <input type="text" v-model="selects"/>
+        <div class="p-l-10 p-b-20">
+          <div class="flex flex-vertical-center fz-14 m-b-20">
+            <div class="m-r-15 ">{{selects[0]}}</div>
+            <div class="m-r-15 ">{{selects[1]}}</div>
+            <div class="m-r-15 ">{{selects[2]}}</div>
+            <div class="m-r-15 ">{{selects[3]}}</div>
+          </div>
+          <div class="fz-14 mbxs">
+            <block v-for="(item,index) of provinceList" :key="index">
+              <div class="m-t-10" @click="select(index,item)">{{item.area_name}}</div>
+            </block>
+
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+
+  import {getAreaByPid} from '../api/system'
+
+  wepy.page({
+    prop: {
+      show: {
+        type: Boolean,
+        default: false
+      }
+    },
+    data: {
+      ind: 0,
+      selects: [],
+      selectIndex: [],
+      provinceList: []
+    },
+    watch: {
+      selects: {
+        deep: true,
+        handler: function(newValue, oldValue) {
+          console.log(newValue, oldValue, 'ss')
+        }
+      },
+      show: {
+        handler(val) {
+
+        }
+      },
+      deep: {
+        immediate: true,
+        handler(val) {
+          if (val < 1) return
+          this.getAreaByPid()
+        }
+      }
+    },
+
+    methods: {
+      select(ind, item) {
+        this.selectIndex[0] = ind
+        this.selects[0] = item.area_name
+        console.log(this.selectIndex, this.selects)
+      },
+      close() {
+
+      },
+      // 地址
+      getAreaByPid() {
+        getAreaByPid().then(res => {
+          this.provinceList = res.data
+        })
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../assets/variables.scss";
+  @import "../assets/app.scss";
+  .titles{
+    display: flex;
+    align-items: center;
+    padding: 0px 10px 15px ;
+    .texts{
+      flex: 1;
+      text-align: center;
+    }
+    .btns{
+      background: $fun-primary-color;
+      color: #333;
+      font-size: 14px;
+      padding:6px 12px;
+      border-radius: 2px;
+      color: #fff;
+      text-align: center;
+    }
+  }
+
+  .masks{
+    position: fixed;
+    z-index: 9;
+    background: rgba(0, 0, 0 , .6);
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .wraps{
+    padding: 15px 0 30px;
+    position: fixed;
+    left: 0;
+    width: 750rpx;
+    z-index: 10;
+    background: #FFFFFF;
+    overflow: hidden;
+    bottom: 0;
+  }
+  .mbxs{
+    height: 840rpx;
+    overflow: scroll;
+  }
+</style>
+<config>
+  {
+  "usingComponents": {
+    "icon": "~@/components/icon"
+  }
+  }
+</config>
