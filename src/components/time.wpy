@@ -14,13 +14,17 @@
 <script>
   import wepy from '@wepy/core'
   const moment = require('moment')
-  import { dateTimePicker, getMonthDay, getNewDateArryByStr,withData } from '../common/time'
+  import { dateTimePicker, getMonthDay, getNewDateArryByStr, withData } from '../common/time'
   const cutTimeStr = (str) => {
     const _str = str.substring(0, str.length - 1)
     return withData(_str)
   }
   wepy.component({
     props: {
+      // 年月日 时分秒
+      mode: {
+        default: 'date'
+      },
       // 暂时使用slot
       label: {
         default: '请选择时间'
@@ -46,7 +50,12 @@
       strTime() {
         try {
           let dateTimeArray = this.dateTimeArray, dateTime = this.dateTime
-          return cutTimeStr(dateTimeArray[0][dateTime[0]]) + '-' + cutTimeStr(dateTimeArray[1][dateTime[1]]) + '-' + cutTimeStr(dateTimeArray[2][dateTime[2]]) + ' ' + cutTimeStr(dateTimeArray[3][dateTime[3]]) + ':' + cutTimeStr(dateTimeArray[4][dateTime[4]]) + ':' + cutTimeStr(dateTimeArray[5][dateTime[5]])
+          //新增 时分秒
+          if (this.mode==='time') {
+            return cutTimeStr(dateTimeArray[0][dateTime[0]]) + ':' + cutTimeStr(dateTimeArray[1][dateTime[1]]) + ':' + cutTimeStr(dateTimeArray[2][dateTime[2]])
+          } else {
+            return cutTimeStr(dateTimeArray[0][dateTime[0]]) + '-' + cutTimeStr(dateTimeArray[1][dateTime[1]]) + '-' + cutTimeStr(dateTimeArray[2][dateTime[2]]) + ' ' + cutTimeStr(dateTimeArray[3][dateTime[3]]) + ':' + cutTimeStr(dateTimeArray[4][dateTime[4]]) + ':' + cutTimeStr(dateTimeArray[5][dateTime[5]])
+          }
         } catch (e) {
           return ''
         }
@@ -63,8 +72,12 @@
       if (_str) {
         hasDate = getNewDateArryByStr(new Date(_str))
       }
-      console.log(_str)
-      const {dateTimeArray, dateTime} = dateTimePicker('', '', hasDate)
+      let {dateTimeArray, dateTime} = dateTimePicker('', '', hasDate)
+      if (this.mode==='time') {
+        dateTimeArray = dateTimeArray.slice(-3)
+        dateTime = dateTime.slice(-3)
+        console.log(this.mode,dateTimeArray)
+      }
       this.dateTimeArray = dateTimeArray
       this.dateTime = dateTime
     },
@@ -76,11 +89,14 @@
         this.selected = true
       },
       changeDateTimeColumn(e) {
+        console.log(e,'ss')
         const val = e.$wx.detail.value
         let arr = this.dateTime
         let dateArr = this.dateTimeArray
         arr[e.$wx.detail.column] = val
-        dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+        if(this.mode!=='time'){
+          dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+        }
         this.dateTimeArray = dateArr
         this.dateTime = arr
       }
