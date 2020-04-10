@@ -370,8 +370,11 @@
         this.proData = reqData.data.map(item => {
           return {...item, check: false}
         })
+
         if (this.id) {
           this.getMbx()
+        }else{
+          hideLoading()
         }
       }
     },
