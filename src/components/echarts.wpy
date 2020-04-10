@@ -3,107 +3,49 @@
     width: 100%;
     height: 100%;
   }
-
 </style>
 <template>
   <canvas
-    type="2d"
     class="f2-canvas"
-    bindtouchstart="touchStart"
-    bindtouchmove="touchMove"
-    bindtouchend="touchEnd"
-  >
+    :canvas-id="canvasId"
+    @init="init"
+    @touchstart="touchStart"
+    @touchmove="touchMove"
+    @touchend="touchEnd"
+    @longtap="press">
   </canvas>
 </template>
 <script>
   import wepy from '@wepy/core'
+  import {
+    F2Mixin
+  } from '../mixins/f2'
 
-  import F2 from '@antv/f2'
-  function wrapEvent(e) {
-    if (!e) return
-    if (!e.preventDefault) {
-      e.preventDefault = function() {}
-    }
-    return e
-}
   wepy.component({
+    mixins: [F2Mixin],
     props: {
       onInit: {
-        type: 'Function',
-        value: () => {}
+        type: Function,
+        default: () => {}
       },
-      propData: {
-        require: true
-      },
-      conf: {
-        require: true
+      canvasId: {
+        type: String,
+        default: 'canvasId'
       },
       lazyLoad: {
         type: Boolean,
-        default: false
-      }
-    },
-    watch: {
-      lazyLoad: {
-        handler(val) {
-          console.log(val)
-          if (val) {
-            this._init_func()
-          }
-        }
+        default: true
+      },
+      propData:{
+        required:true
+      },
+      conf: {
+        type: Object,
+        default: {}
       }
     },
     data: {
 
-    },
-    ready() {
-
-    },
-    methods: {
-      _init_func() {
-        const query = wx.createSelectorQuery().in(this.$wx)
-        query.select('.f2-canvas')
-          .fields({
-            node: true,
-            size: true
-          })
-          .exec(res => {
-            const { node, width, height } = res[0]
-            const context = node.getContext('2d')
-            const pixelRatio = wx.getSystemInfoSync().pixelRatio
-            // 高清设置
-            node.width = width * pixelRatio
-            node.height = height * pixelRatio
-
-            const config = { context, width, height, pixelRatio, ...this.conf }
-            const chart = this.onInit(F2, config, this.propData)
-            if (chart) {
-              this.chart = chart
-              this.canvasEl = chart.get('el')
-            }
-          })
-      },
-      touchStart(e) {
-        const canvasEl = this.canvasEl
-        if (!canvasEl) {
-          return
-        }
-        canvasEl.dispatchEvent('touchstart', wrapEvent(e))
-      },
-      touchMove(e) {
-        const canvasEl = this.canvasEl
-        if (!canvasEl) {
-          return
-        }
-        canvasEl.dispatchEvent('touchmove', wrapEvent(e))
-      },
-      touchEnd(e) {
-        const canvasEl = this.canvasEl
-        if (!canvasEl) {
-          return
-        }
-        canvasEl.dispatchEvent('touchend', wrapEvent(e))
-      }
     }
   })
 </script>
