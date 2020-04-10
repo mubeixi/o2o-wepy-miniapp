@@ -30,8 +30,7 @@
 
     }
     .action{
-      margin-top: 25px;
-      margin-bottom: 15px;
+      margin: 50rpx 50rpx 30rpx;
       display: block;
     }
 
@@ -104,6 +103,32 @@
       text-align: center;
     }
   }
+
+  .channel{
+    &-list{
+      position: absolute;
+      bottom: 60px;
+      width: 750rpx;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    &-item{
+      &:after{
+        border: none;
+        font-size: 14px;
+      }
+      display: flex;
+      align-items: center;
+      .icon{
+
+      }
+      .text{
+        padding-left: 6px;
+      }
+    }
+
+  }
 </style>
 <template>
   <div class="wrap">
@@ -111,22 +136,28 @@
     <image class="img" mode="widthFix" src="/static/copyright.png"></image>
 
     <div class="form">
-      <form @submit="formSubmit" @reset="formReset">
-        <view class="form-item uni-column">
+      <form style="display: block" @submit="formSubmit" @reset="formReset">
+        <div class="form-item uni-column">
           <input @input="inputPhone" class="fun-input" name="input" placeholder="请输入手机号码" />
-        </view>
-        <view class="form-item uni-column">
+        </div>
+        <div class="form-item uni-column">
           <input @input="inputCaptcha" class="fun-input" name="captcha" placeholder="请输入短信验证码" />
-          <div class="sendCaptcha" @click="sendCaptcha">
-            <span class="text" v-if="!captchaSend">获取验证码</span><span class="text active" v-else>{{s}}s</span>
+          <div class="sendCaptcha" >
+            <span class="text" @click="sendCaptcha" v-if="!captchaSend">获取验证码</span><span class="text active" v-else>{{s}}s</span>
           </div>
-        </view>
-        <view class="form-item action">
-          <button form-type="submit" class="sub-btn m-b-15" type="primary" >立即登录</button>
-          <div><button @click="cancel" class="sub-btn m-b-15" >暂不登录</button></div>
+        </div>
+        <div class="action">
+          <div><button form-type="submit" class="sub-btn m-b-15" type="primary" >立即登录</button></div>
+          <div><button @click="cancel" class="sub-btn m-b-20" >暂不登录</button></div>
           <div class="fz-12">登录及表示您已阅读并接受<span class="color-primary">《用户服务协议》</span></div>
-        </view>
+        </div>
       </form>
+    </div>
+
+    <div class="channel-list">
+      <button class="channel-item" open-type="getUserInfo" @getuserinfo="weixinlogin">
+        <icon size="24" class="icon" color="#09bb07" type="iconlogo-wechat"></icon><span class="text fz-14">微信登录</span>
+      </button>
     </div>
 
     <popup-layer ref="pwd" :autoClose="false">
@@ -174,7 +205,7 @@
       setintervalInstance: null,
       phone: '',
       captcha: '',
-      s: 120,
+      s: 60,
       formCheckResult: false,
       smsid: null,
       pwd: '',
@@ -189,6 +220,7 @@
 
       },
       minusFn() {
+        console.log(this)
         if (this.s > 1) {
           this.s--
           return
@@ -201,9 +233,10 @@
           error('发送验证码失败')
           return
         }
+
         bizRegSms({mobile: this.phone}).then(res => {
           this.captchaSend = true
-          this.s = 120
+          this.s = 60
           this.setintervalInstance = setInterval(this.minusFn, 1000)
         }).catch(() => {})
       },
@@ -284,6 +317,7 @@
         ls.set('biz_account', biz_account)
         ls.set('biz_id', biz_id)
         ls.set('status', status)
+        this.$store.dispatch('setUserInfo', userData)
         // 需要设置密码
         if (userData.hasOwnProperty('biz_passwd')) {
           this.$refs.pwd.show()
@@ -295,19 +329,18 @@
         }, 200)
       },
       weixinlogin(e) {
-        console.log(e)
-        const mock = {
-          account: 18530863000,
-          password: 123456
-        }
-        bizLogin(mock).then(res => {
-          const {access_token, Users_id, biz_account, id: biz_id} = res.data
-          ls.set('access_token', access_token)
-          ls.set('users_id', Users_id)
-          ls.set('biz_account', biz_account)
-          ls.set('biz_id', biz_id)
-          wx.navigateBack()
-        }).catch(() => {})
+
+        const {encryptedData, rawData, signature, userInfo,iv} = e.$wx.detail
+        console.log({encryptedData, rawData, signature, userInfo,iv})
+        const lp_raw_data = JSON.stringify({encryptedData, rawData, signature, userInfo,iv})
+        wx.login({
+          success: (res) => {
+            const {code} = res
+            bizLogin({login_method: 'wx_lp', lp_code: code, lp_raw_data}).then(res => {
+              this.loginCall(res.data)
+            }).catch(() => {})
+          }
+        })
       }
     },
     onReady() {
