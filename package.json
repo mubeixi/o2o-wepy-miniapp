@@ -7,6 +7,7 @@
     "dev": "./node_modules/.bin/wepy build --watch --log trace",
     "build": "cross-env NODE_ENV=production ./node_modules/.bin/wepy build --no-cache",
     "clean": "rimraf weapp",
+    "restart": "node restart",
     "test": "echo \"Error: no test specified\" && exit 1",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
@@ -17,13 +18,11 @@
   "author": "junxiang wang <function@wzw.com>",
   "license": "MIT",
   "dependencies": {
-    "@antv/wx-f2": "^2.1.0",
     "@wepy/core": "^2.0.0-alpha.9",
     "@wepy/x": "^2.0.2",
     "miniprogram-slide-view": "0.0.3",
     "moment": "^2.24.0",
-    "validate": "^5.1.0",
-    "validate.js": "^0.13.1"
+    "validate": "^5.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",
@@ -49,6 +48,7 @@
     "eslint-plugin-standard": "^2.0.1",
     "less": "^3.8.1",
     "rimraf": "^3.0.2",
+    "shelljs": "^0.8.3",
     "typescript": "^3.8.3",
     "uglify-js": "^3.8.0",
     "validate-commit-msg": "^2.14.0",
