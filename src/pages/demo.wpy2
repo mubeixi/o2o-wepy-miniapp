@@ -1,11 +1,17 @@
 <style lang="scss">
-.page-wrap{
-  height: 100vh;
-}
+
 </style>
 <template>
   <div class="page-wrap">
-    <echarts ref="pie" :propData="propData" :onInit="chartInit"></echarts>
+    <canvas
+      class="f2-canvas"
+      canvas-id="PieBasic"
+      @init="init"
+      @touchstart="touchStart"
+      @touchmove="touchMove"
+      @touchend="touchEnd"
+      @longtap="press">
+    </canvas>
   </div>
 </template>
 <script>
@@ -13,15 +19,14 @@
   import store from '../store'
   import pageMixin from '../mixins'
   import {
-    createF2Chart
+    F2Mixin
   } from '../mixins/f2'
-
-  const initFunc = function(el, config,data) {
-
-    if (!el) return
-    const {width,height} = config
-    let chart = createF2Chart({
-      el,
+  import F2 from '../lib/f2-canvas/lib/f2'
+  const initFunc = function(canvas, width, height) {
+    console.log(canvas, width, height)
+    if (!canvas) return
+    let chart = new F2.Chart({
+      el: canvas,
       width,
       height
     })
@@ -34,8 +39,39 @@
       寻梦环游记: '5%',
       其他: '2%'
     }
-    let _data =  data
-    chart.source(_data, {
+    let data = [
+      {
+        name: '芳华',
+        percent: 0.4,
+        a: '1'
+      },
+      {
+        name: '妖猫传',
+        percent: 0.2,
+        a: '1'
+      },
+      {
+        name: '机器之血',
+        percent: 0.18,
+        a: '1'
+      },
+      {
+        name: '心理罪',
+        percent: 0.15,
+        a: '1'
+      },
+      {
+        name: '寻梦环游记',
+        percent: 0.05,
+        a: '1'
+      },
+      {
+        name: '其他',
+        percent: 0.02,
+        a: '1'
+      }
+    ]
+    chart.source(data, {
       percent: {
         formatter: function formatter(val) {
           return val * 100 + '%'
@@ -81,46 +117,18 @@
     chart.render()
 
     return chart
-  }
-
+}
   wepy.page({
 
     store,
-    mixins: [pageMixin],
+    mixins: [pageMixin, F2Mixin],
     data: {
-      chartInit: initFunc,
-      propData:[
-        {
-          name: '芳华',
-          percent: 0.4,
-          a: '1'
-        },
-        {
-          name: '妖猫传',
-          percent: 0.2,
-          a: '1'
-        },
-        {
-          name: '机器之血',
-          percent: 0.18,
-          a: '1'
-        },
-        {
-          name: '心理罪',
-          percent: 0.15,
-          a: '1'
-        },
-        {
-          name: '寻梦环游记',
-          percent: 0.05,
-          a: '1'
-        },
-        {
-          name: '其他',
-          percent: 0.02,
-          a: '1'
-        }
-      ]
+      canvasId: 'PieBasic',
+      opts: {
+        lazyLoad: false
+      },
+      onInit: initFunc
+
     },
     computed() {
 
@@ -129,9 +137,7 @@
 
     },
     onReady() {
-      setTimeout(() => {
-        this.$refs.pie.init()
-      }, 100)
+
     },
     onLoad() {
 

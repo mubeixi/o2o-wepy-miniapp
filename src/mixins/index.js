@@ -12,7 +12,7 @@ export default {
   },
 
   methods: {
-    $back:back,
+    $back: back,
     $linkTo: linkTo,
     $toast: toast,
     $error: error,
