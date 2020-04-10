@@ -1,0 +1,158 @@
+<template>
+  <div class="store-all">
+
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-title">
+        门店名称
+      </div>
+      <div class="store-titles flex1">
+        <input type="text" v-model="account_name"  placeholder="请输入门店名称" placeholder-class="__placeholder"  class="input-logistics" >
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="store-title">
+        所属区域
+      </div>
+      <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{cardDate}}"   range-key="bank_name" >
+        {{cardDate[index].bank_name}}
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </picker>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-title">
+        详细地址
+      </div>
+      <div class="store-titles flex1">
+        <input type="text" v-model="account_name"  placeholder="请输入详细地址" placeholder-class="__placeholder"  class="input-logistics" >
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-title">
+        联系方式
+      </div>
+      <div class="store-titles flex1">
+        <input type="text" v-model="account_name"  placeholder="请输入联系方式" placeholder-class="__placeholder"  class="input-logistics" >
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="titles">
+        开始时间
+      </div>
+      <div class="content fz-14 c9 flex flex-vertical-center">
+        <time @uptime="upStartTime" :val="start_time">
+          <span class="fz-14" v-if="start_time">{{start_time}}</span>
+          <span class="fz-14 c9" v-else>请选择开始时间</span>
+        </time>
+        <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="titles">
+        结束时间
+      </div>
+      <div class="content fz-14 c9 flex flex-vertical-center">
+        <time @uptime="upEndTime" :val="end_time">
+          <span class="fz-14" v-if="end_time">{{end_time}}</span>
+          <span class="fz-14 c9" v-else>请选择结束时间</span>
+        </time>
+        <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
+      </div>
+    </div>
+
+
+    <div class="submit-main" @click="save">
+      保存
+    </div>
+
+
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    onShow() {
+
+    },
+    methods: {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .store-all{
+    background-color: #FFFFFF;
+    height: 100vh;
+    .store-item{
+      height: 108rpx;
+      border-bottom: 1px solid #EBEBEB;
+      box-sizing: border-box;
+      width: 710rpx;
+      margin: 0 auto;
+    }
+    .store-title{
+      color: #333333;
+      font-size: 32rpx;
+    }
+    .store-titles{
+      color: #999999;
+      font-size: 26rpx;
+    }
+  }
+  .input-logistics{
+    margin-left: 48rpx;
+    height: 108rpx;
+    font-size: 26rpx;
+    color: #333333;
+  }
+  .__placeholder{
+    color: #CAC8C8;
+  }
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
+  }
+  .picker-mbx{
+    flex: 1;
+    text-align: right;
+    height: 108rpx;
+    line-height: 108rpx;
+    color: #999999;
+    font-size: 26rpx;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "添加门店",
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "time": "~@/components/time",
+  }
+  }
+</config>

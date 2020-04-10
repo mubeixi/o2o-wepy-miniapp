@@ -64,11 +64,9 @@
       </div>
     </div>
 
-<!--    <picker @change="bindPickerChange" value="{{index}}" range="{{business_type}}"   range-key="name">-->
-<!--      <view class="picker">-->
-<!--        当前选择：{{business_type[index].name}}-->
-<!--      </view>-->
-<!--    </picker>-->
+    <div class="submit-main" @click="bizOut">
+      退出登录
+    </div>
   </div>
 </template>
 
@@ -77,85 +75,98 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getBizInfo,getCityExpressConfig,opCityExpressConfig,opBizInfo} from  '../../api/store'
+  import {getBizInfo, getCityExpressConfig, opCityExpressConfig, opBizInfo} from '../../api/store'
+  import {bizLogout} from '../../api/system'
+
   import {
+    back,
     hideLoading,
-    linkTo, showLoading
+    linkTo, showLoading, toast
   } from '../../common/fun'
-  import {chooseImageByPromise,uploadImages} from '../../common/helper'
+  import { chooseImageByPromise, ls, uploadImages } from '../../common/helper'
   import { spaceImg } from '../../common/env'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-        info:{},
-      business_type:{},
-      index:0
+      info: {},
+      business_type: {},
+      index: 0
     },
-    onLoad(){
-    },
-    methods:{
-      repalceImg(){
+    methods: {
+      bizOut() {
+        bizLogout().then(res => {
+          toast('登出成功')
+          setTimeout(function() {
+            ls.remove('access_token')
+            ls.remove('users_id')
+            ls.remove('biz_account')
+            ls.remove('biz_id')
+            ls.remove('status')
+            linkTo('/pages/index')
+          }, 1000)
+        })
+      },
+      repalceImg() {
         this.info.biz_logo = spaceImg
       },
-      async updaImg(){
-        let temp_file_list=[]
-        let that=this
-        await chooseImageByPromise().then(tempFiles=>{
+      async updaImg() {
+        let temp_file_list = []
+        let that = this
+        await chooseImageByPromise().then(tempFiles => {
           temp_file_list.push(tempFiles[0].path)
           showLoading('上传图片中')
         })
-        await uploadImages({'imgs':temp_file_list}).then(urls=>{
-          opBizInfo({biz_logo:urls[0]}).then(res=>{
+        await uploadImages({'imgs': temp_file_list}).then(urls => {
+          opBizInfo({biz_logo: urls[0]}).then(res => {
             this.getDetail()
             hideLoading()
           })
         })
       },
       bindPickerChange(e) {
-        let ind=e.$wx.detail.value
-        let data=this.business_type[ind].name
+        let ind = e.$wx.detail.value
+        let data = this.business_type[ind].name
         showLoading('修改中')
-        opCityExpressConfig({business_type:data}).then(res=>{
-            this.info.city_express_config.business_type=data
-            hideLoading()
+        opCityExpressConfig({business_type: data}).then(res => {
+          this.info.city_express_config.business_type = data
+          hideLoading()
         })
       },
-      updateInfo(item){
-        let data='/pages/store/StoreInfoUpda?type='+item
+      updateInfo(item) {
+        let data = '/pages/store/StoreInfoUpda?type=' + item
         linkTo(data)
       },
-      getDetail(){
-        getBizInfo().then(res=>{
-          this.info=res.data
+      getDetail() {
+        getBizInfo().then(res => {
+          this.info = res.data
         })
       },
-      async getBizInfo(){
+      async getBizInfo() {
         showLoading('加载中')
-        await getBizInfo().then(res=>{
-            this.info=res.data
-        }).catch(e=>{
+        await getBizInfo().then(res => {
+          this.info = res.data
+        }).catch(e => {
           hideLoading()
         })
         hideLoading()
-        await getCityExpressConfig().then(res=>{
-          let arr=res.data.business_type
-          let arrData=[]
-          for(let it in arr){
-            arrData.push({name:it,id:arr[it]})
+        await getCityExpressConfig().then(res => {
+          let arr = res.data.business_type
+          let arrData = []
+          for (let it in arr) {
+            arrData.push({name: it, id: arr[it]})
           }
-          this.business_type=arrData
-          for(let it=0;it<arrData.length;it++){
-            if(arrData[it].name==this.info.city_express_config.business_type){
-              this.index=it
+          this.business_type = arrData
+          for (let it = 0; it < arrData.length; it++) {
+            if (arrData[it].name == this.info.city_express_config.business_type) {
+              this.index = it
             }
           }
         })
-
       }
     },
     onShow() {
-        this.getBizInfo()
+      this.getBizInfo()
     }
 
   })
@@ -197,7 +208,19 @@
     color: #999999;
     font-size: 26rpx;
   }
-
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
+  }
 </style>
 <config>
   {
