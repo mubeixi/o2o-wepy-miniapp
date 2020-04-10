@@ -2,7 +2,7 @@
   <div class="page-wrap">
     <div class="feature-list">
       <div class="feature-row">
-        <div class="feature-item">
+        <div class="feature-item"  @click="$linkTo('/pages/marketing/FlashSale')">
           <image src="/static/marketing/discount.png" class="img"></image>
           <div class="title">限时折扣</div>
         </div>
