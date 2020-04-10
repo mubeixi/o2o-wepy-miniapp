@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrap">
-    <div class="head">
+    <div class="head"  @click="toProfile">
       <div class="base">
         <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
         <span class="store-title">{{info.biz_shop_name}}</span>
@@ -123,9 +123,17 @@
         volidate: false
       },
       info: {},
-      status:1
+      status: 1
+    },
+    computed: {
+      userInfo() {
+        return this.$store.state.userInfo
+      }
     },
     methods: {
+      toProfile() {
+        if (this.userInfo) this.$linkTo('/pages/store/StoreInfo')
+      },
       repalceImg() {
         this.info.biz_logo = spaceImg
       },
@@ -161,7 +169,7 @@
 
     },
     onShow() {
-      this.status=ls.get('status')
+      this.status = ls.get('status')
       if (!checkIsLogin(1, 0)) return
       this.getInit()
     },

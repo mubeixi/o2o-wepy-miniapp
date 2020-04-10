@@ -2,17 +2,23 @@ import Vuex from '@wepy/x';
 
 export default new Vuex.Store({
   state: {
-    counter: 220
+    userInfo:null
   },
   mutations: {
     increment (state) {
       state.counter++;
+    },
+    userInfo(state,data){
+      state.userInfo = data
     },
     decrement (state) {
       state.counter--;
     }
   },
   actions: {
+    setUserInfo({commit},data){
+      commit('userInfo',data)
+    },
     increment ({ commit }) {
       commit('increment');
     },
