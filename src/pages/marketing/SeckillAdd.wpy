@@ -89,7 +89,7 @@
     </div>
 
 
-    <popup-layer title="选择商品" ref="product" :autoClose="false" @maskClicked="closePopup">
+    <popup-layer title="选择商品" ref="product" :autoClose="true">
       <div class="product-list">
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
           <div class="info-box" @click="taggleProductCheck(idx)">
@@ -309,13 +309,13 @@
         const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
         this.end_time = formatRt
       },
-      closePopup() {
-        this.closePop('product')
-        this.proData = this.proData.map(item => {
-          return {...item, check: false}
-        })
-        this.pro_id = ''
-      },
+      // closePopup() {
+      //   this.closePop('product')
+      //   this.proData = this.proData.map(item => {
+      //     return {...item, check: false}
+      //   })
+      //   this.pro_id = ''
+      // },
       surePro() {
         this.closePop('product')
         let that = this

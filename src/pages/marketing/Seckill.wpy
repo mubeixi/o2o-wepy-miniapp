@@ -79,7 +79,16 @@
     store,
     mixins: [pageMixin],
     data: {
-      seckillData: []
+      seckillData: [],
+      page: 1,
+      pageSize: 4,
+      totalCount: 0
+    },
+    onReachBottom() {
+      if (this.seckillData.length < this.totalCount) {
+        this.page++
+        this.init()
+      }
     },
     methods: {
       del(id, status, idx) {
@@ -99,12 +108,21 @@
         linkTo(data)
       },
       init() {
-        bizFlashsaleList().then(res => {
-          this.seckillData = res.data
+        let data = {
+          page: this.page,
+          pageSize: this.pageSize
+        }
+        bizFlashsaleList(data).then(res => {
+          for(let item of res.data){
+            this.seckillData.push(item)
+          }
+          this.totalCount = res.totalCount
         })
       }
     },
     onShow() {
+      this.seckillData=[]
+      this.page = 1
       this.init()
     },
     onLoad() {
