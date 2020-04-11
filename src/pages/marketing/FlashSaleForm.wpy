@@ -158,6 +158,53 @@
       }
     }
   }
+  .model-seckill{
+    width: 500rpx;
+    box-sizing: border-box;
+    padding: 30rpx 44rpx;
+    border-radius: 10rpx;
+  }
+  .input-all{
+    width: 410rpx;
+    height: 66rpx;
+    line-height: 66rpx;
+    border: 1px solid #D6D6D6;
+    box-sizing: border-box;
+  }
+  .btns{
+    width: 130rpx;
+    height: 50rpx;
+    line-height: 50rpx;
+    text-align: center;
+    font-size: 26rpx;
+    color: #FFFFFF;
+    background-color: #BEBEBE;
+    border-radius: 6rpx;
+  }
+  .btns-submit{
+    background-color: #00A8FF;
+  }
+  .placeholder{
+    font-size: 12px;
+    color:#C2C2C2;
+  }
+  .search-input{
+    width: 300rpx;
+    height: 60rpx;
+    box-sizing: border-box;
+    padding-left: 10px;
+    line-height: 60rpx;
+    border: 1px solid #eeeeee;
+  }
+  .search-btn{
+    height: 60rpx;
+    line-height: 60rpx;
+    text-align: center;
+    width: 100rpx;
+    color: #FFFFFF;
+    background-color: #00A8FF;
+    border-radius: 10rpx;
+  }
 </style>
 <template>
   <div class="page-wrap safearea bottom-btn">
@@ -209,9 +256,10 @@
 <!--        </div>-->
       </div>
 
-      <div class="m-t-20 m-b-20 flex flex-vertical-center" @click="openproductPop">
-        <span class="fz-16 c3  m-l-10">选择商品</span>
-        <div class="add-btn m-l-20"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加商品</span></div>
+      <div class="m-t-20 m-b-20 flex flex-vertical-center">
+        <span  class="fz-16 c3  m-l-10">选择商品</span>
+        <div  @click="openproductPop" class="add-btn m-l-20"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加商品</span></div>
+        <div class="add-btn m-l-20"><span class="fz-12 p-l-4"  @click="setDiscount">批量设置折扣</span></div>
       </div>
 
       <div class="goods-list">
@@ -225,13 +273,13 @@
                   <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{product.Products_PriceY}}</span></div>
                   <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{product.Products_PriceY}}</span></div>
                 </div>
-                <icon @click="delPro(idx)" size="18" type="iconshanchu" color="#999"></icon>
+                <icon @click="delPro(idx,product.Products_ID)" size="18" type="iconshanchu" color="#999"></icon>
               </div>
             </div>
           </div>
           <div class="flex flex-vertical-center p-t-10 fz-14">
             <span>折扣</span>
-            <input :value="product.discount"  class="bor m-l-10 m-r-10 w140 fz-12 p-l-4 p-r-4" placeholder="请输入数字 0.1-9.9" type="number" min="0.1" max="9.9" @input="bindDiscountInput" /><span>折</span>
+            <input :value="product.discount"  class="bor m-l-10 m-r-10 w140 fz-12 p-l-4 p-r-4" placeholder="请输入数字 0.1-9.9" type="digit" min="0.1" max="9.9" @input="bindDiscountInput" /><span>折</span>
           </div>
         </div>
       </div>
@@ -246,7 +294,13 @@
     </div>
 
     <popup-layer title="选择商品" ref="product" :autoClose="true">
-      <div class="product-list">
+      <div class="flex flex-vertical-center p-l-10 fz-15 c3">
+        商品名称
+        <input type="text" v-model="searchs" class="search-input m-l-10"/>
+        <div class="search-btn m-l-20" @click="searchBtn">搜索</div>
+        <div class="search-btn m-l-20" @click="searchReset">重置</div>
+      </div>
+      <scroll-view scroll-y="true" class="product-list">
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
           <div class="info-box" @click="taggleProductCheck(idx)">
             <div class="check"   >
@@ -284,9 +338,22 @@
             </div>
           </div>
         </div>
-      </div>
+      </scroll-view>
       <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
     </popup-layer>
+
+
+    <model positions="top-center" ref="myModel" :autoClose="false">
+      <div class="model-seckill">
+        <div class="fz-16 c3 text-center m-b-30">批量设置折扣</div>
+        <input type="digit" v-model="discount"  min="0.1" max="9.9"  class="input-all p-l-12" placeholder="请输入折扣0.1-9.9" placeholder-class="placeholder"/>
+        <div class="flex flex-vertical-center flex-justify-between m-t-25 p-l-27 p-r-27">
+          <div class="btns" @click="$closePop('myModel')">取消</div>
+          <div class="btns btns-submit" @click="sureDiscount">确定</div>
+        </div>
+      </div>
+
+    </model>
 
   </div>
 </template>
@@ -307,6 +374,8 @@
     store,
     mixins: [pageMixin],
     data: {
+      searchs: '',
+      discount: '',
       actIdx: 0,
       timeReady: false,
       formCheckResult: [],
@@ -323,6 +392,47 @@
       animation: {}
     },
     methods: {
+      searchReset() {
+        this.searchs = ''
+        this.searchList()
+      },
+      searchBtn() {
+        this.searchList()
+      },
+      searchList() {
+        let data = {
+          page: 1,
+          pageSize: 9999,
+          pro_name: this.searchs
+        }
+        bizProdList(data).then(res => {
+          this.proData = res.data.map(item => {
+            const hasGoodsIds = getArrColumn(this.select_prod, 'prod_id')
+            item.check = hasGoodsIds.includes(item.Products_ID)
+            if(item.check){
+              item.disalbed = true
+            }else{
+              item.disalbed = false
+            }
+
+            return {...item}
+          })
+        })
+      },
+      sureDiscount() {
+        this.select_prod.map(item => {
+          item.discount = this.discount
+        })
+        this.$closePop('myModel')
+      },
+      // 批量设置折扣
+      setDiscount() {
+        if (this.select_prod.length < 1) {
+          this.formCheckResult = ['请先选择商品']
+          return
+        }
+        this.$openPop('myModel')
+      },
       sub() {
         const rule = {
           name: {
@@ -480,8 +590,14 @@
           }
         }
       },
-      delPro(idx) {
+      delPro(idx, id) {
         this.select_prod.splice(idx, 1)
+        this.proData.map(item => {
+          if (item.Products_ID == id) {
+            item.check = false
+            item.disalbed = false
+          }
+        })
         // confirm({
         //   content: '是否移除该商品'
         // }).then(() => {
@@ -546,6 +662,7 @@
     "usingComponents": {
       "err-msg": "~@/components/err-msg",
       "icon": "~@/components/icon",
+      "model": "~@/components/ModelComponents",
       "time": "~@/components/time",
       "popup-layer": "~@/components/popup-layer"
     }

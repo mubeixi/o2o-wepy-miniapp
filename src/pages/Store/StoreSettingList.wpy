@@ -14,7 +14,7 @@
             营业状态
           </div>
           <div>
-            <switch  bindchange="switch1Change" style="transform: scale(.8)" class="switch-po"></switch>
+            <switch :checked="item.business_status==1"  bindchange="switch1Change($event,item)" style="transform: scale(.8)" class="switch-po"></switch>
           </div>
         </div>
 
@@ -43,8 +43,8 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getStoreList} from '../../api/store'
-  import { linkTo } from '../../common/fun'
+  import {getStoreList, opBizStore} from '../../api/store'
+  import { hideLoading, linkTo, showLoading } from '../../common/fun'
 
   wepy.page({
     store,
@@ -67,8 +67,23 @@
       }
     },
     methods: {
-      edit(id){
-        let data='/pages/store/StoreSettingAdd?id='+id
+      switch1Change(e, item) {
+        let boo = e.$wx.detail.value
+        let status = 0
+        if (boo) {
+          status = 1
+        } else {
+          status = 0
+        }
+        showLoading('加载中')
+        opBizStore({business_status: status, store_id: item.id}).then(res => {
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      },
+      edit(id) {
+        let data = '/pages/store/StoreSettingAdd?id=' + id
         linkTo(data)
       },
       cell(item) {
