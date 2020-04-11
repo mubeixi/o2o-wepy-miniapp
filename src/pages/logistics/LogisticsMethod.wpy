@@ -168,6 +168,7 @@
     background-color: #FFFFFF;
     margin: 0 auto 30rpx;
     border: 1px solid #E1E1E1;
+    position: relative;
   }
   .mail-item-top{
     min-height: 110rpx;
