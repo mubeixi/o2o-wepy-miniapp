@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrap" :style="{paddingBottom:showHandle?'92rpx':'0'}">
-    <div class="action">
+    <div class="head-actions">
       <div class="item" @click="$linkTo('/pages/product/form')">
         <image class="icon" src="/static/goods/add.png"></image>
         <div class="title">添加商品</div>
@@ -17,8 +17,8 @@
 
     <div class="product-list">
         <div class="product-item" v-for="(product,idx) in productList" :key="idx">
-            <div class="info-box">
-              <div class="check" v-if="showHandle" @click="taggleProductCheck(idx)" >
+            <div class="info-box" @click="taggleProductCheck(idx)">
+              <div class="check" v-if="showHandle"  >
                 <icon
                   class="check-icon"
                   :color="product.check?'#F53636':'#999'"
@@ -43,16 +43,16 @@
               </div>
             </div>
             <div class="actions">
-              <div class="action">
+              <div class="action" @click="$linkTo('/pages/product/form?id='+product.Products_ID)">
                 <icon type="iconbianji1"></icon>
                 <span class="title">编辑</span>
               </div>
-              <div class="action">
+              <div class="action" @click="delProd(product.Products_ID,idx)">
                 <icon size="18" type="iconshanchu"></icon>
                 <span class="title">删除</span>
               </div>
-              <div class="action">
-                <template v-if="product.status">
+              <div class="action" @click="taggleProdStatus(product)">
+                <template v-if="!product.Products_SoldOut">
                   <icon type="iconxiajia"></icon>
                   <span class="title">下架</span>
                 </template>
@@ -79,16 +79,14 @@
         <span class="p-l-8">切换全选</span>
       </div>
       <div class="btn-list">
-        <div class="btn btn-up">上架</div>
-        <div class="btn btn-down">下架</div>
+        <div class="btn btn-up" @click="taggleAll('up')">上架</div>
+        <div class="btn btn-down" @click="taggleAll('down')">下架</div>
       </div>
     </div>
 
 <!--    <div class="p-t-50 p-b-50 bgwhite">-->
 <!--      <copyright></copyright>-->
 <!--    </div>-->
-
-
   </div>
 </template>
 
@@ -98,20 +96,15 @@
   import pageMixin from '../../mixins'
 
   import {
-    bizProdList
+    bizProdList, bizProdUp, bizProdDown, bizProdDel
   } from '../../api/product'
   import {
+    error,
     toast
   } from '../../common/fun'
-  // const mockData = [
-  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
-  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 0},
-  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
-  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
-  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 0},
-  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1},
-  //   {id: 1, title: '生日蛋糕水果榴莲芒果巧克力提拉米苏蛋糕水果榴莲芒果巧克力提拉米苏', thumb: 'https://new401t.bafangka.com/uploadfiles/o1rcshfk39/image/202003261150588364.png', selling_price: 199.00, group_price: 109.00, stock: 1888, sale: 156, status: 1}
-  // ]
+  import { getArrColumn } from '../../common/helper'
+  import wxPromisify from '../../common/promisify'
+
 wepy.page({
     store,
     mixins: [pageMixin],
@@ -121,6 +114,51 @@ wepy.page({
       productList: []
     },
     methods: {
+      async delProd(pro_id, idx) {
+        try {
+          // wx.showModal({
+          //   title:'提示',
+          //   content:'删除操作不可逆,是否确定删除该商品?',
+          // })
+          const {confirm} = await wxPromisify('showModal', {
+            title: '提示',
+            content: '删除操作不可逆,是否确定删除该商品?'
+          })
+          if (!confirm) return
+          const prod_ids = [pro_id]
+          await bizProdDel({prod_ids: JSON.stringify(prod_ids)}, {tip: 'loading'}).catch(() => { throw Error('删除商品失败') })
+          this.productList.splice(idx, 1)
+        } catch (e) {
+          error(e.message())
+        }
+      },
+      async taggleAll(act) {
+        try {
+          const action = act === 'up' ? bizProdUp : bizProdDown
+          const prod_list = this.productList.filter(item => item.check)
+          const prod_ids = getArrColumn(prod_list, 'Products_ID')
+          if (prod_ids.length < 1) throw Error('请至少选择一个商品')
+
+          await action({prod_ids: JSON.stringify(prod_ids)}, {tip: '更新中'}).catch(() => { throw Error('更新商品状态失败') })
+          // 更新状态
+          for (let pro of this.productList) {
+            if (prod_ids.includes(pro.Products_ID)) {
+              pro.Products_SoldOut = !pro.Products_SoldOut
+            }
+          }
+          // toast('操作成功')
+        } catch (e) {
+          error(e.message())
+        }
+      },
+      taggleProdStatus(prod) {
+        console.log(prod)
+        const action = prod.Products_SoldOut ? bizProdUp : bizProdDown
+        const prod_ids = [prod.Products_ID]
+        action({prod_ids: JSON.stringify(prod_ids)}, {tip: '更新中'}).catch(() => {
+          prod.Products_SoldOut = !prod.Products_SoldOut
+        })
+      },
       _init_func() {
         // this.productList = mockData
         bizProdList({page: 1, pageSize: 999}).then(res => {
@@ -132,11 +170,12 @@ wepy.page({
       taggleAllCheck() {
         const check = !this.allCheck
         this.allCheck = check
-        this.productList = mockData.map(item => {
+        this.productList = this.productList.map(item => {
           return {...item, check}
         })
       },
       taggleProductCheck(idx) {
+        if (!this.showHandle) return
         console.log(idx)
         this.productList[idx].check = !this.productList[idx].check
       },
@@ -180,9 +219,11 @@ wepy.page({
       display: flex;
       align-items: center;
       .btn{
+        display: block;
         width:96rpx;
         height: 54rpx;
         line-height: 54rpx;
+        font-size: 14px;
         text-align: center;
         border-radius: 10rpx;
         border:1px solid $fun-red-color;
@@ -198,11 +239,23 @@ wepy.page({
   }
   /*底部操作栏 end*/
 
+  .page-wrap{
+    padding-top: 200rpx;
+  }
+
+
   /** 顶部start **/
-  .action{
+  .head-actions{
+    position: fixed;
+    top: 0;
+    width: 750rpx;
+    height: 200rpx;
     display: flex;
     align-items: center;
-    padding: 30rpx;
+    box-sizing: border-box;
+    z-index: 2;
+    background: #f8f8f8;
+    box-shadow: rgba(0,0,0,.1) 0 10px 10px 4px;
     .item{
       flex:1;
       text-align: center;
