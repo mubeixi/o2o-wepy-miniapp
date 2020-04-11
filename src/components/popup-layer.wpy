@@ -1,6 +1,6 @@
 <template>
   <view v-if="isShow" @touchmove.stop.prevent>
-    <view @tap="ableClose" id="mask" class="popup-layer"  ></view>
+    <view @tap="ableClose" id="mask" class="popup-layer" v-if="showMask"  ></view>
     <view :animation="animationData" id="wrap" class="popup-wrap"   @tap.stop="noop" :style="{height:full?'100%':'auto',backgroundColor:mainBgColor}" >
       <div v-if="title" class="pupup-title">{{title}}</div>
       <slot></slot>
@@ -14,6 +14,10 @@
   import wepy from '@wepy/core'
   wepy.component({
     props: {
+      showMask:{
+        type: Boolean,
+        default: true
+      },
       // showPop: {
       //   type: Boolean,
       //   default: false
