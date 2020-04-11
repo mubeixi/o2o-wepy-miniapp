@@ -99,7 +99,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { error, hideLoading, showLoading, toast } from '../../common/fun'
+  import { error, hideLoading, showLoading, toast,linkTo } from '../../common/fun'
   import {opBizInfo, getBizInfo} from '../../api/store'
   const moment = require('moment')
   import {bizLogout} from '../../api/system'

@@ -102,9 +102,16 @@
     },
     methods: {
       init() {
+        showLoading('加载中')
         getStoreList({store_id: this.id}).then(res => {
-
-        })
+          let arr = res.data[0]
+          this.store_name = arr.store_name
+          this.store_address = arr.store_address
+          this.store_mobile = arr.store_mobile
+          this.business_start = arr.business_start
+          this.business_end = arr.business_end
+          hideLoading()
+        }).catch(e => { hideLoading() })
       },
       save() {
         let data = {
@@ -167,6 +174,9 @@
           return
         }
         showLoading('')
+        if (this.id) {
+          data.store_id = this.id
+        }
         opBizStore(data).then(res => {
           hideLoading()
           toast('保存成功')
