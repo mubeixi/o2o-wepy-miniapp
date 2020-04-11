@@ -33,7 +33,7 @@
   }
 </style>
 <template>
-  <div class="err-msg" v-if="show && errs && errs.length>0" @click="hide">
+    <div class="err-msg" :style="{top:topStr}" v-if="show && errs && errs.length>0" @click="hide">
 <!--    <div v-for="(row,idx) in errs" class="item" :key="idx">-->
 <!--      <div class="label">{{idx}}:</div>-->
 <!--      <div class="content">-->
@@ -51,6 +51,10 @@
   import wepy from '@wepy/core'
   wepy.component({
     props: {
+      topStr: {
+        type: String,
+        default: '0px'
+      },
       errs: {
         default: false,
         require: true
@@ -71,7 +75,7 @@
       }
     },
     methods: {
-      hide(){
+      hide() {
         this.show = false
       }
     },
