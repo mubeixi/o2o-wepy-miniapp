@@ -13,6 +13,7 @@
 
 
     <div class="mail-item"  v-for="(item,index) of special_content" :key="index">
+      <icon type="icondel" @click="del(index)" color="#ccc"  size="24" class="del-icon"></icon>
       <div class="mail-item-top flex">
         <div class="select-area">
           选择地区
@@ -87,7 +88,7 @@
       editData: {},
       showSelect: false,
       hasValue: [],
-      special_content: [{express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''}],
+      special_content: [],//{express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''}
       express_start: '',
       express_postage: '',
       express_plus: '',
@@ -118,6 +119,11 @@
       }
     },
     methods: {
+      del(index) {
+        if (this.special_content.length > 1) {
+          this.special_content.splice(index, 1)
+        }
+      },
       // 保存返回
       saveNext() {
         let Template_Content = {
@@ -261,6 +267,12 @@
     bottom: 0rpx;
     left: 0rpx;
     z-index: 9;
+  }
+  .del-icon{
+    position: absolute;
+    z-index: 9;
+    right: -22rpx;
+    top: -22rpx;
   }
 
 </style>

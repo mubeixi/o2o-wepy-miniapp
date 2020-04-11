@@ -1,6 +1,7 @@
 <template>
   <div class="mail-all">
       <div class="mail-item"  v-for="(item,index) of editData" :key="index">
+         <icon v-if="editData.length>1" type="icondel" @click="del(index)" color="#ccc"  size="24" class="del-icon"></icon>
          <div class="mail-item-top flex">
             <div class="select-area">
               选择地区
@@ -85,6 +86,11 @@
       this.editData = arr
     },
     methods: {
+      del(index) {
+        if (this.editData.length > 1) {
+          this.editData.splice(index, 1)
+        }
+      },
       // 保存返回
       saveNext() {
         ls.set('Free_Content', this.editData)
@@ -127,6 +133,7 @@
     width: 710rpx;
     margin: 0 auto 30rpx;
     border: 1px solid #E1E1E1;
+    position: relative;
   }
   .mail-item-top{
     min-height: 142rpx;
@@ -205,6 +212,12 @@
     bottom: 0rpx;
     left: 0rpx;
     z-index: 9;
+  }
+  .del-icon{
+    position: absolute;
+    z-index: 9;
+    right: -22rpx;
+    top: -22rpx;
   }
 
 </style>
