@@ -446,8 +446,16 @@
         }).catch(() => {})
       },
       cancelPwd() {
-        this.$refs.pwd.close()
-        wx.navigateBack()
+        wx.showModal({
+          title: '操作提示',
+          content: '是否跳过设置密码？',
+          success: (res) => {
+            if (res.confirm) {
+              this.$refs.pwd.close()
+              wx.navigateBack()
+            }
+          }
+        })
       },
       async setPwd() {
         const postData = {biz_passwd: this.pwd}
@@ -484,24 +492,29 @@
         ls.set('biz_id', biz_id)
         ls.set('status', status)
         this.$store.dispatch('setUserInfo', userData)
-        // // 需要设置密码
 
-        this.pageTitle = '设置密码'
+        // 需要设置密码
         if (userData.hasOwnProperty('biz_passwd')) {
+          this.pageTitle = '设置密码'
           this.bindPwdShow = true
           this.$refs.pwd.show()
           return
         }
-        // this.setUserInfo(userData.userInfo)
+
         setTimeout(function() {
           wx.navigateBack()
         }, 200)
       },
       async weixinlogin(e) {
-        console.log(e)
         try {
-          // 获取userInfO
-          const {encryptedData, rawData, signature, userInfo, iv} = e.$wx.detail
+          const checkSeting = await wxPromisify('getSetting').catch(() => { throw Error('获取配置失败') })
+          // 未获得用户信息权限,需要让用户授权
+          if (!checkSeting.authSetting['scope.userInfo']) {
+            await wxPromisify('authorize', {scope: 'scope.userInfo'}).catch(() => { throw Error('请授权登录') })
+          }
+          const wxUserInfo = await wxPromisify('getUserInfo', {lang: 'zh_CN'}).catch(() => { throw Error('获取用户信息失败') })
+          console.log(wxUserInfo)
+          const {encryptedData, rawData, signature, userInfo, iv} = wxUserInfo
           if (!rawData) throw Error('请允许授权')
           const lp_raw_data = JSON.stringify({encryptedData, rawData: JSON.parse(rawData), signature, userInfo, iv})
 
@@ -510,7 +523,8 @@
           const {code: lp_code} = wxLoginRt
 
           // 请求接口
-          const {errorCode, data} = await bizLogin({login_method: 'wx_lp', lp_code, lp_raw_data}).catch(() => { throw Error('第三方登录请求错误') })
+          console.log('snslogin data is', {login_method: 'wx_lp', lp_code, lp_raw_data})
+          const {errorCode, data} = await bizLogin({login_method: 'wx_lp', lp_code, lp_raw_data}, {tip: '登录中'}).catch((err) => { throw Error(err.msg || '第三方登录请求错误') })
 
           if (errorCode === 0) {
             this.loginCall(data)

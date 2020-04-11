@@ -1,6 +1,6 @@
 {
   "name": "o2o-client",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "o2o project by WePY",
   "main": "weapp/app.js",
   "scripts": {

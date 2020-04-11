@@ -531,6 +531,7 @@
       activeSpecIdx: 0,
       specs: [],
       couponList: [],
+      Products_ID:null,
       formData: {
         Products_Index: 1,
         Products_Name: '',
@@ -1052,6 +1053,9 @@
       wx.createSelectorQuery().select('#editor').context(function (res) {
         that.editorInstance = res.context
       }).exec()
+    },
+    onLoad(options) {
+      this.Products_ID = options.id
     },
     onShow() {
       this._init_func()

@@ -132,7 +132,7 @@
     },
     methods: {
       toProfile() {
-        if (this.userInfo) this.$linkTo('/pages/store/StoreInfo')
+        if (checkIsLogin(false,false)) this.$linkTo('/pages/store/StoreInfo')
       },
       repalceImg() {
         this.info.biz_logo = spaceImg
