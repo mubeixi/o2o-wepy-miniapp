@@ -294,12 +294,12 @@
     </div>
 
     <popup-layer title="选择商品" ref="product" :autoClose="true">
-<!--      <div class="flex flex-vertical-center p-l-10 fz-15 c3">-->
-<!--        商品名称-->
-<!--        <input type="text" v-model="search" class="search-input m-l-10"/>-->
-<!--        <div class="search-btn m-l-20" @click="search">搜索</div>-->
-<!--        <div class="search-btn m-l-20" @click="searchReset">重置</div>-->
-<!--      </div>-->
+      <div class="flex flex-vertical-center p-l-10 fz-15 c3">
+        商品名称
+        <input type="text" v-model="searchs" class="search-input m-l-10"/>
+        <div class="search-btn m-l-20" @click="searchBtn">搜索</div>
+        <div class="search-btn m-l-20" @click="searchReset">重置</div>
+      </div>
       <scroll-view scroll-y="true" class="product-list">
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
           <div class="info-box" @click="taggleProductCheck(idx)">
@@ -374,7 +374,7 @@
     store,
     mixins: [pageMixin],
     data: {
-      search:'',
+      searchs: '',
       discount: '',
       actIdx: 0,
       timeReady: false,
@@ -392,15 +392,31 @@
       animation: {}
     },
     methods: {
-      searchReset(){
-
+      searchReset() {
+        this.searchs = ''
+        this.searchList()
       },
-      search(){
-
+      searchBtn() {
+        this.searchList()
       },
-      serchList(){
-        bizProdList().then(res=>{
+      searchList() {
+        let data = {
+          page: 1,
+          pageSize: 9999,
+          pro_name: this.searchs
+        }
+        bizProdList(data).then(res => {
+          this.proData = res.data.map(item => {
+            const hasGoodsIds = getArrColumn(this.select_prod, 'prod_id')
+            item.check = hasGoodsIds.includes(item.Products_ID)
+            if(item.check){
+              item.disalbed = true
+            }else{
+              item.disalbed = false
+            }
 
+            return {...item}
+          })
         })
       },
       sureDiscount() {
