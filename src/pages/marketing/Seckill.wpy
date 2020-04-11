@@ -32,7 +32,7 @@
         </div>
         <div class="actions">
           <div class="action" @click="edit(product.id)">
-            <icon type="iconbianji1"></icon>
+            <icon type="iconyanjing"></icon>
             <span class="title">编辑</span>
           </div>
           <div class="action"   @click="del(product.id,product.status,idx)">
@@ -42,14 +42,8 @@
           </div>
 
           <div class="action">
-            <template v-if="product.status">
-              <icon type="iconxiajia"></icon>
-              <span class="title">下架</span>
-            </template>
-            <template v-else>
-              <icon type="iconputaway"></icon>
-              <span class="title">上架</span>
-            </template>
+              <icon type="iconshuju"></icon>
+              <span class="title">数据</span>
           </div>
           <div class="action">
             <icon size="14" type="iconfenxiang1"></icon>
