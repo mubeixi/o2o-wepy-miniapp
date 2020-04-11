@@ -67,6 +67,7 @@ wepy.app({
       "pages/store/StoreSetting",
       "pages/store/StoreSettingConfig",
       "pages/store/StoreSettingAdd",
+      "pages/store/StoreSettingList",
       "pages/store/StoreInfo",
       "pages/store/StoreInfoUpda",
       "pages/store/SameCityDelivery",

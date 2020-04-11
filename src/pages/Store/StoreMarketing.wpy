@@ -16,20 +16,22 @@
         </div>
       </div>
       <div class="feature-row">
-        <div class="feature-item">
-          <image src="/static/marketing/deduct.png" class="img"></image>
-          <div class="title">满减</div>
-        </div>
-        <div class="feature-item" @click="$linkTo('/pages/store/StoreVip')">
-          <image src="/static/marketing/vip.png" class="img"></image>
-          <div class="title">店铺会员</div>
-        </div>
-        <div class="feature-item">
-          <image src="/static/marketing/packet.png" class="img"></image>
-          <div class="title">店铺红包</div>
+          <div class="feature-item">
+            <image src="/static/marketing/deduct.png" class="img"></image>
+            <div class="title">满减</div>
+          </div>
+          <div class="feature-item" @click="$linkTo('/pages/store/StoreVipList')">
+            <image src="/static/marketing/vip.png" class="img"></image>
+            <div class="title">店铺会员</div>
+          </div>
+          <div class="feature-item">
+          <image src="/static/marketing/give.png" class="img"></image>
+          <div class="title">赠品</div>
         </div>
       </div>
     </div>
+
+  </div>
 
 <!--    <div class="p-t-50 p-b-50 bgwhite">-->
 <!--      <copyright></copyright>-->
