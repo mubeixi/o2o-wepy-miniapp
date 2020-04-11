@@ -19,7 +19,7 @@
                 size="20"
                 :type="it.check?'iconcheck-box-o':'iconcheckbox'"
               ></icon>
-              型号黑色
+              {{it.Attr_Value.mobile_prod_attr_name}}
             </div>
             <div class="flex flex-vertical-center seckill-price fz-14 c9 m-b-12">
               秒杀价格 <input v-model="it.price" type="number" placeholder="请输入秒杀价格"  placeholder-class="placeholder" class="input-sec m-l-11 m-r-10"/> 元
@@ -109,6 +109,16 @@
         this.$closePop('myModel')
       },
       show(ind) {
+        let sum=0
+        for (let it in this.skuvaljosn) {
+          if(this.skuvaljosn[it].check){
+            sum++
+          }
+        }
+        if(sum<=0){
+          error('请先勾选对应的规格')
+          return
+        }
         this.ind = ind
         this.text = ind == 1 ? '价格' : '库存'
         this.$openPop('myModel')

@@ -1,5 +1,11 @@
 import { fetch } from '../common/request'
 
+
+
+//添加商家门店列表
+export const opBizStore = (param, options) => fetch({act: 'opBizStore', param, options})
+//获取商家门店列表
+export const getStoreList = (param, options) => fetch({act: 'getStoreList', param, options})
 //获取平台提现方式
 export const getWithdrawMethods = (param, options) => fetch({act: 'getWithdrawMethods', param, options})
 // 获取商家入驻行业列表

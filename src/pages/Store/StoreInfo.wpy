@@ -64,9 +64,7 @@
       </div>
     </div>
 
-    <div class="submit-main" @click="bizOut">
-      退出登录
-    </div>
+
   </div>
 </template>
 
@@ -76,7 +74,7 @@
   import pageMixin from '../../mixins'
 
   import {getBizInfo, getCityExpressConfig, opCityExpressConfig, opBizInfo} from '../../api/store'
-  import {bizLogout} from '../../api/system'
+
 
   import {
     back,
@@ -94,19 +92,6 @@
       index: 0
     },
     methods: {
-      bizOut() {
-        bizLogout().then(res => {
-          toast('登出成功')
-          setTimeout(function() {
-            ls.remove('access_token')
-            ls.remove('users_id')
-            ls.remove('biz_account')
-            ls.remove('biz_id')
-            ls.remove('status')
-            linkTo('/pages/index')
-          }, 1000)
-        })
-      },
       repalceImg() {
         this.info.biz_logo = spaceImg
       },
@@ -208,19 +193,7 @@
     color: #999999;
     font-size: 26rpx;
   }
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
-    line-height: 86rpx;
-    text-align: center;
-    color: #FFFFFF;
-    font-size: 32rpx;
-    background:rgba(0,168,255,1);
-    position: fixed;
-    bottom: 0rpx;
-    left: 0rpx;
-    z-index: 9;
-  }
+
 </style>
 <config>
   {

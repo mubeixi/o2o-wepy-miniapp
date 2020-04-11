@@ -127,13 +127,8 @@
     },
     methods: {
       getDetail() {
-        getUserLevel().then(res => {
-          let arr = res.data
-          arr.map(item => {
-            if (item.id == this.id) {
-              this.vipData = item
-            }
-          })
+        getUserLevel({id:this.id}).then(res => {
+          this.vipData = res.data[0]
           this.level_name = this.vipData.level_name
           this.price = this.vipData.price
           this.basic_rights = this.vipData.basic_rights

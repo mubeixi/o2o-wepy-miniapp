@@ -1,6 +1,6 @@
 <template>
     <div class="store-all">
-      <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/store/StoreSettingList')">
         <div class="store-title">
           门店管理
         </div>
@@ -87,6 +87,11 @@
           </div>
       </model>
 
+
+
+      <div class="submit-main" @click="bizOut">
+        退出登录
+      </div>
     </div>
 </template>
 
@@ -97,6 +102,8 @@
   import { error, hideLoading, showLoading, toast } from '../../common/fun'
   import {opBizInfo, getBizInfo} from '../../api/store'
   const moment = require('moment')
+  import {bizLogout} from '../../api/system'
+  import {  ls } from '../../common/helper'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -110,6 +117,19 @@
       this.init()
     },
     methods: {
+      bizOut() {
+        bizLogout().then(res => {
+          toast('登出成功')
+          setTimeout(function() {
+            ls.remove('access_token')
+            ls.remove('users_id')
+            ls.remove('biz_account')
+            ls.remove('biz_id')
+            ls.remove('status')
+            linkTo('/pages/index')
+          }, 1000)
+        })
+      },
       init() {
         getBizInfo().then(res => {
           this.infoData = res.data
@@ -133,7 +153,7 @@
       },
       upEndTime(e) {
         this.end_time = e
-        let start = '2000-10-1 ' + this.start_time
+        let start = '2000-10-1' + this.start_time
         let end = '2000-10-1 ' + this.end_time
         let boo = moment(end).isAfter(start)
         if (!boo) {
@@ -233,6 +253,19 @@
   .time-select{
     height: 108rpx;
     line-height: 108rpx;
+  }
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
   }
 </style>
 <config>

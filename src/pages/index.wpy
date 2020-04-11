@@ -1,13 +1,13 @@
 <template>
   <div class="page-wrap">
     <div class="head"  @click="toProfile">
-      <div class="base">
+      <div class="base" @click="$linkTo('/pages/store/StoreSetting')">
         <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
         <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
       <div class="action" >
-        <div v-if="status==1" class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
-        <div v-else class="no-validate"><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+        <div v-if="status==2" class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
+        <div v-else class="no-validate" @click="$linkTo('/pages/join/BusinessStation')"><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft"  class="iconarrowleft"></icon>
       </div>
     </div>
@@ -79,10 +79,6 @@
           <div class="grid-item" @click="$linkTo('/pages/logistics/LogisticsMain')">
             <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
             <div class="grid-item-title">物流管理</div>
-          </div>
-          <div class="grid-item" @click="$linkTo('/pages/join/BusinessStation')">
-            <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
-            <div class="grid-item-title">入驻流程</div>
           </div>
         </div>
       </div>
