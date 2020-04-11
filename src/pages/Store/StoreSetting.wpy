@@ -39,12 +39,12 @@
           营业时间
         </div>
         <div class="store-titles flex flex-vertical-center">
-          <time class="time-select" @uptime="upStartTime" mode='time' :val="start_time">
+          <time class="time-select" @uptime="upStartTime" mode="time" :val="start_time">
             <span class="fz-14" v-if="start_time">{{start_time}}</span>
             <span class="fz-14 c9" v-else>请选择开始时间</span>
           </time>
           <span class="m-l-10 m-r-10">-</span>
-          <time class="time-select" @uptime="upEndTime" mode='time' :val="end_time">
+          <time class="time-select" @uptime="upEndTime" mode="time" :val="end_time">
             <span class="fz-14" v-if="end_time">{{end_time}}</span>
             <span class="fz-14 c9" v-else>请选择结束时间</span>
           </time>
