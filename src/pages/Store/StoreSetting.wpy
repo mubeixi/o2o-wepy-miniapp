@@ -1,5 +1,6 @@
 <template>
     <div class="store-all">
+      <err-msg :errs="formCheckResult"></err-msg>
       <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/store/StoreSettingList')">
         <div class="store-title">
           门店管理
@@ -57,16 +58,41 @@
         <div class="wzw-title">
           打印机设置
         </div>
-        <div class="flex flex-vertical-center flex-justify-between wzw-content">
-          <div>
+        <div class="flex flex-vertical-center  wzw-content">
+          <div class="mbx-div">
+            密钥
+          </div>
+          <input v-model="print_config.secret" type="text" class="input-dayin"/>
+
+        </div>
+        <div class="flex flex-vertical-center  wzw-content">
+          <div  class="mbx-div">
+            打印机SN码
+          </div>
+          <input v-model="print_config.sn" type="text" class="input-dayin"/>
+
+        </div>
+        <div class="flex flex-vertical-center  wzw-content">
+          <div  class="mbx-div">
+            打印联数
+          </div>
+          <input  v-model="print_config.count" type="text" class="input-dayin"/>
+
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+          <div >
             是否开启自动打印
           </div>
           <div>
-            <switch :checked="arrive_get==1" bindchange="switch1Change" style="transform: scale(.8)"></switch>
+            <switch :checked="print_config.auto==1" bindchange="switch1ChangeM" style="transform: scale(.8)"></switch>
           </div>
         </div>
         <div class="wzw-info">
           开启此开关后，消费者付款完成后会自动打印小票
+        </div>
+
+        <div class="submit-mbx" @click="saveMbx">
+          保存
         </div>
       </model>
 
@@ -99,24 +125,54 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { error, hideLoading, showLoading, toast,linkTo } from '../../common/fun'
+  import { error, hideLoading, showLoading, toast, linkTo } from '../../common/fun'
   import {opBizInfo, getBizInfo} from '../../api/store'
   const moment = require('moment')
   import {bizLogout} from '../../api/system'
-  import {  ls } from '../../common/helper'
+  import { ls } from '../../common/helper'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      formCheckResult: '',
       infoData: {},
       arrive_get: 0,
       start_time: '',
-      end_time: ''
+      end_time: '',
+      print_config: {
+        sn: '',
+        secret: '',
+        count: '',
+        auto: ''
+      }
     },
     onShow() {
       this.init()
     },
     methods: {
+      saveMbx() {
+        if (!this.print_config.sn) {
+          this.formCheckResult = ['请输入打印机SN码']
+          return
+        }
+        if (!this.print_config.secret) {
+          this.formCheckResult = ['请输入密钥']
+          return
+        }
+        if (!this.print_config.count) {
+          this.formCheckResult = ['请输入打印联数']
+          return
+        }
+        let print_config = JSON.stringify(this.print_config)
+        showLoading('加载中')
+        opBizInfo({print_config}).then(res => {
+          toast('保存成功')
+          this.$closePop('dayin')
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      },
       bizOut() {
         bizLogout().then(res => {
           toast('登出成功')
@@ -136,6 +192,10 @@
           this.arrive_get = this.infoData.arrive_get
           this.start_time = this.infoData.business_start
           this.end_time = this.infoData.business_end
+          this.print_config.sn=this.infoData.print_config.sn
+          this.print_config.secret=this.infoData.print_config.secret
+          this.print_config.count=this.infoData.print_config.count
+          this.print_config.auto=this.infoData.print_config.auto
         })
       },
       upStartTime(e) {
@@ -171,6 +231,14 @@
         }).catch(e => {
           hideLoading()
         })
+      },
+      switch1ChangeM(e) {
+        let boo = e.$wx.detail.value
+        if (boo) {
+          this.print_config.auto = 1
+        } else {
+          this.print_config.auto = 0
+        }
       },
       switch1Change(e) {
         let boo = e.$wx.detail.value
@@ -238,7 +306,7 @@
     margin: 0 auto;
     height: 44rpx;
     line-height: 44rpx;
-    margin-bottom: 26rpx;
+    margin-bottom: 60rpx;
   }
   .wzw-info{
     font-size: 22rpx;
@@ -267,6 +335,28 @@
     left: 0rpx;
     z-index: 9;
   }
+  .submit-mbx{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    z-index: 9;
+  }
+  .input-dayin{
+    width: 440rpx;
+    height: 56rpx;
+    line-height: 56rpx;
+    border: 1px solid #DDDDDD;
+    margin-left: 10px;
+    padding-left: 10px;
+    box-sizing: border-box;
+  }
+  .mbx-div{
+    width: 180rpx;
+  }
 </style>
 <config>
   {
@@ -274,6 +364,7 @@
   "usingComponents": {
     "icon": "~@/components/icon",
     "time": "~@/components/time",
+    "err-msg": "~@/components/err-msg",
     "model": "~@/components/ModelComponents"
   }
   }
