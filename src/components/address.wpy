@@ -1,86 +1,284 @@
 <template>
-    <div  @touchmove.prevent.stop="noop">
-      <div class="masks" @click="close" ></div>
-      <div class="wraps" >
+    <div>
+      <div @touchmove.prevent.stop="noop" v-if="active" class="masks" @click="close" ></div>
+      <div v-if="active" class="wraps" >
         <div class="titles">
           <div class="texts">选择城市</div>
           <div @click="subFn" class="btns">确认</div>
         </div>
-        <input type="text" v-model="selects"/>
-        <div class="p-l-10 p-b-20">
-          <div class="flex flex-vertical-center fz-14 m-b-20">
-            <div class="m-r-15 ">{{selects[0]}}</div>
-            <div class="m-r-15 ">{{selects[1]}}</div>
-            <div class="m-r-15 ">{{selects[2]}}</div>
-            <div class="m-r-15 ">{{selects[3]}}</div>
+        <!--<input type="text" v-model="selects"/>-->
+        <div class="main">
+          <div class="select-list flex flex-vertical-center fz-14 m-b-20 p-l-10">
+            <div class="select-text m-r-15" @click="bindClickText(0)">{{provinceStr}}</div>
+            <div class="select-text m-r-15" @click="bindClickText(1)">{{cityStr}}</div>
+            <div class="select-text m-r-15" @click="bindClickText(2)">{{areaStr}}</div>
+            <div class="select-text m-r-15" @click="bindClickText(3)">{{townStr}}</div>
           </div>
-          <div class="fz-14 mbxs">
-            <block v-for="(item,index) of provinceList" :key="index">
-              <div class="m-t-10" @click="select(index,item)">{{item.area_name}}</div>
-            </block>
+          <div class="fz-14 container">
+            <swiper class="swiper-box" :current="currentSwiperIndex">
+              <swiper-item class="swiper-item">
+                <div
+                  v-for="(item,index) of provinceList"
+                  :key="index" class="m-t-10"
+                  @click="selectFn(0,index,item)"
+                ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[0] === index"></icon>{{item.area_name}}</div>
+              </swiper-item>
+              <swiper-item class="swiper-item">
+                <div
+                  v-for="(item,index) of cityList"
+                  :key="index" class="m-t-10"
+                  @click="selectFn(1,index,item)"
+                ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[1] === index"></icon>{{item.area_name}}</div>
+              </swiper-item>
+              <swiper-item class="swiper-item">
+                <div
+                  v-for="(item,index) of areaList"
+                  :key="index"
+                  class="m-t-10"
+                  @click="selectFn(2,index,item)"
+                ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[2] === index"></icon>{{item.area_name}}</div>
+              </swiper-item>
+              <swiper-item class="swiper-item">
+                <div
+                  v-for="(item,index) of townList"
+                  :key="index"
+                  class="m-t-10"
+                  @click="selectFn(3,index,item)"
+                ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[3] === index"></icon>{{item.area_name}}</div>
+              </swiper-item>
+            </swiper>
 
           </div>
         </div>
 
 
       </div>
+      <slot></slot>
     </div>
-
 </template>
 
 <script>
   import wepy from '@wepy/core'
 
   import {getAreaByPid} from '../api/system'
+  import { findArrayIdx, getArrColumn } from '../common/helper'
+  import { error } from '../common/fun'
 
-  wepy.page({
+  wepy.component({
     prop: {
-      show: {
+      visiable: {
         type: Boolean,
         default: false
+      },
+      // 已经选中的area_id，记住不是下标，而是area_id
+      province: {default: ''},
+      city: {default: ''},
+      area: {default: ''},
+      town: {default: ''}
+    },
+    computed: {
+      provinceStr() {
+        try {
+          const idx = this.selectIdxList[0]
+          return this.provinceList[idx].area_name
+        } catch (e) {
+          return ''
+        }
+      },
+      cityStr() {
+        try {
+          const idx = this.selectIdxList[1]
+          return this.cityList[idx].area_name
+        } catch (e) {
+          return ''
+        }
+      },
+      areaStr() {
+        try {
+          const idx = this.selectIdxList[2]
+          return this.areaList[idx].area_name
+        } catch (e) {
+          return ''
+        }
+      },
+      townStr() {
+        try {
+          const idx = this.selectIdxList[3]
+          return this.townList[idx].area_name
+        } catch (e) {
+          return ''
+        }
       }
     },
     data: {
-      ind: 0,
-      selects: [],
-      selectIndex: [],
-      provinceList: []
+      active: false,
+      selectIdxList: [-1, -1, -1, -1], // 初始化标记为-1,意味着所有的都没有选中
+      currentSwiperIndex: 0, // 当前激活的idx
+      provinceList: [],
+      cityList: [],
+      areaList: [],
+      townList: [],
+      tempObj: {}
     },
     watch: {
-      selects: {
-        deep: true,
-        handler: function(newValue, oldValue) {
-          console.log(newValue, oldValue, 'ss')
+      provinceStr: {
+        handler(newVal, oldVal) {
+          console.log(`provinceStr is ${newVal}`)
+          this.changeProvince()
         }
       },
-      show: {
-        handler(val) {
-
+      cityStr: {
+        handler(newVal, oldVal) {
+          console.log(`cityStr is ${newVal}`)
+          this.changeCity()
         }
       },
-      deep: {
-        immediate: true,
-        handler(val) {
-          if (val < 1) return
-          this.getAreaByPid()
+      areaStr: {
+        handler(newVal, oldVal) {
+          console.log(`areaStr is ${newVal}`)
+          this.changeArea()
+        }
+      },
+      townStr: {
+        handler(newVal, oldVal) {
+          console.log(`townStr is ${newVal}`)
         }
       }
     },
-
+    ready() {
+      this._init_func()
+    },
     methods: {
-      select(ind, item) {
-        this.selectIndex[0] = ind
-        this.selects[0] = item.area_name
-        console.log(this.selectIndex, this.selects)
+      subFn() {
+        const selectAreaList = [this.provinceList[this.selectIdxList[0]], this.cityList[this.selectIdxList[1]], this.areaList[this.selectIdxList[2]], this.townList[this.selectIdxList[3]]]
+        const rt = {
+          str: [this.provinceStr, this.cityStr, this.areaStr, this.townStr].join(' '),
+          id: getArrColumn(selectAreaList,'area_id')
+        }
+        this.$emit('up', rt)
+      },
+      bindClickText(idx) {
+        // console.log(idx)
+        //this.$set(this.selectIdxList, idx, -1)
+        this.currentSwiperIndex = idx
+        // console.log(this.selectIdxList)
+      },
+      async changeProvince() {
+        this.selectIdxList[1] = -1
+
+        const findProvinceIdx = this.selectIdxList[0]
+        if (findProvinceIdx > -1) {
+          const province = this.provinceList[findProvinceIdx]
+          this.cityList = await this.getAreaList({pid: province.area_id}).catch(() => { throw Error('初始化市级地址失败') })
+          this.currentSwiperIndex = 1 // 设置市
+          console.log(this.currentSwiperIndex)
+        }
+      },
+      async changeCity() {
+        this.selectIdxList[2] = -1
+
+        const findCityIdx = this.selectIdxList[1]
+        if (findCityIdx > -1) {
+          const city = this.cityList[findCityIdx]
+          this.areaList = await this.getAreaList({pid: city.area_id}).catch(() => { throw Error('初始化区县地址失败') })
+          this.currentSwiperIndex = 2 // 设置区县
+        }
+      },
+      async changeArea() {
+        this.selectIdxList[3] = -1
+
+        const findAreaIdx = this.selectIdxList[2]
+        if (findAreaIdx > -1) {
+          const area = this.areaList[findAreaIdx]
+          this.townList = await this.getAreaList({pid: area.area_id}).catch(() => { throw Error('初始化乡镇地址失败') })
+          this.currentSwiperIndex = 3 // 设置区县
+        }
+      },
+      /**
+       * 如果是
+       * @returns {Promise<unknown>}
+       * @private
+       */
+      getAreaList({pid}) {
+        return new Promise((resolve, reject) => {
+          if (this.tempObj.hasOwnProperty(pid)) {
+            resolve(this.tempObj[pid])
+          } else {
+            getAreaByPid({pid}).then(res => {
+              // 存起来用
+              this.$set(this.tempObj, pid, res.data)
+              console.log(this.tempObj)
+              resolve(res.data)
+            }).catch((err) => {
+              reject(err)
+            })
+          }
+        })
+      },
+      async _init_func() {
+        try {
+        // 找到省
+          this.provinceList = await this.getAreaList({pid: 0}).catch(() => { throw Error('初始化省级地址失败') })
+          const findProvinceIdx = findArrayIdx(this.provinceList, {area_id: this.province})
+          if (findProvinceIdx !== false) {
+            this.selectIdxList[0] = findProvinceIdx
+          }
+
+          // // 初始化市
+          // this.cityList = await this.getAreaList({pid: province.area_id}).catch(() => { throw Error('初始化市级地址失败') })
+          // const findCityIdx = findArrayIdx(this.cityList, {area_id: this.city})
+          // if (findCityIdx === false) {
+          //   this.areaList = []
+          //   this.townList = []
+          //   this.selectIdxList[1] = -1
+          //   return
+          // }
+          // this.selectIdxList[1] = findCityIdx
+          // const city = this.cityList[findCityIdx]
+          //
+          // // 初始化区县
+          // this.areaList = await this.getAreaList({pid: city.area_id}).catch(() => { throw Error('初始化区县地址失败') })
+          // const findAreaIdx = findArrayIdx(this.areaList, {area_id: this.area})
+          // if (findAreaIdx === false) {
+          //   this.townList = []
+          //   this.selectIdxList[2] = -1
+          //   this.currentSwiperIndex = 2 // 第三屏
+          //   return
+          // }
+          // this.selectIdxList[2] = findAreaIdx
+          // const area = this.areaList[findAreaIdx]
+          //
+          // // 初始化乡镇
+          // this.townList = await this.getAreaList({pid: area.area_id}).catch(() => { throw Error('初始化乡镇地址失败') })
+          // const findTownIdx = findArrayIdx(this.townList, {id: this.town})
+          // if (findTownIdx === false) {
+          //   this.selectIdxList[3] = -1
+          //   this.currentSwiperIndex = 3 // 第三屏
+          //   return
+          // }
+          // this.selectIdxList[3] = findTownIdx
+        } catch (e) {
+          error(e.message)
+        }
+      },
+      noop() {
+
+      },
+      show() {
+        this.active = true
       },
       close() {
-
+        this.active = false
+      },
+      selectFn(col, idx, item) {
+        console.log(col, idx, item)
+        this.$set(this.selectIdxList, col, idx)
+        console.log(this.selectIdxList, this.provinceStr)
       },
       // 地址
-      getAreaByPid() {
-        getAreaByPid().then(res => {
-          this.provinceList = res.data
-        })
+      async getAreaByPid(pid, arr) {
+        const requestRt = await getAreaByPid(pid).catch(() => { throw Error('初始化地址失败') })
+        arr = requestRt.data
       }
     }
 
@@ -111,7 +309,7 @@
 
   .masks{
     position: fixed;
-    z-index: 9;
+    z-index: 2;
     background: rgba(0, 0, 0 , .6);
     height: 100%;
     width: 100%;
@@ -120,18 +318,45 @@
     overflow: hidden;
   }
   .wraps{
-    padding: 15px 0 30px;
+    padding: 15px 0 0;
     position: fixed;
     left: 0;
+    bottom: 0;
     width: 750rpx;
-    z-index: 10;
+    z-index: 3;
     background: #FFFFFF;
     overflow: hidden;
-    bottom: 0;
+
   }
-  .mbxs{
+  .container{
+    position: relative;
     height: 840rpx;
-    overflow: scroll;
+    overflow: hidden;
+  }
+
+  .select{
+    &-list{
+
+    }
+    &-text{
+      border-bottom: 1px $fun-red-color solid;
+    }
+
+  }
+  .swiper{
+
+
+    &-box{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    &-item{
+      box-sizing: border-box;
+      padding: 15px;
+      overflow-y: scroll;
+    }
+
   }
 </style>
 <config>
