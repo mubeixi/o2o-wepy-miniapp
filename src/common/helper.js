@@ -209,8 +209,9 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = []}) =>
  * @returns {boolean}
  */
 export const validateFun = (data, rule) => {
+  const _data = objTranslate(data)
   const rules = new Schema(rule)
-  const errors = rules.validate(data)
+  const errors = rules.validate(_data)
   const rt = errors.map(item => item.message)
   return JSON.stringify(rt) === '[]' ? true : rt
 }
