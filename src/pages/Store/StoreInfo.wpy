@@ -41,7 +41,7 @@
         店铺地址
       </div>
       <div class="store-titles">
-        {{info.biz_address}}
+        <span class="over-hidden">{{info.area_address}}}{{info.biz_address}}</span>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -192,6 +192,12 @@
     line-height: 108rpx;
     color: #999999;
     font-size: 26rpx;
+  }
+  .over-hidden{
+    width: 500rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
 </style>

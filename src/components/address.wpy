@@ -19,14 +19,14 @@
               <swiper-item class="swiper-item">
                 <div
                   v-for="(item,index) of provinceList"
-                  :key="index" class="m-t-10"
+                  :key="index" class="h-60"
                   @click="selectFn(0,index,item)"
                 ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[0] === index"></icon>{{item.area_name}}</div>
               </swiper-item>
               <swiper-item class="swiper-item">
                 <div
                   v-for="(item,index) of cityList"
-                  :key="index" class="m-t-10"
+                  :key="index" class="h-60"
                   @click="selectFn(1,index,item)"
                 ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[1] === index"></icon>{{item.area_name}}</div>
               </swiper-item>
@@ -34,7 +34,7 @@
                 <div
                   v-for="(item,index) of areaList"
                   :key="index"
-                  class="m-t-10"
+                  class="h-60"
                   @click="selectFn(2,index,item)"
                 ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[2] === index"></icon>{{item.area_name}}</div>
               </swiper-item>
@@ -42,7 +42,7 @@
                 <div
                   v-for="(item,index) of townList"
                   :key="index"
-                  class="m-t-10"
+                  class="h-60"
                   @click="selectFn(3,index,item)"
                 ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[3] === index"></icon>{{item.area_name}}</div>
               </swiper-item>
@@ -308,6 +308,10 @@
     }
   }
 
+  .h-60{
+    height: 60rpx;
+    line-height: 60rpx;
+  }
   .masks{
     position: fixed;
     z-index: 2;

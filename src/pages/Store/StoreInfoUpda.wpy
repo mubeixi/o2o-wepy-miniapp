@@ -4,7 +4,7 @@
     <input v-if="type==4" type="text" class="my-info" v-model="biz_name"  placeholder="请输入联系人"/>
     <block v-if="type==5">
         <view class="other">
-          <view class="other-item">
+          <view class="other-item" v-if="mobile">
             您现在的手机号是： {{mobile}}
           </view>
           <view class="other-item">
