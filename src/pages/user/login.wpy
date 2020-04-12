@@ -279,7 +279,8 @@
       bindBackFn() {
         console.log('拦截返回成功了')
         if (this.binbPhoneShow) {
-          toast('请绑定手机号', 'none')
+          //toast('请绑定手机号', 'none')
+          this.$refs.phone.close()
           return
         }
         if (this.bindPwdShow) {

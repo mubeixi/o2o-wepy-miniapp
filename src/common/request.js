@@ -101,11 +101,11 @@ class XHR {
   }
 }
 
-const hookErrorCode = [0, 66001,88001]
+const hookErrorCode = [0, 66001, 88001]
 export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
-  let {tip = '', mask = false, timelen = 2000, timeout = 1000, errtip = true, reqHeader = false} = options
+  let {tip = '', mask = false, timelen = 2000, timeout = 100, errtip = true, reqHeader = false} = options
 
-  if (tip)wx.showLoading({ title: tip, mask, timelen })
+  if (tip)wx.showLoading({title: tip, mask})
 
   // let token
   var header = {
