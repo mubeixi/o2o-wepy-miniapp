@@ -14,6 +14,15 @@ export const bizProdDel = (param, options) => fetch({act: 'bizProdDel', param, o
 
 // 获取商品列表
 export const bizProdList = (param, options) => fetch({act: 'bizProdList', param, options})
+// 编辑赠品列表
+export const opBizGift = (param, options) => fetch({act: 'opBizGift', param, options})
+
+// 获取赠品详情
+export const getShopGiftInfo = (param, options) => fetch({act: 'getShopGiftInfo', param, options})
+// 删除赠品
+export const delGift = (param, options) => fetch({act: 'delGift', param, options})
+// 获取物流模板
+export const getShippingTemplate = (param, options) => fetch({act: 'getShippingTemplate', param, options})
 
 // 获取赠品列表
 export const getShopGiftList = (param, options) => fetch({act: 'getShopGiftList', param, options})
@@ -34,3 +43,8 @@ export const bizProdUp = (param, options) => fetch({act: 'bizProdUpdown', param:
 
 // 产品下架
 export const bizProdDown = (param, options) => fetch({act: 'bizProdUpdown', param: {...param, updown_sales: 'down'}, options})
+
+//获取活动详情
+export const getActiveInfo = (param, options) => fetch({act: 'getActiveInfo', param: {...param, updown_sales: 'down'}, options})
+//添加/编辑活动
+export const opActive = (param, options) => fetch({act: 'opActive', param: {...param, updown_sales: 'down'}, options})
