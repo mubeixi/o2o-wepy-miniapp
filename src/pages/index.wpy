@@ -1,13 +1,13 @@
 <template>
   <div class="page-wrap">
     <div class="head"  @click="toProfile">
-      <div class="base" @click="$linkTo('/pages/store/StoreSetting')">
+      <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')">
         <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
         <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
       <div class="action" >
         <div v-if="status==2" class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
-        <div v-else class="no-validate" @click="$linkTo('/pages/join/BusinessStation')"><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+        <div v-else class="no-validate" @click.stop="$linkTo('/pages/join/BusinessStation')"><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft"  class="iconarrowleft"></icon>
       </div>
     </div>
