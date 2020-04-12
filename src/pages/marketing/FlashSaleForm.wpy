@@ -409,9 +409,9 @@
           this.proData = res.data.map(item => {
             const hasGoodsIds = getArrColumn(this.select_prod, 'prod_id')
             item.check = hasGoodsIds.includes(item.Products_ID)
-            if(item.check){
+            if (item.check) {
               item.disalbed = true
-            }else{
+            } else {
               item.disalbed = false
             }
 
@@ -489,7 +489,6 @@
             use: {
               discount: (str) => {
                 let val = JSON.parse(str)
-                console.log(str, val)
                 for (let item of val) {
                   if (item.discount >= 0.1 && item.discount <= 9.9) {
 
@@ -506,7 +505,7 @@
               discount: '商品折扣只能在0.1到9.9之间'
             }
           },
-          spike_id: this.spike_id ? {} : {
+          spike_id: !this.spike_id ? {}:{
             required: true,
             message: {
               required: '编辑模式下spike_id必填'
@@ -523,7 +522,6 @@
           return {prod_id: item.Products_ID, discount: item.discount ? item.discount : 0}
         })
 
-        console.log(select_prod)
         let postData = {
           ...this.formData,
           select_prod: JSON.stringify(select_prod)
@@ -567,7 +565,6 @@
         for (let goods of this.proData) {
           for (let item of this.select_prod) {
             if (item.Products_ID === goods.Products_ID) {
-              console.log(goods.Products_ID)
               goods.disalbed = true
               // goods.check = true
               // goods.discount = item.discount
@@ -623,7 +620,7 @@
             // 初始化商品
             this.select_prod = info.spike_goods
           } catch (e) {
-            console.log(e)
+
           }
         }
         this.timeReady = true
@@ -638,7 +635,6 @@
       }
     },
     onLoad(options) {
-      console.log(options)
       this.spike_id = options.spike_id
     },
     onShow() {

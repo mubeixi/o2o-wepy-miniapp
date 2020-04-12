@@ -146,10 +146,10 @@
 
 
         <echarts ref="catTime" :propData="charts[tabActiveIdx].data" :conf="charts[tabActiveIdx].conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
-        <div class="foot">
-          <span>查看详情</span>
-          <icon type="iconarrowleft" size="14" color="#999"></icon>
-        </div>
+<!--        <div class="foot">-->
+<!--          <span>查看详情</span>-->
+<!--          <icon type="iconarrowleft" size="14" color="#999"></icon>-->
+<!--        </div>-->
 
 
       </div>
@@ -166,10 +166,10 @@
         </div>
         <echarts ref="pie" :propData="newOldTradeStatistic.circles" :conf="newOldTradeStatistic.circlesConf"  class="pie-echarts" :onInit="onInitChartPie" ></echarts>
       </div>
-      <div class="foot">
-        <span>查看详情</span>
-        <icon type="iconarrowleft" size="14" color="#999"></icon>
-      </div>
+<!--      <div class="foot">-->
+<!--        <span>查看详情</span>-->
+<!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
+<!--      </div>-->
     </div>
 
     <div class="section">
@@ -209,10 +209,10 @@
           </div>
         </div>
       </div>
-      <div class="foot">
-        <span>查看详情</span>
-        <icon type="iconarrowleft" size="14" color="#999"></icon>
-      </div>
+<!--      <div class="foot">-->
+<!--        <span>查看详情</span>-->
+<!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
+<!--      </div>-->
     </div>
 
     <div class="section">
@@ -233,10 +233,10 @@
           </div>
         </div>
       </div>
-      <div class="foot">
-        <span>查看详情</span>
-        <icon type="iconarrowleft" size="14" color="#999"></icon>
-      </div>
+<!--      <div class="foot">-->
+<!--        <span>查看详情</span>-->
+<!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
+<!--      </div>-->
     </div>
 
   </div>
