@@ -1,5 +1,7 @@
 <style>
-  .fun-tree{}
+  .fun-tree{
+    padding-left: 10px;
+  }
 </style>
 <template>
   <div>
@@ -118,7 +120,7 @@
       }
     },
     ready() {
-      // console.log(this.nodeKey)
+      // console.log(this.has)
       this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has})
     }
   })

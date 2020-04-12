@@ -7,7 +7,7 @@
       </div>
       <div class="action" >
         <div v-if="status==2" class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
-        <div v-else class="no-validate" @click="$linkTo('/pages/join/BusinessStation')"><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+        <div v-else class="no-validate" @click.stop="$linkTo('/pages/join/BusinessStation')"><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft"  class="iconarrowleft"></icon>
       </div>
     </div>
