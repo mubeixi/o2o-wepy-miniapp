@@ -7,7 +7,7 @@ export const getSystemProdConfig = (param, options) => fetch({act: 'system_prod_
 export const systemOperateProd = (param, options) => fetch({act: 'system_operate_prod', param, options})
 
 // 商品详情
-export const getProductDetail = (param, options) => fetch({act: 'prod_detail', param, options})
+export const getProductDetail = (param, options) => fetch({act: 'system_prod_detail', param, options})
 
 // 产品删除
 export const bizProdDel = (param, options) => fetch({act: 'bizProdDel', param, options})

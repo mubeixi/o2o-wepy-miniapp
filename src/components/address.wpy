@@ -153,6 +153,7 @@
         this.active =false
         const selectAreaList = [this.provinceList[this.selectIdxList[0]], this.cityList[this.selectIdxList[1]], this.areaList[this.selectIdxList[2]], this.townList[this.selectIdxList[3]]]
         const rt = {
+          strArr:[this.provinceStr, this.cityStr, this.areaStr, this.townStr],
           str: [this.provinceStr, this.cityStr, this.areaStr, this.townStr].join(' '),
           id: getArrColumn(selectAreaList,'area_id')
         }

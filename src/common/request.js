@@ -103,7 +103,15 @@ class XHR {
 
 const hookErrorCode = [0, 66001, 88001]
 export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
-  let {tip = '', mask = false, timelen = 2000, timeout = 100, errtip = true, reqHeader = false} = options
+  let {
+    tip = '', // loading text
+    mask = false,
+    // timelen = 2000,
+    timeout = 100, // 如果tip参数生效，请求结束后会延迟取消loading,有的请求太快了一闪而过
+    errtip = true, // 是否提示错误
+    // reqHeader = false, // 是否需要把响应头返回放在resolve里面，一般是有时候登录的时候需要从请求头里拿到token的
+    onlyData = false// 是否直接返回data，方便结构赋值
+  } = options
 
   if (tip)wx.showLoading({title: tip, mask})
 
@@ -144,7 +152,7 @@ export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
             return
           }
 
-          resolve(res)
+          resolve(onlyData ? res.data : res)
         } else {
           // 配置决定是否显示错误提示
           if (errtip) error(msg)

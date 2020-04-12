@@ -1,6 +1,12 @@
 <style lang="scss">
   @import "../assets/app.scss";
+
+  .nobor{
+    border-bottom: none !important;
+  }
   .form{
+
+
 
     &-panel{
       margin: 10px;
@@ -23,9 +29,12 @@
     }
     &-upload{
 
+
       &-item{
         display: block;
-        padding: 10px;
+        margin: 0 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
 
         &__label{
           color: #555555;
@@ -47,12 +56,13 @@
         display: flex;
         align-items: center;
         padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        margin: 0 10px;
 
         &__label{
           width: 80px;
-          padding: 0 10px;
+          padding: 0 10px 0 0;
           color: #555555;
-
           line-height: 1.3;
         }
         &__content{
@@ -88,18 +98,18 @@
 <template>
   <div class="form-cell" v-if="formList.length>0">
     <div v-for="(item,idx) in formList" :key="idx" @click="setActiveIdx(idx)">
-      <div v-if="item.type==='input'" class="form-cell-item">
+      <div v-if="item.type==='input'" class="form-cell-item cell-item" :class="{nobor:idx===formList.length-1}">
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
           <input placeholder-class="__placeholder" @input="inputChange" :value="item.value" class="input" :placeholder="item.desc" />
         </div>
       </div>
-      <div v-if="item.type==='picker'" class="form-cell-item">
+      <div v-if="item.type==='picker'" class="form-cell-item cell-item" :class="{nobor:idx===formList.length-1}">
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
-          <picker :range="item.options" @change="pickerChange">
+          <picker style="width: 100%" :range="item.options" @change="pickerChange">
             <div class="" v-if="item.value">{{item.value}}</div>
-            <div class="__placeholder" v-else>{{item.desc}}</div>
+            <div class="__placeholder" v-else>{{item.desc||'请选择'}}</div>
           </picker>
 
         </div>
@@ -107,17 +117,22 @@
           <span class="wzwicon iconright font16" style="color: #666"></span>
         </div>
       </div>
-      <div v-if="item.type==='area'" class="form-cell-item" @click="openAddressChoose">
+      <div v-if="item.type==='area'" class="form-cell-item cell-item" :class="{nobor:idx===formList.length-1}" @click="openAddressChoose">
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
-          <div class="__placeholder" v-if="!item.value">{{item.desc}}</div>
-          <div v-if="item.value">{{item.value}}</div>
+
+          <address @up="updateAddress" ref="address">
+            <div @click="openPop('address')">
+              <div class="__placeholder" v-if="!item.value">{{item.desc||'选择位置'}}</div>
+              <div v-if="item.value">{{item.value}}</div>
+            </div>
+          </address>
         </div>
         <div class="form-cell-item__right">
           <icon  type="iconarrowleft" size="16"  color="#666"></icon>
         </div>
       </div>
-      <div v-if="item.type==='img'" class="form-upload-item">
+      <div v-if="item.type==='img'" class="form-upload-item cell-item" :class="{nobor:idx===formList.length-1}">
         <div class="form-upload-item__label">{{item.label}}</div>
         <div class="form-upload-item__content">
             <upload-image
@@ -160,7 +175,7 @@
         deep: true,
         immediate: true,
         handler(newVal) {
-          //console.log(`${this.eid} formData change`, newVal)
+          // console.log(`${this.eid} formData change`, newVal)
           if (Array.isArray(newVal) && newVal.length > 0) {
             this.$emit('update', objTranslate(newVal))
           }
@@ -169,7 +184,6 @@
     },
 
     ready() {
-
       const _arr = objTranslate(this.forms)
       // 我也太聪明了
       if (Array.isArray(_arr) && _arr.length > 0) {
@@ -181,10 +195,17 @@
           }
           return row
         })
-
+        console.log(this.formList)
       }
     },
     methods: {
+      openPop(name){
+        this.$refs[name].show()
+      },
+      updateAddress(data){
+        //console.log(data)
+        this.setVal(data.strArr.join(''))
+      },
       getData() {
         // console.log('formList is', this.formList)
         // return objTranslate(this.formList)
@@ -228,6 +249,7 @@
   {
     "usingComponents": {
       "icon": "~@/components/icon",
+      "address": "~@/components/address",
       "upload-image": "~@/components/upload-image"
     }
   }
