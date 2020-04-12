@@ -16,45 +16,22 @@
             <input type="text" v-model="sms_code" class="input code" placeholder="请输入验证码" />
             <view class="get-msg" @click="getCode">{{countdownStatus?(countdownNum + '秒'):'获取验证码'}}</view>
           </view>
-          <button @click="confirms"  class="confirm"  @>确认修改</button>
+          <button @click="confirms"  class="confirm"  >确认修改</button>
         </view>
     </block>
 
     <block v-if="type==3">
-      <view class="dizhi" >
-        <view class="section">
-          <picker mode="multiSelector"  @change="bindMultiPickerChange" @columnchange="bindMultiPickerColumnChange" :value="change_multiIndex" :range="change_objectMultiArray" range-key="name">
-            <view class="picker">
-              <text class="text">店铺地址</text>
-              <view class="view" v-if="!address_info.Address_Province">选择省份</view>
-              <view class="view"  v-else>{{objectMultiArray[0][multiIndex[0]]['name']}}</view>
-              <view class="view"  v-if="!address_info.Address_City">选择城市</view>
-              <view class="view"  v-else>{{objectMultiArray[1][multiIndex[1]]['name']}}</view>
-              <view class="view"  v-if="!address_info.Address_Area">选择地区</view>
-              <view class="view"  v-else>{{objectMultiArray[2][multiIndex[2]]['name']}}</view>
-            </view>
-          </picker>
-        </view>
-      </view>
-      <view class="xiangzhen">
-        <view class="section">
-          <picker mode="selector" @change="t_pickerChange" :range="t_arr" range-key="name" :value="t_index">
-            <view class="picker">
-              <text class="text">街道地址</text>
-              <view class="view"  v-if="!address_info.Address_Town">选择街道</view>
-              <view class="view"  v-else>{{t_arr[t_index]['name']}}</view>
-            </view>
-          </picker>
-        </view>
+      <view class="dizhi flex flex-vertical-center" @click="$openPop('address')">
+          <span class="p-r-20">地址</span>
+          <address @up="updateAddress" :province="province" :city="city" :area="area" :town="town" class="address" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
       </view>
       <view class="xinxi">
         <text class="text">详细地址</text>
-        <input type="text" class="input"  name="Address_Detailed" :value="address_info.Address_Detailed" maxlength="30" placeholder="请输入详细地址" />
+        <input type="text" v-model="biz_address" class="input"  name="Address_Detailed"  maxlength="30" placeholder="请输入详细地址" />
       </view>
     </block>
 
 
-    <address show=true ></address>
 
     <div class="button" @click="saveAll"  v-if="type!=5">
       保存
@@ -84,7 +61,13 @@
       biz_mobile: '', // 手机号
       sms_code: '', // 验证码
       countdownStatus: false, // 是否开启倒计时了
-      countdownNum: 60
+      countdownNum: 60,
+      selectArea: '',
+      province: '',
+      city: '',
+      area: '',
+      town: '',
+      biz_address: ''
     },
     onLoad(options) {
       this.type = options.type
@@ -111,11 +94,25 @@
       showLoading('加载中')
     },
     methods: {
+      // 选择的地址
+      updateAddress(data) {
+        this.selectArea = data.str
+        let selectValue = data.id
+        this.province = selectValue[0]
+        this.city = selectValue[1]
+        this.area = selectValue[2]
+        this.town = selectValue[3]
+      },
       // 保存信息
       saveAll() {
         let data = {
           biz_shop_name: this.biz_shop_name,
-          biz_name: this.biz_name
+          biz_name: this.biz_name,
+          biz_province: this.province,
+          biz_city: this.city,
+          biz_area: this.area,
+          biz_town: this.town,
+          biz_address: this.biz_address
         }
         opBizInfo(data).then(res => {
           wx.showToast({
@@ -201,6 +198,11 @@
           this.biz_shop_name = this.info.biz_shop_name
           this.biz_name = this.info.biz_name
           this.mobile = this.info.biz_mobile
+          this.province=this.info.biz_province
+          this.city=this.info.biz_city
+          this.area=this.info.biz_area
+          this.town=this.info.biz_town
+          this.biz_address=this.info.biz_address
         })
       }
     },
@@ -271,7 +273,7 @@
       line-height: 76rpx;
       width: 580rpx;
       color: #fff;
-      background: #F43131;
+      background: #00A8FF;
       text-align: center;
       margin: 157rpx auto 0;
     }
@@ -281,12 +283,15 @@
   .xinxi .text{float: left;width: 140rpx; font-size: 28rpx; line-height:90rpx;}
   .xinxi .input{width: 570rpx; float: left;font-size: 28rpx; line-height:90rpx;height:90rpx;}
   .tianjia-btn{width: 710rpx; margin: 50rpx 20rpx 20rpx; color:#fff;background:#F43131;border-radius: 8rpx;}
-  .dizhi{width: 710rpx; padding:0  20rpx; border-bottom:1px #f4f4f4 solid; overflow: hidden; margin-bottom: 20rpx;}
-  .dizhi , .xiangzhen {width: 710rpx; padding:0 20rpx; border-bottom:1px #f4f4f4 solid; overflow: hidden; margin-bottom: 20rpx;}
+  .dizhi{width: 710rpx; padding:0  20rpx; border-bottom:1px #f4f4f4 solid; overflow: hidden; margin-bottom: 20rpx;height: 90rpx; }
+  .dizhi , .xiangzhen {width: 710rpx; padding:0 20rpx; border-bottom:1px #f4f4f4 solid; overflow: hidden; margin-bottom: 20rpx;overflow: hidden}
+  .address{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width: 600rpx}
   .xiangzhen .text{float: left;width: 140rpx; font-size: 28rpx; line-height:90rpx;}
   .dizhi .text{float: left;width: 140rpx; font-size: 28rpx; line-height:90rpx;}
   .dizhi .input{width: 180rpx; float: left;font-size: 28rpx; line-height:90rpx;height:90rpx; margin-right: 10rpx;}
   .picker .view{width: 180rpx; float: left;font-size: 28rpx; line-height:90rpx;height:90rpx; margin-right: 10rpx;}
+
+
 
 </style>
 <config>
