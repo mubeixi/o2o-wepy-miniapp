@@ -113,7 +113,7 @@
               </div>
             </div>
           </div>
-          <div class="right" style="padding-right: 20rpx">
+          <div class="right" style="padding-right: 20rpx" @click="delSpecRow(idx)">
             <icon type="iconminus" color="#F53636"></icon>
           </div>
         </div>
@@ -483,6 +483,7 @@
     chooseImageByPromise, getArrColumn, uploadImages, validateFun, getDomain, findArrayIdx
   } from '../../common/helper'
   import {
+    getProductDetail,
     getSystemProdConfig, systemOperateProd
   } from '../../api/product'
   import {
@@ -490,6 +491,9 @@
   } from '../../api/store'
 
   import { error, toast, modal } from '../../common/fun'
+  import {
+    floatNumber, intNumber
+  } from '../../common/regs'
 
   wepy.page({
     store,
@@ -531,7 +535,7 @@
       activeSpecIdx: 0,
       specs: [],
       couponList: [],
-      Products_ID:null,
+      Products_ID: null,
       formData: {
         Products_Index: 1,
         Products_Name: '',
@@ -578,9 +582,19 @@
     },
     methods: {
       subFn() {
-
-
         const rule = {
+          Products_ID: {
+            required: this.Products_ID,
+            message: {
+              required: '编辑模式下缺少商品ID'
+            }
+          },
+          prod_order_type: {
+            required: true,
+            message: {
+              required: '订单类型必填'
+            }
+          },
           Products_Name: {
             type: String,
             required: true,
@@ -597,138 +611,123 @@
             }
           },
           Products_PriceY: {
-            type: Number,
             required: true,
+            match: floatNumber,
             size: {min: 0.01},
             message: {
               required: '原价必填',
-              type: '原价必须为数字',
+              match: '原价必须为数字',
               size: '原价必须大于0'
             }
 
           },
           Products_PriceX: {
-            type: Number,
             required: true,
+            match: floatNumber,
             size: {min: 0.01},
             use: {
-              compareMarketPrice:(val,row) => {
-                return val < row.Products_PriceY
+              compareMarketPrice: (val, row) => {
+                return parseFloat(val) < parseFloat(row.Products_PriceY)
               }
             },
             message: {
               required: '现价必填',
-              type: '现价必须为数字',
+              match: '现价必须为数字',
               size: '现价必须大于0',
               compareMarketPrice: '现价必须小于原价'
             }
           },
-          pintuan_people:{
-            type: Number,
+          pintuan_people: {
+            match: intNumber,
             required: true,
             size: {min: 2},
             message: {
               required: '拼团人数必填',
-              type: '拼团人数必须为数字',
+              match: '拼团人数必须为数字',
               size: '拼团人数必须大于2'
             }
           },
           pintuan_pricex: {
-            type: Number,
+            match: floatNumber,
             required: true,
             size: {min: 0.01},
             use: {
-              compareMarketPrice:(val,row) => {
-                return val < row.Products_PriceY
+              compareMarketPrice: (val, row) => {
+                return parseFloat(val) < parseFloat(row.Products_PriceY)
               }
             },
             message: {
               required: '拼团价必填',
-              type: '拼团价必须为数字',
+              match: '拼团价必须为数字',
               size: '拼团价必须大于0',
               compareMarketPrice: '拼团价必须小于原价'
             }
           },
-          Products_Profit:{
-            type: Number,
-            required: true,
-            size: {min: 0},
-            message: {
-              required: '利润必填',
-              type: '利润必须为数字',
-              size: '利润必须大于0'
-            }
-          },
-          fee_type:{
+          // Products_Profit:{
+          //   match: floatNumber,
+          //   required: true,
+          //   size: {min: 0},
+          //   message: {
+          //     required: '利润必填',
+          //     type: '利润必须为数字',
+          //     size: '利润必须大于0'
+          //   }
+          // },
+          fee_type: {
             required: true,
             message: {
               required: '运费计算方式必填'
             }
           },
-          fix_fee:{
-            type: Number,
+          fix_fee: this.formData.fee_type !== 1 ? {} : {
+            match: floatNumber,
             required: true,
             size: {min: 0},
             use: {
-              limit:(val,row) => {
-                if(row.fee_type ===1){
-                  return val>=0
+              limit: (val, row) => {
+                if (row.fee_type === 1) {
+                  return val >= 0
                 }
                 return true
               }
             },
             message: {
               limit: '固定运费为不小于的数值',
-              type: '固定运费为数字',
+              match: '固定运费为数字',
               size: '固定运费必须不小于0'
             }
           },
-
-        }
-
-
-        const rule2 = {
-
-          fix_fee: (value, attributes, key, options, constraints) => {
-            if (attributes.fee_type === 1) {
-              return {
-                ismust: {label: '固定运费'},
-                numericality: {
-                  greaterThanOrEqualTo: 0,
-                  notGreaterThanOrEqualTo: '固定运费必须大于等于0'
+          shipping_temp: this.formData.fee_type === 1 ? {} : {
+            required: true,
+            message: {
+              required: '物流模板必须设置'
+            }
+          },
+          Products_JSON: {
+            required: true,
+            use: {
+              has: (val) => {
+                const {ImgPath = []} = JSON.parse(val)
+                if (ImgPath.length < 1) {
+                  return false
                 }
+                return true
               }
+            },
+            message: {
+              has: '商品图片必须上传'
             }
-            return undefined
           },
-          shipping_temp: (value, attributes, key, options, constraints) => {
-            if (attributes.fee_type === 2) {
-              return {
-                ismust: {label: '物流模板ID'}
-              }
-            }
-            return undefined
-          },
-          Products_JSON: (value, attributes, key, options, constraints) => {
-            const {ImgPath = []} = JSON.parse(value)
-            if (ImgPath.length < 1) {
-              return {
-                errtip: {message: '至少上传一张缩略图'}
-              }
-            }
-            return undefined
-          },
-          Products_Weight: (value, attributes, key, options, constraints) => {
-            const num = parseFloat(value)
-
-            // 实物订单
-            if (attributes.prod_order_type === 0 && wx.$validate.isNumber(num) && num > 0) {
-              return undefined
-            }
-            return {
-              errtip: {message: '实物订单必须设置重量'}
+          Products_Weight: {
+            use: {
+              // 如果前面没有申明prod_order_type这个校验的方法，那么其实row是不会有这个属性的。这个不好说是算bug还是这个类库刻意要求人严谨的
+              limit: (val, row) => row.prod_order_type === 0 && floatNumber.test(val) && parseFloat(val) > 0
+            },
+            message: {
+              limit: '实物订单必须设置重量'
             }
           }
+
         }
 
         let Products_Description = ''
@@ -772,7 +771,6 @@
           coupon_present,
           Products_Description,
           prod_attrval
-
         }
         console.log(productInfo)
 
@@ -791,6 +789,9 @@
       },
       focusSpecItem(idx) {
         this.activeSpecIdx = idx
+      },
+      delSpecRow(idx) {
+        this.specs.splice(idx, 1)
       },
       bindSpecNameInput(e) {
         const idx = this.activeSpecIdx
@@ -1020,32 +1021,32 @@
         })
       },
       async _init_func() {
-        getSystemProdConfig({}).then(res => {
-          const {prod_limit_type = [], shop_damage = []} = res.data
+        try {
+          if (this.Products_ID) {
+            const productData = await getProductDetail({prod_id: this.Products_ID},{onlyData: true}).catch(() => { throw Error('获取商品信息失败') })
+            console.log(productData)
+          }
+          // 获取公共配置
+          this._default = await getSystemProdConfig({prod_id: this.Products_ID}, {onlyData: true}).catch(() => { throw Error('获取公共配置失败') })
+          const { prod_limit_type = [], shop_damage = [] } = this._default
           this.PROD_LIMIT_TYPE = prod_limit_type
           this.shopDamageList = shop_damage
-          this._default = res.data
-        }).catch(() => {
-          error('获取商品公共配置失败')
-        })
 
-        getShippingTemplate().then(res => {
-          this.shippingTmplList = res.data
-        })
+          // 运费模板
+          this.shippingTmplList = await getShippingTemplate({}, {onlyData: true}).catch(() => { throw Error('获取运费模板信息失败') })
 
-        this._initBizProdCate()
+          // 自定义分类
+          this.bizProdCateList = await getBizProdCateList({return_type: 'tree'}, {onlyData: true}).catch(() => { throw Error('获取自定义分类信息失败') })
 
-        getBizIndustryList({
-          return_type: 'tree'
-        }).then(res => {
-          this.bizIndustryList = res.data
-        })
+          // 平台分类
+          this.bizIndustryList = await getBizIndustryList({ return_type: 'tree' }, {onlyData: true}).catch(() => { throw Error('获取平台分类信息失败') })
 
-        getCouponList().then(res => {
-          this.couponList = res.data
-        })
-
-        this.addSpecsRow()
+          // 优惠券
+          const {data: couponListData} = await getCouponList({}, {onlyData: true}).catch(() => { throw Error('获取优惠券信息失败') })
+          this.couponList = couponListData
+        } catch (e) {
+          error(e.message)
+        }
       }
     },
     onReady() {
