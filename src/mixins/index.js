@@ -44,8 +44,7 @@ export default {
   }
 }
 
-
-export const componentMixins =  {
+export const componentMixins = {
   data: {
     menuButtonInfo: {},
     systemInfo: {statusBarHeight: 0},

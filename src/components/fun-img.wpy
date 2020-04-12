@@ -1,0 +1,66 @@
+<style lang="scss">
+.fun-img{
+  overflow: hidden;
+}
+</style>
+<template>
+  <image
+  class="fun-img"
+  :src="url"
+  :mode="mode"
+  :lazy-load="lazyLoad"
+  :webp="webp"
+  binderror="bindImgError"
+  @click="_onClick"
+  :style="{width:width,height:height,borderRadius:borderRadius}"
+  ></image>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  wepy.component({
+    props: {
+      src: {
+        type: String,
+        required: true
+      },
+      mode: {
+        type: String,
+        default: 'scaleToFill'
+      },
+      borderRadius: {
+        type: String,
+        default: '0px'
+      },
+      width: {
+        type: String,
+        default: '100%'
+      },
+      height: {
+        type: String,
+        default: '100%'
+      },
+      webp: {
+        type: Boolean,
+        default: false
+      },
+      lazyLoad: {
+        type: Boolean,
+        default: false
+      }
+    },
+    data: {
+      url: ''
+    },
+    ready() {
+      this.url = this.src
+    },
+    methods: {
+      bindImgError: function (e) {
+        this.url = '/static/placehold.jpg'
+      },
+      _onClick () {
+        this.$emit('click')
+      }
+    }
+  })
+</script>
