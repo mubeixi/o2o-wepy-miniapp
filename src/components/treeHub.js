@@ -11,6 +11,7 @@ export class TreeHub {
   eid = ''
   constructor(options) {
     const {treeData, nodeKey, eid, has = [], childrenName} = options
+
     if (!nodeKey) {
       throw Error('nodeKey必须设置')
     }
@@ -26,7 +27,7 @@ export class TreeHub {
     // has
     if (has.length > 0) {
       for (let i in nodes) {
-        if (has.includes(nodes[i][nodeKey])) {
+        if (has.includes(nodes[i][nodeKey]) || has.includes('' + nodes[i][nodeKey])) {
           nodes[i].check = true
         }
       }

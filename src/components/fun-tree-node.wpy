@@ -2,7 +2,7 @@
 @import "../assets/app.scss";
 </style>
 <template>
-  <div :style="{paddingLeft:val.pid === 0 ? 0:indent+'px'}" class="m-t-15  p-l-10 p-r-10">
+  <div :style="{paddingLeft:val.pid === 0 ? 0:indent+'px'}" class="m-t-15 p-r-10">
     <div class="flex" @tap.stop="clickFn(val)">
       <div v-show="(!checkOnlyLeaf || isLeaf)">
 <!--        <checkbox v-if="!single" size="mini" :checked="isCheck" color="#F53636" />-->
@@ -77,7 +77,7 @@
       // 叶子目录
       isLeaf() {
         try {
-          return this.children.length < 1
+          return !this.children || this.children.length < 1
         } catch (e) {
           return false
         }
@@ -115,14 +115,19 @@
       val(newVal) {
         // console.log(newVal)
       },
-      has(newVal) {
-        try {
-          let isHas = this.has.includes(this.val[this.nodeKey])
-          if (isHas) {
-            this.isCheck = true
-          }
-        } catch (e) {
+      has:{
+        immediate:true,
+        deep:true,
+        handler(newVal) {
 
+          try {
+            let isHas = newVal.includes(this.val[this.nodeKey]) || newVal.includes(''+this.val[this.nodeKey])
+            if (isHas) {
+              this.isCheck = true
+            }
+          } catch (e) {
+
+          }
         }
       }
     },
