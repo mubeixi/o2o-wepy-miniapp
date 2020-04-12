@@ -1,0 +1,132 @@
+<template>
+    <div class="alls">
+          <div class="flex flex-vertical-center   items " v-for="(item,index) of infoData"  :key="index">
+            满 <input type="digit" v-model="item.reach" class="input-full m-l-5 m-r-5" />元 减 <input type="digit" v-model="item.award"  class="input-full m-l-5 m-r-5" />元
+          </div>
+
+      <div class="submits" @click="goAdd">
+        <icon type="iconadd" color="#00A8FF"  size="20"></icon>
+        添加满减
+      </div>
+
+      <div style="height: 86rpx;width: 750rpx"></div>
+      <div class="submit" @click="submit">
+        保存
+      </div>
+    </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {getActiveInfo, opActive} from '../../api/product'
+  import { error, hideLoading, showLoading } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      infoData: [{reach: '', award: ''}]
+    },
+    methods: {
+      submit() {
+        for (let item of this.infoData) {
+          if (!item.reach || !item.award) {
+            error('请输入金额')
+            return
+          }
+          if(item.reach<=item.award){
+            error('满减设置有误')
+            return
+          }
+        }
+        let data={
+          type:'manjian',
+          active_info:JSON.stringify(this.infoData)
+        }
+        showLoading('保存中')
+        opActive(data).then(res => {
+          hideLoading()
+        }).catch(e => {})
+      },
+      goAdd() {
+        this.infoData.push({reach: '', award: ''})
+      },
+      init() {
+        let arr = getActiveInfo({type: 'manjian'}).catch(e => { error('获取列表失败') })
+        if (arr.data.length > 0) {
+          this.infoData = arr.data
+        }
+      }
+    },
+    onShow() {
+      this.init()
+    },
+    onLoad() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .alls{
+    height: 100vh;
+    background-color: #FFFFFF;
+    padding-top: 40rpx;
+  }
+  .submits{
+    width: 276rpx;
+    height: 70rpx;
+    display: flex;
+    font-size: 28rpx;
+    color: #00A8FF;
+    margin:60rpx  auto ;
+    align-items: center;
+    justify-content: center;
+    border:1px solid rgba(0,168,255,1);
+    border-radius:6rpx;
+    margin-bottom: 80rpx;
+  }
+  .items{
+    margin: 0 auto;
+    width: 600rpx;
+    margin-bottom: 20px !important;
+  }
+  .input-full{
+    width: 200rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    box-sizing: border-box;
+    border: 1px solid #eeeeee;
+    padding-left: 10px;
+    text-align: center;
+  }
+  .submit{
+    width: 750rpx;
+    height: 86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #00A8FF;
+    color: #FFFFFF;
+    z-index: 99;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "满减",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
+  }
+</config>

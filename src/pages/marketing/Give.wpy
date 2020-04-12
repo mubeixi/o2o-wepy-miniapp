@@ -1,0 +1,288 @@
+<template>
+  <div class="page-wrap" >
+    <div class="product-list">
+      <div class="product-item" v-for="(product,idx) in seckillData" :key="idx">
+        <div class="info-box">
+          <fun-img class="thumb" :src="product.img_url"></fun-img>
+          <div class="info">
+            <div class="title">{{product.gift_name}}</div>
+            <div class="price-box" v-if="product.attr_txt">
+              <span class="sign color-gray" style="margin-right: 4rpx">规格: </span>
+              <span class="color-gray">{{product.attr_txt}}</span>
+            </div>
+            <div class="price-box" v-else>
+              <span class="sign color-gray" style="margin-right: 4rpx"></span>
+            </div>
+            <div class="stock-box">
+              <span class="stock">赠品库存: {{product.Products_Count}}件</span>
+            </div>
+          </div>
+        </div>
+        <div class="time-my">
+          {{product.valid_days}}
+        </div>
+        <div class="actions">
+          <div class="action" @click="edit(product.id)">
+            <icon type="iconyanjing"></icon>
+            <span class="title">编辑</span>
+          </div>
+          <div class="action"   @click="del(product.id)">
+            <icon size="18" type="iconshanchu"></icon>
+            <span class="title" >删除</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div style="width: 750rpx;height: 86rpx;"></div>
+    <div class="submits flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/GiveAdd')">
+      <icon type="iconadd" color="#fff"  size="20"  class="m-r-9"></icon>
+      添加赠品
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import {getShopGiftList, bizFlashsaleStatus,delGift} from '../../api/product'
+  import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      seckillData: [],
+      page: 1,
+      pageSize: 4,
+      totalCount: 0
+    },
+    onReachBottom() {
+      if (this.seckillData.length < this.totalCount) {
+        this.page++
+        this.init()
+      }
+    },
+    methods: {
+      del(id) {
+        showLoading('删除中')
+        let data = {
+          id: id,
+        }
+        delGift(data).then(res => {
+          toast('删除成功')
+          this.page=1
+          this.seckillData=[]
+          this.init()
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      },
+      edit(id) {
+        let data = '/pages/marketing/GiveAdd?id=' + id
+        linkTo(data)
+      },
+      init() {
+        let data = {
+          page: this.page,
+          pageSize: this.pageSize
+        }
+        getShopGiftList(data).then(res => {
+          for(let item of res.data){
+            this.seckillData.push(item)
+          }
+          this.totalCount = res.totalCount
+        })
+      }
+    },
+    onShow() {
+      this.seckillData=[]
+      this.page = 1
+      this.init()
+    },
+    onLoad() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  /* 底部的操作栏start */
+  .handle-box{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 90rpx;
+    width: 750rpx;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 0 20rpx;
+    box-sizing: border-box;
+    border-top: 1px solid #eee;
+    .btn-list{
+      display: flex;
+      align-items: center;
+      .btn{
+        width:96rpx;
+        height: 54rpx;
+        line-height: 54rpx;
+        text-align: center;
+        border-radius: 10rpx;
+        border:1px solid $fun-red-color;
+        color: $fun-red-color;
+        background: white;
+        margin-left: 20rpx;
+        &.btn-up{
+          color: white;
+          background: $fun-red-color;
+        }
+      }
+    }
+  }
+  /*底部操作栏 end*/
+
+  /** 顶部start **/
+  .action{
+    display: flex;
+    align-items: center;
+    padding: 30rpx;
+    .item{
+      flex:1;
+      text-align: center;
+      .icon{
+        width: 70rpx;
+        height: 70rpx;
+        border-radius: 50%;
+      }
+      .title{
+        color: #333;
+        font-size: 14px;
+      }
+    }
+  }
+  /** 顶部end **/
+
+  /*商品列表 start*/
+  .product-list{
+
+  }
+  .product-item{
+    padding: 30rpx 0;
+    background: white;
+    margin-bottom: 20rpx;
+    .info-box{
+      padding: 0 20rpx;
+      display: flex;
+      font-size: 14px;
+      height: 200rpx;
+      .check{
+        padding-right: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .check-icon{
+
+        }
+      }
+      .thumb{
+        width: 200rpx;
+        height: 200rpx;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          color: #333;
+          font-size: 14px;
+          /*font-weight: bold;*/
+          line-height: 20px;
+          height: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+        .price-box{
+          color: $fun-red-color;
+          margin-bottom: 20px;
+          font-size: 12px;
+        }
+        .stock-box{
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .actions{
+      margin-top: 30rpx;
+      font-size: 12px;
+      display: flex;
+      .action{
+        justify-content: center;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: #888;
+        border-right: 1rpx solid #e7e7e7;
+        &:last-child{
+          border-right: none;
+        }
+        .title{
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  /*商品列表 end*/
+
+  .font-13{
+    font-size: 13px;
+  }
+  .font-15{
+    font-size: 15px;
+  }
+  .time-my{
+    margin: 40rpx 0rpx;
+    font-size: 12px;
+    color: #888;
+    height: 11px;
+    padding-left: 20rpx;
+    line-height: 11px;
+  }
+  .submits{
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 750rpx;
+    height: 86rpx;
+    background-color: #00A8FF;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    line-height: 86rpx;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "赠品",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "fun-img": "~@/components/fun-img",
+  "ad": "~@/components/ad"
+  }
+  }
+</config>

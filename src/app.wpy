@@ -95,6 +95,10 @@ wepy.app({
       "pages/marketing/SeckillAddSelect",
       "pages/marketing/FlashSale",
       "pages/marketing/FlashSaleForm",
+      "pages/marketing/Give",
+      "pages/marketing/GiveAdd",
+      "pages/marketing/GiveAddSelect",
+      "pages/marketing/FullReduce",
       "pages/demo"
 
     ],
