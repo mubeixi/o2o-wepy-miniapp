@@ -196,8 +196,9 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = []}) =>
   return new Promise((resolve, reject) => {
     Promise.all(taskList).then((urls) => {
       resolve(urls)
-    }).catch((error) => {
-      reject(new Error(error))
+    }).catch((err) => {
+      const errMsg = err.hasOwnProperty('errMsg')?err.errMsg:err
+      reject(errMsg)
     })
   })
 }
