@@ -44,7 +44,7 @@
 
         <div class="group-cell" @click="openPop('systemCatePop')">
           <div class="cell-item">
-            <div class="label">平台分类</div>
+            <div class="label">平台商品分类</div>
             <div class="content"></div>
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
           </div>
@@ -296,7 +296,7 @@
     </popup-layer>
 
     <popup-layer ref="systemCatePop" title="平台分类" :autoClose="false">
-      <div v-if="bizIndustryList.length>0">
+      <div v-if="ProductCateList.length>0">
         <fun-tree
           ele-id="prodSystemCate"
           :has="systemCateHas"
@@ -304,7 +304,7 @@
           :conf="systemCateConf"
           :show-checkbox="true"
           :check-only-leaf="true"
-          :tree-data="bizIndustryList"
+          :tree-data="ProductCateList"
           nodeKey="id"
         >
         </fun-tree>
@@ -442,13 +442,13 @@
             <div class="title m-b-4">热卖</div>
           </div>
         </label>
-        <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('Products_IsRecommend')">
+        <label class="type-item flex flex-vertical-center" @click="taggleFormData('Products_IsRecommend')">
           <checkbox color="#00A8FF" :checked="formData.Products_IsRecommend"></checkbox>
           <div class="label p-10">
             <div class="title m-b-4">推荐</div>
           </div>
         </label>
-        <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('one_hour_send')">
+        <label v-if="_default.one_hour_send_switch" class="type-item flex flex-vertical-center bor-t" @click="taggleFormData('one_hour_send')">
           <checkbox color="#00A8FF" :checked="formData.one_hour_send"></checkbox>
           <div class="label p-10">
             <div class="title m-b-4">一小时达</div>
@@ -489,10 +489,11 @@
   } from '../../common/helper'
   import {
     getProductDetail,
+    getProductCategory,
     getSystemProdConfig, systemOperateProd
   } from '../../api/product'
   import {
-    getShippingTemplate, bizIndustryList as getBizIndustryList, addBizProdCate, getCouponList, getBizProdCateList
+    getShippingTemplate, addBizProdCate, getCouponList, getBizProdCateList
   } from '../../api/store'
 
   import { error, toast, modal } from '../../common/fun'
@@ -506,11 +507,11 @@
     data: {
       bizProdCateFormShow: false,
       newBizProdCateText: '',
-      bizIndustryList: [],
+      ProductCateList: [],
       hasSystemCate: [],
       systemCateConf: {
         children: 'child', // 指定子树为节点对象的某个属性值
-        label: 'industry_name', // 指定节点标签为节点对象的某个属性值
+        label: 'Category_Name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
       },
       systemCateHas: [], // 系统商品分类
@@ -526,7 +527,7 @@
       shippingTmplIdx: 0,
       shippingTmplList: [],
       focusPromiseIdx: 0,
-      promiseList: [''],
+      promiseList: [],
       limitBuyIndex: 0,
       PROD_LIMIT_TYPE: [],
       _default: null,
@@ -549,20 +550,21 @@
         Products_Name: '',
         Products_Category: '', // 系统商品分类
         Products_BizCategory: '', // 商家商品分类
-        Products_Sales: 0, // 销量
-        Products_PriceY: 0, // 原价
-        Products_PriceX: 0, // 现价,
-        pintuan_pricex: 0, // 拼团价格
-        pintuan_people: 2, // 拼团人数，>=2的整数
-        Products_Profit: 0, // 产品利润
+        Products_Sales: '', // 销量
+        Products_PriceY: '', // 原价
+        Products_PriceX: '', // 现价,
+        pintuan_pricex: '', // 拼团价格
+        pintuan_people: '', // 拼团人数，>=2的整数
+        Products_Profit: '', // 产品利润
         Products_BriefDescription: '', // 产品描述
-        Products_Count: 0, // 库存
+        Products_Count: '', // 库存
         Product_backup: null,
+        Products_Type: '', // 产品属性类型，和规格有关。如果specs再编辑模式下被全部删除，则需手动置为''
         // 运费
         fee_type: 1,
-        fix_fee: 0,
+        fix_fee: '',
         shipping_temp: null,
-        Products_Weight: 0, // 重量
+        Products_Weight: '', // 重量
         // 特殊属性
         Products_SoldOut: 0, // 下架
         Products_IsNew: 0, // 新品
@@ -592,7 +594,7 @@
       subFn() {
         const rule = {
           prod_id: {
-            required: this.Products_ID,
+            required: !!this.Products_ID,
             message: {
               required: '编辑模式下缺少商品ID'
             }
@@ -759,18 +761,6 @@
 
         const {mobile_prod_attr_name} = this._default
 
-        const specAttrValue = this.specs.map(item => {
-          return {
-            Attr_Value: { [mobile_prod_attr_name]: item.name },
-            ...item
-          }
-        })
-        const attrs = {
-          [mobile_prod_attr_name]: getArrColumn(this.specs, 'name')
-        }
-
-        let prod_attrval = JSON.stringify({attrs, values: specAttrValue})
-
         let productInfo = {
           ...this.formData,
           Products_Category,
@@ -778,10 +768,23 @@
           Products_JSON,
           Products_Promise,
           coupon_present,
-          Products_Description,
-          prod_attrval
+          Products_Description
         }
-        if(this.Products_ID)productInfo.prod_id = this.Products_ID
+        if (this.specs.length > 0) {
+          const specAttrValue = this.specs.map(item => {
+            return {
+              Attr_Value: { [mobile_prod_attr_name]: item.name },
+              ...item
+            }
+          })
+          const attrs = {
+            [mobile_prod_attr_name]: getArrColumn(this.specs, 'name')
+          }
+
+          let prod_attrval = JSON.stringify({attrs, values: specAttrValue})
+          productInfo.prod_attrval = prod_attrval
+        }
+        if (this.Products_ID)productInfo.prod_id = this.Products_ID
         console.log(productInfo)
 
         const checkRt = validateFun(productInfo, rule)
@@ -792,9 +795,10 @@
 
         systemOperateProd(productInfo, {tip: '保存商品'}).then(res => {
           toast('操作成功')
-          wx.navigateTo({
-            url: '/pages/procut/ProductManager'
-          })
+          wx.navigateBack()
+          // wx.navigateTo({
+          //   url: '/pages/product/ProductManager'
+          // })
         }).catch((err) => {
           const {msg: errMsg = ''} = err
           modal(errMsg, '商品发布失败')
@@ -1088,7 +1092,7 @@
           this.bizProdCateList = await getBizProdCateList({return_type: 'tree'}, {onlyData: true}).catch(() => { throw Error('获取自定义分类信息失败') })
 
           // 平台分类
-          this.bizIndustryList = await getBizIndustryList({ return_type: 'tree' }, {onlyData: true}).catch(() => { throw Error('获取平台分类信息失败') })
+          this.ProductCateList = await getProductCategory({ return_type: 'tree' }, {onlyData: true}).catch(() => { throw Error('获取平台分类信息失败') })
 
           // 优惠券
           this.couponList = await getCouponList({}, {onlyData: true}).catch(() => { throw Error('获取优惠券信息失败') })

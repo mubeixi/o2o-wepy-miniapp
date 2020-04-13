@@ -88,7 +88,7 @@
       editData: {},
       showSelect: false,
       hasValue: [],
-      special_content: [],//{express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''}
+      special_content: [], // {express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''}
       express_start: '',
       express_postage: '',
       express_plus: '',
