@@ -17,10 +17,10 @@
                 <div
                   @click="bindThumbClick(idx,img)"
                   class="img-item img"
-                  v-for="(img,idx) in imgTempList"
+                  v-for="(img,idx) in imgs"
                   :key="idx"
-                  :style="{backgroundImage:'url('+img.path+')'}">
-                  <span class="progress" v-if="img.task && img.task.progress<100">{{img.task.progress}}%</span>
+                  :style="{backgroundImage:'url('+img+')'}">
+                  <!-- <span class="progress" v-if="img.task && img.task.progress<100">{{img.task.progress}}%</span> -->
                 </div>
                 <div
                   class="img-item add"
@@ -301,8 +301,7 @@
       <button @click="closePop('couponPop')" class="btn btn-primary">确定</button>
     </popup-layer>
 
-    <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false">
-      <div v-show="bizProdCateFormShow" style="width: 100%;height: 100%;left: 0;top: 0;position: fixed;background: rgba(0,0,0,.3);z-index:3;">
+      <div v-show="bizProdCateFormShow" style="width: 100%;height: 100%;left: 0;top: 0;position: fixed;background: rgba(0,0,0,.3);z-index:101;">
         <div class="posi" style="width: 426rpx;overflow: hidden;background: white;border-radius: 6rpx;box-sizing: border-box;padding: 20rpx;">
           <div class="text-center c3">添加分类</div>
           <div style="margin: 48rpx auto;">
@@ -314,6 +313,9 @@
           </div>
         </div>
       </div>
+
+    <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false">
+      
 
       <div v-if="bizCateReady && bizProdCateList.length>0">
         <fun-tree
@@ -1061,11 +1063,11 @@
 
             if (tapIndex === 0) {
               wx.previewImage({
-                urls: [img.path]
+                urls: [img]
               })
             }
             if (tapIndex === 1) {
-              this.imgTempList.splice(idx, 1)
+              // this.imgTempList.splice(idx, 1)
               this.imgs.splice(idx, 1)
             }
           },
@@ -1102,12 +1104,19 @@
           const arr1 = files.map(file => {
             return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
           })
-          this.imgTempList = this.imgTempList.concat(arr1)
+          console.log('upload img arr1 is',arr1)
+          //this.imgTempList = this.imgTempList.concat(arr1)
           const imgs = getArrColumn(files, 'path')
-          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch((err) => { throw Error('文件批量上传失败:' + JSON.stringify(err)) })
+          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch((errMsg) => { throw Error(errMsg) })
+          for(var i=0;i<ossUrls.length;i++){
+            ossUrls[i] = getDomain(ossUrls[i])
+          }
           this.imgs = this.imgs.concat(ossUrls)
           this._click = false
         } catch (e) {
+          //this.imgTempList = []
+          modal(e.message)
+          console.log(e)
           console.log(e.message)
         }
       },

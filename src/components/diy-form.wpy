@@ -6,8 +6,6 @@
   }
   .form{
 
-
-
     &-panel{
       margin: 10px;
     }
@@ -111,7 +109,6 @@
             <div class="" v-if="item.value">{{item.value}}</div>
             <div class="__placeholder" v-else>{{item.desc||'请选择'}}</div>
           </picker>
-
         </div>
         <div class="form-cell-item__right">
           <span class="wzwicon iconright font16" style="color: #666"></span>

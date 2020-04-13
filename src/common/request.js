@@ -220,18 +220,31 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
       name,
       formData,
       success: (res) => {
-        let {data = {}} = res
-        if (typeof data === 'string' && data) {
-          let body = JSON.parse(data)
-          data = body.data
+        
+        console.log('upload file result',res)
+        let {data:body} = res
+        if (typeof body === 'string' && body) {
+          body = JSON.parse(body)
         }
-        const {path = ''} = data
-        if (path) {
-          resolve(path)
-        } else {
-          resolve(false)
-          //toast('文件上传失败')
+
+        console.log('body is',body)
+        if(body.hasOwnProperty('data') && typeof body.data ==='object'){
+
+        }else{
+          reject(body.msg)
+          return;
         }
+
+        const {errorCode=0,data} = body
+
+        if(errorCode === 0 && data.hasOwnProperty('path') && data.path){
+          resolve(data.path)
+        }else{
+          console.log(res)
+          reject(body.msg)
+        }
+
+        
       },
       fail: (err) => {
         reject(err)
@@ -241,15 +254,15 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
       }
     })
 
-    uploadTask.onProgressUpdate((res) => {
-      // console.log('上传进度' + res.progress)
-      // console.log('已经上传的数据长度' + res.totalBytesSent)
-      // console.log('预期需要上传的数据总长度' + res.totalBytesExpectedToSend)
+    // uploadTask.onProgressUpdate((res) => {
+    //   // console.log('上传进度' + res.progress)
+    //   // console.log('已经上传的数据长度' + res.totalBytesSent)
+    //   // console.log('预期需要上传的数据总长度' + res.totalBytesExpectedToSend)
 
-      if (progressList.length > 0 && progressList[idx] && progressList[idx].hasOwnProperty('task')) {
-        progressList[idx].task = res
-      }
-    })
+    //   if (progressList.length > 0 && progressList[idx] && progressList[idx].hasOwnProperty('task')) {
+    //     progressList[idx].task = res
+    //   }
+    // })
   })
 }
 

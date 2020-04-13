@@ -51,7 +51,7 @@
                 <icon size="18" type="iconshanchu"></icon>
                 <span class="title">删除</span>
               </div>
-              <div class="action" @click="taggleProdStatus(product)">
+              <div class="action" @click="taggleProdStatus(product,idx)">
                 <template v-if="!product.Products_SoldOut">
                   <icon type="iconxiajia"></icon>
                   <span class="title">下架</span>
@@ -167,21 +167,31 @@ wepy.page({
           error(e.message())
         }
       },
-      taggleProdStatus(prod) {
+      taggleProdStatus(prod,idx) {
         console.log(prod)
-        const action = prod.Products_SoldOut ? bizProdUp : bizProdDown
+        const action = prod.Products_SoldOut ? bizProdUp:bizProdDown
+        console.log(prod.Products_SoldOut)
         const prod_ids = [prod.Products_ID]
-        action({prod_ids: JSON.stringify(prod_ids)}, {tip: '更新中'}).catch(() => {
-          prod.Products_SoldOut = !prod.Products_SoldOut
+
+        
+        action({prod_ids: JSON.stringify(prod_ids)},{tip:'loading'}).then(res=>{
+          this.$set(this.productList[idx],'Products_SoldOut',!prod.Products_SoldOut)
+        }).catch(() => {
+          
         })
       },
-      _init_func() {
-        bizProdList({...this.paginate}, {tip: 'loading'}).then(res => {
+      _init_func(rest) {
+        bizProdList({...this.paginate}).then(res => {
           const loadData = res.data.map(item => {
             return {...item, check: false}
           })
           this.paginate.totalCount = res.data.totalCount
-          this.productList = this.productList.concat(loadData)
+          if(rest){
+            this.productList = loadData
+          }else{
+            this.productList = this.productList.concat(loadData)
+          }
+          
         })
       },
       taggleAllCheck() {
@@ -209,12 +219,10 @@ wepy.page({
       this._init_func()
     },
     onShow() {
-      this.productList=[]
-      this.paginate.page=1
-      this._init_func()
+      
     },
     created() {
-
+      this._init_func()
     }
 
   })
