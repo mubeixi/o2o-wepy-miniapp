@@ -537,9 +537,9 @@
 
         bizAddSpike(postData).then(res => {
           toast('发布成功')
-          // setTimeout(() => {
-          //   this.$back()
-          // }, 1000)
+          setTimeout(() => {
+            this.$back()
+          }, 1000)
         }).catch(() => {})
       },
       setActiveIdx(idx) {
