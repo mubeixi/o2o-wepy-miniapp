@@ -39,7 +39,7 @@
         linkTo(data)
       },
       getList() {
-        getUserLevel().then(res => {
+        getUserLevel({},{tip:'加载中',mask:true}).then(res => {
           this.list = res.data
         })
       }

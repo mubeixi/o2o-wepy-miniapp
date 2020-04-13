@@ -9,10 +9,10 @@
         <!--<input type="text" v-model="selects"/>-->
         <div class="main">
           <div class="select-list flex flex-vertical-center fz-14 m-b-20 p-l-10">
-            <div class="select-text m-r-15" @click="bindClickText(0)">{{provinceStr}}</div>
-            <div class="select-text m-r-15" @click="bindClickText(1)">{{cityStr}}</div>
-            <div class="select-text m-r-15" @click="bindClickText(2)">{{areaStr}}</div>
-            <div class="select-text m-r-15" @click="bindClickText(3)">{{townStr}}</div>
+            <div class="select-text m-r-15" @click="bindClickText(0)" v-if="provinceStr">{{provinceStr}}</div>
+            <div class="select-text m-r-15" @click="bindClickText(1)" v-if="cityStr">{{cityStr}}</div>
+            <div class="select-text m-r-15" @click="bindClickText(2)" v-if="areaStr">{{areaStr}}</div>
+            <div class="select-text m-r-15" @click="bindClickText(3)" v-if="townStr">{{townStr}}</div>
           </div>
           <div class="fz-14 container">
             <swiper class="swiper-box" :current="currentSwiperIndex">
@@ -20,23 +20,26 @@
                 <div
                   v-for="(item,index) of provinceList"
                   :key="index" class="h-60"
+                  :style="{fontWeight:(selectIdxList[0] === index?'bold':'')}"
                   @click="selectFn(0,index,item)"
-                ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[0] === index"></icon>{{item.area_name}}</div>
+                ><icon type="iconradio-check" color="#F53636" class="m-r-5" v-if="selectIdxList[0] === index"></icon>{{item.area_name}}</div>
               </swiper-item>
               <swiper-item class="swiper-item">
                 <div
                   v-for="(item,index) of cityList"
                   :key="index" class="h-60"
                   @click="selectFn(1,index,item)"
-                ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[1] === index"></icon>{{item.area_name}}</div>
+                  :style="{fontWeight:(selectIdxList[1] === index?'bold':'')}"
+                ><icon type="iconradio-check" color="#F53636" class="m-r-5" v-if="selectIdxList[1] === index"></icon>{{item.area_name}}</div>
               </swiper-item>
               <swiper-item class="swiper-item">
                 <div
                   v-for="(item,index) of areaList"
                   :key="index"
                   class="h-60"
+                  :style="{fontWeight:(selectIdxList[2] === index?'bold':'')}"
                   @click="selectFn(2,index,item)"
-                ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[2] === index"></icon>{{item.area_name}}</div>
+                ><icon type="iconradio-check" color="#F53636" class="m-r-5" v-if="selectIdxList[2] === index"></icon>{{item.area_name}}</div>
               </swiper-item>
               <swiper-item class="swiper-item">
                 <div
@@ -44,14 +47,16 @@
                   :key="index"
                   class="h-60"
                   @click="selectFn(3,index,item)"
-                ><icon type="iconradio-check" color="#F53636" v-if="selectIdxList[3] === index"></icon>{{item.area_name}}</div>
+                  :style="{fontWeight:(selectIdxList[3] === index?'bold':'')}"
+                ><icon type="iconradio-check" color="#F53636" class="m-r-5" v-if="selectIdxList[3] === index"></icon>{{item.area_name}}</div>
               </swiper-item>
             </swiper>
 
           </div>
         </div>
       </div>
-      <slot></slot>
+      <slot>
+      </slot>
     </div>
 </template>
 
@@ -230,46 +235,53 @@
       },
       async _init_func() {
         try {
-
-        // 找到省
+      // 找到省
           this.provinceList = await this.getAreaList({pid: 0}).catch(() => { throw Error('初始化省级地址失败') })
           const findProvinceIdx = findArrayIdx(this.provinceList, {area_id: this.province})
+          let province = {}
           if (findProvinceIdx !== false) {
-            this.selectIdxList[0] = findProvinceIdx
+            this.selectIdxList[0] = parseInt(findProvinceIdx)
+            province = this.provinceList[findProvinceIdx]
           }
-          // // 初始化市
-          // this.cityList = await this.getAreaList({pid: province.area_id}).catch(() => { throw Error('初始化市级地址失败') })
-          // const findCityIdx = findArrayIdx(this.cityList, {area_id: this.city})
-          // if (findCityIdx === false) {
-          //   this.areaList = []
-          //   this.townList = []
-          //   this.selectIdxList[1] = -1
-          //   return
-          // }
-          // this.selectIdxList[1] = findCityIdx
-          // const city = this.cityList[findCityIdx]
-          //
-          // // 初始化区县
-          // this.areaList = await this.getAreaList({pid: city.area_id}).catch(() => { throw Error('初始化区县地址失败') })
-          // const findAreaIdx = findArrayIdx(this.areaList, {area_id: this.area})
-          // if (findAreaIdx === false) {
-          //   this.townList = []
-          //   this.selectIdxList[2] = -1
-          //   this.currentSwiperIndex = 2 // 第三屏
-          //   return
-          // }
-          // this.selectIdxList[2] = findAreaIdx
-          // const area = this.areaList[findAreaIdx]
-          //
-          // // 初始化乡镇
-          // this.townList = await this.getAreaList({pid: area.area_id}).catch(() => { throw Error('初始化乡镇地址失败') })
-          // const findTownIdx = findArrayIdx(this.townList, {id: this.town})
-          // if (findTownIdx === false) {
-          //   this.selectIdxList[3] = -1
-          //   this.currentSwiperIndex = 3 // 第三屏
-          //   return
-          // }
-          // this.selectIdxList[3] = findTownIdx
+          this.selectFn(0,this.selectIdxList[0])
+
+          // 初始化市
+          this.cityList = await this.getAreaList({pid: province.area_id}).catch(() => { throw Error('初始化市级地址失败') })
+          const findCityIdx = findArrayIdx(this.cityList, {area_id: this.city})
+          if (findCityIdx === false) {
+            this.areaList = []
+            this.townList = []
+            this.selectIdxList[1] = -1
+            return
+          }
+          this.selectIdxList[1] = parseInt(findCityIdx)
+          const city = this.cityList[findCityIdx]
+          this.selectFn(1,this.selectIdxList[1])
+
+          // 初始化区县
+          this.areaList = await this.getAreaList({pid: city.area_id}).catch(() => { throw Error('初始化区县地址失败') })
+          const findAreaIdx = findArrayIdx(this.areaList, {area_id: this.area})
+          if (findAreaIdx === false) {
+            this.townList = []
+            this.selectIdxList[2] = -1
+            this.currentSwiperIndex = 2 // 第三屏
+            return
+          }
+          this.selectIdxList[2] = parseInt(findAreaIdx)
+          const area = this.areaList[findAreaIdx]
+          this.selectFn(2,this.selectIdxList[2])
+
+          // 初始化乡镇
+          this.townList = await this.getAreaList({pid: area.area_id}).catch(() => { throw Error('初始化乡镇地址失败') })
+          const findTownIdx = findArrayIdx(this.townList, {area_id: this.town})
+          if (findTownIdx === false) {
+            this.selectIdxList[3] = -1
+            this.currentSwiperIndex = 3 // 第三屏
+            return
+          }
+          this.selectIdxList[3] = parseInt(findTownIdx)
+          this.selectFn(3,this.selectIdxList[3])
+
         } catch (e) {
           error(e.message)
         }
@@ -284,9 +296,9 @@
         this.active = false
       },
       selectFn(col, idx, item) {
-        console.log(col, idx, item)
+        //console.log(col, idx, item)
         this.$set(this.selectIdxList, col, idx)
-        console.log(this.selectIdxList, this.provinceStr)
+        //console.log(this.selectIdxList, this.provinceStr)
       },
       // 地址
       async getAreaByPid(pid, arr) {
@@ -356,7 +368,21 @@
 
     }
     &-text{
-      border-bottom: 1px $fun-red-color solid;
+      //border-bottom: 2px $fun-red-color solid;
+      height: 60rpx;
+      line-height: 60rpx;
+      position: relative;
+      &:after{
+        display:block;
+        content:'';
+        width:30px;
+        height:2px;
+        background-color:$fun-red-color;
+        position: absolute;
+        bottom: 0rpx;
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
 
   }
@@ -375,6 +401,8 @@
     }
 
   }
+
+
 </style>
 <config>
   {
