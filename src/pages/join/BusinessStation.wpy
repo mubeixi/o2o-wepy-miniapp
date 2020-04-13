@@ -38,7 +38,7 @@
           <div class="station-title">签署入驻协议</div>
           <div class="station-title-sub">在线签署商家入住协议</div>
         </div>
-        <div class="right-div"  v-if="info.is_agree">
+        <div class="right-div"  v-if="info.entry_process.is_agree==1">
           <div class="station-button"  >
             已完成
           </div>
@@ -54,13 +54,13 @@
 
       </div>
 
-      <div class="rectangle flex flex-justify-between flex-vertical-center"    @click="goShow">
+      <div class="rectangle flex flex-justify-between flex-vertical-center"    >
         <div>
           <div class="station-title">提交资质</div>
           <div class="station-title-sub">提交企业资料和银行账户信息</div>
         </div>
 
-        <div class="station-button active" v-if="this.info.principal_type!=0">
+        <div class="station-button active" v-if="info.entry_process.is_auth!=1" @click="goShow">
           去提交
         </div>
         <div class="station-button" v-else>
@@ -69,14 +69,17 @@
 
       </div>
 
-      <div class="rectangle flex flex-justify-between flex-vertical-center"     @click="$linkTo('/pages/join/BusinessPay')">
+      <div class="rectangle flex flex-justify-between flex-vertical-center"     >
         <div>
           <div class="station-title">付款</div>
           <div class="station-title-sub">根据不同的入驻类目及入驻年限打款</div>
         </div>
 
-        <div class="station-button active" >
+        <div class="station-button active" v-if="info.entry_process.is_pay!=1" @click="$linkTo('/pages/join/BusinessPay')">
           去提交
+        </div>
+        <div class="station-button" v-else>
+          已完成
         </div>
 
 
@@ -114,37 +117,46 @@
     store,
     mixins: [pageMixin],
     data: {
-      info: {}
+      info: {entry_process: {}}
     },
     onShow() {
       this.getBizInfo()
     },
     methods: {
       goShow() {
-        if (this.info.principal_type != 0) {
-          wx.showActionSheet({
-            itemList: ['个人认证', '企业认证'],
-            success: (res) => {
-              const {tapIndex} = res
-              console.log(tapIndex)
-              if (tapIndex === 0) {
-                linkTo('/pages/join/PersonalCertification')
-              }
-              if (tapIndex === 1) {
-                linkTo('/pages/join/CompanyCertification')
-              }
-            },
-            fail (res) {
+        if (this.info.apply_info && this.info.apply_info.principal_type) {
+          if (this.info.apply_info.principal_type == 1) {
+            linkTo('/pages/join/CompanyCertification')
+          } else {
+            linkTo('/pages/join/PersonalCertification')
+          }
+        } else {
+          if (this.info.principal_type == 0) {
+            wx.showActionSheet({
+              itemList: ['个人认证', '企业认证'],
+              success: (res) => {
+                const {tapIndex} = res
+                console.log(tapIndex)
+                if (tapIndex === 0) {
+                  linkTo('/pages/join/PersonalCertification')
+                }
+                if (tapIndex === 1) {
+                  linkTo('/pages/join/CompanyCertification')
+                }
+              },
+              fail (res) {
 
-            }
-          })
+              }
+            })
+          }
         }
       },
-      getBizInfo() {
-        getBizInfo().then(res => {
-          let entry_process = res.data.entry_process
-          this.info = entry_process
-        })
+      async getBizInfo() {
+        this.info = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+        if (!this.info.entry_process) {
+          this.info.entry_process = {}
+        }
+
       }
     }
 
