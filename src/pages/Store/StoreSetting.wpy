@@ -115,7 +115,7 @@
 
 
 
-      <div class="submit-main" @click="bizOut">
+      <div class="submit-main" @click="bizOuts">
         退出登录
       </div>
     </div>
@@ -173,7 +173,7 @@
           hideLoading()
         })
       },
-      bizOut() {
+      bizOuts() {
         bizLogout().then(res => {
           toast('登出成功')
           setTimeout(function() {
@@ -188,7 +188,7 @@
       },
       init() {
         getBizInfo().then(res => {
-          this.infoData = res.data
+          this.infoData = res.data[0]
           this.arrive_get = this.infoData.arrive_get
           this.start_time = this.infoData.business_start
           this.end_time = this.infoData.business_end

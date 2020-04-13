@@ -193,7 +193,8 @@
         })
       },
       async getBizInfo() {
-        this.info = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch((e) => { throw Error(e.msg) })
+        let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch((e) => { throw Error(e.msg) })
+        this.info=arr[0]
         this.biz_shop_name = this.info.biz_shop_name
         this.biz_name = this.info.biz_name
         this.mobile = this.info.biz_mobile

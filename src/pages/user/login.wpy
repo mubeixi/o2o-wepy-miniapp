@@ -65,6 +65,7 @@
     box-sizing: border-box;
     position: fixed;
     background: white;
+    z-index: 10;
   }
   .wrap{
     text-align: center;
@@ -178,9 +179,9 @@
           <div><button form-type="submit" class="sub-btn m-b-15" type="primary" >立即登录</button></div>
           <!--<div><button @click="cancel" class="sub-btn m-b-20" >暂不登录</button></div>-->
 
-          <div class="flex flex-vertical-center flex-justify-between p-t-10" @click="cancel">
+          <div class="flex flex-vertical-center flex-justify-between p-t-10" >
             <div class="fz-12 text-right">登录及表示您已阅读并接受<span class="color-primary">《用户服务协议》</span></div>
-            <span class="c6 fz-12" style="text-decoration: underline">暂不登录</span>
+<!--            <span class="c6 fz-12" style="text-decoration: underline" @click="cancel">暂不登录</span>-->
           </div>
         </div>
       </form>

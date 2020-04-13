@@ -107,11 +107,11 @@
       getDetail() {
         showLoading('加载中')
         getBizInfo().then(res => {
-          if (res.data.settle_config) {
-            this.account = res.data.settle_config.account
-            this.type = res.data.settle_config.type
-            this.account_name = res.data.settle_config.account_name
-            let bankcode = res.data.settle_config.bankcode
+          if (res.data[0].settle_config) {
+            this.account = res.data[0].settle_config.account
+            this.type = res.data[0].settle_config.type
+            this.account_name = res.data[0].settle_config.account_name
+            let bankcode = res.data[0].settle_config.bankcode
 
             for (let i = 0; i < this.withDrawData.length; i++) {
               if (this.withDrawData[i]['type'] == this.type) { this.ind = i }

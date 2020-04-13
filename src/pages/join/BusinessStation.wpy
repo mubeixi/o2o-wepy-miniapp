@@ -38,18 +38,12 @@
           <div class="station-title">签署入驻协议</div>
           <div class="station-title-sub">在线签署商家入住协议</div>
         </div>
-        <div class="right-div"  v-if="info.entry_process.is_agree==1">
-          <div class="station-button"  >
-            已完成
-          </div>
-          <div class="look-info" @click="$linkTo('/pages/join/SettlementAgreement')">
-            查看资料
-          </div>
+
+        <div class="station-button " v-if="info.entry_process.is_agree==1">
+          已完成
         </div>
-        <div class="right-div"  v-else>
-          <div class="station-button active"   @click="$linkTo('/pages/join/SettlementAgreement')">
-            去提交
-          </div>
+        <div class="station-button active" v-else  @click="$linkTo('/pages/join/SettlementAgreement')">
+          去提交
         </div>
 
       </div>
@@ -60,12 +54,38 @@
           <div class="station-title-sub">提交企业资料和银行账户信息</div>
         </div>
 
-        <div class="station-button active" v-if="info.entry_process.is_auth!=1" @click="goShow">
-          去提交
+
+        <div class="right-div"  v-if="info.entry_process.is_auth!=1" @click="goShow">
+          <div class="station-button active"  >
+            去提交
+          </div>
         </div>
-        <div class="station-button" v-else>
-          已完成
-        </div>
+        <block v-else>
+          <block v-if="info.apply_info.apply_status==1">
+            <div class="right-div"  @click="goShow">
+              <div class="station-button active"  >
+                审核中
+              </div>
+            </div>
+          </block>
+          <block v-else-if="info.apply_info.apply_status==-1">
+            <div class="right-div"  @click="goShow">
+              <div class="station-button active"  >
+                已驳回
+              </div>
+            </div>
+          </block>
+          <div class="right-div"  v-else>
+            <div class="station-button"  >
+              已完成
+            </div>
+            <div class="look-info" @click="goShow">
+              查看资料
+            </div>
+          </div>
+        </block>
+
+
 
       </div>
 
@@ -156,7 +176,8 @@
         }
       },
       async getBizInfo() {
-        this.info = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+        let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+        this.info=arr[0]
         if (!this.info.entry_process) {
           this.info.entry_process = {}
         }
