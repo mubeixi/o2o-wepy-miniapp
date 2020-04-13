@@ -109,6 +109,11 @@ wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      paginate: {
+        page: 1,
+        pageSize: 6,
+        totalCount: 0
+      },
       showHandle: false,
       allCheck: false,
       productList: []
@@ -171,11 +176,12 @@ wepy.page({
         })
       },
       _init_func() {
-        // this.productList = mockData
-        bizProdList({page: 1, pageSize: 999}).then(res => {
-          this.productList = res.data.map(item => {
+        bizProdList({...this.paginate}, {tip: 'loading'}).then(res => {
+          const loadData = res.data.map(item => {
             return {...item, check: false}
           })
+          this.paginate.totalCount = res.data.totalCount
+          this.productList = this.productList.concat(loadData)
         })
       },
       taggleAllCheck() {
@@ -196,6 +202,11 @@ wepy.page({
       checkboxChange: function (e) {
         console.log('checkbox发生change事件，携带value值为：', e.$wx.detail.value)
       }
+    },
+    onReachBottom() {
+      if (this.productList.length >= this.paginate.totalCount) return
+      this.paginate.page++
+      this._init_func()
     },
     onShow() {
       this._init_func()
