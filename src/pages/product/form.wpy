@@ -855,13 +855,13 @@
               enum: '请配置是否支持外卖'
             }
           },
-          share_commission: this.formData.share_commission ? {required: false} : {
+          share_commission: this.formData.share_commission ?  {
             required: true,
             match: floatNumber,
             message: {
               match: '分享赚金额格式错误'
             }
-          }
+          }:{required: false}
 
         }
 
