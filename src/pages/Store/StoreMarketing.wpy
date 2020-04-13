@@ -24,7 +24,7 @@
             <image src="/static/marketing/vip.png" class="img"></image>
             <div class="title">店铺会员</div>
           </div>
-          <div class="feature-item">
+          <div class="feature-item"  @click="$linkTo('/pages/marketing/Give')">
           <image src="/static/marketing/give.png" class="img"></image>
           <div class="title">赠品</div>
         </div>

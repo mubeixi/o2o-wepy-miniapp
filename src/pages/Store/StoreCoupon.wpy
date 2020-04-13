@@ -58,7 +58,7 @@
         let data = {
           page:1,
           pageSize:999,
-          status: 1
+          //status: 1
           // show: 2
         }
         showLoading('加载中')

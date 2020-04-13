@@ -36,13 +36,15 @@
             error('请输入金额')
             return
           }
-          if(item.reach<=item.award){
+          if(parseFloat(item.reach)<=parseFloat(item.award)){
             error('满减设置有误')
             return
           }
         }
         let data={
           type:'manjian',
+          start_time:0,
+          end_time:0,
           active_info:JSON.stringify(this.infoData)
         }
         showLoading('保存中')
@@ -54,10 +56,11 @@
       goAdd() {
         this.infoData.push({reach: '', award: ''})
       },
-      init() {
-        let arr = getActiveInfo({type: 'manjian'}).catch(e => { error('获取列表失败') })
-        if (arr.data.length > 0) {
-          this.infoData = arr.data
+      async init() {
+        let arr = await getActiveInfo({type: 'manjian'},{onlyData:true}).catch(e => { error('获取列表失败') })
+        console.log(arr,"ss")
+        if (arr.active_info.length > 0) {
+          this.infoData = arr.active_info
         }
       }
     },
