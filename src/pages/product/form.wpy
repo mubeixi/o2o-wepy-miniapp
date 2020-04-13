@@ -1136,7 +1136,7 @@
 
           // 优惠券
           this.couponList = await getCouponList({}, {onlyData: true}).catch(() => { throw Error('获取优惠券信息失败') })
-
+            hideLoading()
           if (this.Products_ID) {
             const productData = await getProductDetail({prod_id: this.Products_ID}, {onlyData: true}).catch(() => { throw Error('获取商品信息失败') })
             console.log('productData is', productData)

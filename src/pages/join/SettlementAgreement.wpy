@@ -5,15 +5,15 @@
 
     <div class="checks flex flex-vertical-center" >
       <checkbox-group  bindchange="checkboxChange">
-        <checkbox value="1" >我已阅读、同意并接受《admin的微商城网络交易平台服务协议》</checkbox>
+        <checkbox value="1"  :disabled="agree==1" :checked="agree==1">我已阅读、同意并接受《admin的微商城网络交易平台服务协议》</checkbox>
       </checkbox-group>
 
 
     </div>
 
 
-    <div class="submit" @click="agree">
-      签署
+    <div class="submit" @click="agreeMethod">
+      {{agree==1?'已签署':'签署'}}
     </div>
 
   </div>
@@ -32,13 +32,16 @@
     mixins: [pageMixin],
     data: {
       show: [],
+      agree:0,
       info: ''
     },
-    onLoad() {
+    onLoad(option) {
+      this.agree=option.agree
       this.getBizConfig()
     },
     methods: {
-      agree() {
+      agreeMethod() {
+        if(this.agree==1)return
         if (this.show.length <= 0) {
           toast('请勾选同意协议')
           return

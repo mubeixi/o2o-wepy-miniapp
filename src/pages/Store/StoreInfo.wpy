@@ -124,13 +124,13 @@
       },
       getDetail() {
         getBizInfo().then(res => {
-          this.info = res.data
+          this.info = res.data[0]
         })
       },
       async getBizInfo() {
         showLoading('加载中')
         await getBizInfo().then(res => {
-          this.info = res.data
+          this.info = res.data[0]
         }).catch(e => {
           hideLoading()
         })
