@@ -37,15 +37,20 @@
         <div class="group-cell" @click="openPop('orderType')">
           <div class="cell-item">
             <div class="label">订单类型</div>
-            <div class="content"></div>
+            <div class="content">
+              <div class="text-right fz-14">{{prod_order_type_list[formData.prod_order_type].title}}</div>
+            </div>
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
           </div>
         </div>
 
         <div class="group-cell" @click="openPop('systemCatePop')">
           <div class="cell-item">
-            <div class="label">平台商品分类</div>
-            <div class="content"></div>
+            <div class="label">平台分类</div>
+            <div class="content flex">
+              <div class="flex1"></div>
+              <div class="text-right fz-14 text-nowrap" style="width: 400rpx;">{{systemCateHasStr}}</div>
+            </div>
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
           </div>
         </div>
@@ -94,22 +99,22 @@
             <div class="cell-item" style="border-bottom: none">
               <div class="label">规格名</div>
               <div class="content">
-                <input @input="bindSpecNameInput" class="line-input" style="width: 450rpx" placeholder="请输入规格名" />
+                <input @input="bindSpecNameInput" :value="item.name" class="line-input" style="width: 450rpx" placeholder="请输入规格名" />
               </div>
             </div>
             <div class="cell-item" style="border-bottom: none">
               <div class="label">商品价格</div>
               <div class="content">
                 <div class="flex flex-vertical-center"  style="width: 450rpx">
-                  <input class="line-input" @input="bindSpecMarketPriceInput" style="width: 210rpx" placeholder="请输入商品原价"  />
-                  <input class="line-input" @input="bindSpecSellingPriceInput" style="width: 210rpx;margin-left: 30rpx" placeholder="请输入商品现价"  />
+                  <input class="line-input" :value="item.Supply_Price" @input="bindSpecMarketPriceInput" style="width: 210rpx" placeholder="请输入商品原价"  />
+                  <input class="line-input" :value="item.Attr_Price" @input="bindSpecSellingPriceInput" style="width: 210rpx;margin-left: 30rpx" placeholder="请输入商品现价"  />
                 </div>
               </div>
             </div>
             <div class="cell-item">
               <div class="label">库存</div>
               <div class="content">
-                <input class="line-input" @input="bindSpecStockInput" style="width: 450rpx" placeholder="请输入商品库存" />
+                <input class="line-input" :value="item.Property_count" @input="bindSpecStockInput" style="width: 450rpx" placeholder="请输入商品库存" />
               </div>
             </div>
           </div>
@@ -164,7 +169,10 @@
         <div class="group-cell" @click="openPop('bizCatePop')">
           <div class="cell-item">
             <div class="label">自定义分类</div>
-            <div class="content"></div>
+            <div class="content flex">
+              <div class="flex1"></div>
+              <div class="text-right fz-14 text-nowrap" style="width: 400rpx;">{{bizCateHasStr}}</div>
+            </div>
             <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
           </div>
         </div>
@@ -195,21 +203,34 @@
           <div class="cell-item" @click="openPop('limitBuy')">
             <div class="label">限购</div>
             <div class="content"></div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c9 fz-12" v-if="formData.prod_limit.switch">限制</span>
+                <span class="c4 fz-12" v-else>不限制</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
           </div>
           <div class="cell-item" @click="openPop('couponPop')">
             <div class="label">优惠券赠送</div>
             <div class="content">
             </div>
             <div class="right">
-              <div class="flex-vertical-center flex"><span class="c9 fz-12">不赠送</span><icon type="iconarrowleft" color="#999"></icon></div>
+              <div class="flex-vertical-center flex">
+                <span v-if="isSendCoupon" class="c4 fz-12">赠送</span>
+                <span v-else class="c4 fz-12">不赠送</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
             </div>
           </div>
           <div class="cell-item" @click="openPop('back')">
               <div class="label">退换货</div>
               <div class="content flex"></div>
               <div class="right">
-                <div class="flex-vertical-center flex"><span class="c9 fz-12">{{shopDamageList[shopDamageIdx].Damage_Name || '未设置'}}</span><icon type="iconarrowleft" color="#999"></icon></div>
+                <div class="flex-vertical-center flex">
+                  <span v-if="shopDamageList[shopDamageIdx].Damage_Name" class="c4 fz-12">{{shopDamageList[shopDamageIdx].Damage_Name}}</span>
+                  <span v-else class="c9 fz-12">未设置</span>
+                  <icon type="iconarrowleft" color="#999"></icon></div>
               </div>
           </div>
 
@@ -218,7 +239,10 @@
             <div class="content">
             </div>
             <div class="right">
-              <div class="flex-vertical-center flex"><span class="c9 fz-12">设置运费</span><icon type="iconarrowleft" color="#999"></icon></div>
+              <div class="flex-vertical-center flex">
+                <span v-if="formData.fee_type===1 || formData.fee_type===0" class="c4 fz-12">{{formData.fee_type===1?'固定运费':'运费模板'}}</span>
+                <span v-else class="c9 fz-12">设置运费</span>
+                <icon type="iconarrowleft" color="#999"></icon></div>
             </div>
           </div>
           <div class="cell-item">
@@ -296,7 +320,7 @@
     </popup-layer>
 
     <popup-layer ref="systemCatePop" title="平台分类" :autoClose="false">
-      <div v-if="ProductCateList.length>0">
+      <div v-if="ProductCateList.length>0" style="height: 50vh;overflow-y: scroll;">
         <fun-tree
           ele-id="prodSystemCate"
           :has="systemCateHas"
@@ -305,7 +329,7 @@
           :show-checkbox="true"
           :check-only-leaf="true"
           :tree-data="ProductCateList"
-          nodeKey="id"
+          nodeKey="Category_ID"
         >
         </fun-tree>
       </div>
@@ -400,22 +424,22 @@
         <label class="type-item flex flex-vertical-center bor-b">
           <radio color="#00A8FF" value="0" :checked="formData.prod_order_type === 0"></radio>
           <div class="label p-10">
-            <div class="title m-b-4">实物订单</div>
-            <div class="desc fz-12 c9">买家下单-买家付款-商家发货-买家收货-订单完成</div>
+            <div class="title m-b-4">{{prod_order_type_list[0].title}}</div>
+            <div class="desc fz-12 c9">{{prod_order_type_list[0].desc}}</div>
           </div>
         </label>
         <label class="type-item flex flex-vertical-center bor-b">
           <radio color="#00A8FF" value="1" :checked="formData.prod_order_type === 1"></radio>
           <div class="label p-10">
-            <div class="title m-b-4">虚拟订单</div>
-            <div class="desc fz-12 c9">买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成</div>
+            <div class="title m-b-4">{{prod_order_type_list[1].title}}</div>
+            <div class="desc fz-12 c9">{{prod_order_type_list[1].desc}}</div>
           </div>
         </label>
         <label class="type-item flex flex-vertical-center bor-b">
           <radio color="#00A8FF" value="2" :checked="formData.prod_order_type === 2"></radio>
           <div class="label p-10">
-            <div class="title m-b-4">其他</div>
-            <div class="desc fz-12 c9">买家下单-买家付款-订单完成</div>
+            <div class="title m-b-4">{{prod_order_type_list[2].title}}</div>
+            <div class="desc fz-12 c9">{{prod_order_type_list[2].desc}}</div>
           </div>
         </label>
       </radio-group>
@@ -508,13 +532,14 @@
       bizProdCateFormShow: false,
       newBizProdCateText: '',
       ProductCateList: [],
-      hasSystemCate: [],
       systemCateConf: {
         children: 'child', // 指定子树为节点对象的某个属性值
         label: 'Category_Name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
       },
+      systemCateHasStr: '',
       systemCateHas: [], // 系统商品分类
+      bizCateHasStr: '',
       bizCategoryHas: [], // 商家商品分类
       bizProdCateList: [],
       bizCateConf: {
@@ -545,6 +570,11 @@
       Products_ID: null,
       content: '',
       contentReady: false,
+      prod_order_type_list: [
+        {title: '实物订单', desc: '买家下单-买家付款-商家发货-买家收货-订单完成'},
+        {title: '虚拟订单', desc: '买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成'},
+        {title: '其他', desc: '买家下单-买家付款-订单完成'}
+      ],
       formData: {
         Products_Index: 1,
         Products_Name: '',
@@ -561,7 +591,7 @@
         Product_backup: null,
         Products_Type: '', // 产品属性类型，和规格有关。如果specs再编辑模式下被全部删除，则需手动置为''
         // 运费
-        fee_type: 1,
+        fee_type: '',
         fix_fee: '',
         shipping_temp: null,
         Products_Weight: '', // 重量
@@ -580,6 +610,11 @@
         },
         prod_order_type: 0// 订单类型
 
+      }
+    },
+    computed: {
+      isSendCoupon() {
+        return this.couponList.filter(item => item.check).length > 0
       }
     },
     watch: {
@@ -601,8 +636,10 @@
           },
           prod_order_type: {
             required: true,
+            enum: [0, 1, 2],
             message: {
-              required: '订单类型必填'
+              required: '订单类型必填',
+              enum: '订单类型无效'
             }
           },
           Products_Name: {
@@ -783,6 +820,8 @@
 
           let prod_attrval = JSON.stringify({attrs, values: specAttrValue})
           productInfo.prod_attrval = prod_attrval
+        } else {
+          productInfo.Products_Type = ''// 如果是空规格的话，需要手动把商品属性id设置为''
         }
         if (this.Products_ID)productInfo.prod_id = this.Products_ID
         console.log(productInfo)
@@ -859,12 +898,14 @@
         console.log(checkNodeList)
         this.closePop('bizCatePop')
         this.bizCategoryHas = getArrColumn(checkNodeList, 'id')
+        this.bizCateHasStr = getArrColumn(checkNodeList, 'cate_name').join(',')
       },
       setSystemCate() {
         const checkNodeList = this.$refs.systemCateTree.getCheckedNodes()
         console.log(checkNodeList)
         this.closePop('systemCatePop')
-        this.systemCateHas = getArrColumn(checkNodeList, 'id')
+        this.systemCateHas = getArrColumn(checkNodeList, 'Category_ID')
+        this.systemCateHasStr = getArrColumn(checkNodeList, 'Category_Name').join(',')
       },
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
@@ -911,9 +952,6 @@
         const idx = e.$wx.detail.value
         this.limitBuyIndex = idx
         this.formData.prod_limit.limit.type = this.PROD_LIMIT_TYPE[idx].id
-      },
-      async _init() {
-
       },
       onEditorStatusChange(e) {
         console.log(e)
@@ -1004,33 +1042,20 @@
         }
       },
       async addImg() {
-        if (this._click) {
-          error('操作过快')
-          return
+        try {
+          if (this._click) throw Error('操作过快')
+          const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch(() => { throw Error('未选择图片') })
+          const arr1 = files.map(file => {
+            return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+          })
+          this.imgTempList = this.imgTempList.concat(arr1)
+          const imgs = getArrColumn(files, 'path')
+          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch(() => { throw Error('文件批量上传失败:' + JSON.stringify(err)) })
+          this.imgs = this.imgs.concat(ossUrls)
+          this._click = false
+        } catch (e) {
+          console.log(e.message)
         }
-        const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch(err => {
-          wx.showModal({
-            title: '请选择图片',
-            content: JSON.stringify(err)
-          })
-          return []
-        })
-
-        const arr1 = files.map(file => {
-          return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
-        })
-        this.imgTempList = this.imgTempList.concat(arr1)
-        const imgs = getArrColumn(files, 'path')
-        const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch(err => {
-          wx.showModal({
-            title: '文件批量上传失败',
-            content: JSON.stringify(err)
-          })
-        })
-
-        this.imgs = this.imgs.concat(ossUrls)
-
-        this._click = false
       },
       _initBizProdCate() {
         getBizProdCateList({return_type: 'tree'}, {tip: '获取商家分类'}).then(res => {
@@ -1039,9 +1064,33 @@
       },
       async _init_func() {
         try {
+        // 获取公共配置
+          this._default = await getSystemProdConfig({prod_id: this.Products_ID}, {onlyData: true}).catch(() => { throw Error('获取公共配置失败') })
+          const { prod_limit_type = [], shop_damage = [] } = this._default
+          this.PROD_LIMIT_TYPE = prod_limit_type
+          this.shopDamageList = shop_damage
+
+          // 运费模板
+          this.shippingTmplList = await getShippingTemplate({}, {onlyData: true}).catch(() => { throw Error('获取运费模板信息失败') })
+
+          // 自定义分类
+          this.bizProdCateList = await getBizProdCateList({return_type: 'tree'}, {onlyData: true}).catch(() => { throw Error('获取自定义分类信息失败') })
+
+          // 平台分类
+          this.ProductCateList = await getProductCategory({ return_type: 'tree' }, {onlyData: true}).catch(() => { throw Error('获取平台分类信息失败') })
+
+          // 优惠券
+          this.couponList = await getCouponList({}, {onlyData: true}).catch(() => { throw Error('获取优惠券信息失败') })
+
           if (this.Products_ID) {
             const productData = await getProductDetail({prod_id: this.Products_ID}, {onlyData: true}).catch(() => { throw Error('获取商品信息失败') })
             console.log('productData is', productData)
+
+            const {values: specsValues = []} = productData.prod_attrval_mobile
+            this.specs = specsValues.map(item => {
+              const { Attr_Price = 0, Supply_Price = 0, Property_count = 0 } = item
+              return { Attr_Price, Supply_Price, Property_count, name: item.Attr_Value.mobile_prod_attr_name.replace(/mobile_prod_attr_name：/, '')}
+            })
 
             // 缩略图
             const {ImgPath = []} = productData.Products_JSON
@@ -1062,6 +1111,16 @@
             // 商品承诺
             this.promiseList = productData.Products_Promise
 
+            // 优惠券
+            const coupon_present = productData.coupon_present.split(',')
+            for (var i = 0; i < this.couponList.length; i++) {
+              this.couponList[i].check = coupon_present.includes(this.couponList['Coupon_ID'])
+            }
+
+            // 初始化分类
+            this.setBizCate()
+            this.setSystemCate()
+
             // 富文本
             wx.createSelectorQuery().select('#editor').context((res) => {
               const editorInstance = res.context
@@ -1079,23 +1138,6 @@
               }
             }).exec()
           }
-          // 获取公共配置
-          this._default = await getSystemProdConfig({prod_id: this.Products_ID}, {onlyData: true}).catch(() => { throw Error('获取公共配置失败') })
-          const { prod_limit_type = [], shop_damage = [] } = this._default
-          this.PROD_LIMIT_TYPE = prod_limit_type
-          this.shopDamageList = shop_damage
-
-          // 运费模板
-          this.shippingTmplList = await getShippingTemplate({}, {onlyData: true}).catch(() => { throw Error('获取运费模板信息失败') })
-
-          // 自定义分类
-          this.bizProdCateList = await getBizProdCateList({return_type: 'tree'}, {onlyData: true}).catch(() => { throw Error('获取自定义分类信息失败') })
-
-          // 平台分类
-          this.ProductCateList = await getProductCategory({ return_type: 'tree' }, {onlyData: true}).catch(() => { throw Error('获取平台分类信息失败') })
-
-          // 优惠券
-          this.couponList = await getCouponList({}, {onlyData: true}).catch(() => { throw Error('获取优惠券信息失败') })
         } catch (e) {
           error(e.message)
         }
@@ -1226,7 +1268,7 @@
           /*font-size: 16px;*/
         }
         .content{
-          padding-right: 20rpx;
+          padding-right : 20rpx;
           text-align: left;
           .line-input{
             border:1px solid #eee;
