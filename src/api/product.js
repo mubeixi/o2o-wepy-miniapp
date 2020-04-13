@@ -48,3 +48,6 @@ export const bizProdDown = (param, options) => fetch({act: 'bizProdUpdown', para
 export const getActiveInfo = (param, options) => fetch({act: 'getActiveInfo', param: {...param, updown_sales: 'down'}, options})
 //添加/编辑活动
 export const opActive = (param, options) => fetch({act: 'opActive', param: {...param, updown_sales: 'down'}, options})
+
+//获取产品分类
+export const getProductCategory = (param, options) => fetch({act: 'pro_cate', param, options})
