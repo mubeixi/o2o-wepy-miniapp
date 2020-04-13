@@ -1,11 +1,11 @@
 <template>
   <div class="store-all">
-    <div class="store-item flex flex-vertical-center flex-justify-between">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="$linkTo('/pages/store/StoreInfoUpda?type=3')">
       <div class="store-title">
         取货地址
       </div>
-      <div class="store-titles">
-        郑州市金水区文化路硅谷广场
+      <div class="store-titles flex flex-vertical-center">
+        <span class="address">{{address}}</span>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -91,10 +91,10 @@
                     <div style="color: #2ABB23" v-if="dada.provider_status==2">
                       已开通
                     </div>
-                    <div v-if="dada.provider_status==1">
+                    <div v-else-if="dada.provider_status==1">
                       审核中
                     </div>
-                    <div v-if="dada.provider_status==-1">
+                    <div v-else-if="dada.provider_status==-1">
                       未开通
                     </div>
                     <div class="font-wzw"  v-else>
@@ -121,10 +121,10 @@
               <div style="color: #2ABB23" v-if="meituan.provider_status==2">
                 已开通
               </div>
-              <div v-if="meituan.provider_status==1">
+              <div v-else-if="meituan.provider_status==1">
                 审核中
               </div>
-              <div v-if="meituan.provider_status==-1">
+              <div v-else-if="meituan.provider_status==-1">
                 未开通
               </div>
               <div class="font-wzw"  v-else>
@@ -151,10 +151,10 @@
               <div style="color: #2ABB23" v-if="fengniao.provider_status==2">
                 已开通
               </div>
-              <div v-if="fengniao.provider_status==1">
+              <div v-else-if="fengniao.provider_status==1">
                 审核中
               </div>
-              <div v-if="fengniao.provider_status==-1">
+              <div v-else-if="fengniao.provider_status==-1">
                 未开通
               </div>
               <div class="font-wzw"  v-else>
@@ -181,7 +181,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getCityExpressConfig, opCityExpressConfig, cityExpressProvider} from '../../api/store'
+  import {getCityExpressConfig, opCityExpressConfig, cityExpressProvider, getBizInfo} from '../../api/store'
   import {
     hideLoading,
     linkTo, showLoading
@@ -191,6 +191,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      address:'',
       type: 1,
       index: 0,
       provider: {}, // 服务商
@@ -201,7 +202,7 @@
       meituan: {},
       fengniao: {}
     },
-    onLoad(options) {
+    onShow() {
       this.init()
     },
     methods: {
@@ -286,6 +287,10 @@
               this.index = it
             }
           }
+        })
+
+        getBizInfo().then(res => {
+              this.address=res.data.area_address+res.data.biz_address
         })
       }
     }
@@ -373,6 +378,15 @@
     line-height: 108rpx;
     color: #999999;
     font-size: 26rpx;
+  }
+  .address{
+    display: inline-block;
+    width: 500rpx;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 108rpx;
+    line-height: 108rpx;
+    text-overflow:ellipsis;
   }
 
 </style>
