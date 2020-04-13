@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrap">
     <div class="head"  @click="toProfile">
-      <div class="base" @click="$linkTo('/pages/store/StoreSetting')">
+      <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')">
         <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
         <span class="store-title">{{info.biz_shop_name}}</span>
       </div>

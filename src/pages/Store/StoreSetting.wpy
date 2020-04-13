@@ -213,7 +213,7 @@
       },
       upEndTime(e) {
         this.end_time = e
-        let start = '2000-10-1' + this.start_time
+        let start = '2000-10-1 ' + this.start_time
         let end = '2000-10-1 ' + this.end_time
         let boo = moment(end).isAfter(start)
         if (!boo) {

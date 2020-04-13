@@ -21,7 +21,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {getActiveInfo, opActive} from '../../api/product'
-  import { error, hideLoading, showLoading } from '../../common/fun'
+  import { back, error, hideLoading, showLoading } from '../../common/fun'
 
   wepy.page({
     store,
@@ -47,6 +47,7 @@
         }
         showLoading('保存中')
         opActive(data).then(res => {
+          back()
           hideLoading()
         }).catch(e => {})
       },

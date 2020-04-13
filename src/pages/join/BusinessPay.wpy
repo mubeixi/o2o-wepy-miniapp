@@ -166,21 +166,26 @@
           bizOrderPay(datas).then(res => {
             hideLoading()
             let obj = res.data
-            let {timeStamp, nonceStr, paySign} = obj || {}
-            let packages = obj.package
-            wx.requestPayment({
-              timeStamp: timeStamp,
-              nonceStr: nonceStr,
-              package: packages,
-              signType: 'MD5',
-              paySign: paySign,
-              success (res) {
-                linkTo('/pages/index')
-              },
-              fail (res) {
-                console.log(res, 'ss')
-              }
-            })
+            if (obj) {
+              let {timeStamp, nonceStr, paySign} = obj || {}
+              let packages = obj.package
+              wx.requestPayment({
+                timeStamp: timeStamp,
+                nonceStr: nonceStr,
+                package: packages,
+                signType: 'MD5',
+                paySign: paySign,
+                success (res) {
+                  linkTo('/pages/index')
+                },
+                fail (res) {
+                  console.log(res, 'ss')
+                }
+              })
+            } else {
+              toast(res.msg)
+              linkTo('/pages/index')
+            }
           }).catch(e => { hideLoading() })
         }).catch(e => {
           hideLoading()
