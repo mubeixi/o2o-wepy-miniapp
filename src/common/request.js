@@ -230,11 +230,11 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
           resolve(path)
         } else {
           resolve(false)
-          toast('文件上传失败')
+          //toast('文件上传失败')
         }
       },
       fail: (err) => {
-        reject(new Error(err))
+        reject(err)
       },
       complete: (rt) => {
 
