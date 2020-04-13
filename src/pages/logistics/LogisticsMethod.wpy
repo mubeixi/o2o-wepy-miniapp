@@ -101,6 +101,9 @@
       this.editData = ls.get('Template_Content')
       if (this.editData) {
         this.express_start = this.editData.express.default.start
+        this.express_postage = this.editData.express.default.postage
+        this.express_plus = this.editData.express.default.plus
+        this.express_postageplus = this.editData.express.default.postageplus
         let arr = []
         for (let item of this.editData.express.special_content) {
           arr.push({
@@ -113,9 +116,7 @@
           })
         }
         this.special_content = arr
-        this.express_postage = this.editData.express.default.postage
-        this.express_plus = this.editData.express.default.plus
-        this.express_postageplus = this.editData.express.default.postageplus
+
       }
     },
     methods: {

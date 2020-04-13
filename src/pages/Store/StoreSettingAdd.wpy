@@ -9,14 +9,12 @@
         <input type="text" v-model="store_name"  placeholder="请输入门店名称" placeholder-class="__placeholder"  class="input-logistics" >
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between" >
+    <div class="store-item flex flex-vertical-center flex-justify-between"  @click.stop="$openPop('address')">
       <div class="store-title">
         所属区域
       </div>
-      <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{cardDate}}"   range-key="bank_name" >
-        {{cardDate[index].bank_name}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-      </picker>
+      <address @up="updateAddress" :visiable='false'   class="address m-l-10 flex flex-vertical-center" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
+
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
@@ -36,24 +34,24 @@
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between" >
       <div class="titles">
-        开始时间
+        营业开始时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
         <time @uptime="upStartTime" mode='time' :val="business_start">
           <span class="fz-14" v-if="business_start">{{business_start}}</span>
-          <span class="fz-14 c9" v-else>请选择开始时间</span>
+          <span class="fz-14 c9" v-else>请选择营业开始时间</span>
         </time>
         <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between" >
       <div class="titles">
-        结束时间
+        营业结束时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
         <time @uptime="upEndTime" mode='time' :val="business_end">
           <span class="fz-14" v-if="business_end">{{business_end}}</span>
-          <span class="fz-14 c9" v-else>请选择结束时间</span>
+          <span class="fz-14 c9" v-else>请选择营业结束时间</span>
         </time>
         <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
       </div>
@@ -92,7 +90,11 @@
       store_mobile: '',
       business_start: '',
       business_end: '',
-      formCheckResult: ''
+      formCheckResult: '',
+      province: '',
+      city: '',
+      area: '',
+      selectArea: ''
     },
     onLoad(options) {
       if (options.id) {
@@ -101,6 +103,14 @@
       }
     },
     methods: {
+      // 选择的地址
+      updateAddress(data) {
+        this.selectArea = data.str
+        let selectValue = data.id
+        this.province = selectValue[0]
+        this.city = selectValue[1]
+        this.area = selectValue[2]
+      },
       init() {
         showLoading('加载中')
         getStoreList({store_id: this.id}).then(res => {
@@ -110,6 +120,10 @@
           this.store_mobile = arr.store_mobile
           this.business_start = arr.business_start
           this.business_end = arr.business_end
+          this.selectArea = arr.area_address
+          this.province = arr.store_province
+          this.city = arr.store_city
+          this.area = arr.store_area
           hideLoading()
         }).catch(e => { hideLoading() })
       },
@@ -120,11 +134,14 @@
           store_mobile: this.store_mobile,
           business_start: this.business_start,
           business_end: this.business_end,
-          area_id: 1542
+          area_id: this.area
         }
         const rule = {
           area_id: {
-            required: true
+            required: true,
+            message: {
+              required: '请选择地址'
+            }
           },
           store_name: {
             required: true,
@@ -150,14 +167,14 @@
             required: true,
             type: String,
             message: {
-              required: '开始时间必选'
+              required: '营业开始时间必选'
             }
           },
           business_end: {
             required: true,
             type: String,
             message: {
-              required: '结束时间必选'
+              required: '营业结束时间必选'
             }
           }
         }
@@ -227,6 +244,9 @@
     font-size: 26rpx;
     color: #333333;
   }
+  .address{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    height: 108rpx;
+    flex: 1;}
   .__placeholder{
     color: #CAC8C8;
   }
@@ -260,6 +280,7 @@
   "usingComponents": {
   "icon": "~@/components/icon",
   "err-msg": "~@/components/err-msg",
+  "address": "~@/components/address",
   "time": "~@/components/time",
   }
   }

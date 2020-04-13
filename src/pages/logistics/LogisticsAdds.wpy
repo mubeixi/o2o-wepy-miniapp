@@ -73,7 +73,7 @@
       temp_id: '', // 模板id
       Template_Name: ''// 模板名称
     },
-    onUnload(){
+    onUnload() {
       ls.remove('Template_Content')
       ls.remove('Free_Content')
     },
@@ -81,7 +81,7 @@
       if (options.temp_id) {
         this.temp_id = options.temp_id
         this.getDetail()
-      }else{
+      } else {
         ls.remove('Template_Content')
         ls.remove('Free_Content')
       }
@@ -103,6 +103,17 @@
         showLoading('加载中')
         getTemplateDetail({'temp_id': this.temp_id}).then(res => {
           this.listData = res.data
+            // 因为添加和获取的时候  字段不一样  所以 特此循环没得办法
+          if (this.listData.Template_Content.express.special_content) {
+            for (let item of this.listData.Template_Content.express.special_content) {
+              item.express_areas = item.areas
+              item.express_desc = item.desc
+              item.express_start = item.start
+              item.express_postage = item.postage
+              item.express_plus = item.plus
+              item.express_postageplus = item.postageplus
+            }
+          }
           hideLoading()
           ls.remove('Template_Content')
           ls.remove('Free_Content')

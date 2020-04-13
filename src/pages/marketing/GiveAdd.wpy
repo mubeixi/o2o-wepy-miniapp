@@ -329,6 +329,10 @@
           pro_id: this.pro_id
         }
         if (this.selectValue.Products_Type != 0) {
+          if(!selectSku.Attr_Value){
+            this.formCheckResult = ['请设置赠品规格']
+            return
+          }
           obj.attr_id = selectSku.Product_Attr_ID
           obj.attr_txt = selectSku.Attr_Value.mobile_prod_attr_name
         }
@@ -409,6 +413,14 @@
         showLoading('加载中')
         getShopGiftInfo({id: this.id }).then(res => {
           this.editData = res.data
+          for (let item of this.proData) {
+            console.log(item,this.editData.product_id,"ss")
+            if (item.Products_ID == this.editData.product_id) {
+              this.selectValue = item
+              item.check = true
+              this.pro_id = item.Products_ID
+            }
+          }
           this.gift_name = this.editData.gift_name
           this.valid_days = this.editData.valid_days
           this.limit_times = this.editData.limit_times
@@ -431,13 +443,6 @@
             }
           }
 
-          for (let item of this.proData) {
-            if (item.Products_ID == this.editData.product_id) {
-              this.selectValue = item
-              item.check = true
-              this.pro_id = item.Products_ID
-            }
-          }
           hideLoading()
         }).catch(e => { hideLoading() })
       },

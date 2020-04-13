@@ -209,6 +209,8 @@ wepy.page({
       this._init_func()
     },
     onShow() {
+      this.productList=[]
+      this.paginate.page=1
       this._init_func()
     },
     created() {
