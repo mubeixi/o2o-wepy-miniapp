@@ -109,7 +109,7 @@
     methods: {
       // 重新生成
       clearFn({item, nodeKey}) {
-        console.log('clearFn', item, nodeKey,this.$refs)
+        console.log('clearFn', item, nodeKey, this.$refs)
         // this.tree = objTranslate(this.treeData)
         for (let i in this.$refs) {
           this.$refs[i].restCheck({item, nodeKey})
@@ -120,8 +120,9 @@
       }
     },
     ready() {
-      // console.log(this.has)
       this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has})
+      // 用来告诉父组件我好了，可以搞事
+      this.$emit('done')
     }
   })
 </script>
