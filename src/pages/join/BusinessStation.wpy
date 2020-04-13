@@ -91,8 +91,11 @@
           <div class="station-title-sub">恭喜您入驻成功</div>
         </div>
 
-        <div class="station-button active"  @click="$linkTo('/pages/index')">
+        <div class="station-button active" v-if="info.entry_process.is_pay==1&&info.entry_process.is_agree==1&&info.entry_process.is_auth==1"  @click="$linkTo('/pages/index')">
           已完成
+        </div>
+        <div class="station-button" v-else>
+          未完成
         </div>
 
       </div>
@@ -112,6 +115,7 @@
 
   import {getBizInfo} from '../../api/store'
   import { linkTo } from '../../common/fun'
+  import { ls } from '../../common/helper'
 
   wepy.page({
     store,
@@ -156,6 +160,7 @@
         if (!this.info.entry_process) {
           this.info.entry_process = {}
         }
+        ls.set('status',this.info.status)
 
       }
     }

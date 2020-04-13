@@ -127,7 +127,7 @@
     },
     methods: {
       getDetail() {
-        getUserLevel({id:this.id}).then(res => {
+        getUserLevel({id:this.id},{tip:'加载中',mask:true}).then(res => {
           this.vipData = res.data[0]
           this.level_name = this.vipData.level_name
           this.price = this.vipData.price
