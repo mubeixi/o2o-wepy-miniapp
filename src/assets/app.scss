@@ -112,6 +112,9 @@ page{
 .color-red{
   color: $fun-red-color;
 }
+.color-blue{
+  color: $fun-blue-color;
+}
 
 .text-left{
   text-align: left;
@@ -242,6 +245,9 @@ page{
   }
 }
 
+
+
+//底部用
 .safearea-box{
   height: constant(safe-area-inset-bottom);
   height: env(safe-area-inset-bottom);
