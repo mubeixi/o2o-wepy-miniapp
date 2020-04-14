@@ -32,6 +32,9 @@
           打印机设置
         </div>
         <div class="store-titles">
+          <block v-if="print_config.sn&&print_config.secret&&print_config.count">
+            已配置
+          </block>
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
@@ -175,15 +178,12 @@
       },
       bizOuts() {
         bizLogout().then(res => {
-          toast('登出成功')
-          setTimeout(function() {
-            ls.remove('access_token')
-            ls.remove('users_id')
-            ls.remove('biz_account')
-            ls.remove('biz_id')
-            ls.remove('status')
-            linkTo('/pages/index')
-          }, 1000)
+          ls.remove('access_token')
+          ls.remove('users_id')
+          ls.remove('biz_account')
+          ls.remove('biz_id')
+          ls.remove('status')
+          linkTo('/pages/index')
         })
       },
       init() {
@@ -192,10 +192,10 @@
           this.arrive_get = this.infoData.arrive_get
           this.start_time = this.infoData.business_start
           this.end_time = this.infoData.business_end
-          this.print_config.sn=this.infoData.print_config.sn
-          this.print_config.secret=this.infoData.print_config.secret
-          this.print_config.count=this.infoData.print_config.count
-          this.print_config.auto=this.infoData.print_config.auto
+          this.print_config.sn = this.infoData.print_config.sn
+          this.print_config.secret = this.infoData.print_config.secret
+          this.print_config.count = this.infoData.print_config.count
+          this.print_config.auto = this.infoData.print_config.auto
         })
       },
       upStartTime(e) {
@@ -213,8 +213,9 @@
       },
       upEndTime(e) {
         this.end_time = e
-        let start = '2000-10-1 ' + this.start_time
-        let end = '2000-10-1 ' + this.end_time
+        let start = '2000-10-01 ' + this.start_time
+        let end = '2000-10-01 ' + this.end_time
+        console.log(start, end)
         let boo = moment(end).isAfter(start)
         if (!boo) {
           error('结束时间必须大于开始时间')

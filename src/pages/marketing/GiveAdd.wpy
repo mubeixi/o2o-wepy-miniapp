@@ -3,14 +3,16 @@
     <err-msg :errs="formCheckResult"></err-msg>
     <block v-if="pro_id">
       <div  class="flex  product-mbx" @click="openPop('product')">
-        <div class="thumbs" :style="{backgroundImage:'url('+selectValue.ImgPath+')'}">
+<!--        <fun-img class="thumbs" :src="selectValue.ImgPath"></fun-img>-->
+        <div class="thumbs">
+          <image :src="selectValue.ImgPath" style="width: 100%;height: 100%;"></image>
         </div>
         <div class="info">
           <div class="title-my">
             {{selectValue.Products_Name}}
           </div>
           <div class="fz-13 c6">
-            原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">199.00</span>
+            现价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">{{selectValue.Products_PriceX}}</span>
           </div>
         </div>
       </div>
@@ -19,13 +21,13 @@
       <div style="width: 750rpx;height: 50rpx;"></div>
       <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
         <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
-        添加秒杀
+        选择商品
       </div>
     </block>
     <block v-if="pro_id&&selectValue.Products_Type!==0">
       <div class="submitq flex flex-vertical-center flex-justify-center" @click="goAdd">
         <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-2"></icon>
-        设置参与秒杀的型号
+        设置商品的型号
       </div>
     </block>
 
@@ -112,6 +114,7 @@
           <radio color="#00A8FF" value=1 :checked="shipping_type === 1"></radio>
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">物流模板</div>
+            <div class="title m-r-15">{{Template_Name}}</div>
             <div class="select-pro" @click="selectPro">
               选择模板
             </div>
@@ -202,12 +205,13 @@
     store,
     mixins: [pageMixin],
     data: {
+      Template_Name:'',
       weight: '',
       is_shipping: 0,
       sort: '',
       gift_name: '',
       valid_days: '',
-      limit_times: 0,
+      limit_times: '',
       shipping_price: '',
       shipping_id: '',
       emsData: [],
@@ -245,6 +249,7 @@
           item.check = false
         })
         this.emsData[index].check = !this.emsData[index].check
+        this.Template_Name=this.emsData[index].Template_Name
       },
       selectPro() {
         this.$closePop('myModal')
@@ -674,6 +679,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
+  "fun-img": "~@/components/fun-img",
   "err-msg": "~@/components/err-msg",
   "icon": "~@/components/icon",
   "popup-layer": "~@/components/popup-layer",

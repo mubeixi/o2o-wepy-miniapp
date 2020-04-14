@@ -90,14 +90,18 @@
       goMail() {
         if (this.temp_id) {
           linkTo('/pages/logistics/LogisticsAddsMail?temp_id=' + this.temp_id)
+        }else{
+          linkTo('/pages/logistics/LogisticsAddsMail')
         }
-        linkTo('/pages/logistics/LogisticsAddsMail')
+
       },
       goMethods() {
         if (this.temp_id) {
           linkTo('/pages/logistics/LogisticsMethod?temp_id=' + this.temp_id)
+        }else{
+          linkTo('/pages/logistics/LogisticsMethod')
         }
-        linkTo('/pages/logistics/LogisticsMethod')
+
       },
       getDetail() {
         showLoading('加载中')

@@ -19,13 +19,13 @@
         <div style="width: 750rpx;height: 50rpx;"></div>
         <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
           <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
-          添加秒杀
+          选择商品
         </div>
       </block>
       <block v-if="pro_id&&selectValue.Products_Type!==0">
         <div class="submitq flex flex-vertical-center flex-justify-center" @click="goAdd">
           <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-2"></icon>
-          设置参与秒杀的型号
+          设置商品的型号
         </div>
       </block>
 

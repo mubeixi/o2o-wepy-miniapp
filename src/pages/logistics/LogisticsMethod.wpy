@@ -2,13 +2,13 @@
   <div class="mail-all">
     <div class="first">
       <span class="first-title">默认运费：</span>
-      <input type="text" class="input-out"  v-model="express_start"/> kg内，
-      <input type="text"  class="input-out" v-model="express_postage"/> 元
+      <input type="digit" class="input-out"  v-model="express_start"/> kg内，
+      <input type="digit"  class="input-out" v-model="express_postage"/> 元
     </div>
     <div class="second">
       每增加
-      <input type="text" class="input-out" v-model="express_plus"/> kg，增加运费
-      <input type="text"  class="input-out" v-model="express_postageplus"/> 元
+      <input type="digit" class="input-out" v-model="express_plus"/> kg，增加运费
+      <input type="digit"  class="input-out" v-model="express_postageplus"/> 元
     </div>
 
 
@@ -29,7 +29,7 @@
           首重
         </div>
         <div class="input-div">
-          <input type="number"  class="input-my" v-model="item.express_start"/>  kg
+          <input type="digit"  class="input-my" v-model="item.express_start"/>  kg
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -37,7 +37,7 @@
           首费
         </div>
         <div class="input-div">
-          <input type="number"  class="input-my"  v-model="item.express_postage"/>  元
+          <input type="digit"  class="input-my"  v-model="item.express_postage"/>  元
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -45,7 +45,7 @@
           续重
         </div>
         <div class="input-div">
-          <input type="number"  class="input-my"  v-model="item.express_plus"/>  kg
+          <input type="digit"  class="input-my"  v-model="item.express_plus"/>  kg
         </div>
       </div>
       <div class="mail-item-bottom flex" style="border-bottom: 0px">
@@ -53,7 +53,7 @@
           续费
         </div>
         <div class="input-div">
-          <input type="number"  class="input-my"  v-model="item.express_postageplus"/>  元
+          <input type="digit"  class="input-my"  v-model="item.express_postageplus"/>  元
         </div>
       </div>
     </div>
@@ -62,7 +62,6 @@
       为指定区域设置运费
     </div>
     <city @onConfirm="selectValue" :has="hasValue"  @close="close"   deep="2"  :show="showSelect"></city>
-
     <div style="height: 86rpx;width: 100%"></div>
     <div class="submit-main" @click="saveNext">
       提交
@@ -94,29 +93,13 @@
       express_plus: '',
       express_postageplus: ''
     },
-    onLoad(options) {
-      if (options.temp_id) {
-        this.temp_id = options.temp_id
-      }
-      this.editData = ls.get('Template_Content')
-      if (this.editData) {
-        this.express_start = this.editData.express.default.start
-        this.express_postage = this.editData.express.default.postage
-        this.express_plus = this.editData.express.default.plus
-        this.express_postageplus = this.editData.express.default.postageplus
-        let arr = []
-        for (let item of this.editData.express.special_content) {
-          arr.push({
-            express_areas: item.areas,
-            express_desc: item.desc,
-            express_start: item.start,
-            express_postage: item.postage,
-            express_plus: item.plus,
-            express_postageplus: item.postageplus
-          })
+    watch: {
+      special_content: {
+        immediate: true,
+        deep: true,
+        handler(val) {
+          console.log(val)
         }
-        this.special_content = arr
-
       }
     },
     methods: {
@@ -143,10 +126,14 @@
         wx.navigateBack({delta: -1})
       },
       addList() {
+        const time1 = new Date().getTime()
         this.special_content.push({express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''})
+        const time2 = new Date().getTime()
+        console.log(time2 - time1)
       },
       edit(index) {
         this.ind = index
+        this.hasValue = []
         this.showSelect = true
       },
       close() {
@@ -157,6 +144,30 @@
         this.special_content[this.ind].express_desc = getString(value, 'area_name', ',')
         this.special_content[this.ind].express_areas = getString(value, 'area_code', ',')
         console.log(value)
+      }
+    },
+    onLoad(options) {
+      if (options.temp_id) {
+        this.temp_id = options.temp_id
+      }
+      this.editData = ls.get('Template_Content')
+      if (this.editData) {
+        this.express_start = this.editData.express.default.start
+        this.express_postage = this.editData.express.default.postage
+        this.express_plus = this.editData.express.default.plus
+        this.express_postageplus = this.editData.express.default.postageplus
+        let arr = []
+        for (let item of this.editData.express.special_content) {
+          arr.push({
+            express_areas: item.areas,
+            express_desc: item.desc,
+            express_start: item.start,
+            express_postage: item.postage,
+            express_plus: item.plus,
+            express_postageplus: item.postageplus
+          })
+        }
+        this.special_content = arr
       }
     }
 
