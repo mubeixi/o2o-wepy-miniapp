@@ -2,7 +2,7 @@ const path = require('path');
 var prod = process.env.NODE_ENV === 'production';
 
 // 使用 UglifyJS 对编译后的代码进行打混淆压缩。
-// const UglifyPlugin = require('@wepy/plugin-uglifyjs');
+const UglifyPlugin = require('@wepy/plugin-uglifyjs');
 const TypeScriptCompiler = require('@wepy/compiler-typescript');
 
 module.exports = {
@@ -39,8 +39,8 @@ module.exports = {
     }
   },
   plugins: [
-    TypeScriptCompiler()
-    // UglifyPlugin()
+    TypeScriptCompiler(),
+    UglifyPlugin()
   ],
   appConfig: {
     noPromiseAPI: ['createSelectorQuery']

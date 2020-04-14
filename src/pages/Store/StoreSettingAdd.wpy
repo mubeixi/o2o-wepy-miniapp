@@ -13,7 +13,7 @@
       <div class="store-title">
         所属区域
       </div>
-      <address @up="updateAddress" :visiable='false'   class="address m-l-10 flex flex-vertical-center" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
+      <address @up="updateAddress" :visiable="false"   class="address m-l-10 flex flex-vertical-center" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
 
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
@@ -37,7 +37,7 @@
         营业开始时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
-        <time @uptime="upStartTime" mode='time' :val="business_start">
+        <time @uptime="upStartTime" mode="time" :val="business_start">
           <span class="fz-14" v-if="business_start">{{business_start}}</span>
           <span class="fz-14 c9" v-else>请选择营业开始时间</span>
         </time>
@@ -49,7 +49,7 @@
         营业结束时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
-        <time @uptime="upEndTime" mode='time' :val="business_end">
+        <time @uptime="upEndTime" mode="time" :val="business_end">
           <span class="fz-14" v-if="business_end">{{business_end}}</span>
           <span class="fz-14 c9" v-else>请选择营业结束时间</span>
         </time>

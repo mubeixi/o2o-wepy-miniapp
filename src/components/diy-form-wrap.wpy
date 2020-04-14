@@ -1,0 +1,206 @@
+<style lang="scss">
+  @import "../assets/app.scss";
+  @import "../assets/variables.scss";
+  .wrap{
+    background: white;
+    padding: 20px 10px;
+  }
+  .specs-action-box{
+    display: flex;
+    justify-content: center;
+    margin: 30rpx auto;
+    .add-btn{
+      width: 220rpx;
+      padding: 0 20rpx;
+      height: 60rpx;
+      display: flex;
+      align-items: center;
+      border:1px solid $fun-blue-color;
+      color:$fun-blue-color;
+      border-radius: 4rpx;
+      justify-content: center
+    }
+  }
+  .label{
+    min-width: 80px;
+  }
+</style>
+<template>
+  <div class="wrap">
+    <div class="p-b-20">模板信息</div>
+    <form-row
+      v-for="(row,idx) in formData"
+      :key="idx"
+      :len="formData.length"
+      :idx="idx"
+      :conf="row"
+      @del="rowDel"
+      @next="rowNext"
+      @pre="rowPre"
+      @openEdit="rowOpenEdit"
+    ></form-row>
+
+    <div class="specs-action-box">
+      <div class="add-btn" @click="rowAdd">
+        <icon color="#00A8FF" type="iconadd"></icon>
+        <span class="fz-14 p-l-8">添加模板信息</span>
+      </div>
+    </div>
+
+    <popup-layer ref="_form" title="添加模板信息">
+      <div class="p-10">
+        <div class="row flex flex-vertical-center flex-justify-between m-b-10">
+          <div class="label">名称</div>
+          <div class="content p-t-10 p-b-10 flex1 p-l-15">
+            <input style="display: block" v-model="_row.label" placeholder="请输入名称" />
+          </div>
+        </div>
+        <div class="row flex flex-vertical-center flex-justify-between m-b-10">
+          <div class="label">字段类型</div>
+          <div class="content p-t-10 p-b-10">
+            <picker :range="eleTypeList" @change="bindTypeChange" range-key="title">
+              <span>{{eleTypeList[typeIdx].title}}</span><icon type="iconarrowleft" color="#999"></icon>
+            </picker>
+          </div>
+        </div>
+        <div class="row flex flex-vertical-center flex-justify-between m-b-10">
+          <div class="label">是否必填</div>
+          <div class="content p-t-10 p-b-10">
+            <switch style="transform: scale(.8)" :checked="_row.require"  bindchange="switchChange"/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">初始内容</div>
+          <div class="content p-t-15 p-b-15">
+            <input v-model="_row.value" placeholder="请输入初始内容" />
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="editorDone">完成</button>
+    </popup-layer>
+
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import {
+    componentMixins
+  } from '../mixins'
+  import {
+    eleTypeList
+  } from '../lib/form/form'
+  import { findArrayIdx } from '../common/helper'
+
+  wepy.component({
+    mixins: [componentMixins],
+    props: {
+      _conf: {
+        type: Array,
+        default: () => []
+      }
+    },
+    data: {
+      eleTypeList,
+      idx: 0,
+      typeIdx: 0,
+      _row: {
+        type:'',
+        title:'',
+        label: '',
+        desc: '',
+        require: false,
+        value: ''
+      },
+      formData: []
+    },
+    watch: {
+      _row: {
+        deep: true,
+        handler(newVal) {
+          console.log('_row is', newVal)
+        }
+      },
+      formData: {
+        deep: true,
+        handler(newVal) {
+          this.$emit('change', newVal)
+        }
+      }
+    },
+    ready() {
+      this.formData = this._conf.concat([])
+    },
+    methods: {
+      editorDone() {
+        console.log(this._row)
+        updateBizConfig(postData).then(res => {
+          fun.success({msg:'修改成功'})
+        }).catch(()=>{
+
+        })
+      },
+      switchChange(e) {
+        this._row.require = !!e.$wx.detail.value
+      },
+      bindTypeChange(e) {
+        const idx = e.$wx.detail.value
+        this.typeIdx = idx
+        this._row.type = this.eleTypeList[idx].type
+        this._row.title = this.eleTypeList[idx].title
+      },
+      rowAdd({type = 'input', title = '文本框'}) {
+        const ele = {
+          type,
+          title,
+          label: '',
+          desc: '',
+          require: false,
+          value: ''
+        }
+        this.formData.push(ele)
+        this._edit = ele
+        // 更新type下标
+        const findIdx = findArrayIdx(eleTypeList, {type: this._edit.type})
+        this.typeIdx = findIdx === false ? 0 : findIdx
+        this.$openPop('_form')
+      },
+      rowOpenEdit({idx}) {
+        this._edit = this.formData[idx]
+        // 更新type下标
+        const findIdx = findArrayIdx(eleTypeList, {type: this._edit.type})
+        this.typeIdx = findIdx === false ? 0 : findIdx
+        this.$openPop('_form')
+      },
+      // 自己控制更新才可靠
+      rowUpdate({idx, val}) {
+        this.$set(this.formData, idx, val)
+      },
+
+      rowDel(idx) {
+        this.formData.splice(idx, 1)
+      },
+
+      rowNext(idx) {
+        const temp = Object.assign({}, this.formData[idx + 1])
+        this.$set(this.formData, idx + 1, this.formData[idx])
+        this.$set(this.formData, idx, temp)
+      },
+
+      rowPre(idx) {
+        const temp = Object.assign({}, this.formData[idx - 1])
+        console.log(idx, temp)
+        this.$set(this.formData, idx - 1, this.formData[idx])
+        this.$set(this.formData, idx, temp)
+      }
+    }
+  })
+</script>
+<config>
+  {
+    "usingComponents": {
+      "icon": "~@/components/icon",
+      "form-row": "~@/components/diy-form-row",
+      "popup-layer": "~@/components/popup-layer",
+    }
+  }
+</config>

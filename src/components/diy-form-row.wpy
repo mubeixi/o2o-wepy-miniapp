@@ -1,0 +1,117 @@
+<style lang="scss">
+  @import "../assets/app.scss";
+  .wrap{
+    padding-left: 15px;
+  }
+  .actions{
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    .icon{
+
+    }
+    .space-line{
+      width: 1px;
+      background: #DADADA;
+      height: 16px;
+      margin: 0 10px;
+    }
+  }
+  .row{
+    display: flex;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    .label{
+      flex:1;
+    }
+  }
+</style>
+<template>
+  <div v-if="rowData" class="wrap">
+    <div class="row">
+      <div class="label">{{rowData.title}}</div>
+      <div class="actions">
+        <icon @click="openEdit" size="20" color="#999" class="icon" type="iconbianji1"></icon>
+        <div class="space-line"></div>
+        <icon @click="delFn" size="20" color="#999" class="icon" type="iconshanchu"></icon>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import {
+    objTranslate, sleep,
+    strSplit
+  } from '../common/helper'
+  import { hideLoading, showLoading } from '../common/fun'
+  wepy.component({
+    props: {
+      idx: {
+        type: Number,
+        require: true
+      },
+      len: {
+        type: Number,
+        require: true
+      },
+      conf: {
+        type: Object,
+        require: true
+      }
+    },
+    data: {
+      rowData: {}
+    },
+    watch: {
+      conf: {
+        deep: true,
+        handler(newVal, oldVal) {
+
+          this.rowData = Object.assign({}, newVal)
+          // 这一句很关键，不然会是一条衔尾的蛇吃完所有内存
+          // if (newVal!=oldVal && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          //   this.rowData = Object.assign({}, newVal)
+          // }
+        }
+      },
+      rowData: {
+        deep: true,
+        handler(newVal) {
+          this.$emit('change', {idx: this.idx, val: newVal})
+        }
+      }
+    },
+
+    ready() {
+      this.rowData = Object.assign({}, this.conf)
+    },
+    methods: {
+      openEdit(){
+        this.$emit('openEdit', {idx: this.idx})
+      },
+
+      delFn() {
+        this.$emit('del', this.idx)
+      },
+      nextFn() {
+        if (this.idx === this.len - 1) return
+        this.$emit('next', this.idx)
+      },
+      preFn() {
+        if (this.idx === 0) return
+        this.$emit('pre', this.idx)
+        console.log(this.idx)
+      }
+    }
+  })
+</script>
+<config>
+  {
+    "usingComponents": {
+      "icon": "~@/components/icon",
+      "address": "~@/components/address",
+      "upload-image": "~@/components/upload-image"
+    }
+  }
+</config>

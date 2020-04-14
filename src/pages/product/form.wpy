@@ -582,6 +582,8 @@
     floatNumber, intNumber
   } from '../../common/regs'
 
+  import eventHub from '../../common/eventHub'
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -1223,6 +1225,10 @@
     onLoad(options) {
       this.Products_ID = options.id
       this._init_func()
+      eventHub.$on('flash-order-tmpl', (...args) => {
+        console.log('flash-order-tmpl event emitted, the params are:')
+        console.log(args)
+      })
     },
     onShow() {
 
