@@ -301,8 +301,8 @@
   {
     "navigationBarTitleText": "个人认证",
     "usingComponents": {
-      "diy-form": "~@/components/diy-form",
-      "diy-form2": "~@/components/diy-form",
+      "diy-form": "~@/components/diy-form-format",
+      "diy-form2": "~@/components/diy-form-format",
       "icon": "~@/components/icon",
       "err-msg": "~@/components/err-msg",
       "select-trade": "~@/components/SelectTrade"

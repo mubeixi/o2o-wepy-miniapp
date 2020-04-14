@@ -102,6 +102,7 @@ wepy.app({
       "pages/marketing/GiveAddSelect",
       "pages/marketing/FullReduce",
       "pages/order/OrderRetail",
+      "pages/order/OrderTmpl",
       "pages/order/OrderRetailSend",
       "pages/demo"
 

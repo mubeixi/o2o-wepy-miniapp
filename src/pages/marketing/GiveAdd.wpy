@@ -103,7 +103,7 @@
     <popup-layer title="配送方式" ref="myModal" :autoClose="true">
       <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
         <label class="type-item flex flex-vertical-center fz-14">
-          <radio color="#00A8FF" value=0 :checked="shipping_type === 0"></radio>
+          <radio color="#00A8FF" value="0" :checked="shipping_type === 0" />
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">固定费用</div>
             <input type="digit" v-model="shipping_price"  class="input-price fz-12 m-r-5"/>
@@ -111,7 +111,7 @@
           </div>
         </label>
         <label class="type-item flex flex-vertical-center fz-14">
-          <radio color="#00A8FF" value=1 :checked="shipping_type === 1"></radio>
+          <radio color="#00A8FF" value="1" :checked="shipping_type === 1" />
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">物流模板</div>
             <div class="title m-r-15">{{Template_Name}}</div>
