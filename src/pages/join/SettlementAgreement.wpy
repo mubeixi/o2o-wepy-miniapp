@@ -25,7 +25,7 @@
   import pageMixin from '../../mixins'
 
   import { getBizConfig, opBizInfo } from '../../api/store'
-  import { back, hideLoading, showLoading, toast } from '../../common/fun'
+  import { back, error, hideLoading, showLoading, toast } from '../../common/fun'
 
   wepy.page({
     store,
@@ -43,7 +43,7 @@
       agreeMethod() {
         if(this.agree==1)return
         if (this.show.length <= 0) {
-          toast('请勾选同意协议')
+          error('请勾选同意协议')
           return
         }
         showLoading()

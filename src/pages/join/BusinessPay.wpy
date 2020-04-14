@@ -92,7 +92,7 @@
 
   import {proCate, getBizPayAmount, getBizConfig, addBizOrder, bizOrderPay, code2Session} from '../../api/store'
 
-  import {getArrColumn} from '../../common/helper'
+  import { getArrColumn, ls } from '../../common/helper'
   import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
   wepy.page({
     store,
@@ -176,6 +176,7 @@
                 signType: 'MD5',
                 paySign: paySign,
                 success (res) {
+                  ls.set('status', 2)
                   linkTo('/pages/index')
                 },
                 fail (res) {
@@ -184,6 +185,7 @@
               })
             } else {
               toast(res.msg)
+              ls.set('status', 2)
               linkTo('/pages/index')
             }
           }).catch(e => { hideLoading() })
