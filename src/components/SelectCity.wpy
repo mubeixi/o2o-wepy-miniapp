@@ -1,4 +1,3 @@
-
 <template>
   <div v-show="show" @touchmove.prevent.stop="noop">
     <div class="mask" @click="close" ></div>
@@ -80,6 +79,7 @@
         immediate: true,
         handler(val) {
           if (val < 1) return
+          console.log('deep',val)
           getCityList({'deep': val}).then(res => {
             this.treeData = res.data// mockData
             this.isReady = true

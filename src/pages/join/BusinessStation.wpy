@@ -55,9 +55,12 @@
         </div>
 
 
-        <div class="right-div"  v-if="info.entry_process.is_auth!=1" @click="goShow">
-          <div class="station-button active"  >
-            去提交
+        <div class="right-div"  v-if="info.entry_process.is_auth==1" >
+          <div class="station-button"  >
+            已完成
+          </div>
+          <div class="look-info" @click="goShow">
+            查看资料
           </div>
         </div>
         <block v-else>
@@ -75,13 +78,11 @@
               </div>
             </div>
           </block>
-          <div class="right-div"  v-else>
-            <div class="station-button"  >
-              已完成
+          <div class="right-div"  v-else  @click="goShow">
+            <div class="station-button active"  >
+              去提交
             </div>
-            <div class="look-info" @click="goShow">
-              查看资料
-            </div>
+
           </div>
         </block>
 
