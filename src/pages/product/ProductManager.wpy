@@ -5,7 +5,7 @@
         <image class="icon" src="/static/goods/add.png"></image>
         <div class="title">添加商品</div>
       </div>
-      <div class="item">
+      <div class="item" @click="$linkTo('/pages/product/DiyCate')">
         <image class="icon" src="/static/goods/cate.png"></image>
         <div class="title">分类管理</div>
       </div>

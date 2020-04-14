@@ -88,6 +88,7 @@ wepy.app({
       "pages/logistics/LogisticsPaperless",
       "pages/logistics/ExpressCompany",
       "pages/product/ProductManager",
+      "pages/product/DiyCate",
       "pages/product/form",
       "pages/user/login",
       "pages/statistics/dashboard",
