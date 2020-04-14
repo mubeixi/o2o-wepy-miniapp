@@ -1,12 +1,10 @@
 import { fetch } from '../common/request'
 
-
-
-//添加商家门店列表
+// 添加商家门店列表
 export const opBizStore = (param, options) => fetch({act: 'opBizStore', param, options})
-//获取商家门店列表
+// 获取商家门店列表
 export const getStoreList = (param, options) => fetch({act: 'getStoreList', param, options})
-//获取平台提现方式
+// 获取平台提现方式
 export const getWithdrawMethods = (param, options) => fetch({act: 'getWithdrawMethods', param, options})
 // 获取商家入驻行业列表
 export const bizIndustryList = (param, options) => fetch({act: 'bizIndustryList', param, options})
@@ -54,7 +52,14 @@ export const opCoupon = (param, options) => fetch({act: 'opCoupon', param, optio
 // 获取商家自定义分类
 export const getBizProdCateList = (param, options) => fetch({act: 'bizProdCateList', param, options})
 
+// 添加商家自定义分类
 export const addBizProdCate = (param, options) => fetch({act: 'addBizProdCate', param, options})
+
+// 编辑商家自定义分类
+export const editBizProdCate = (param, options) => fetch({act: 'editBizProdCate', param, options})
+
+// 删除商家自定义分类
+export const delBizProdCate = (param, options) => fetch({act: 'delBizProdCate', param, options})
 
 // 商家注册
 export const bizReg = (param, options) => fetch({act: 'bizReg', param, options})

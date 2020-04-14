@@ -10,7 +10,8 @@ import wepy from '@wepy/core'
 import vuex from '@wepy/x'
 wepy.use(vuex)
 
-
+import { FunError } from './mixins'
+wx.$errorHandle = FunError // 全局的错误处理
 
 require('./common/index')
 
@@ -87,6 +88,7 @@ wepy.app({
       "pages/logistics/LogisticsPaperless",
       "pages/logistics/ExpressCompany",
       "pages/product/ProductManager",
+      "pages/product/DiyCate",
       "pages/product/form",
       "pages/user/login",
       "pages/statistics/dashboard",

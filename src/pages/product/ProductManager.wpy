@@ -5,7 +5,7 @@
         <image class="icon" src="/static/goods/add.png"></image>
         <div class="title">添加商品</div>
       </div>
-      <div class="item">
+      <div class="item" @click="$linkTo('/pages/product/DiyCate')">
         <image class="icon" src="/static/goods/cate.png"></image>
         <div class="title">分类管理</div>
       </div>
@@ -167,32 +167,20 @@ wepy.page({
           error(e.message())
         }
       },
-      taggleProdStatus(prod,idx) {
+      taggleProdStatus(prod, idx) {
         console.log(prod)
-        const action = prod.Products_SoldOut ? bizProdUp:bizProdDown
+        const action = prod.Products_SoldOut ? bizProdUp : bizProdDown
         console.log(prod.Products_SoldOut)
         const prod_ids = [prod.Products_ID]
 
-        
-        action({prod_ids: JSON.stringify(prod_ids)},{tip:'loading'}).then(res=>{
-          this.$set(this.productList[idx],'Products_SoldOut',!prod.Products_SoldOut)
+        action({prod_ids: JSON.stringify(prod_ids)}, {tip: 'loading'}).then(res => {
+          this.$set(this.productList[idx], 'Products_SoldOut', !prod.Products_SoldOut)
         }).catch(() => {
-          
+
         })
       },
-      _init_func(rest) {
-        bizProdList({...this.paginate}).then(res => {
-          const loadData = res.data.map(item => {
-            return {...item, check: false}
-          })
-          this.paginate.totalCount = res.data.totalCount
-          if(rest){
-            this.productList = loadData
-          }else{
-            this.productList = this.productList.concat(loadData)
-          }
-          
-        })
+      async _init_func() {
+        this.productList = await bizProdList({pageSize: 9999}, {onlyData: true}).catch(() => {})
       },
       taggleAllCheck() {
         const check = !this.allCheck
@@ -213,16 +201,16 @@ wepy.page({
         console.log('checkbox发生change事件，携带value值为：', e.$wx.detail.value)
       }
     },
-    onReachBottom() {
-      if (this.productList.length >= this.paginate.totalCount) return
-      this.paginate.page++
-      this._init_func()
-    },
+    // onReachBottom() {
+    //   if (this.productList.length >= this.paginate.totalCount) return
+    //   this.paginate.page++
+    //   this._init_func()
+    // },
     onShow() {
-      
+      this._init_func()
     },
     created() {
-      this._init_func()
+
     }
 
   })
