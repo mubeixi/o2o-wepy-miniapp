@@ -330,7 +330,9 @@
     text-align: center;
     color: #FFFFFF;
     font-size: 32rpx;
-    background:rgba(0,168,255,1);
+    background-color: #FF0000;
+    //因为容易和保存颜色混
+    //background:rgba(0,168,255,1);
     position: fixed;
     bottom: 0rpx;
     left: 0rpx;
