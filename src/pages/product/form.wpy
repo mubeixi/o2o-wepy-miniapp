@@ -25,7 +25,7 @@
                 <div
                   class="img-item add"
                   @click="addImg"
-                  v-if="imgTempList.length<thumbLimit"
+                  v-if="imgs.length<thumbLimit"
                 >
                   <icon color="#ddd" size="40" type="iconupload"></icon>
                 </div>
@@ -136,7 +136,7 @@
           </div>
         </div>
 
-        <modal ref="descModel" positions="top" radius="12rpx" :autoClose="false" >
+        <modal ref="descModel" positions="top" radius="12rpx"  >
           <div class="p-20 desc-wrap">
             <textarea
               class="bor p-10 desc-content"
@@ -314,8 +314,8 @@
         </div>
       </div>
 
-    <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false">
-      
+    <popup-layer ref="bizCatePop" title="自定义分类" >
+
 
       <div v-if="bizCateReady && bizProdCateList.length>0">
         <fun-tree
@@ -339,7 +339,7 @@
       <button class="btn btn-primary m-t-35" @click="setBizCate">确认</button>
     </popup-layer>
 
-    <popup-layer ref="systemCatePop" title="平台分类" :autoClose="false">
+    <popup-layer ref="systemCatePop" title="平台分类" >
       <div v-if="systemCateReady && ProductCateList.length>0" style="height: 50vh;overflow-y: scroll;">
         <fun-tree
           ele-id="prodSystemCate"
@@ -369,7 +369,7 @@
       </picker-view>
     </popup-layer>
 
-    <popup-layer title="运费" ref="fee" :autoClose="false">
+    <popup-layer title="运费" ref="fee" >
       <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
         <label class="type-item flex flex-vertical-center">
           <radio color="#00A8FF" value="1" :checked="formData.fee_type === 1"></radio>
@@ -393,7 +393,7 @@
       <button class="btn btn-primary m-t-35" @click="closePop('fee')">确认</button>
     </popup-layer>
 
-    <popup-layer title="商品承诺" ref="promise" :autoClose="false">
+    <popup-layer title="商品承诺" ref="promise" >
       <div class="wrap flex promise-wrap" >
         <div class="left" >
           <div v-for="(text,idx) in promiseList" :key="idx" class="p-l-10 m-t-10 flex flex-vertical-center row">
@@ -410,7 +410,7 @@
       <button  class="btn btn-primary m-t-35" @click="closePop('promise')">确定</button>
     </popup-layer>
 
-    <popup-layer title="限购"  ref="limitBuy" :autoClose="false">
+    <popup-layer title="限购"  ref="limitBuy" >
       <div class="p-15">
 
         <div class="flex flex-vertical-center m-b-15">
@@ -440,7 +440,7 @@
         <button  class="btn btn-primary m-t-35" @click="closePop('limitBuy')">确定</button>
     </popup-layer>
 
-    <popup-layer title="订单类型" ref="orderType" :autoClose="false">
+    <popup-layer title="订单类型" ref="orderType" >
       <radio-group class="type-list p-l-10 p-r-10"  @change="setOrderType">
         <label class="type-item flex flex-vertical-center bor-b">
           <radio color="#00A8FF" value="0" :checked="formData.prod_order_type === 0"></radio>
@@ -467,7 +467,7 @@
       <button class="btn btn-primary m-t-35" @click="closePop('orderType')">确认</button>
     </popup-layer>
 
-    <popup-layer title="特殊属性" ref="specailAttr" :autoClose="false">
+    <popup-layer title="特殊属性" ref="specailAttr" >
       <div class="type-list p-l-10 p-r-10">
         <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('Products_SoldOut')">
           <checkbox color="#00A8FF" :checked="formData.Products_SoldOut"></checkbox>
@@ -503,7 +503,7 @@
       <button class="btn btn-primary m-t-35" @click="closePop('specailAttr')">确认</button>
     </popup-layer>
 
-    <popup-layer :full="true"  ref="content" :autoClose="false">
+    <popup-layer :full="true"  ref="content" >
       <div class="editor-wrap">
         <div class="editor-container">
           <editor
@@ -523,7 +523,7 @@
 
     </popup-layer>
 
-    <popup-layer title="支持外卖"  ref="delivery" :autoClose="false">
+    <popup-layer title="支持外卖"  ref="delivery" >
       <div class="p-l-15 p-r-15" @touchmove.stop.prevent>
         <div class="flex flex-vertical-center flex-justify-between m-b-15">
           <div class="label p-r-10">开关</div>
@@ -536,7 +536,7 @@
       <button  class="btn btn-primary m-t-35" @click="closePop('delivery')">确定</button>
     </popup-layer>
 
-    <popup-layer title="分享有礼"  ref="share" :autoClose="false">
+    <popup-layer title="分享有礼"  ref="share" >
       <div class="p-l-15 p-r-15" @touchmove.stop.prevent>
         <div class="flex flex-vertical-center m-b-15 bor-b c3 p-b-15">
           <span>分享赚</span>
@@ -857,13 +857,13 @@
               enum: '请配置是否支持外卖'
             }
           },
-          share_commission: this.formData.share_commission ?  {
+          share_commission: this.formData.share_commission ? {
             required: true,
             match: floatNumber,
             message: {
               match: '分享赚金额格式错误'
             }
-          }:{required: false}
+          } : {required: false}
 
         }
 
@@ -1049,9 +1049,9 @@
       },
       addSpecsRow() {
         this.specs.push({
-          Attr_Price: 0,
-          Supply_Price: 0,
-          Property_count: 0,
+          Attr_Price: '',
+          Supply_Price: '',
+          Property_count: '',
           name: ''
         })
       },
@@ -1104,20 +1104,17 @@
           const arr1 = files.map(file => {
             return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
           })
-          console.log('upload img arr1 is',arr1)
-          //this.imgTempList = this.imgTempList.concat(arr1)
+          console.log('upload img arr1 is', arr1)
+          // this.imgTempList = this.imgTempList.concat(arr1)
           const imgs = getArrColumn(files, 'path')
-          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch((errMsg) => { throw Error(errMsg) })
-          for(var i=0;i<ossUrls.length;i++){
+          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch((errMsg) => { throw {message: errMsg, type: 'modal'} })
+          for (var i = 0; i < ossUrls.length; i++) {
             ossUrls[i] = getDomain(ossUrls[i])
           }
           this.imgs = this.imgs.concat(ossUrls)
           this._click = false
         } catch (e) {
-          //this.imgTempList = []
-          modal(e.message)
-          console.log(e)
-          console.log(e.message)
+          wx.$errorHandle(e)
         }
       },
       _initBizProdCate() {
@@ -1145,7 +1142,7 @@
 
           // 优惠券
           this.couponList = await getCouponList({}, {onlyData: true}).catch(() => { throw Error('获取优惠券信息失败') })
-            hideLoading()
+          hideLoading()
           if (this.Products_ID) {
             const productData = await getProductDetail({prod_id: this.Products_ID}, {onlyData: true}).catch(() => { throw Error('获取商品信息失败') })
             console.log('productData is', productData)

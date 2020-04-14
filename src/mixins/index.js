@@ -1,6 +1,24 @@
 import {
-  linkTo, toast, error, back
+  linkTo, toast, error, back, modal
 } from '../common/fun'
+
+/**
+ * 自定义处理错误
+ * @param msg
+ * @constructor
+ */
+export function FunError(msg) {
+  if (typeof msg !== 'object') {
+    toast(msg)
+  } else {
+    const e = msg
+    const { message = '错误信息', type = 'toast', icon = 'none' } = e
+    if (type === 'toast')toast(message, icon)
+    if (type === 'modal')modal(message)
+  }
+}
+FunError.prototype = Object.create(Error.prototype)
+FunError.prototype.constructor = FunError
 
 export default {
   data: {
