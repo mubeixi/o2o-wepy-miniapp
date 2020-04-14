@@ -69,7 +69,7 @@
             <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title">推广营销</div>
           </div>
-          <div class="grid-item">
+          <div class="grid-item" @click="$linkTo('/pages/order/OrderRetail')">
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
             <div class="grid-item-title">订单管理</div>
           </div>

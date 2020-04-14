@@ -29,7 +29,7 @@
 <template>
   <div v-if="rowData" class="wrap">
     <div class="row">
-      <div class="label">{{rowData.title}}</div>
+      <div class="label">{{rowData.label}}</div>
       <div class="actions">
         <icon @click="openEdit" size="20" color="#999" class="icon" type="iconbianji1"></icon>
         <div class="space-line"></div>
@@ -40,11 +40,8 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import {
-    objTranslate, sleep,
-    strSplit
-  } from '../common/helper'
-  import { hideLoading, showLoading } from '../common/fun'
+
+
   wepy.component({
     props: {
       idx: {
@@ -67,7 +64,6 @@
       conf: {
         deep: true,
         handler(newVal, oldVal) {
-
           this.rowData = Object.assign({}, newVal)
           // 这一句很关键，不然会是一条衔尾的蛇吃完所有内存
           // if (newVal!=oldVal && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
@@ -87,7 +83,7 @@
       this.rowData = Object.assign({}, this.conf)
     },
     methods: {
-      openEdit(){
+      openEdit() {
         this.$emit('openEdit', {idx: this.idx})
       },
 

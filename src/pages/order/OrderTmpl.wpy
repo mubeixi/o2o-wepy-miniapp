@@ -7,7 +7,7 @@
           <div class="cell-item">
             <div class="label">模板名称</div>
             <div class="content">
-              <input type="text" v-model="formData.title" placeholder="请输入模板名称" />
+              <input type="text" v-model="title" placeholder="请输入模板名称" />
             </div>
           </div>
         </div>
@@ -34,6 +34,9 @@
   import {
     validateFun
   } from '../../common/helper'
+  import {
+    opBizOrderTemplate, delBizOrderTemplate, getBizOrderTemplateList
+  } from '../../api/order'
 
   import { error, toast, modal, showLoading, hideLoading } from '../../common/fun'
   import {
@@ -45,7 +48,8 @@
     mixins: [pageMixin],
     data: {
       id: '',
-      ready:false,
+      title: '',
+      ready: false,
       addTypeIdx: 0,
       formData: []
     },
@@ -63,33 +67,26 @@
         this.$refs.diyfrom.rowAdd(eleTypeList[this.addTypeIdx])
       },
       subFn() {
-        const rule = {
-          prod_id: {
-            required: !!this.Products_ID,
-            message: {
-              required: '编辑模式下缺少商品ID'
-            }
-          }
+        if (!this.title) {
+          this.formCheckResult.push('标题必填')
+          return
         }
-
+        if (this.formData.length < 1) {
+          this.formCheckResult.push('至少填写一行数据')
+          return
+        }
         let postData = {
-          ...this.formData
+          temp_info: JSON.stringify({formData: this.formData, title: this.title})
         }
 
-      // if (this.Products_ID)productInfo.prod_id = this.Products_ID
+        if (this.id)postData.id = this.id
 
-        const checkRt = validateFun(postData, rule)
-        if (checkRt !== true) {
-          this.formCheckResult = checkRt
-        }
-
-      // systemOperateProd(postData, {tip: '保存'}).then(res => {
-      //   toast('操作成功')
-      //   wx.navigateBack()
-      // }).catch((err) => {
-      //   const {msg: errMsg = ''} = err
-      //   modal(errMsg, '商品发布失败')
-      // })
+        opBizOrderTemplate(postData, {tip: 'loading'}).then(res => {
+          wx.navigateBack()
+        }).catch((err) => {
+          const {msg: errMsg = ''} = err
+          modal(errMsg, '商品发布失败')
+        })
       },
       async _init_func() {
         try {

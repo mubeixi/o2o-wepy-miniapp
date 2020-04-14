@@ -89,6 +89,7 @@
   import {
     eleTypeList
   } from '../lib/form/form'
+
   import { findArrayIdx } from '../common/helper'
 
   wepy.component({
@@ -101,11 +102,11 @@
     },
     data: {
       eleTypeList,
-      idx: 0,
+      rowIdx: 0,
       typeIdx: 0,
       _row: {
-        type:'',
-        title:'',
+        type: '',
+        title: '',
         label: '',
         desc: '',
         require: false,
@@ -123,6 +124,7 @@
       formData: {
         deep: true,
         handler(newVal) {
+          console.log('new formData',newVal)
           this.$emit('change', newVal)
         }
       }
@@ -132,12 +134,8 @@
     },
     methods: {
       editorDone() {
-        console.log(this._row)
-        updateBizConfig(postData).then(res => {
-          fun.success({msg:'修改成功'})
-        }).catch(()=>{
-
-        })
+        this.$set(this.formData, this.rowIdx, this._row) // 把更改作用到数据里
+        this.$closePop('_form')
       },
       switchChange(e) {
         this._row.require = !!e.$wx.detail.value
@@ -158,16 +156,19 @@
           value: ''
         }
         this.formData.push(ele)
-        this._edit = ele
+        this._row = Object.assign({}, ele) // 不能有关联
+        this.rowIdx = this.formData.length - 1
         // 更新type下标
-        const findIdx = findArrayIdx(eleTypeList, {type: this._edit.type})
+        const findIdx = findArrayIdx(eleTypeList, {type: this._row.type})
         this.typeIdx = findIdx === false ? 0 : findIdx
         this.$openPop('_form')
       },
       rowOpenEdit({idx}) {
-        this._edit = this.formData[idx]
+        this._row = Object.assign({}, this.formData[idx])
+
+        this.rowIdx = idx
         // 更新type下标
-        const findIdx = findArrayIdx(eleTypeList, {type: this._edit.type})
+        const findIdx = findArrayIdx(eleTypeList, {type: this._row.type})
         this.typeIdx = findIdx === false ? 0 : findIdx
         this.$openPop('_form')
       },
