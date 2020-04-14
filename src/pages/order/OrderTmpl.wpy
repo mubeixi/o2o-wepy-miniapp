@@ -47,6 +47,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      formCheckResult:[],
       id: '',
       title: '',
       ready: false,
