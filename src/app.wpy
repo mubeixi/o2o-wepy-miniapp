@@ -103,6 +103,7 @@ wepy.app({
       "pages/marketing/FullReduce",
       "pages/order/OrderRetail",
       "pages/order/OrderTmpl",
+      "pages/order/OrderTmplList",
       "pages/order/OrderRetailSend",
       "pages/demo"
 
