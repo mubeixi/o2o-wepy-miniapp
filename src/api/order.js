@@ -23,3 +23,8 @@ export const delBizOrderTemplate = (param, options) => fetch({act: 'delBizOrderT
 
 // 添加编辑下单模板
 export const opBizOrderTemplate = (param, options) => fetch({act: 'opBizOrderTemplate', param, options})
+
+
+
+export const checkOrderByCode = (param, options) => fetch({act: 'system_consumption_order', param, options})
+
