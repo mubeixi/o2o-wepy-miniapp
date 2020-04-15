@@ -105,6 +105,9 @@ wepy.app({
       "pages/order/OrderTmpl",
       "pages/order/OrderTmplList",
       "pages/order/OrderRetailSend",
+      "pages/order/CheckChannel",
+      "pages/order/CheckByCode",
+      "pages/order/CheckOrderInfo",
       "pages/demo"
 
     ],
