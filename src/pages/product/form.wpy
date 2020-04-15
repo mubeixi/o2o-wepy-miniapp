@@ -245,10 +245,16 @@
                 <icon type="iconarrowleft" color="#999"></icon></div>
             </div>
           </div>
-          <div class="cell-item">
+          <div class="cell-item" @click="openOrderTempl">
             <div class="label">下单模板</div>
             <div class="content"></div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.order_temp_id">{{order_temp_text||'已设置'}}</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -583,7 +589,10 @@
   } from '../../common/regs'
 
   import eventHub from '../../common/eventHub'
-
+  import Index from '../../mixins'
+  export default {
+    components: { Index }
+  }
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -636,6 +645,7 @@
         {title: '虚拟订单', desc: '买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成'},
         {title: '其他', desc: '买家下单-买家付款-订单完成'}
       ],
+      order_temp_text:'',//
       formData: {
         Products_Index: 1,
         Products_Name: '',
@@ -670,6 +680,7 @@
             num: 0
           }
         },
+        order_temp_id: '',
         prod_order_type: 0, // 订单类型
         is_waimai: 0, // 外卖
         share_commission: '' // 分享的分润
@@ -690,6 +701,9 @@
       // }
     },
     methods: {
+      openOrderTempl() {
+        this.$linkTo('/pages/order/OrderTmplList?mode=goodsForm&select=' + this.formData.order_temp_id)
+      },
       bindDeliveryChange(e) {
         this.formData.is_waimai = e.$wx.detail.value ? 1 : 0
       },
@@ -1225,9 +1239,12 @@
     onLoad(options) {
       this.Products_ID = options.id
       this._init_func()
-      eventHub.$on('flash-order-tmpl', (...args) => {
+      eventHub.$on('goods-order-tmpl', ({tmpl}) => {
         console.log('flash-order-tmpl event emitted, the params are:')
-        console.log(args)
+        console.log(tmpl)
+        // const order_temp_id = this.args[0].order_temp_id
+        this.formData.order_temp_id = tmpl.id
+        this.order_temp_text = tmpl.title
       })
     },
     onShow() {
