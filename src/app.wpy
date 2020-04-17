@@ -79,6 +79,7 @@ wepy.app({
       "pages/store/StoreCoupon",
       "pages/store/StoreCouponAdd",
       "pages/store/StoreMarketing",
+      "pages/store/StoreBalance",
       "pages/logistics/LogisticsMain",
       "pages/logistics/LogisticsAdds",
       "pages/logistics/LogisticsAddsMail",
