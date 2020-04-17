@@ -1,6 +1,10 @@
 import { fetch } from '../common/request'
 
-// 添加商家门店列表
+
+
+// 电子面单合作公司列表和详情
+export const getCoopCompany = (param, options) => fetch({act: 'getCoopCompany', param, options})
+
 export const opBizStore = (param, options) => fetch({act: 'opBizStore', param, options})
 // 获取商家门店列表
 export const getStoreList = (param, options) => fetch({act: 'getStoreList', param, options})

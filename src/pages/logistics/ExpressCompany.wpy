@@ -51,6 +51,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
+  import  {getCoopCompany} from '../../api/store'
 
   wepy.page({
     store,
@@ -59,10 +60,12 @@
 
     },
     methods: {
+      getCoopCompany(){
 
+      }
     },
-    created() {
-
+    onShow() {
+      this.getCoopCompany()
     }
 
   })
