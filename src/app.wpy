@@ -107,6 +107,8 @@ wepy.app({
       "pages/order/CheckChannel",
       "pages/order/CheckByCode",
       "pages/order/CheckOrderInfo",
+      "pages/order/SettlementList",
+      "pages/order/Settlement",
       "pages/demo"
 
     ],

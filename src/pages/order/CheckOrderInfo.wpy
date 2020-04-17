@@ -178,7 +178,7 @@
             color: #333;
           }
           .action{
-            color: $wzw-primary-color;
+            color: red;
             .action-item{
               text-decoration: underline;
               cursor: pointer;
@@ -278,7 +278,7 @@
         display: inline-block;
         width: 4px;
         height: 16px;
-        background: $wzw-primary-color;
+        background: red;
         border-radius: 2px;
         margin: 0 10px;
       }

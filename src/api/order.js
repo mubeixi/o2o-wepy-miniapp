@@ -24,7 +24,14 @@ export const delBizOrderTemplate = (param, options) => fetch({act: 'delBizOrderT
 // 添加编辑下单模板
 export const opBizOrderTemplate = (param, options) => fetch({act: 'opBizOrderTemplate', param, options})
 
-
-
 export const checkOrderByCode = (param, options) => fetch({act: 'system_consumption_order', param, options})
+
+// 获取结算单列表和详情
+export const getSettle = (param, options) => fetch({act: 'getSettle', param, options})
+
+// 申请结算
+export const opBizSettle = (param, options) => fetch({act: 'opBizSettle', param, options})
+
+//处理结算单
+export const dealBizSettle = (param, options) => fetch({act: 'dealBizSettle', param, options})
 
