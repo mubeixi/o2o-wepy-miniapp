@@ -183,8 +183,11 @@
           this.formCheckResult = checkRt
           return
         }
-        let start = '2020-10-1 ' + this.business_start
-        let end = '2020-10-1 ' + this.business_end
+        let start = '2020-10-01 ' + this.business_start
+        let end = '2020-10-01 ' + this.business_end
+        start = moment(start).format('YYYY-MM-DD HH:MM:SS')
+        end = moment(end).format('YYYY-MM-DD HH:MM:SS')
+
         let boo = moment(end).isAfter(start)
         if (!boo) {
           this.formCheckResult = ['结束时间必须大于开始时间']

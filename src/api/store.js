@@ -113,3 +113,10 @@ export const getNewOldTradeStatistic = (param, options) => fetch({act: 'getNewOl
 
 // 商品销售情况统计
 export const systemProdSales = (param, options) => fetch({act: 'systemProdSales', param, options})
+
+
+// 商家资金流水
+export const bizMoneyRecord = (param, options) => fetch({act: 'bizMoneyRecord', param, options})
+
+// 修改限时抢购状态
+export const bizSpikeStatus = (param, options) => fetch({act: 'bizSpikeStatus', param, options})

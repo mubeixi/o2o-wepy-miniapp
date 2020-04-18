@@ -26,7 +26,8 @@
                   :type="product.check?'iconblchecked':'iconCircle'"
                 ></icon>
               </div>
-              <fun-img class="thumb" :src="product.ImgPath"></fun-img>
+              <image class="thumb" :src="product.ImgPath"></image>
+<!--              <fun-img class="thumb" :src="product.ImgPath"></fun-img>-->
               <div class="info">
                 <div class="title">{{product.Products_Name}}</div>
                 <div class="price-box">

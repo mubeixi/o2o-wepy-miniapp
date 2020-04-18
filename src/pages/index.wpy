@@ -15,8 +15,8 @@
       </div>
     </div>
 
-    <div class="finance-box">
-      <div class="finance-item">
+    <div class="finance-box" >
+      <div class="finance-item"  @click="$linkTo('/pages/store/StoreBalance')">
         <div><span class="fz-12">￥</span><span class="fz-18">{{info.biz_money}}</span></div>
         <span class="title">店铺余额</span>
       </div>
