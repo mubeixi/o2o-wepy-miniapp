@@ -3,21 +3,21 @@
     <div class="img m-b-16">
       <image src="/static/balance.png" class="full-img"></image>
       <div class="balance-store">店内余额</div>
-      <div class="fz-18 price-store">¥<span class="m-l-5 fz-25">366.00</span></div>
+      <div class="fz-18 price-store">¥<span class="m-l-5 fz-25">{{biz_money}}</span></div>
       <div class="btn-sub">提现</div>
     </div>
 
-    <div class="store-item">
+    <div class="store-item"  v-for="(item,ind) of balanceList" :key="ind">
         <div class="flex flex-vertical-center flex-justify-between m-b-4">
             <div class="fz-14 c3">
-              销售新款女式外套获得收益
+              {{item.descr}}
             </div>
           <div class="fz-16" style="color: #FF0000;">
-            +199.00
+            {{item.money}}
           </div>
         </div>
         <div class="fz-12 c8">
-          2020-04-14  15:00
+          {{item.created_at}}
         </div>
     </div>
 
@@ -28,18 +28,45 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
+  import {bizMoneyRecord} from '../../api/store'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      page: 1,
+      pageSize: 8,
+      totalCount: 0,
+      balanceList: [],
+      biz_money:''
     },
     methods: {
-
+      async bizMoneyRecord(it) {
+        let data = {
+          page: this.page,
+          pageSize: this.pageSize
+        }
+        let arr = await bizMoneyRecord(data).catch(e => {})
+        this.totalCount = arr.totalCount
+        this.biz_money=arr.data.biz_money
+        if (it === 1) {
+          arr.data.list.map(item => {
+            this.balanceList.push(item)
+          })
+        } else {
+          this.balanceList = arr.data.list
+        }
+      }
     },
     onShow() {
-
+      this.page = 1
+      this.bizMoneyRecord()
+    },
+    onReachBottom() {
+      if (this.balanceList.length < this.totalCount) {
+        this.page++
+        this.bizMoneyRecord(1)
+      }
     }
   })
 </script>

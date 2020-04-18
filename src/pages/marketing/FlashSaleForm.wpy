@@ -265,7 +265,8 @@
       <div class="goods-list">
         <div class="goods-item" v-for="(product,idx) in select_prod" :key="idx" @click="setActiveIdx(idx)">
           <div class="flex">
-            <div class="thumb" :style="{backgroundImage:'url('+product.ImgPath+')'}"></div>
+<!--            <div class="thumb" :style="{backgroundImage:'url('+product.ImgPath+')'}"></div>-->
+            <image class="thumb" :src="product.ImgPath"></image>
             <div class="info">
               <div class="title">{{product.Products_Name}}</div>
               <div class="flex flex-vertical-center flex-justify-between">

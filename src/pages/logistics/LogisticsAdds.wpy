@@ -135,7 +135,6 @@
         this.ind = e.$wx.detail.value
       },
       save() {
-        showLoading('保存中')
         let arr = ls.get('Free_Content')
         let arrs = []
         for (let item of arr) {
@@ -164,7 +163,7 @@
           data.temp_id = this.temp_id
         }
 
-        opShippingTemplate(data).then(res => {
+        opShippingTemplate(data,{tip:'加载中'}).then(res => {
           if (this.temp_id) {
             wx.showToast({
               title: '修改成功',
@@ -183,7 +182,6 @@
               delta: 1
             })
           }, 1000)
-          hideLoading()
         })
       }
     }
