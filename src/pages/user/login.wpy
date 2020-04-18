@@ -199,7 +199,7 @@
       </div>
     </div>
 
-    <popup-layer ref="phone" :autoClose="false" :showMask="false">
+    <popup-layer ref="phone" :autoClose="false" :topStr="menuButtonInfo.height+menuButtonInfo.top+10+'px'" :showMask="false">
       <div class="form pwd-wrap" :style="{top:menuButtonInfo.height+menuButtonInfo.top+10+'px'}">
         <div class="form-item uni-column">
           <input @input="inputPhone" class="fun-input" name="input" placeholder="请输入手机号码" />
@@ -216,7 +216,7 @@
       </div>
     </popup-layer>
 
-    <popup-layer ref="pwd" :autoClose="false"  :showMask="false">
+    <popup-layer ref="pwd" :autoClose="false" :topStr="menuButtonInfo.height+menuButtonInfo.top+10+'px'"  :showMask="false">
       <div class="form pwd-wrap" :style="{top:menuButtonInfo.height+menuButtonInfo.top+10+'px'}">
         <view class="form-item uni-column">
           <input v-model="pwd" class="fun-input" placeholder="请输入不少于6位的密码" />

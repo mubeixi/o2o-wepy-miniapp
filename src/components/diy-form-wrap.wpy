@@ -5,6 +5,13 @@
     background: white;
     padding: 20px 10px;
   }
+  .row{
+    border-bottom: 1px solid #eee;
+    padding: 6px 0;
+    &:last-child{
+      /*border-bottom: none;*/
+    }
+  }
   .specs-action-box{
     display: flex;
     justify-content: center;
@@ -23,11 +30,12 @@
   }
   .label{
     min-width: 80px;
+
   }
 </style>
 <template>
   <div class="wrap">
-    <div class="p-b-20">模板信息</div>
+    <div class="p-b-10">模板信息</div>
     <form-row
       v-for="(row,idx) in formData"
       :key="idx"
@@ -49,21 +57,21 @@
 
     <popup-layer ref="_form" title="添加模板信息">
       <div class="p-10">
-        <div class="row flex flex-vertical-center flex-justify-between m-b-10">
+        <div class="row flex flex-vertical-center flex-justify-between">
           <div class="label">名称</div>
           <div class="content p-t-10 p-b-10 flex1 p-l-15">
             <input style="display: block" v-model="_row.label" placeholder="请输入名称" />
           </div>
         </div>
-        <div class="row flex flex-vertical-center flex-justify-between m-b-10">
+        <div class="row flex flex-vertical-center flex-justify-between">
           <div class="label">字段类型</div>
           <div class="content p-t-10 p-b-10">
             <picker :range="eleTypeList" @change="bindTypeChange" range-key="title">
-              <span>{{eleTypeList[typeIdx].title}}</span><icon type="iconarrowleft" color="#999"></icon>
+              <span class="c6">{{eleTypeList[typeIdx].title}}</span><icon type="iconarrowleft" color="#999"></icon>
             </picker>
           </div>
         </div>
-        <div class="row flex flex-vertical-center flex-justify-between m-b-10">
+        <div class="row flex flex-vertical-center flex-justify-between">
           <div class="label">是否必填</div>
           <div class="content p-t-10 p-b-10">
             <switch style="transform: scale(.8)" :checked="_row.require"  bindchange="switchChange"/>
@@ -71,12 +79,18 @@
         </div>
         <div class="row">
           <div class="label">初始内容</div>
-          <div class="content p-t-15 p-b-15">
-            <input v-model="_row.value" placeholder="请输入初始内容" />
+          <div class="content p-t-10 p-b-4">
+            <input placeholder-style="color:#666" style="color: #666" v-model="_row.value" placeholder="请输入初始内容" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">内容提示</div>
+          <div class="content p-t-10 p-b-4">
+            <input placeholder-style="color:#666" style="color: #666" v-model="_row.desc" placeholder="请输入内容提示" />
           </div>
         </div>
       </div>
-      <button class="btn btn-primary m-t-35" @click="editorDone">完成</button>
+      <button class="btn btn-primary m-t-20" @click="editorDone">完成</button>
     </popup-layer>
 
   </div>
@@ -161,7 +175,9 @@
         // 更新type下标
         const findIdx = findArrayIdx(eleTypeList, {type: this._row.type})
         this.typeIdx = findIdx === false ? 0 : findIdx
-        this.$openPop('_form')
+        setTimeout(()=>{
+          this.$openPop('_form')
+        },100)
       },
       rowOpenEdit({idx}) {
         this._row = Object.assign({}, this.formData[idx])
@@ -170,7 +186,9 @@
         // 更新type下标
         const findIdx = findArrayIdx(eleTypeList, {type: this._row.type})
         this.typeIdx = findIdx === false ? 0 : findIdx
-        this.$openPop('_form')
+        setTimeout(()=>{
+          this.$openPop('_form')
+        },100)
       },
       // 自己控制更新才可靠
       rowUpdate({idx, val}) {

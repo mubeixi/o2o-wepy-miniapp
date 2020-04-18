@@ -35,7 +35,7 @@
     validateFun
   } from '../../common/helper'
   import {
-    opBizOrderTemplate, delBizOrderTemplate, getBizOrderTemplateList
+    opBizOrderTemplate,getBizOrderTemplateList
   } from '../../api/order'
 
   import { error, toast, modal, showLoading, hideLoading } from '../../common/fun'
@@ -84,18 +84,21 @@
 
         opBizOrderTemplate(postData, {tip: 'loading'}).then(res => {
           wx.navigateBack()
-        }).catch((err) => {
-          const {msg: errMsg = ''} = err
-          modal(errMsg, '商品发布失败')
+        }).catch((e) => {
+          modal(e.msg, '发布失败')
         })
       },
       async _init_func() {
         try {
-          // showLoading('loading')
-
+          showLoading('loading')
+          const tmplData = await getBizOrderTemplateList({id:this.id},{onlyData:true}).catch((e)=>{throw Error(e.msg)})
+          const tempInfo = JSON.parse(tmplData.temp_info)
+          this.formData = tempInfo.formData
+          this.title = tempInfo.title
+          hideLoading()
           this.ready = true
         } catch (e) {
-          error(e.message)
+          wx.$errorHandle(e)
         }
       }
     },
@@ -104,7 +107,10 @@
     },
     onLoad(options) {
       this.id = options.id
-      this._init_func()
+      if(options.id){
+        this._init_func()
+      }
+
     },
     onShow() {
 
@@ -173,7 +179,7 @@
 </style>
 <config>
   {
-    "navigationBarTitleText": "订单模板",
+    "navigationBarTitleText": "下单模板管理",
     "navigationBarTextStyle": "black",
     "usingComponents": {
       "err-msg": "~@/components/err-msg",
