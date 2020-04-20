@@ -20,7 +20,7 @@
       <div class="m-t-15 m-l-10 order-search flex flex-vertical-center">
         <input type="text" bindconfirm="searchList"  v-model="prod_name" placeholder="请输入商品关键字" confirm-type="search" class="input-search"  placeholder-class="_place"/>
         <icon  type="iconsearch1" size="16"  color="#999" class="icon-search"></icon>
-        <div class="erweima m-l-15">
+        <div class="erweima m-l-15" @click="$linkTo('/pages/order/CheckChannel')">
           <icon  type="iconsaoma" size="20"  color="#00A8FF" ></icon>
           <div>核销</div>
         </div>
