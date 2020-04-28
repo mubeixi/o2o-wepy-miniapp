@@ -40,7 +40,7 @@
         <div class="item" v-for="(row,idx) in list" :key="idx" @click="selectFn(row)">
           <div class="title c3 fz-16 p-b-15 p-t-15">{{row.title}}</div>
           <div class="placeholder c8  fz-14 p-t-10 p-b-10">买家下单时需要填写：{{row.placeholder}}等信息</div>
-          <div class="actions p-t-10">
+          <div class="actions p-t-10" @click.stop>
             <div @click.stop="$linkTo('/pages/order/OrderTmpl?id='+row.id)" class="action"><icon size="18"  color="#444" type="iconbianji1"></icon><span class="fz-14 c8 p-l-8">编辑</span></div>
             <div @click.stop="delFn(row,idx)" class="action"><icon size="18"  color="#444" type="iconshanchu"></icon><span class="fz-14 c8 p-l-8">删除</span></div>
           </div>
@@ -103,15 +103,17 @@
           // showLoading('loading')
           const list = await getBizOrderTemplateList({pageSize: 999}, {onlyData: true}).catch((e) => {throw Error(e.msg)})
 
+          const temp = []
           for(let row of list){
             row.temp_info = JSON.parse(row.temp_info)
             const {title='',formData=[]} = row.temp_info
             row.title = title
             row.placeholder = getArrColumn(formData, 'label').join(',')
             if(row.title){
-              this.list.push(row)
+              temp.push(row)
             }
           }
+          this.list = temp
         } catch (e) {
           console.log(e)
           error('初始化失败:' + e.message)
