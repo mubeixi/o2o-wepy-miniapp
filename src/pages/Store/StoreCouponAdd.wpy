@@ -13,14 +13,18 @@
         <div class="title">
           优惠券图片
         </div>
-        <div
-          @click="bindThumbClick(idx,img)"
-          class="img-item img"
-          v-for="(img,idx) in imgTempList"
-          :key="idx"
-          :style="{backgroundImage:'url('+img.path+')'}">
-          <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>
-        </div>
+<!--        <div-->
+<!--          @click="bindThumbClick(idx,img)"-->
+<!--          class="img-item img"-->
+<!--          v-for="(img,idx) in imgTempList"-->
+<!--          :key="idx"-->
+<!--          :style="{backgroundImage:'url('+img.path+')'}">-->
+<!--          <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>-->
+<!--        </div>-->
+        <block  v-for="(img,idx) in imgTempList">
+          <image class="img-item img" :src="img"  @click="bindThumbClick(idx,img)"></image>
+        </block>
+
         <div  @click="addImg"
           class="img-item add"
               v-if="imgTempList.length<1"
@@ -211,7 +215,7 @@
   import {bizProdList} from '../../api/product'
   const moment = require('moment')
 
-  import {chooseImageByPromise, uploadImages, getArrColumn} from '../../common/helper'
+  import {chooseImageByPromise, uploadImages, getArrColumn, getDomain} from '../../common/helper'
   import {
     hideLoading,
     linkTo, showLoading, error, toast
@@ -320,6 +324,8 @@
         let startTime = parseInt(this.dateTimeArray1[0][this.dateTime1[0]]) + '-' + parseInt(this.dateTimeArray1[1][this.dateTime1[1]]) + '-' + parseInt(this.dateTimeArray1[2][this.dateTime1[2]]) + ' ' + parseInt(this.dateTimeArray1[3][this.dateTime1[3]]) + ':' + parseInt(this.dateTimeArray1[4][this.dateTime1[4]]) + ':' + parseInt(this.dateTimeArray1[5][this.dateTime1[5]])
         let endTime = parseInt(this.dateTimeArray2[0][this.dateTime2[0]]) + '-' + parseInt(this.dateTimeArray2[1][this.dateTime2[1]]) + '-' + parseInt(this.dateTimeArray2[2][this.dateTime2[2]]) + ' ' + parseInt(this.dateTimeArray2[3][this.dateTime2[3]]) + ':' + parseInt(this.dateTimeArray2[4][this.dateTime2[4]]) + ':' + parseInt(this.dateTimeArray2[5][this.dateTime2[5]])
 
+        startTime = moment(startTime).format('YYYY-MM-DD HH:mm:ss')
+        endTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
         let boo = moment(endTime).isAfter(startTime)
         if (!boo) {
           hideLoading()
@@ -329,7 +335,7 @@
 
         let data = {
           Coupon_Subject: this.Coupon_Subject,
-          Coupon_PhotoPath: this.imgs[0],
+          Coupon_PhotoPath: this.imgTempList[0],
           Coupon_Cash: this.Coupon_Cash,
           Coupon_Condition: this.Coupon_Condition,
           Coupon_UsedTimes: this.canUse[this.index].id,
@@ -412,30 +418,24 @@
         })
       },
       async addImg() {
-        // if (this._click) {
-        //   error('操作过快')
-        //   return
-        // }
-        const files = await chooseImageByPromise().catch(err => {
-          wx.showModal({
-            title: '请选择图片',
-            content: JSON.stringify(err)
+        try {
+          if (this._click) throw Error('操作过快')
+          const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch(() => { throw Error('未选择图片') })
+          const arr1 = files.map(file => {
+            return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
           })
-          return []
-        })
-        const arr1 = files.map(file => {
-          return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
-        })
-        this.imgTempList = this.imgTempList.concat(arr1)
-        const imgs = getArrColumn(files, 'path')
-        const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch(err => {
-          wx.showModal({
-            title: '文件批量上传失败',
-            content: JSON.stringify(err)
-          })
-        })
-
-        this.imgs = this.imgs.concat(ossUrls)
+          console.log('upload img arr1 is', arr1)
+          // this.imgTempList = this.imgTempList.concat(arr1)
+          const imgs = getArrColumn(files, 'path')
+          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch((errMsg) => { throw {message: errMsg, type: 'modal'} })
+          for (var i = 0; i < ossUrls.length; i++) {
+            ossUrls[i] = getDomain(ossUrls[i])
+          }
+          this.imgTempList = ossUrls
+          this._click = false
+        } catch (e) {
+          wx.$errorHandle(e)
+        }
       },
       bindPickerChanges(e) {
         this.index = e.$wx.detail.value
@@ -457,13 +457,15 @@
                   this.coupon_prod = item.coupon_prod
                 }
                 this.Coupon_Subject = item.Coupon_Subject
-                this.imgs[0] = item.Coupon_PhotoPath
+                // this.imgs[0] = item.Coupon_PhotoPath
                 this.Coupon_Cash = item.Coupon_Cash
                 this.Coupon_Condition = item.Coupon_Condition
                 this.index = String(item.Coupon_UsedTimes)
                 this.Coupon_UserLevel = String(item.Coupon_UserLevel)
                 this.front_show = item.front_show
 
+                this.imgTempList.push(item.Coupon_PhotoPath)
+                console.log(item.Coupon_PhotoPath, this.imgTempList,"sss")
                 // 初始化开始时间
                 let date = item.Coupon_StartTime
                 let defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()

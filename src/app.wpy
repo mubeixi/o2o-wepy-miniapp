@@ -79,6 +79,7 @@ wepy.app({
       "pages/store/StoreCoupon",
       "pages/store/StoreCouponAdd",
       "pages/store/StoreMarketing",
+      "pages/store/StoreBalance",
       "pages/logistics/LogisticsMain",
       "pages/logistics/LogisticsAdds",
       "pages/logistics/LogisticsAddsMail",
@@ -105,6 +106,11 @@ wepy.app({
       "pages/order/OrderTmpl",
       "pages/order/OrderTmplList",
       "pages/order/OrderRetailSend",
+      "pages/order/CheckChannel",
+      "pages/order/CheckByCode",
+      "pages/order/CheckOrderInfo",
+      "pages/order/SettlementList",
+      "pages/order/Settlement",
       "pages/demo"
 
     ],

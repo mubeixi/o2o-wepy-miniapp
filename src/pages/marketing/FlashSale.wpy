@@ -81,23 +81,26 @@
   <div class="page-wrap safearea bottom-btn">
     <div class="container">
       <div class="list">
-        <div class="item" v-for="(item,idx) in list" :key="idx" @click="$linkTo('/pages/marketing/FlashSaleForm?spike_id='+item.id)">
+        <div class="item" v-for="(item,idx) in list" :key="idx" >
           <div class="title">{{item.name}}</div>
           <div class="goods-list">
-            <div class="goods-item flex flex-vertical-center" v-for="(product,idx2) in item.spike_goods" :key="idx2">
-              <div class="goods-thumb" :style="{backgroundImage:'url('+product.ImgPath+')'}"></div>
+            <div class="goods-item flex flex-vertical-center">
+<!--              <div class="goods-thumb" :style="{backgroundImage:'url('+item.spike_goods[0].ImgPath+')'}"></div>-->
+              <image class="goods-thumb" :src="item.spike_goods[0].ImgPath"></image>
               <div class="goods-info flex1">
-                <div class="goods-title">{{product.Products_Name}}</div>
+                <div class="goods-title">{{item.spike_goods[0].Products_Name}}</div>
                 <div class="price-box flex">
-                  <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{product.Products_PriceX}}</span></div>
-                  <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{product.Products_PriceY}}</span></div>
+                  <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{item.spike_goods[0].Products_PriceX}}</span></div>
+                  <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{item.spike_goods[0].Products_PriceY}}</span></div>
                 </div>
               </div>
               <icon type="iconarrowleft" size="14" color="#999"></icon>
             </div>
           </div>
           <div class="actions">
-            <div class="action"><icon type="iconyanjing" size="20" color="#999"></icon><span class="m-l-4">预览</span></div>
+            <div class="action" @click="$linkTo('/pages/marketing/FlashSaleForm?spike_id='+item.id)"><icon type="iconyanjing" size="20" color="#999"></icon><span class="m-l-4">预览</span></div>
+            <div class="action" v-if="item.status==1" @click="update(item.id,2,idx)"><icon type="iconfenxiang1" size="14" color="#999"></icon><span class="m-l-4">禁用</span> </div>
+            <div class="action" v-else @click="update(item.id,1,idx)"><icon type="iconfenxiang1" size="14" color="#999"></icon><span class="m-l-4">启用</span> </div>
             <div class="action"><icon type="iconfenxiang1" size="14" color="#999"></icon><span class="m-l-4">分享</span> </div>
           </div>
         </div>
@@ -120,7 +123,7 @@
   } from '../../common/helper'
   import { error } from '../../common/fun'
   import {
-    bizSpikeList
+    bizSpikeList, bizSpikeStatus
   } from '../../api/store'
 
   wepy.page({
@@ -130,6 +133,17 @@
       list: []
     },
     methods: {
+      update(id, status, idx) {
+        let data = {
+          spike_id: id,
+          status: status
+        }
+        bizSpikeStatus(data,{tip:'修改中',mask:true}).then(res => {
+         this._init_func()
+        }).catch(e => {
+
+        })
+      },
       async _init_func() {
         const {data: flashSaleList} = await bizSpikeList({size: 999}).catch(() => {})
         this.list = flashSaleList
