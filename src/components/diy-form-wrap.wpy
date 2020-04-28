@@ -157,13 +157,14 @@
       bindTypeChange(e) {
         const idx = e.$wx.detail.value
         this.typeIdx = idx
+        console.log(eleTypeList,idx)
         this._row.type = this.eleTypeList[idx].type
         this._row.title = this.eleTypeList[idx].title
       },
-      rowAdd({type = 'input', title = '文本框'}) {
+      rowAdd() {
         const ele = {
-          type,
-          title,
+          type:'input',
+          title:'文本框',
           label: '',
           desc: '',
           require: false,
