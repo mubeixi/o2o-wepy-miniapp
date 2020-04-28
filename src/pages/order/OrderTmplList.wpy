@@ -101,14 +101,19 @@
       async _init_func() {
         try {
           // showLoading('loading')
-          const list = await getBizOrderTemplateList({pageSize: 999}, {onlyData: true}).catch(() => {})
-          this.list = list.map(row => {
+          const list = await getBizOrderTemplateList({pageSize: 999}, {onlyData: true}).catch((e) => {throw Error(e.msg)})
+
+          for(let row of list){
             row.temp_info = JSON.parse(row.temp_info)
-            row.title = row.temp_info.title
-            row.placeholder = getArrColumn(row.temp_info.formData, 'label').join(',')
-            return row
-          })
+            const {title='',formData=[]} = row.temp_info
+            row.title = title
+            row.placeholder = getArrColumn(formData, 'label').join(',')
+            if(row.title){
+              this.list.push(row)
+            }
+          }
         } catch (e) {
+          console.log(e)
           error('初始化失败:' + e.message)
         }
       }

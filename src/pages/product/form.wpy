@@ -777,6 +777,7 @@
               compareMarketPrice: '现价必须小于原价'
             }
           },
+          //如果拼团价格为0，则不校验拼团人数了
           pintuan_people: {
             match: intNumber,
             required: true,
@@ -790,7 +791,7 @@
           pintuan_pricex: {
             match: floatNumber,
             required: true,
-            size: {min: 0.01},
+            size: {min: 0},
             use: {
               compareMarketPrice: (val, row) => {
                 return parseFloat(val) < parseFloat(row.Products_PriceY)
