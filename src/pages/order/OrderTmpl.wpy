@@ -95,10 +95,12 @@
           const tempInfo = JSON.parse(tmplData.temp_info)
           this.formData = tempInfo.formData
           this.title = tempInfo.title
-          hideLoading()
           this.ready = true
         } catch (e) {
+          console.log(e)
           wx.$errorHandle(e)
+        }finally{
+          hideLoading()
         }
       }
     },
@@ -109,6 +111,8 @@
       this.id = options.id
       if(options.id){
         this._init_func()
+      }else{
+        this.ready = true
       }
 
     },
