@@ -4,7 +4,7 @@
       <div class="store-title">
         付款方式
       </div>
-      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{withDrawData}}"    range-key="name">
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{ind}}" range="{{withDrawData}}"    range-key="name">
         {{withDrawData[ind].name}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </picker>
