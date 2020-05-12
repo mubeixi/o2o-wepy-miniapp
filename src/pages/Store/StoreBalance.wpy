@@ -4,7 +4,8 @@
       <image src="/static/balance.png" class="full-img"></image>
       <div class="balance-store">店内余额</div>
       <div class="fz-18 price-store">¥<span class="m-l-5 fz-25">{{biz_money}}</span></div>
-      <div class="btn-sub">提现</div>
+      <div class="btn-sub  btn-pay fz-14" @click="$linkTo('/pages/store/Recharge')">充值</div>
+      <div class="btn-sub fz-14" @click="$linkTo('/pages/store/StoreWithdrawal')">提现</div>
     </div>
 
     <div class="store-item"  v-for="(item,ind) of balanceList" :key="ind">
@@ -99,12 +100,18 @@
     height:56rpx;
     line-height: 56rpx;
     text-align: center;
-    background:rgba(255,255,255,1);
-    opacity:0.2;
+    background:#969aff;
+    //opacity:0.2;
     border-radius:28rpx;
     position: absolute;
     top:230rpx;
-    left:269rpx;
+    left:370rpx;
+    color: #F6F6F6;
+  }
+  .btn-pay{
+    position: absolute;
+    top:230rpx;
+    left:198rpx;
   }
   .store-item{
     width:710rpx;

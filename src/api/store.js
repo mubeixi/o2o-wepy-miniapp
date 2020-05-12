@@ -37,7 +37,10 @@ export const opBizInfo = (param, options) => fetch({act: 'opBizInfo', param, opt
 
 // 发送验证码
 export const bizRegSms = (param, options) => fetch({act: 'bizRegSms', param, options})
-
+// 申请提现（商家）/保证金退款
+export const bizWithdrawApply = (param, options) => fetch({act: 'bizWithdrawApply', param, options})
+// 获取提现记录列表/保证金退款列表
+export const getWithdrawRecordList = (param, options) => fetch({act: 'get_withdraw_record_list', param, options})
 // 获取城市列表
 export const getCityList = (param, options) => fetch({act: 'getCityList', param, options})
 
