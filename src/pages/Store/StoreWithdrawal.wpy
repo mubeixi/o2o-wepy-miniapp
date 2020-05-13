@@ -17,7 +17,7 @@
         </view>
       </view>
       <view class="tiMoney">
-        提现金额
+        {{isBond?'保证金退款':'提现'}}金额
       </view>
       <view class="inputMoney">
         <view class="input-money-inner">
@@ -26,18 +26,18 @@
       </view>
       <view class="canTi">
         <view class="canTiMoney">
-          可提现金额：{{storeInfo.biz_money}}元
+          可{{isBond?'退款':'提现'}}金额：{{isBond?storeInfo.bond_fee:storeInfo.biz_money}}元
         </view>
         <view class="allTi" @click="allWith">
-          全部提现
+          全部{{isBond?'退款':'提现'}}
         </view>
       </view>
 
       <view class="liji" @click="sureWith">
-        立即提现
+        立即{{isBond?'退款':'提现'}}
       </view>
       <view class="lishi flex flex-vertical-center" @click="goRecord">
-        提现记录 <icon type="iconarrowleft" class="lishi-image" size="14" color="#999"  class="m-l-10"></icon>
+        {{isBond?'退款':'提现'}}记录 <icon type="iconarrowleft" class="lishi-image" size="14" color="#999"  class="m-l-10"></icon>
       </view>
     </view>
   </view>
@@ -54,32 +54,57 @@
     store,
     mixins: [pageMixin],
     data: {
-      storeInfo: {biz_money: ''},
+      isBond: false,
+      storeInfo: {biz_money: '', bond_fee: ''},
       storeWith: {
       },
       bankname: '',
       money: ''
     },
+    onLoad(options) {
+      let type = Number(options.type)
+      if (type === 4) {
+        this.isBond = true
+        wx.setNavigationBarTitle({
+          title: '保证金退款'
+        })
+      }
+    },
     methods: {
       goRecord() {
-        this.$linkTo('/pages/store/Record?type=3')
+        if (this.isBond) {
+          this.$linkTo('/pages/store/Record?type=4')
+        } else {
+          this.$linkTo('/pages/store/Record?type=3')
+        }
       },
       async sureWith() {
+        let data = {
+          money: this.money,
+          type: 'withdraw'
+        }
+        if (this.isBond) {
+          data.type = 'back_bond'
+        }
         if (this.money <= 0) {
-          error('提现金额错误')
+          error(`${this.isBond ? '退款' : '提现'}金额错误`)
           return
         }
-        await bizWithdrawApply({money: this.money}).then(res => {
+        await bizWithdrawApply(data).then(res => {
           this.money = ''
-          toast('提现成功')
-          let that=this
+          toast(`${this.isBond ? '退款' : '提现'}成功`)
+          let that = this
           setTimeout(function() {
             that.getDetail()
           }, 1000)
-        }).catch(e => { error(e.msg || '提现失败') })
+        }).catch(e => { error(e.msg || '操作失败') })
       },
       allWith() {
-        this.money = this.storeInfo.biz_money
+        if (this.isBond) {
+          this.money = this.storeInfo.bond_fee
+        } else {
+          this.money = this.storeInfo.biz_money
+        }
       },
       async getDetail() {
         await getBizInfo({}, {tip: '加载中'}).then(res => {

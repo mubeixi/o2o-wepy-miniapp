@@ -1,49 +1,85 @@
 <template>
   <view class="all">
     <view class="main" v-for="(item,index) of data" :key="index">
-      <view class="fir">
-        <view class="left">
-          申请方式：
+     <block v-if="type===5">
+       <view class="fir">
+         <view class="left">
+           充值方式：
+         </view>
+         <view class="right">
+           {{item.payMethodName}}
+         </view>
+       </view>
+       <view class="fir">
+         <view class="left">
+           充值金额：
+         </view>
+         <view class="right">
+           {{item.pay_price}}
+         </view>
+       </view>
+       <view class="fir">
+         <view class="left">
+           状态：
+         </view>
+         <view class="rights">
+           {{item.statusName}}
+         </view>
+       </view>
+       <view class="fir">
+         <view class="left">
+           时间：
+         </view>
+         <view class="right">
+           {{item.created_at}}
+         </view>
+       </view>
+     </block>
+      <block v-else>
+        <view class="fir">
+          <view class="left">
+            申请方式：
+          </view>
+          <view class="right">
+            {{item.Method_Name}}
+          </view>
         </view>
-        <view class="right">
-          {{item.Method_Name}}
+        <view class="fir">
+          <view class="left">
+            提现来源：
+          </view>
+          <view class="right">
+            {{item.Record_From_desc}}
+          </view>
         </view>
-      </view>
-      <view class="fir">
-        <view class="left">
-          提现来源：
+        <view class="fir">
+          <view class="left">
+            提现金额：
+          </view>
+          <view class="right">
+            {{item.Record_Total}}
+          </view>
         </view>
-        <view class="right">
-          {{item.Record_From_desc}}
+        <view class="fir">
+          <view class="left">
+            状态：
+          </view>
+          <view class="rights">
+            {{item.Record_Status_desc}}
+          </view>
+          <view class="rightt">
+            {{item.No_Record_Desc}}
+          </view>
         </view>
-      </view>
-      <view class="fir">
-        <view class="left">
-          提现金额：
+        <view class="fir">
+          <view class="left">
+            时间：
+          </view>
+          <view class="right">
+            {{item.Record_CreateTime}}
+          </view>
         </view>
-        <view class="right">
-          {{item.Record_Total}}
-        </view>
-      </view>
-      <view class="fir">
-        <view class="left">
-          状态：
-        </view>
-        <view class="rights">
-          {{item.Record_Status_desc}}
-        </view>
-        <view class="rightt">
-          {{item.No_Record_Desc}}
-        </view>
-      </view>
-      <view class="fir">
-        <view class="left">
-          时间：
-        </view>
-        <view class="right">
-          {{item.Record_CreateTime}}
-        </view>
-      </view>
+      </block>
     </view>
 
 
@@ -57,7 +93,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getWithdrawRecordList} from '../../api/store'
+  import {getWithdrawRecordList, getOrderList} from '../../api/store'
   import { error, toast } from '../../common/fun'
 
   wepy.page({
@@ -73,7 +109,20 @@
 
     },
     onLoad(options) {
-      this.type = options.type
+      this.type = Number(options.type)
+      if (this.type === 3) {
+        wx.setNavigationBarTitle({
+          title: '提现记录'
+        })
+      } else if (this.type === 4) {
+        wx.setNavigationBarTitle({
+          title: '保证金退款记录'
+        })
+      } else if (this.type === 5) {
+        wx.setNavigationBarTitle({
+          title: '充值记录'
+        })
+      }
     },
     onShow() {
       this.data = []
@@ -90,19 +139,35 @@
     methods: {
       // 获取提现记录
       getWithdrawRecordList() {
-        let data = {
-          page: this.page,
-          pageSize: this.pageSize,
-          type: this.type
-        }
-        getWithdrawRecordList(data).then(res => {
-          this.totalCount = res.totalCount
-          for (let item of res.data) {
-            this.data.push(item)
+        if (this.type === 5) {
+          let data = {
+            page: this.page,
+            pageSize: this.pageSize,
+            pay_type: 4
           }
-        }).catch(e => {
+          getOrderList(data).then(res => {
+            this.totalCount = res.totalCount
+            for (let item of res.data) {
+              this.data.push(item)
+            }
+          }).catch(e => {
 
-        })
+          })
+        } else {
+          let data = {
+            page: this.page,
+            pageSize: this.pageSize,
+            type: this.type
+          }
+          getWithdrawRecordList(data).then(res => {
+            this.totalCount = res.totalCount
+            for (let item of res.data) {
+              this.data.push(item)
+            }
+          }).catch(e => {
+
+          })
+        }
       }
     }
 
@@ -115,11 +180,13 @@
   .all{
     background-color: #f8f8f8;
     min-height: 100vh;
+    padding-top: 40rpx;
+    box-sizing: border-box;
   }
   .main{
     width: 710rpx;
     margin: 0 auto;
-    margin-top: 40rpx;
+    margin-bottom: 40rpx;
     background-color: #FFFFFF;
     box-sizing: border-box;
     padding: 28rpx 0rpx 32rpx 27rpx;
