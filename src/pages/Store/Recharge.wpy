@@ -1,0 +1,266 @@
+<template>
+  <view class="all" >
+
+
+    <view class="content">
+
+      <view class="tiMoney">
+        充值金额
+      </view>
+      <view class="inputMoney">
+        <view class="input-money-inner">
+          ¥  <input class="input-money-input" type="number" placeholder="请输入充值金额" placeholder-class="_place" v-model="money">
+        </view>
+      </view>
+
+
+      <view class="liji" @click="sureRecharge">
+        立即充值
+      </view>
+      <view class="lishi flex flex-vertical-center" @click="goRecord">
+        充值记录 <icon type="iconarrowleft" class="lishi-image" size="14" color="#999"  class="m-l-10"></icon>
+      </view>
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {addBizOrder, bizOrderPay, code2Session} from '../../api/store'
+  import { error, toast, hideLoading, showLoading } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      money: ''
+    },
+    methods: {
+      goRecord(){
+          this.$linkTo('/pages/store/Record?type=5')
+      },
+      async sureRecharge() {
+        if (!this.money || this.money <= 0) {
+          error('充值金额错误')
+          return
+        }
+        let that = this
+        wx.login({
+          success (res) {
+            if (res.code) {
+              let code = res.code
+              code2Session({code: code}).then(res => {
+                if (!res.data.openid) {
+                  error('获取支付信息失败')
+                  return
+                }
+                let open = res.data.openid
+                that.pay(open)
+              })
+            } else {
+
+            }
+          },
+          fail() {
+
+          }
+        })
+      },
+      async pay(open) {
+        let data = {
+          pay_type: 4,
+          price: this.money
+        }
+        let order = await addBizOrder(data, {onlyData: true, tip: '加载中'}).catch(e => { error(e.msg || '创建订单错误') })
+
+        let obj = await bizOrderPay({order_id: order.order_id, pay_method: 'wx_lp', open_id: open}, {onlyData: true, tip: '加载中'}).catch(e => { error(e.msg || '创建订单错误') })
+        if (obj) {
+          let {timeStamp, nonceStr, paySign} = obj || {}
+          let packages = obj.package
+          wx.requestPayment({
+            timeStamp: timeStamp,
+            nonceStr: nonceStr,
+            package: packages,
+            signType: 'MD5',
+            paySign: paySign,
+            success (res) {
+              this.$back()
+            },
+            fail (res) {
+              if (res.errMsg === 'requestPayment:fail cancel') {
+                toast('取消支付，请重新支付')
+              }
+            }
+          })
+        } else {
+          toast(obj.msg)
+        }
+      }
+    },
+    onShow() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss" >
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .all{
+    background-color: #FFFFff;
+    width: 750rpx;
+    min-height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .content{
+    background-color: #FFFFFF;
+    width: 710rpx;
+    margin: 40rpx 20rpx 0rpx 20rpx;
+    padding-bottom: 85rpx;
+    border-radius: 10rpx;
+    .bank{
+      width: 710rpx;
+      background-color: #EEEEEE;
+      height: 100rpx;
+      padding: 0rpx 30rpx;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      .bankCard{
+        width: 50rpx;
+        height: 50rpx;
+        margin-right: 18rpx;
+      }
+      .bankName{
+        font-size: 28rpx;
+        color: #333333;
+      }
+      .right{
+        width: 18rpx;
+        height: 27rpx;
+        margin-left: auto;
+      }
+    }
+    .guanli{
+      font-size: 28rpx;
+      color: #5E9BFF;
+      line-height: 100rpx;
+      display: block;
+      text-align: center;
+    }
+    .tiMoney{
+      width: 710rpx;
+      height: 25rpx;
+      line-height: 25rpx;
+      margin: 68rpx 0rpx 68rpx 30rpx;
+      font-size: 26rpx;
+      color: #333333;
+    }
+    .inputMoney{
+      width: 650rpx;
+      height: 66rpx;
+      margin-left: 30rpx;
+      margin-right: 30rpx;
+      border-bottom: 1rpx solid #ECE8E8;
+      display: flex;
+      font-size: 48rpx;
+      color: #333333;
+      padding-bottom: 30rpx;
+      .input-money-inner{
+        height: 35rpx;
+        line-height: 35rpx;
+        display: flex;
+        align-items: center;
+        .input-money-input{
+          margin-left: 20rpx;
+          height: 35rpx;
+          width: 600rpx;
+        }
+      }
+    }
+    .canTi{
+      width: 670rpx;
+      height: 76rpx;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .canTiMoney{
+        font-size: 22rpx;
+        color: #999999;
+      }
+      .allTi{
+        font-size: 22rpx;
+        color: #00A8FF;
+      }
+    }
+    .kong{
+      background-color: #F8F8F8;
+      width: 690rpx;
+      margin: 0 auto;
+      height: 20rpx;
+    }
+    .tishi{
+      margin-top: 27rpx;
+      margin-left: 32rpx;
+      margin-right: 33rpx;
+      width: 645rpx;
+      display: flex;
+      .tishi-image{
+        width: 22rpx;
+        height: 22rpx;
+        margin-right: 10rpx;
+        margin-top: 5rpx;
+      }
+      .tishi-view{
+        width: 613rpx;
+        font-size: 20rpx;
+        color: #999999;
+      }
+    }
+    .liji{
+      margin-top: 98rpx;
+      width:620rpx;
+      height:80rpx;
+      line-height: 80rpx;
+      background:#00A8FF;
+      border-radius:10rpx;
+      margin-left: 50rpx;
+      margin-right: 40rpx;
+      text-align: center;
+      font-size: 34rpx;
+      color: #FFFFFF;
+    }
+    .lishi{
+      // width: 106rpx;
+      margin-top: 25rpx;
+      margin-left: 565rpx;
+      font-size: 22rpx;
+      color: #999999;
+      display: flex;
+      align-items: center;
+      .lishi-image{
+        width: 12rpx;
+        height: 20rpx;
+        margin-left: 6rpx;
+      }
+    }
+  }
+  ._place{
+    font-size: 14px;
+    color: #D5D5D5;
+  }
+</style>
+<config>
+  {
+  "navigationBarTitleText": "充值",
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  }
+  }
+</config>

@@ -83,6 +83,8 @@ export const getBizPayAmount = (param, options) => fetch({act: 'getBizPayAmount'
 export const addBizOrder = (param, options) => fetch({act: 'addBizOrder', param, options})
 // 商家入驻订单支付
 export const bizOrderPay = (param, options) => fetch({act: 'bizOrderPay', param, options})
+// 获取商家入驻订单列表/充值记录
+export const getOrderList = (param, options) => fetch({act: 'getOrderList', param, options})
 
 // 获取自定义类别的详情
 export const bizIndustryDetail = (param, options) => fetch({act: 'bizIndustryDetail', param, options})
