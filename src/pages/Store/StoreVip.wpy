@@ -1,5 +1,5 @@
 <template>
-  <div class="store-vip">
+  <div class="store-vip page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
     <div class="store-item flex flex-vertical-center "  style="padding-top: 20rpx;height: 108rpx">
       <div class="store-title">
@@ -38,8 +38,12 @@
       </div>
     </div>
     <div class="line"></div>
-
-    <div class="submit-main"  @click="saveVip">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class=" btn action-btn btn-primary"  @click="saveVip">
       保存
     </div>
 
@@ -209,6 +213,9 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+  .page-wrap{
+    padding-bottom: 44px;
+  }
   .store-vip{
     min-height: 100vh;
     width: 750rpx;
@@ -263,19 +270,7 @@
     border: 1px solid #DDDDDD;
   }
 
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
-    line-height: 86rpx;
-    text-align: center;
-    color: #FFFFFF;
-    font-size: 32rpx;
-    background:rgba(0,168,255,1);
-    position: fixed;
-    bottom: 0rpx;
-    left: 0rpx;
-    z-index: 9;
-  }
+
 </style>
 <config>
   {

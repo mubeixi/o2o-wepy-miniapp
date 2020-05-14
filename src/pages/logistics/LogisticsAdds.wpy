@@ -1,5 +1,5 @@
 <template>
-  <div class="store-all">
+  <div class="store-all page-wrap">
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
         模板名称
@@ -42,8 +42,12 @@
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </picker>
     </div>
-
-    <div class="submit-main" @click="save">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary" @click="save">
       保存
     </div>
   </div>
@@ -187,7 +191,9 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
+  .page-wrap{
+    padding-bottom: 44px;
+  }
   .store-all{
     background-color: #FFFFFF;
     height: 100vh;

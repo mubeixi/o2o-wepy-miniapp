@@ -1,5 +1,5 @@
 <template>
-  <div class="seckill-add">
+  <div class="seckill-add page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
     <block v-if="pro_id">
       <div  class="flex  product-mbx" @click="openPop('product')">
@@ -95,8 +95,12 @@
 
 
 
-    <div style="height: 86rpx;width: 750rpx"></div>
-    <div class="submitLast fz-16"  @click="addSeckill">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary fz-16"  @click="addSeckill">
       确定
     </div>
 
@@ -486,6 +490,10 @@
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
 
+  .page-wrap{
+    padding-bottom: 44px;
+  }
+
   .picker{
     height: 110rpx;
     line-height: 110rpx;
@@ -541,18 +549,7 @@
     color: #999999;
     font-size: 26rpx;
   }
-  .submitLast{
-    width: 750rpx;
-    height: 86rpx;
-    line-height: 86rpx;
-    text-align: center;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    background-color: #00A8FF;
-    color: #FFFFFF;
-    z-index: 99;
-  }
+
   .product-mbx{
     width: 750rpx;
     box-sizing: border-box;

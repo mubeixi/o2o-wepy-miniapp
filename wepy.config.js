@@ -39,8 +39,8 @@ module.exports = {
     }
   },
   plugins: [
-    TypeScriptCompiler()
-    // UglifyPlugin()
+    TypeScriptCompiler(),
+    UglifyPlugin()
   ],
   appConfig: {
     noPromiseAPI: ['createSelectorQuery']
