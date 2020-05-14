@@ -26,7 +26,6 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-
   const mockData = [
     {
       label: '一级 1',
@@ -62,17 +61,16 @@
           label: '三级 3-2-1'
         }]
       }]
-    }];
-  function formateData(origin_data){
-    for(var item of origin_data){
+    }]
+function formateData(origin_data) {
+    for (var item of origin_data) {
       item.label = item.industry_name
-      if(item.child){
+      if (item.child) {
         item.children = objTranslate(item.child)
-        if(item.child && item.child.length>0){
+        if (item.child && item.child.length > 0) {
           formateData(item.child)
         }
       }
-
     }
     return origin_data
   }
@@ -88,9 +86,9 @@
     store,
     mixins: [pageMixin],
     props: {
-      show:{
-        type:Boolean,
-        default:false
+      show: {
+        type: Boolean,
+        default: false
       },
       bottomHeight: {
         type: Number || String,
@@ -98,32 +96,32 @@
       },
       direction: {
         type: String,
-        default: 'top', // 方向  top，bottom，left，right
-      },
+        default: 'top' // 方向  top，bottom，left，right
+      }
     },
     data: {
-      isReady:false,
-      showTree:false,
+      isReady: false,
+      showTree: false,
       timer: null,
       iftoggle: false,
       translateValue: -100, // 位移距离
       treeData: [],
-      maskOpacity:0,
-      propsConf:{
-        //icon:'iconname',
+      maskOpacity: 0,
+      propsConf: {
+        // icon:'iconname',
         children: 'child', // 指定子树为节点对象的某个属性值
         label: 'industry_name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled' //	指定节点选择框是否禁用为节点对象的某个属性值
       }
     },
-    computed:{
+    computed: {
       _translate() {
         const transformObj = {
           'top': `transform:translateY(${-this.translateValue}%)`,
           'bottom': `transform:translateY(${this.translateValue}%)`,
           'left': `transform:translateX(${-this.translateValue}%)`,
           'right': `transform:translateX(${this.translateValue}%)`
-        };
+        }
         return transformObj[this.direction]
       },
       _location() {
@@ -131,85 +129,75 @@
           'top': `bottom:${this.bottomHeight}px;width:100%;`,
           'bottom': 'top:0px;width:100%;',
           'left': 'right:0px;height:100%;',
-          'right': 'left:0px;height:100%;',
-        };
-        return positionValue[this.direction] + this._translate;
+          'right': 'left:0px;height:100%;'
+        }
+        return positionValue[this.direction] + this._translate
       }
     },
-    watch:{
-      show:{
-        handler(val){
+    watch: {
+      show: {
+        handler(val) {
           val && this.open()
           !val && this.close()
         }
       }
     },
-    async created(){
+    async created() {
+      bizIndustryList().then(res => {
+      // let ret = res.data
+        // formateData(ret)
 
-      bizIndustryList().then(res=>{
-
-        //let ret = res.data
-        //formateData(ret)
-
-        this.treeData = res.data;//mockData
+        this.treeData = res.data// mockData
         this.isReady = true
-
       })
-
     },
-    onLoad(){
+    onLoad() {
 
     },
     methods: {
-      subFn(){
+      subFn() {
         let checkNodeList = this.$refs.tree.getCheckedNodes()
         console.log(checkNodeList)
-        this.$emit('onConfirm',checkNodeList)
+        this.$emit('onConfirm', checkNodeList)
       },
-      loadNode(){
+      loadNode() {
 
       },
-      noop(){
-        return ;
-      },
-      close(){
+      noop() {
 
+      },
+      close() {
         if (this.timer !== null || !this.iftoggle) {
-          return;
+          return
         }
-        this.translateValue = -100;
+        this.translateValue = -100
         setTimeout(() => {
-          this.showTree = false;
-          this.timer = null;
-          this.iftoggle = false;
-          this.$emit('closeCallBack', null);
-          this.$emit('change',false)
+          this.showTree = false
+          this.timer = null
+          this.iftoggle = false
+          this.$emit('closeCallBack', null)
+          this.$emit('change', false)
           this.$emit('close')
-        }, 100);
-
-
+        }, 100)
       },
-      open(){
-
+      open() {
         this.showTree = true
         let _open = setTimeout(() => {
-          this.translateValue = 0;
-          this.maskOpacity = 0.5;
-          _open = null;
+          this.translateValue = 0
+          this.maskOpacity = 0.5
+          _open = null
         }, 100)
         let _toggle = setTimeout(() => {
-          this.iftoggle = true;
-          _toggle = null;
-        }, 300);
-
-
+          this.iftoggle = true
+          _toggle = null
+        }, 300)
       },
       // uni-app中emit触发的方法只能接受一个参数
       handleNodeClick(obj) {
-        console.log('handleNodeClick', obj);
+        console.log('handleNodeClick', obj)
       },
       handleNodeExpand(obj) {
-        console.log('handleNodeExpand', JSON.stringify(obj));
+        console.log('handleNodeExpand', JSON.stringify(obj))
       }
     }
 

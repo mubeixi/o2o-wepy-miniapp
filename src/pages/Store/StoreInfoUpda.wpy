@@ -46,9 +46,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getBizInfo, opBizInfo, bizRegSms} from '../../api/store'
-
-  import {showLoading, hideLoading} from '../../common/fun'
+  import { bizRegSms, getBizInfo, opBizInfo } from '../../api/store'
 
   wepy.page({
     store,
@@ -194,7 +192,7 @@
       },
       async getBizInfo() {
         let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch((e) => { throw Error(e.msg) })
-        this.info=arr[0]
+        this.info = arr[0]
         this.biz_shop_name = this.info.biz_shop_name
         this.biz_name = this.info.biz_name
         this.mobile = this.info.biz_mobile

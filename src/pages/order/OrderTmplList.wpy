@@ -62,15 +62,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    confirm,
-    getArrColumn
-  } from '../../common/helper'
-  import {
-    delBizOrderTemplate, getBizOrderTemplateList
-  } from '../../api/order'
+  import { confirm, getArrColumn } from '../../common/helper'
+  import { delBizOrderTemplate, getBizOrderTemplateList } from '../../api/order'
 
-  import { error, toast, modal, showLoading, hideLoading } from '../../common/fun'
+  import { error } from '../../common/fun'
 
   import eventHub from '../../common/eventHub'
 
@@ -86,7 +81,7 @@
     methods: {
       selectFn(row) {
         if (this.mode === 'none') return
-        eventHub.$emit('goods-order-tmpl', {tmpl:row})
+        eventHub.$emit('goods-order-tmpl', {tmpl: row})
         this.$back()
       },
       async delFn(row, idx) {
@@ -101,15 +96,15 @@
       async _init_func() {
         try {
           // showLoading('loading')
-          const list = await getBizOrderTemplateList({pageSize: 999}, {onlyData: true}).catch((e) => {throw Error(e.msg)})
+          const list = await getBizOrderTemplateList({pageSize: 999}, {onlyData: true}).catch((e) => { throw Error(e.msg) })
 
           const temp = []
-          for(let row of list){
+          for (let row of list) {
             row.temp_info = JSON.parse(row.temp_info)
-            const {title='',formData=[]} = row.temp_info
+            const {title = '', formData = []} = row.temp_info
             row.title = title
             row.placeholder = getArrColumn(formData, 'label').join(',')
-            if(row.title){
+            if (row.title) {
               temp.push(row)
             }
           }

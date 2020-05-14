@@ -194,18 +194,17 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
-  } from '../../common/helper'
-  import { bizProdList, opBizGift, getShopGiftInfo, getShippingTemplate } from '../../api/product'
+  import { ls, validateFun } from '../../common/helper'
+  import { bizProdList, getShippingTemplate, getShopGiftInfo, opBizGift } from '../../api/product'
   import { back, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+
   const moment = require('moment')
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      Template_Name:'',
+      Template_Name: '',
       weight: '',
       is_shipping: 0,
       sort: '',
@@ -249,7 +248,7 @@
           item.check = false
         })
         this.emsData[index].check = !this.emsData[index].check
-        this.Template_Name=this.emsData[index].Template_Name
+        this.Template_Name = this.emsData[index].Template_Name
       },
       selectPro() {
         this.$closePop('myModal')
@@ -334,7 +333,7 @@
           pro_id: this.pro_id
         }
         if (this.selectValue.Products_Type != 0) {
-          if(!selectSku.Attr_Value){
+          if (!selectSku.Attr_Value) {
             this.formCheckResult = ['请设置赠品规格']
             return
           }
@@ -419,7 +418,7 @@
         getShopGiftInfo({id: this.id }).then(res => {
           this.editData = res.data
           for (let item of this.proData) {
-            console.log(item,this.editData.product_id,"ss")
+            console.log(item, this.editData.product_id, 'ss')
             if (item.Products_ID == this.editData.product_id) {
               this.selectValue = item
               item.check = true
@@ -439,11 +438,11 @@
 
             this.shipping_id = shipping.shipping_id
             if (this.shipping_type == 1) {
-              this.weight=shipping.value
+              this.weight = shipping.value
               this.emsData.map(item => {
                 item.Template_ID == this.shipping_id ? item.check = true : item.check = false
               })
-            }else{
+            } else {
               this.shipping_price = shipping.value
             }
           }

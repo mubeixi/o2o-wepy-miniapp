@@ -72,8 +72,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {opBizInfo, getBizInfo, getWithdrawMethods} from '../../api/store'
+  import { getBizInfo, getWithdrawMethods, opBizInfo } from '../../api/store'
   import { back, error, hideLoading, showLoading, toast } from '../../common/fun'
+
   wepy.page({
     store,
     mixins: [pageMixin],

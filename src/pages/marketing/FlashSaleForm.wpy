@@ -362,10 +362,8 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
-  } from '../../common/helper'
-  import { error, modal, toast } from '../../common/fun'
+  import { findArrayIdx, getArrColumn, validateFun } from '../../common/helper'
+  import { error, toast } from '../../common/fun'
   import { bizProdList } from '../../api/product'
   import { bizAddSpike, bizSpikeDetail } from '../../api/store'
 
@@ -506,7 +504,7 @@
               discount: '商品折扣只能在0.1到9.9之间'
             }
           },
-          spike_id: !this.spike_id ? {}:{
+          spike_id: !this.spike_id ? {} : {
             required: true,
             message: {
               required: '编辑模式下spike_id必填'

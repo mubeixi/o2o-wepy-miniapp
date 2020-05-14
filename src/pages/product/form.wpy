@@ -563,33 +563,16 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    chooseImageByPromise,
-    getArrColumn,
-    uploadImages,
-    validateFun,
-    getDomain
-  } from '../../common/helper'
-  import {
-    getProductDetail,
-    getProductCategory,
-    getSystemProdConfig,
-    systemOperateProd
-  } from '../../api/product'
-  import {
-    getShippingTemplate,
-    addBizProdCate,
-    getCouponList,
-    getBizProdCateList
-  } from '../../api/store'
+  import Index from '../../mixins'
+  import { chooseImageByPromise, getArrColumn, getDomain, uploadImages, validateFun } from '../../common/helper'
+  import { getProductCategory, getProductDetail, getSystemProdConfig, systemOperateProd } from '../../api/product'
+  import { addBizProdCate, getBizProdCateList, getCouponList, getShippingTemplate } from '../../api/store'
 
-  import { error, toast, modal, showLoading, hideLoading } from '../../common/fun'
-  import {
-    floatNumber, intNumber
-  } from '../../common/regs'
+  import { error, hideLoading, modal, showLoading, toast } from '../../common/fun'
+  import { floatNumber, intNumber } from '../../common/regs'
 
   import eventHub from '../../common/eventHub'
-  import Index from '../../mixins'
+
   export default {
     components: { Index }
   }
@@ -645,7 +628,7 @@
         {title: '虚拟订单', desc: '买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成'},
         {title: '其他', desc: '买家下单-买家付款-订单完成'}
       ],
-      order_temp_text:'',//
+      order_temp_text: '', //
       formData: {
         Products_Index: 1,
         Products_Name: '',
@@ -777,7 +760,7 @@
               compareMarketPrice: '现价必须小于原价'
             }
           },
-          //如果拼团价格为0，则不校验拼团人数了
+          // 如果拼团价格为0，则不校验拼团人数了
           pintuan_people: {
             match: intNumber,
             required: true,

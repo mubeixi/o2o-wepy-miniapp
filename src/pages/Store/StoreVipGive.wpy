@@ -94,8 +94,8 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getShopGiftList} from '../../api/product'
-  import {getCouponList} from '../../api/store'
+  import { getShopGiftList } from '../../api/product'
+  import { getCouponList } from '../../api/store'
   import { back, showLoading } from '../../common/fun'
   import { ls } from '../../common/helper'
 
@@ -160,11 +160,10 @@
         this.proData[idx].check = !this.proData[idx].check
       },
       getList() {
+        this.coupon_prod = ls.get('coupon_prod')
+        this.pro_prod = ls.get('pro_prod')
 
-        this.coupon_prod=ls.get('coupon_prod')
-        this.pro_prod=ls.get('pro_prod')
-
-        getCouponList({status:1}).then(res => {
+        getCouponList({status: 1}).then(res => {
           this.couponList = res.data.map(item => {
             return {...item, check: false}
           })

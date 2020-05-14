@@ -97,12 +97,8 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import {
-    componentMixins
-  } from '../mixins'
-  import {
-    eleTypeList
-  } from '../lib/form/form'
+  import { componentMixins } from '../mixins'
+  import { eleTypeList } from '../lib/form/form'
 
   import { findArrayIdx } from '../common/helper'
 
@@ -138,7 +134,7 @@
       formData: {
         deep: true,
         handler(newVal) {
-          console.log('new formData',newVal)
+          console.log('new formData', newVal)
           this.$emit('change', newVal)
         }
       }
@@ -157,14 +153,14 @@
       bindTypeChange(e) {
         const idx = e.$wx.detail.value
         this.typeIdx = idx
-        console.log(eleTypeList,idx)
+        console.log(eleTypeList, idx)
         this._row.type = this.eleTypeList[idx].type
         this._row.title = this.eleTypeList[idx].title
       },
       rowAdd() {
         const ele = {
-          type:'input',
-          title:'文本框',
+          type: 'input',
+          title: '文本框',
           label: '',
           desc: '',
           require: false,
@@ -176,9 +172,9 @@
         // 更新type下标
         const findIdx = findArrayIdx(eleTypeList, {type: this._row.type})
         this.typeIdx = findIdx === false ? 0 : findIdx
-        setTimeout(()=>{
+        setTimeout(() => {
           this.$openPop('_form')
-        },100)
+        }, 100)
       },
       rowOpenEdit({idx}) {
         this._row = Object.assign({}, this.formData[idx])
@@ -187,9 +183,9 @@
         // 更新type下标
         const findIdx = findArrayIdx(eleTypeList, {type: this._row.type})
         this.typeIdx = findIdx === false ? 0 : findIdx
-        setTimeout(()=>{
+        setTimeout(() => {
           this.$openPop('_form')
-        },100)
+        }, 100)
       },
       // 自己控制更新才可靠
       rowUpdate({idx, val}) {

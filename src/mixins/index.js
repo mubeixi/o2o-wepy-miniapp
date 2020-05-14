@@ -1,6 +1,4 @@
-import {
-  linkTo, toast, error, back, modal
-} from '../common/fun'
+import { back, error, linkTo, modal, toast } from '../common/fun'
 
 /**
  * 自定义处理错误

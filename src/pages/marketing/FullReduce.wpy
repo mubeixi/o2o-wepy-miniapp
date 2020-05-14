@@ -20,7 +20,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getActiveInfo, opActive} from '../../api/product'
+  import { getActiveInfo, opActive } from '../../api/product'
   import { back, error, hideLoading, showLoading } from '../../common/fun'
 
   wepy.page({
@@ -36,16 +36,16 @@
             error('请输入金额')
             return
           }
-          if(parseFloat(item.reach)<=parseFloat(item.award)){
+          if (parseFloat(item.reach) <= parseFloat(item.award)) {
             error('满减设置有误')
             return
           }
         }
-        let data={
-          type:'manjian',
-          start_time:0,
-          end_time:0,
-          active_info:JSON.stringify(this.infoData)
+        let data = {
+          type: 'manjian',
+          start_time: 0,
+          end_time: 0,
+          active_info: JSON.stringify(this.infoData)
         }
         showLoading('保存中')
         opActive(data).then(res => {
@@ -57,8 +57,8 @@
         this.infoData.push({reach: '', award: ''})
       },
       async init() {
-        let arr = await getActiveInfo({type: 'manjian'},{onlyData:true}).catch(e => { error('获取列表失败') })
-        console.log(arr,"ss")
+        let arr = await getActiveInfo({type: 'manjian'}, {onlyData: true}).catch(e => { error('获取列表失败') })
+        console.log(arr, 'ss')
         if (arr.active_info.length > 0) {
           this.infoData = arr.active_info
         }

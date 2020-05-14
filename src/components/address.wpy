@@ -63,7 +63,7 @@
 <script>
   import wepy from '@wepy/core'
 
-  import {getAreaByPid} from '../api/system'
+  import { getAreaByPid } from '../api/system'
   import { findArrayIdx, getArrColumn } from '../common/helper'
   import { error } from '../common/fun'
 

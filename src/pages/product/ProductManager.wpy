@@ -96,17 +96,12 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {
-    bizProdList, bizProdUp, bizProdDown, bizProdDel
-  } from '../../api/product'
-  import {
-    error,
-    toast
-  } from '../../common/fun'
+  import { bizProdDel, bizProdDown, bizProdList, bizProdUp } from '../../api/product'
+  import { error } from '../../common/fun'
   import { getArrColumn } from '../../common/helper'
   import wxPromisify from '../../common/promisify'
 
-wepy.page({
+  wepy.page({
     store,
     mixins: [pageMixin],
     data: {

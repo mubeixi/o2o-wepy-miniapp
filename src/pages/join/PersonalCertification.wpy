@@ -158,9 +158,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getBizConfig, bizIndustryDetail, bizApply } from '../../api/store'
+  import { bizApply, bizIndustryDetail, getBizConfig } from '../../api/store'
   import { objTranslate, validateFun } from '../../common/helper'
-  import { error, modal,toast } from '../../common/fun'
+  import { modal, toast } from '../../common/fun'
 
   wepy.page({
     store,
@@ -252,11 +252,11 @@
           return
         }
 
-        bizApply(postData, {tip: 'loading', mask: 1},{errtip:false}).then(res => {
+        bizApply(postData, {tip: 'loading', mask: 1}, {errtip: false}).then(res => {
           toast('提交成功')
           wx.navigateBack()
         }).catch((err) => {
-          modal('提交失败:'+err.msg)
+          modal('提交失败:' + err.msg)
         })
       },
       openTradeSelect() {

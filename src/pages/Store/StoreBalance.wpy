@@ -28,7 +28,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {bizMoneyRecord} from '../../api/store'
+  import { bizMoneyRecord } from '../../api/store'
 
   wepy.page({
     store,
@@ -38,7 +38,7 @@
       pageSize: 8,
       totalCount: 0,
       balanceList: [],
-      biz_money:''
+      biz_money: ''
     },
     methods: {
       async bizMoneyRecord(it) {
@@ -48,7 +48,7 @@
         }
         let arr = await bizMoneyRecord(data).catch(e => {})
         this.totalCount = arr.totalCount
-        this.biz_money=arr.data.biz_money
+        this.biz_money = arr.data.biz_money
         if (it === 1) {
           arr.data.list.map(item => {
             this.balanceList.push(item)

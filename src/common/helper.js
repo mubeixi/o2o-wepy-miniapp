@@ -1,12 +1,6 @@
-import {
-  staticUrl
-} from './env'
-import {
-  error, toast
-} from './fun'
-import {
-  upload, getAccessToken
-} from './request'
+import { staticUrl } from './env'
+import { error } from './fun'
+import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
 
@@ -197,7 +191,7 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = []}) =>
     Promise.all(taskList).then((urls) => {
       resolve(urls)
     }).catch((err) => {
-      const errMsg = err.hasOwnProperty('errMsg')?err.errMsg:err
+      const errMsg = err.hasOwnProperty('errMsg') ? err.errMsg : err
       reject(errMsg)
     })
   })
@@ -311,3 +305,5 @@ export function sleep (fn, par, time = 3000) {
     setTimeout(() => resolve(fn(par)), time)
   })
 }
+
+export const setNavigationBarTitle = (title) => wx.setNavigationBarTitle({title})

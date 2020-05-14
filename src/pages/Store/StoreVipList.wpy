@@ -22,11 +22,10 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getUserLevel} from '../../api/store'
+  import { getUserLevel } from '../../api/store'
 
-  import {
-    linkTo
-  } from '../../common/fun'
+  import { linkTo } from '../../common/fun'
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -39,7 +38,7 @@
         linkTo(data)
       },
       getList() {
-        getUserLevel({},{tip:'加载中',mask:true}).then(res => {
+        getUserLevel({}, {tip: '加载中', mask: true}).then(res => {
           this.list = res.data
         })
       }

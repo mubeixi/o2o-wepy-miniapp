@@ -146,10 +146,7 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import {
-    objTranslate, sleep,
-    strSplit
-  } from '../common/helper'
+  import { objTranslate } from '../common/helper'
   import { hideLoading, showLoading } from '../common/fun'
 
   wepy.component({
@@ -196,11 +193,11 @@
       }
     },
     methods: {
-      openPop(name){
+      openPop(name) {
         this.$refs[name].show()
       },
-      updateAddress(data){
-        //console.log(data)
+      updateAddress(data) {
+        // console.log(data)
         this.setVal(data.strArr.join(''))
       },
       getData() {
@@ -227,9 +224,9 @@
         const val = e.$wx.detail.value
         this.setVal(this.formList[this.idx].options[val])
       },
-      inputChange(e,idx) {
+      inputChange(e, idx) {
         const val = e.$wx.detail.value
-        this.setVal(val,idx)
+        this.setVal(val, idx)
       },
       addressCall({province, city, area, town}) {
         // const val = e.$wx.detail.value

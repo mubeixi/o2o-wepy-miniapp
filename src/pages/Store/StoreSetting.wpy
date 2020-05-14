@@ -128,11 +128,12 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { error, hideLoading, showLoading, toast, linkTo } from '../../common/fun'
-  import {opBizInfo, getBizInfo} from '../../api/store'
-  const moment = require('moment')
-  import {bizLogout} from '../../api/system'
+  import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { getBizInfo, opBizInfo } from '../../api/store'
+  import { bizLogout } from '../../api/system'
   import { ls } from '../../common/helper'
+
+  const moment = require('moment')
   wepy.page({
     store,
     mixins: [pageMixin],

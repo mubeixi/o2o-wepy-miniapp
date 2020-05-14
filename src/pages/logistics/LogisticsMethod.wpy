@@ -74,9 +74,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {ls, getString} from '../../common/helper'
-
-  import {getCityList} from '../../api/store'
+  import { getString, ls } from '../../common/helper'
 
   wepy.page({
     store,

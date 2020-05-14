@@ -103,8 +103,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {opBizSettle} from '../../api/order'
+  import { opBizSettle } from '../../api/order'
   import { back, error, toast } from '../../common/fun'
+
   let myDate = new Date()
 const start = myDate.toLocaleDateString()
 

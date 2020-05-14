@@ -238,22 +238,12 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls, emptyObject, validateFun
-  } from '../../common/helper'
-  import { error, toast } from '../../common/fun'
-  import {
-    bizRegSms, opBizInfo
-  } from '../../api/store'
-  import {
-    bizLogin
-  } from '../../api/system'
-  import {
-    regPhone
-  } from '../../common/regs'
+  import { ls, validateFun } from '../../common/helper'
+  import { error } from '../../common/fun'
+  import { bizRegSms, opBizInfo } from '../../api/store'
+  import { bizLogin } from '../../api/system'
+  import { regPhone } from '../../common/regs'
   import wxPromisify from '../../common/promisify'
-
-  import Schema from 'validate'
 
   wepy.page({
     store,
@@ -280,7 +270,7 @@
       bindBackFn() {
         console.log('拦截返回成功了')
         if (this.binbPhoneShow) {
-          //toast('请绑定手机号', 'none')
+          // toast('请绑定手机号', 'none')
           this.$refs.phone.close()
           return
         }

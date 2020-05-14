@@ -90,10 +90,11 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {proCate, getBizPayAmount, getBizConfig, addBizOrder, bizOrderPay, code2Session} from '../../api/store'
+  import { addBizOrder, bizOrderPay, code2Session, getBizConfig, getBizPayAmount, proCate } from '../../api/store'
 
   import { getArrColumn, ls } from '../../common/helper'
   import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+
   wepy.page({
     store,
     mixins: [pageMixin],

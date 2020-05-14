@@ -211,18 +211,14 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {opCoupon, getCouponList} from '../../api/store'
-  import {bizProdList} from '../../api/product'
+  import { getCouponList, getUserLevel, opCoupon } from '../../api/store'
+  import { bizProdList } from '../../api/product'
+  import { chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '../../common/helper'
+  import { error, hideLoading, showLoading } from '../../common/fun'
+  import { dateTimePicker, getMonthDay, getNewDateArry } from '../../common/time'
+
   const moment = require('moment')
 
-  import {chooseImageByPromise, uploadImages, getArrColumn, getDomain} from '../../common/helper'
-  import {
-    hideLoading,
-    linkTo, showLoading, error, toast
-  } from '../../common/fun'
-  import {dateTimePicker, getMonthDay, getNewDateArry, getArr} from '../../common/time'
-
-  import {getUserLevel} from '../../api/store'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -465,7 +461,7 @@
                 this.front_show = item.front_show
 
                 this.imgTempList.push(item.Coupon_PhotoPath)
-                console.log(item.Coupon_PhotoPath, this.imgTempList,"sss")
+                console.log(item.Coupon_PhotoPath, this.imgTempList, 'sss')
                 // 初始化开始时间
                 let date = item.Coupon_StartTime
                 let defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()
