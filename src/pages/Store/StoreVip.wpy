@@ -74,9 +74,8 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {regDiscount} from '../../common/regs'
-  import { opBizUserLevel, getUserLevel} from '../../api/store'
-  import { back, error, hideLoading, showLoading, toast } from '../../common/fun'
+  import { getUserLevel, opBizUserLevel } from '../../api/store'
+  import { back, error, toast } from '../../common/fun'
   import { ls, validateFun } from '../../common/helper'
 
   wepy.page({
@@ -117,7 +116,7 @@
         this.getDetail()
       }
     },
-    onUnload(){
+    onUnload() {
       ls.remove('coupon_prod')
       ls.remove('pro_prod')
     },
@@ -127,7 +126,7 @@
     },
     methods: {
       getDetail() {
-        getUserLevel({id:this.id},{tip:'加载中',mask:true}).then(res => {
+        getUserLevel({id: this.id}, {tip: '加载中', mask: true}).then(res => {
           this.vipData = res.data[0]
           this.level_name = this.vipData.level_name
           this.price = this.vipData.price

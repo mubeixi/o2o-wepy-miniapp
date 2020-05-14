@@ -1,7 +1,4 @@
-import {
-  findArrayIdx,
-  objTranslate, plainArray, ls
-} from '../common/helper'
+import { findArrayIdx, ls, plainArray } from '../common/helper'
 
 export class TreeHub {
   // nodes = []

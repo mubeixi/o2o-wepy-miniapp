@@ -66,7 +66,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {bizFlashsaleList, bizFlashsaleStatus} from '../../api/product'
+  import { bizFlashsaleList, bizFlashsaleStatus } from '../../api/product'
   import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
 
   wepy.page({
@@ -107,7 +107,7 @@
           pageSize: this.pageSize
         }
         bizFlashsaleList(data).then(res => {
-          for(let item of res.data){
+          for (let item of res.data) {
             this.seckillData.push(item)
           }
           this.totalCount = res.totalCount
@@ -115,7 +115,7 @@
       }
     },
     onShow() {
-      this.seckillData=[]
+      this.seckillData = []
       this.page = 1
       this.init()
     },

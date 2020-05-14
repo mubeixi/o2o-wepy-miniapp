@@ -72,13 +72,12 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  const moment = require('moment')
-  import {
-    validateFun
-  } from '../../common/helper'
-  import {regPhone} from '../../common/regs'
-  import {opBizStore, getStoreList} from '../../api/store'
+  import { validateFun } from '../../common/helper'
+  import { regPhone } from '../../common/regs'
+  import { getStoreList, opBizStore } from '../../api/store'
   import { back, hideLoading, showLoading, toast } from '../../common/fun'
+
+  const moment = require('moment')
 
   wepy.page({
     store,

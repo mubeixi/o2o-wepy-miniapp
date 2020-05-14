@@ -21,9 +21,7 @@
 
 <script>
   import wepy from '@wepy/core'
-  import {
-    TreeHub
-  } from './TreeHub'
+  import { TreeHub } from './TreeHub'
   import { ls } from '../common/helper'
 
   wepy.component({
@@ -115,13 +113,12 @@
       val(newVal) {
         // console.log(newVal)
       },
-      has:{
-        immediate:true,
-        deep:true,
+      has: {
+        immediate: true,
+        deep: true,
         handler(newVal) {
-
           try {
-            let isHas = newVal.includes(this.val[this.nodeKey]) || newVal.includes(''+this.val[this.nodeKey])
+            let isHas = newVal.includes(this.val[this.nodeKey]) || newVal.includes('' + this.val[this.nodeKey])
             if (isHas) {
               this.isCheck = true
             }
@@ -132,15 +129,14 @@
       }
     },
     methods: {
-      restCheck({item,nodeKey}){
-
+      restCheck({item, nodeKey}) {
         this.isCheck = item[nodeKey] === this.val[nodeKey]
         for (let i in this.$refs) {
           this.$refs[i].restCheck({item, nodeKey})
         }
       },
-      bingClearFn({item,nodeKey}) {
-        this.$emit('clear',{item,nodeKey})
+      bingClearFn({item, nodeKey}) {
+        this.$emit('clear', {item, nodeKey})
       },
       clickFn(item) {
         // console.log(item)
@@ -154,7 +150,7 @@
             // 单选的话，需要先清空其他的
             if (this.single) {
               // console.log(333333)
-              this.$emit('clear',{item,nodeKey:this.nodeKey})
+              this.$emit('clear', {item, nodeKey: this.nodeKey})
               TreeHub.removeAllCheck(this.eid, this.nodeKey)
             }
             TreeHub.addCheck(this.eid, item, this.nodeKey)

@@ -53,13 +53,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    hideLoading,
-    showLoading, linkTo
-  } from '../../common/fun'
-  import {ls} from '../../common/helper'
+  import { hideLoading, linkTo, showLoading } from '../../common/fun'
+  import { ls } from '../../common/helper'
 
-  import {opShippingTemplate, getTemplateDetail} from '../../api/store'
+  import { getTemplateDetail, opShippingTemplate } from '../../api/store'
 
   wepy.page({
     store,
@@ -90,18 +87,16 @@
       goMail() {
         if (this.temp_id) {
           linkTo('/pages/logistics/LogisticsAddsMail?temp_id=' + this.temp_id)
-        }else{
+        } else {
           linkTo('/pages/logistics/LogisticsAddsMail')
         }
-
       },
       goMethods() {
         if (this.temp_id) {
           linkTo('/pages/logistics/LogisticsMethod?temp_id=' + this.temp_id)
-        }else{
+        } else {
           linkTo('/pages/logistics/LogisticsMethod')
         }
-
       },
       getDetail() {
         showLoading('加载中')
@@ -163,7 +158,7 @@
           data.temp_id = this.temp_id
         }
 
-        opShippingTemplate(data,{tip:'加载中'}).then(res => {
+        opShippingTemplate(data, {tip: '加载中'}).then(res => {
           if (this.temp_id) {
             wx.showToast({
               title: '修改成功',

@@ -5,13 +5,14 @@
 </style>
 
 <script>
-import wepy from '@wepy/core'
-// import eventHub from './common/eventHub'
-import vuex from '@wepy/x'
-wepy.use(vuex)
+  import wepy from '@wepy/core'
+  // import eventHub from './common/eventHub'
+  import vuex from '@wepy/x'
+  import { FunError } from './mixins'
 
-import { FunError } from './mixins'
-wx.$errorHandle = FunError // 全局的错误处理
+  wepy.use(vuex)
+
+  wx.$errorHandle = FunError // 全局的错误处理
 
 require('./common/index')
 
@@ -19,27 +20,27 @@ require('./common/index')
 // wepy.use(promisify.js)
 
 wepy.app({
-  hooks: {
+    hooks: {
     // App 级别 hook，对整个 App 生效
     // 同时存在 Page hook 和 App hook 时，优先执行 Page hook，返回值再交由 App hook 处
     // 'before-setData': function (dirty) {
     //   console.log('setData dirty: ', dirty)
     //   return dirty
     // }
-  },
-  globalData: {
-    userInfo: null
-  },
+    },
+    globalData: {
+      userInfo: null
+    },
 
-  onLaunch() {
+    onLaunch() {
     // this.testAsync()
     // eventHub.$on('app-launch', (...args) => {
     //   console.log('app-launch event emitted, the params are:')
     //   console.log(args)
     // })
-  },
+    },
 
-  methods: {
+    methods: {
 
     // sleep (s) {
     //   return new Promise((resolve, reject) => {
@@ -53,7 +54,7 @@ wepy.app({
     //   let d = await this.sleep(3)
     //   console.log(d)
     // }
-  }
+    }
 })
 </script>
 <config>
@@ -122,43 +123,6 @@ wepy.app({
         navigationBarBackgroundColor: "#fff",
         navigationBarTitleText: "本地生活",
         navigationBarTextStyle: "black"
-    },
-    tabBar: {
-        borderStyle: "white",
-        color: "#999999",
-        selectedColor: "#26C78D",
-        list: [
-            {
-                "pagePath": "pages/index",
-                "iconPath": "/static/tabbar/find.png",
-                "selectedIconPath": "/static/tabbar/find.png",
-                "text": "发现"
-            },
-            {
-                "pagePath": "pages/index",
-                "iconPath": "/static/tabbar/live.png",
-                "selectedIconPath": "/static/tabbar/live.png",
-                "text": "商品管理"
-            },
-            {
-                "pagePath": "pages/index",
-                "iconPath": "/static/tabbar/praise.png",
-                "selectedIconPath": "/static/tabbar/praise.png",
-                "text": "店铺设置"
-            },
-            {
-                "pagePath": "pages/index",
-                "iconPath": "/static/tabbar/notify.png",
-                "selectedIconPath": "/static/tabbar/notify.png",
-                "text": "入驻"
-            },
-            {
-                "pagePath": "pages/index",
-                "iconPath": "/static/tabbar/user.png",
-                "selectedIconPath": "/static/tabbar/user.png",
-                "text": "店铺信息"
-            }
-        ]
-    },
+    }
 }
 </config>

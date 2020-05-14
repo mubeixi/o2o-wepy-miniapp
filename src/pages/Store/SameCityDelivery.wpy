@@ -181,17 +181,14 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getCityExpressConfig, opCityExpressConfig, cityExpressProvider, getBizInfo} from '../../api/store'
-  import {
-    hideLoading,
-    linkTo, showLoading
-  } from '../../common/fun'
+  import { cityExpressProvider, getBizInfo, getCityExpressConfig, opCityExpressConfig } from '../../api/store'
+  import { hideLoading, linkTo, showLoading } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      address:'',
+      address: '',
       type: 1,
       index: 0,
       provider: {}, // 服务商
@@ -290,7 +287,7 @@
         })
 
         getBizInfo().then(res => {
-              this.address=res.data[0].area_address+res.data[0].biz_address
+          this.address = res.data[0].area_address + res.data[0].biz_address
         })
       }
     }

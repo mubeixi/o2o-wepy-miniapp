@@ -44,10 +44,10 @@ export const bizProdUp = (param, options) => fetch({act: 'bizProdUpdown', param:
 // 产品下架
 export const bizProdDown = (param, options) => fetch({act: 'bizProdUpdown', param: {...param, updown_sales: 'down'}, options})
 
-//获取活动详情
+// 获取活动详情
 export const getActiveInfo = (param, options) => fetch({act: 'getActiveInfo', param: {...param, updown_sales: 'down'}, options})
-//添加/编辑活动
+// 添加/编辑活动
 export const opActive = (param, options) => fetch({act: 'opActive', param: {...param, updown_sales: 'down'}, options})
 
-//获取产品分类
+// 获取产品分类
 export const getProductCategory = (param, options) => fetch({act: 'pro_cate', param, options})

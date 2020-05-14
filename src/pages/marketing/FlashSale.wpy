@@ -118,13 +118,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    chooseImageByPromise, getArrColumn, uploadImages
-  } from '../../common/helper'
-  import { error } from '../../common/fun'
-  import {
-    bizSpikeList, bizSpikeStatus
-  } from '../../api/store'
+  import { bizSpikeList, bizSpikeStatus } from '../../api/store'
 
   wepy.page({
     store,
@@ -138,8 +132,8 @@
           spike_id: id,
           status: status
         }
-        bizSpikeStatus(data,{tip:'修改中',mask:true}).then(res => {
-         this._init_func()
+        bizSpikeStatus(data, {tip: '修改中', mask: true}).then(res => {
+          this._init_func()
         }).catch(e => {
 
         })

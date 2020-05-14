@@ -32,6 +32,5 @@ export const getSettle = (param, options) => fetch({act: 'getSettle', param, opt
 // 申请结算
 export const opBizSettle = (param, options) => fetch({act: 'opBizSettle', param, options})
 
-//处理结算单
+// 处理结算单
 export const dealBizSettle = (param, options) => fetch({act: 'dealBizSettle', param, options})
-

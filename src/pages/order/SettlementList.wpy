@@ -54,7 +54,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getSettle, dealBizSettle} from '../../api/order'
+  import { dealBizSettle, getSettle } from '../../api/order'
   import { toast } from '../../common/fun'
 
   wepy.page({

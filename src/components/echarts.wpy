@@ -17,9 +17,7 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import {
-    F2Mixin
-  } from '../mixins/f2'
+  import { F2Mixin } from '../mixins/f2'
 
   wepy.component({
     mixins: [F2Mixin],
@@ -36,8 +34,8 @@
         type: Boolean,
         default: true
       },
-      propData:{
-        required:true
+      propData: {
+        required: true
       },
       conf: {
         type: Object,

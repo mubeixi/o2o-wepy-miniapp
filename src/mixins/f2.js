@@ -51,13 +51,12 @@ export const F2Mixin = {
 
       const query = wx.createSelectorQuery().in(this.$wx)
       query.select('.f2-canvas').boundingClientRect(res => {
-
-        let {width,height} = res
-        const config = {width,height,...this.conf}
+        let {width, height} = res
+        const config = {width, height, ...this.conf}
         if (typeof callback === 'function') {
-          this.chart = callback(el, config,this.propData)
+          this.chart = callback(el, config, this.propData)
         } else if (this.onInit) {
-          this.chart = this.onInit(el, config,this.propData)
+          this.chart = this.onInit(el, config, this.propData)
         }
       }).exec()
     },
@@ -86,5 +85,5 @@ export const F2Mixin = {
     if (!this.lazyLoad) {
       this.init()
     }
-  },
+  }
 }

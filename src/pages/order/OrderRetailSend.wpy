@@ -149,7 +149,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getOrderDetail, getAvailableCityExpress, systemSendOrder} from '../../api/order'
+  import { getAvailableCityExpress, getOrderDetail, systemSendOrder } from '../../api/order'
   import { back, error, toast } from '../../common/fun'
 
   wepy.page({

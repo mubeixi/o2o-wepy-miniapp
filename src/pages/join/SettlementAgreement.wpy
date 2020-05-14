@@ -25,23 +25,23 @@
   import pageMixin from '../../mixins'
 
   import { getBizConfig, opBizInfo } from '../../api/store'
-  import { back, error, hideLoading, showLoading, toast } from '../../common/fun'
+  import { back, error, hideLoading, showLoading } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
       show: [],
-      agree:0,
+      agree: 0,
       info: ''
     },
     onLoad(option) {
-      this.agree=option.agree
+      this.agree = option.agree
       this.getBizConfig()
     },
     methods: {
       agreeMethod() {
-        if(this.agree==1)return
+        if (this.agree == 1) return
         if (this.show.length <= 0) {
           error('请勾选同意协议')
           return

@@ -46,11 +46,8 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getCityExpressConfig, opCityExpressConfig, cityExpressProvider} from '../../api/store'
-  import {
-    hideLoading, toast,
-    linkTo, showLoading, error
-  } from '../../common/fun'
+  import { getCityExpressConfig, opCityExpressConfig } from '../../api/store'
+  import { error, hideLoading, showLoading, toast } from '../../common/fun'
 
   wepy.page({
     store,

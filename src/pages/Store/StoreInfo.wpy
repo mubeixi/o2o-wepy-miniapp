@@ -73,16 +73,12 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getBizInfo, getCityExpressConfig, opCityExpressConfig, opBizInfo} from '../../api/store'
+  import { getBizInfo, getCityExpressConfig, opBizInfo, opCityExpressConfig } from '../../api/store'
 
-
-  import {
-    back,
-    hideLoading,
-    linkTo, showLoading, toast
-  } from '../../common/fun'
-  import { chooseImageByPromise, ls, uploadImages } from '../../common/helper'
+  import { hideLoading, linkTo, showLoading } from '../../common/fun'
+  import { chooseImageByPromise, uploadImages } from '../../common/helper'
   import { spaceImg } from '../../common/env'
+
   wepy.page({
     store,
     mixins: [pageMixin],

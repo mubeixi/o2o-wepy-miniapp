@@ -1,7 +1,5 @@
 import { fetch } from '../common/request'
 
-
-
 // 电子面单合作公司列表和详情
 export const getCoopCompany = (param, options) => fetch({act: 'getCoopCompany', param, options})
 
@@ -118,7 +116,6 @@ export const getNewOldTradeStatistic = (param, options) => fetch({act: 'getNewOl
 
 // 商品销售情况统计
 export const systemProdSales = (param, options) => fetch({act: 'systemProdSales', param, options})
-
 
 // 商家资金流水
 export const bizMoneyRecord = (param, options) => fetch({act: 'bizMoneyRecord', param, options})

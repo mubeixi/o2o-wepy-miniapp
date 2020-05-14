@@ -103,19 +103,11 @@
   import wepy from '@wepy/core'
   import store from '../store'
   import pageMixin from '../mixins'
-  import {
-    spaceImg
-  } from '../common/env'
+  import { spaceImg } from '../common/env'
 
-  import {
-    initInfo, bizLogin, bizLogout
-  } from '../api/system'
-  import {
-    linkTo
-  } from '../common/fun'
-  import {
-    checkIsLogin, ls
-  } from '../common/helper'
+  import { bizLogin, initInfo } from '../api/system'
+  import { linkTo } from '../common/fun'
+  import { checkIsLogin, ls } from '../common/helper'
 
   wepy.page({
     store,

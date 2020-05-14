@@ -245,17 +245,11 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    chooseImageByPromise, getArrColumn, uploadImages
-  } from '../../common/helper'
-  import { error, hideLoading, modal, showLoading } from '../../common/fun'
-  import {
-    getTradeStatistic, getNewOldTradeStatistic, systemProdSales
-  } from '../../api/store'
+  import { hideLoading, modal, showLoading } from '../../common/fun'
+  import { getNewOldTradeStatistic, getTradeStatistic, systemProdSales } from '../../api/store'
+  import { createF2Chart } from '../../mixins/f2'
+
   const moment = require('moment')
-  import {
-    createF2Chart
-  } from '../../mixins/f2'
 
   /**
    * 求某个对象组成数组中，某个对象的值占百分比。方便配合f2-chart做饼图

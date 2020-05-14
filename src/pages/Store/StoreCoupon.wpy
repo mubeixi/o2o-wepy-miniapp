@@ -35,8 +35,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getCouponList} from '../../api/store'
-  import {linkTo, showLoading, hideLoading} from '../../common/fun'
+  import { getCouponList } from '../../api/store'
+  import { hideLoading, linkTo, showLoading } from '../../common/fun'
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -44,8 +45,8 @@
       couponList: []
     },
     methods: {
-      goEdit(item){
-        let url='/pages/store/StoreCouponAdd?Coupon_ID='+item.Coupon_ID
+      goEdit(item) {
+        let url = '/pages/store/StoreCouponAdd?Coupon_ID=' + item.Coupon_ID
         linkTo(url)
       },
       goAdd() {
@@ -56,9 +57,9 @@
       },
       init() {
         let data = {
-          page:1,
-          pageSize:999,
-          //status: 1
+          page: 1,
+          pageSize: 999
+          // status: 1
           // show: 2
         }
         showLoading('加载中')
