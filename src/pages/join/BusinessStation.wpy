@@ -72,7 +72,7 @@
             </div>
           </block>
           <block v-else-if="info.apply_info.apply_status==-1">
-            <div class="right-div"  @click="goShow('edit')">
+            <div class="right-div"  @click="goShow('showReason')">
               <div class="station-button danger"  >
                 已驳回
               </div>
@@ -138,6 +138,7 @@
   import { getBizInfo } from '../../api/store'
   import { linkTo } from '../../common/fun'
   import { ls } from '../../common/helper'
+  import {confirm} from '../../common/helper'
 
   wepy.page({
     store,
@@ -151,6 +152,19 @@
     methods: {
       // 利用isHasInfo标记为已经有信息了
       goShow(action) {
+        if (action === 'showReason') {
+          confirm({
+            title: '审核原因',
+            content: this.info.apply_info.reject_reason || '为通过审核，请完善资料后再次提交',
+            confirmText: '完善资料',
+            cancelText: '下次再说'
+          }).then(() => {
+            this.goShow('edit')
+          }).catch(() => {})
+
+          return
+        }
+
         if (action === 'add') {
           wx.showActionSheet({
             itemList: ['个人认证', '企业认证'],
@@ -168,6 +182,7 @@
 
             }
           })
+          return
         }
 
         const principal_type = this.info.apply_info.principal_type
@@ -178,6 +193,7 @@
           } else {
             linkTo('/pages/join/PersonalCertification?action=show')
           }
+          return
         }
 
         if (action === 'edit') {
