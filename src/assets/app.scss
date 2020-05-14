@@ -103,6 +103,19 @@ page{
 
 }
 
+//底部用
+.safearea-box{
+  height: constant(safe-area-inset-bottom);
+  height: env(safe-area-inset-bottom);
+  width: 100%;
+  &.fixed{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+}
+
+
 .color-gray{
   color: $fun-gray-color;
 }
@@ -251,17 +264,7 @@ page{
 
 
 
-//底部用
-.safearea-box{
-  height: constant(safe-area-inset-bottom);
-  height: env(safe-area-inset-bottom);
-  width: 100%;
-  &.fixed{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-  }
-}
+
 
 .posi{
   position: absolute;

@@ -8,6 +8,13 @@
       </div>
     </div>
 
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+
     <div class="actions" @click="$linkTo('/pages/store/StoreVip')">
       <icon type="iconadd" size="20" color="#00a8ff"></icon>
       <span class="p-l-6">新增会员</span>
@@ -55,6 +62,7 @@
   .page-wrap{
     min-height: 100vh;
     background: white;
+    padding-bottom: 90rpx;
   }
   .group-cell{
     padding-right: 30rpx;
@@ -79,7 +87,8 @@
 
   .actions{
     position: fixed;
-    bottom: 0;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
     left: 0;
     width: 750rpx;
     height: 90rpx;

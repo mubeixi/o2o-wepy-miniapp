@@ -53,11 +53,16 @@
       </div>
     </div>
 
-    <div style="width: 750rpx;height: 86rpx;"></div>
-    <div class="submits flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/SeckillAdd')">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/SeckillAdd')">
       <icon type="iconadd" color="#fff"  size="20"  class="m-r-9"></icon>
       添加秒杀
     </div>
+
   </div>
 </template>
 
@@ -129,44 +134,10 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
-  /* 底部的操作栏start */
-  .handle-box{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    height: 90rpx;
-    width: 750rpx;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    padding: 0 20rpx;
-    box-sizing: border-box;
-    border-top: 1px solid #eee;
-    .btn-list{
-      display: flex;
-      align-items: center;
-      .btn{
-        width:96rpx;
-        height: 54rpx;
-        line-height: 54rpx;
-        text-align: center;
-        border-radius: 10rpx;
-        border:1px solid $fun-red-color;
-        color: $fun-red-color;
-        background: white;
-        margin-left: 20rpx;
-        &.btn-up{
-          color: white;
-          background: $fun-red-color;
-        }
-      }
-    }
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
   }
-  /*底部操作栏 end*/
-
+  
   /** 顶部start **/
   .action{
     display: flex;
@@ -276,17 +247,7 @@
     padding-left: 20rpx;
     line-height: 11px;
   }
-  .submits{
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 750rpx;
-    height: 86rpx;
-    background-color: #00A8FF;
-    color: #FFFFFF;
-    font-size: 32rpx;
-    line-height: 86rpx;
-  }
+
 
 
 </style>

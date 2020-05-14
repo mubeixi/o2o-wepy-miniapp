@@ -1,5 +1,5 @@
 <template>
-    <div class="store-all">
+    <div class="store-all page-wrap">
       <err-msg :errs="formCheckResult"></err-msg>
       <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/store/StoreSettingList')">
         <div class="store-title">
@@ -143,8 +143,12 @@
       </model>
 
 
-
-      <div class="submit-main" @click="bizOuts">
+      <!--占住底部的位置-->
+      <div class="safearea-box fixed bgwhite"></div>
+      <!--放置页面底部内容被挡住，额外给的高度-->
+      <div class="safearea-box"></div>
+      <!--action-btn全局有样式-->
+      <div class="submit-main btn action-btn" @click="bizOuts">
         退出登录
       </div>
     </div>
@@ -321,9 +325,12 @@
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
 
+  .page-wrap{
+    padding-bottom: 44px;
+  }
   .store-all{
     background-color: #FFFFFF;
-    height: 100vh;
+    min-height: 100vh;
     .store-item{
       height: 108rpx;
       border-bottom: 1px solid #EBEBEB;
@@ -374,19 +381,11 @@
     line-height: 108rpx;
   }
   .submit-main{
-    width:750rpx;
-    height:86rpx;
-    line-height: 86rpx;
-    text-align: center;
+
     color: #FFFFFF;
     font-size: 32rpx;
     background-color: #FF0000;
-    //因为容易和保存颜色混
-    //background:rgba(0,168,255,1);
-    position: fixed;
-    bottom: 0rpx;
-    left: 0rpx;
-    z-index: 9;
+
   }
   .submit-mbx{
     width:750rpx;

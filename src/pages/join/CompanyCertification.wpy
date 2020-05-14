@@ -1,6 +1,11 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
+
   .form{
 
     &-panel{
@@ -89,16 +94,7 @@
   }
   .actions{
 
-    &-subbtn{
-      position: fixed;
-      bottom: 0;
-      width: 750rpx;
-      border-radius: 0;
-      background: #00A8FF;
-      color: #fff;
-      border: none;
-      z-index: 2;
-    }
+
   }
 
   .back-pay-box{
@@ -172,10 +168,16 @@
 
         </div>
       </div>
-      <button @click="sub" v-if="action!='show'" class="actions-subbtn">{{action==='add'?'提交资料':'修改资料'}}</button>
+
     </form>
 
-    <div style="height: 50px"></div>
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <button @click="sub" v-if="action!='show'" class="btn action-btn btn-primary">{{action==='add'?'提交资料':'修改资料'}}</button>
+
 
     <select-trade :single="true" :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
 
