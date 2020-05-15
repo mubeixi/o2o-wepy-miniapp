@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrap">
-    <div class="group-cell" @click="$openPop('computedType')">
-      <div class="cell-item">
+    <div class="group-cell" >
+      <div class="cell-item" @click="$openPop('computedType')">
         <div class="label">运费计算方式</div>
         <div class="content"></div>
         <icon type="iconarrowleft" color="#999" class="right"></icon>
