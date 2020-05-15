@@ -6,6 +6,9 @@ export const getCoopCompany = (param, options) => fetch({act: 'getCoopCompany', 
 // 获取支持的快递公司
 export const getShippingCompany = (param, options) => fetch({act: 'getShippingCompany', param, options})
 
+// 添加或编辑
+export const opCoopCompany = (param, options) => fetch({act: 'opCoopCompany', param, options})
+
 export const opBizStore = (param, options) => fetch({act: 'opBizStore', param, options})
 // 获取商家门店列表
 export const getStoreList = (param, options) => fetch({act: 'getStoreList', param, options})
