@@ -42,6 +42,11 @@
       tree: []
     },
     props: {
+      // 数据存在哪里 vuex表示放在vuex里面 runtime放在global， ls表示放在LocalStorage里面 默认runtime
+      storage: {
+        type: String,
+        default: 'global'
+      },
       // 展示数据
       treeData: Array,
       // 单选
@@ -100,10 +105,14 @@
     },
     watch: {
 
-      treeData(newVal) {
-        // console.log(newVal)
-        this.tree = objTranslate(newVal)
-        // this.store.setData(newVal)
+      treeData: {
+        deep: true,
+        immediate: true,
+        handler(newVal) {
+          // console.log(newVal)
+          this.tree = objTranslate(newVal)
+          // this.store.setData(newVal)
+        }
       }
     },
     methods: {

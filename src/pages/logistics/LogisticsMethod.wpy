@@ -61,6 +61,7 @@
     <div class="submit-last"  @click="addList">
       为指定区域设置运费
     </div>
+    <div class="h20"></div>
 
 
     <city @onConfirm="selectValue" :has="hasValue"  @close="close"   deep="2"  :show="showSelect"></city>
