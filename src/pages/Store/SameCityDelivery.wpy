@@ -108,7 +108,7 @@
 
                   </div>
                   <div>
-                    <switch :checked="provider.dada==1" bindchange="switch1Changes('dada',$event)" style="transform: scale(.8)"></switch>
+                    <switch :checked="provider.dada" bindchange="switch1Changes('dada',$event)" style="transform: scale(.8)"></switch>
                   </div>
               </div>
         </div>
@@ -138,7 +138,7 @@
 
             </div>
             <div>
-              <switch :checked="provider.meituan==1" bindchange="switch1Changes('meituan',$event)" style="transform: scale(.8)"></switch>
+              <switch checked="{{provider.meituan}}" bindchange="switch1Changes('meituan',$event)" style="transform: scale(.8)"></switch>
             </div>
           </div>
         </div>
@@ -168,7 +168,7 @@
 
             </div>
             <div>
-              <switch :checked="provider.fengniao==1"  bindchange="switch1Changes('fengniao',$event)" style="transform: scale(.8)"></switch>
+              <switch :checked="provider.fengniao"  bindchange="switch1Changes('fengniao',$event)" style="transform: scale(.8)"></switch>
             </div>
           </div>
         </div>
@@ -207,20 +207,16 @@
         let url = '/pages/store/SameCityUpda?type=' + item
         linkTo(url)
       },
-      switch1Changes(item, it) {
-        let boo = it.$wx.detail.value
+      async switch1Changes(item, e) {
+        let boo = e.$wx.detail.value
         if (boo) {
           showLoading('开启中')
         } else {
           showLoading('关闭中')
         }
-        cityExpressProvider({type: item}).then(res => {
-          this.provider[item] = boo ? 1 : 0
-          hideLoading()
-        }).catch(e => {
-          this.provider[item] = 0
-          hideLoading()
-        })
+        await cityExpressProvider({type: item}).then(res => {}).catch(e => {})
+        hideLoading()
+        this.initCityExpress()
       },
       switch1Change(e) {
         let boo = e.$wx.detail.value
@@ -256,19 +252,19 @@
         this.$refs.my.show()
         this.type = 2
       },
-      init() {
+      initCityExpress() {
         getCityExpressConfig().then(res => {
           let arr = res.data.business_type
           this.businessTypeValue = res.data.city_express_config.business_type
           this.provider = res.data.provider
           for (let item of res.data.express_info) {
-            if (item.provider == 'dada') {
+            if (item.provider === 'dada') {
               this.dada = item
             }
-            if (item.provider == 'meituan') {
+            if (item.provider === 'meituan') {
               this.meituan = item
             }
-            if (item.provider == 'fengniao') {
+            if (item.provider === 'fengniao') {
               this.fengniao = item
             }
           }
@@ -280,12 +276,14 @@
           this.business_type = arrData
 
           for (let it = 0; it < arrData.length; it++) {
-            if (arrData[it].name == this.businessTypeValue) {
+            if (arrData[it].name === this.businessTypeValue) {
               this.index = it
             }
           }
         })
-
+      },
+      init() {
+        this.initCityExpress()
         getBizInfo().then(res => {
           this.address = res.data[0].area_address + res.data[0].biz_address
         })

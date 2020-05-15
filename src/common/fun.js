@@ -48,7 +48,7 @@ export const linkTo = (url, type = 'default') => {
   }
 }
 
-export const showLoading = (title, mask = true) => {
+export const showLoading = (title = 'loading', mask = true) => {
   wx.showLoading({
     title,
     mask

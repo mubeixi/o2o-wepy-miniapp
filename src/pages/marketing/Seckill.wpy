@@ -15,15 +15,15 @@
           <div class="info">
             <div class="title">{{product.Products_Name}}</div>
             <div class="price-box">
-              <span class="sign color-gray" style="margin-right: 4rpx">秒杀价: ¥</span>
-              <span class="font-15">{{product.attr_json.price}}</span>
+              <span class="sign" style="margin-right: 4rpx">秒杀价: ¥</span>
+              <span class="font-15">{{product.price}}</span>
               <span class="p-l-20 p-r-4 fz-12 color-gray">原价:</span>
-              <span class="sign color-gray">￥</span>
-              <span class="color-gray font-13">{{product.Products_PriceX}}</span>
+              <span class="sign color-gray text-through">￥</span>
+              <span class="color-gray font-13 text-through">{{product.Products_PriceX}}</span>
             </div>
             <div class="stock-box">
               <span class="stock">限购:{{product.limits}}件</span>
-              <span class="sale p-l-40">活动库存:{{product.attr_json.count}}</span>
+              <span class="sale p-l-40">活动库存:{{product.stock}}</span>
             </div>
           </div>
         </div>
@@ -36,9 +36,9 @@
             <span class="title">编辑</span>
           </div>
           <div class="action"   @click="del(product.id,product.status,idx)">
-            <icon size="18" type="iconshanchu"></icon>
+            <icon size="18" :type="product.status==1?'iconIcon-jinyong':'iconqiyongzhanghao'"></icon>
             <span class="title" v-if="product.status==1">禁用</span>
-            <span class="title" v-else>已失效</span>
+            <span class="title" v-else>启用</span>
           </div>
 
           <div class="action">
@@ -91,13 +91,13 @@
     },
     methods: {
       del(id, status, idx) {
-        showLoading('修改中')
+        showLoading()
         let data = {
           flashsale_id: id,
           status: status == 1 ? 2 : 1
         }
         bizFlashsaleStatus(data).then(res => {
-          toast('修改成功')
+          toast('操作成功')
           this.seckillData[idx].status = status == 1 ? 2 : 1
           hideLoading()
         }).catch(e => { hideLoading() })
@@ -137,7 +137,7 @@
   .page-wrap{
     padding-bottom: 44px; //.btn的是44px
   }
-  
+
   /** 顶部start **/
   .action{
     display: flex;

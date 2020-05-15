@@ -61,7 +61,11 @@
     <div class="submit-last"  @click="addList">
       为指定区域设置运费
     </div>
+
+
     <city @onConfirm="selectValue" :has="hasValue"  @close="close"   deep="2"  :show="showSelect"></city>
+
+
     <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
     <!--放置页面底部内容被挡住，额外给的高度-->
@@ -128,8 +132,11 @@
         wx.navigateBack({delta: -1})
       },
       addList() {
+        console.log(1)
         const time1 = new Date().getTime()
+        console.log(2)
         this.special_content.push({express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''})
+        console.log(3)
         const time2 = new Date().getTime()
         console.log(time2 - time1)
       },

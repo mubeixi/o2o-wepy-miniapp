@@ -135,7 +135,8 @@
 
           <block v-if="action==='add'">
             <picker style="width: 100%" :range="item.options" @change="pickerChange">
-              <div class="__placeholder">{{item.desc||'请选择'}}</div>
+              <div class="" v-if="item.value">{{item.value}}</div>
+              <div class="__placeholder" v-else>{{item.desc||'请选择'}}</div>
             </picker>
           </block>
 
@@ -246,9 +247,9 @@
         }
       }
     },
-
     ready() {
       const _arr = objTranslate(this.forms)
+      console.log(_arr)
       // 我也太聪明了
       if (Array.isArray(_arr) && _arr.length > 0) {
         this.formList = _arr.map(row => {
