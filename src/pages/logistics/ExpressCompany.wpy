@@ -42,7 +42,7 @@
     <div class="safearea-box fixed bgwhite"></div>
     <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
-    <div class="actions">
+    <div class="actions" @click="$linkTo('/pages/logistics/AoAuth')">
       <icon type="iconadd" size="20" color="#00a8ff"></icon>
       <span class="p-l-6">新增合作公司</span>
     </div>
@@ -55,20 +55,23 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
+  import {
+    getCoopCompany
+  } from '../../api/store'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      lists: []
     },
     methods: {
-      getCoopCompany() {
-
+      async _init_func() {
+        this.lists = await getCoopCompany().then(res => res.data).catch((e) => { throw Error(e.msg || '获取电子面单列表失败') })
       }
     },
     onShow() {
-      this.getCoopCompany()
+      this._init_func()
     }
 
   })

@@ -27,19 +27,26 @@
                 ></icon>
               </div>
               <image class="thumb" :src="product.ImgPath"></image>
-<!--              <fun-img class="thumb" :src="product.ImgPath"></fun-img>-->
+
               <div class="info">
-                <div class="title">{{product.Products_Name}}</div>
-                <div class="price-box">
-                  <span class="sign">￥</span>
-                  <span>{{product.Products_PriceY}}</span>
-                  <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
-                  <span class="sign">￥</span>
-                  <span>{{product.Products_PriceX}}</span>
+                <div>
+                  <div class="title">{{product.Products_Name}}</div>
+                  <div class="price-box">
+                    <span class="sign">￥</span>
+                    <span>{{product.Products_PriceY}}</span>
+                    <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
+                    <span class="sign">￥</span>
+                    <span>{{product.Products_PriceX}}</span>
+                  </div>
                 </div>
-                <div class="stock-box">
-                  <span class="stock">库存:{{product.Products_Count}}</span>
-                  <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+                <div>
+                  <div class="stock-box">
+                    <span class="stock">库存:{{product.Products_Count}}</span>
+                    <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+                  </div>
+                  <div class="check-status fz-12 color-red  m-t-6" v-if="!product.Products_Status" @click="showRejectReasn(product)">
+                    <span>审核未通过</span><span class="m-l-6" style="text-decoration: underline;">查看原因</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -98,7 +105,7 @@
 
   import { bizProdDel, bizProdDown, bizProdList, bizProdUp } from '../../api/product'
   import { error } from '../../common/fun'
-  import { getArrColumn } from '../../common/helper'
+  import { confirm, getArrColumn } from '../../common/helper'
   import wxPromisify from '../../common/promisify'
 
   wepy.page({
@@ -115,6 +122,14 @@
       productList: []
     },
     methods: {
+      showRejectReasn(productInfo) {
+        confirm({
+          title: '审核详情',
+          content: productInfo.reject_reason
+        }).catch(() => {
+
+        })
+      },
       bindImgError: function (e) {
         console.log(e.$wx)
 
@@ -271,7 +286,7 @@
     box-sizing: border-box;
     z-index: 2;
     background: #f8f8f8;
-    box-shadow: rgba(0,0,0,.1) 0 10px 10px 4px;
+    box-shadow: rgba(0,0,0,.06) 0 10px 10px 4px;
     .item{
       flex:1;
       text-align: center;
@@ -297,10 +312,10 @@
     background: white;
     margin-bottom: 20rpx;
     .info-box{
-      padding: 0 20rpx;
+      padding: 20rpx;
       display: flex;
       font-size: 14px;
-      height: 176rpx;
+      height: 196rpx;
       .check{
         padding-right: 20rpx;
         display: flex;
@@ -312,26 +327,31 @@
         }
       }
       .thumb{
-        width: 176rpx;
-        height: 176rpx;
+        width: 196rpx;
+        height: 196rpx;
       }
       .info{
         flex: 1;
         padding-left: 20rpx;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         .title{
           color: #333;
           font-size: 14px;
           /*font-weight: bold;*/
           line-height: 20px;
-          height: 40px;
+          max-height: 40px;
           overflow: hidden;
           text-overflow: ellipsis;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
         }
         .price-box{
           color: $fun-red-color;
-          margin-bottom: 10px;
           font-size: 14px;
+        }
+        .check-status{
+
         }
         .stock-box{
           font-size: 12px;

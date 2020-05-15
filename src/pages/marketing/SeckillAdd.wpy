@@ -270,13 +270,9 @@
         }
         console.log(data, this.id, 'sss')
         bizOperateFlashsale(data).then(res => {
-          if (this.id) {
-            toast('保存成功')
-          } else {
-            toast('编辑成功')
-          }
+          toast('操作成功')
           ls.remove('skuvaljosn')
-          setTimeout(function() {
+          setTimeout(() => {
             back()
           }, 1000)
         }).catch(e => {
@@ -287,7 +283,7 @@
         let arr = ls.get('skuvaljosn')
         if (!arr) {
           if (this.editData.Products_Type) {
-            for (let item of this.editData.attr_json.data) {
+            for (let item of this.editData.attr_json) {
               for (let it in this.selectValue.skuvaljosn) {
                 if (this.selectValue.skuvaljosn[it].Product_Attr_ID == item.id) {
                   this.selectValue.skuvaljosn[it].price = item.price
@@ -347,8 +343,8 @@
         showLoading('加载中')
         bizFlashsaleDetail({flashsale_id: this.id }).then(res => {
           this.editData = res.data
-          this.price = this.editData.attr_json.price
-          this.count = this.editData.attr_json.count
+          this.price = this.editData.price
+          this.count = this.editData.stock
           this.limit = this.editData.limits
           this.start_time = moment(this.editData.start_time).format('YYYY-MM-DD HH:mm:ss')
           this.end_time = moment(this.editData.end_time).format('YYYY-MM-DD HH:mm:ss')
@@ -452,6 +448,7 @@
     width: 150rpx;
     height: 150rpx;
     margin-right: 24rpx;
+    @include cover-img();
   }
   .color-my{
     color: #FF0000;

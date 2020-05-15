@@ -3,6 +3,9 @@ import { fetch } from '../common/request'
 // 电子面单合作公司列表和详情
 export const getCoopCompany = (param, options) => fetch({act: 'getCoopCompany', param, options})
 
+// 获取支持的快递公司
+export const getShippingCompany = (param, options) => fetch({act: 'getShippingCompany', param, options})
+
 export const opBizStore = (param, options) => fetch({act: 'opBizStore', param, options})
 // 获取商家门店列表
 export const getStoreList = (param, options) => fetch({act: 'getStoreList', param, options})

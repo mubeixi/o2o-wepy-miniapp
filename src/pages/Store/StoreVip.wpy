@@ -65,7 +65,7 @@
             </div>
           </checkbox>
 
-          <input type="text"  class="zhe" v-model="basic_rights.discount.value"/>
+          <input type="text" placeholder="0.1-9.9"  class="zhe" v-model="basic_rights.discount.value"/>
           折
         </div>
       </checkbox-group>
