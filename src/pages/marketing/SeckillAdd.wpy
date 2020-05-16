@@ -1,5 +1,5 @@
 <template>
-  <div class="seckill-add">
+  <div class="seckill-add page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
       <block v-if="pro_id">
         <div  class="flex  product-mbx" @click="openPop('product')">
@@ -82,9 +82,12 @@
       </div>
     </div>
 
-
-    <div style="height: 86rpx;width: 750rpx"></div>
-    <div class="submitLast fz-16"  @click="addSeckill">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="fz-16 btn action-btn btn-primary"  @click="addSeckill">
       确定
     </div>
 
@@ -140,11 +143,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
-  } from '../../common/helper'
-  import { bizProdList, bizOperateFlashsale, bizFlashsaleDetail } from '../../api/product'
+  import { ls, validateFun } from '../../common/helper'
+  import { bizFlashsaleDetail, bizOperateFlashsale, bizProdList } from '../../api/product'
   import { back, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+
   const moment = require('moment')
 
   wepy.page({
@@ -222,12 +224,12 @@
             required: true,
             type: String,
             use: {
-              after: (val, row) => moment(val).isAfter()
+              // after: (val, row) => moment(val).isAfter()
             },
             message: {
               required: '开始时间必选',
-              type: '开始时间必须为字符串',
-              after: '开始时间必须大于现在时间'
+              type: '开始时间必须为字符串'
+              // after: '开始时间必须大于现在时间'
             }
           },
           end_time: {
@@ -268,13 +270,9 @@
         }
         console.log(data, this.id, 'sss')
         bizOperateFlashsale(data).then(res => {
-          if (this.id) {
-            toast('保存成功')
-          } else {
-            toast('编辑成功')
-          }
+          toast('操作成功')
           ls.remove('skuvaljosn')
-          setTimeout(function() {
+          setTimeout(() => {
             back()
           }, 1000)
         }).catch(e => {
@@ -285,7 +283,7 @@
         let arr = ls.get('skuvaljosn')
         if (!arr) {
           if (this.editData.Products_Type) {
-            for (let item of this.editData.attr_json.data) {
+            for (let item of this.editData.attr_json) {
               for (let it in this.selectValue.skuvaljosn) {
                 if (this.selectValue.skuvaljosn[it].Product_Attr_ID == item.id) {
                   this.selectValue.skuvaljosn[it].price = item.price
@@ -345,8 +343,8 @@
         showLoading('加载中')
         bizFlashsaleDetail({flashsale_id: this.id }).then(res => {
           this.editData = res.data
-          this.price = this.editData.attr_json.price
-          this.count = this.editData.attr_json.count
+          this.price = this.editData.price
+          this.count = this.editData.stock
           this.limit = this.editData.limits
           this.start_time = moment(this.editData.start_time).format('YYYY-MM-DD HH:mm:ss')
           this.end_time = moment(this.editData.end_time).format('YYYY-MM-DD HH:mm:ss')
@@ -373,7 +371,7 @@
 
         if (this.id) {
           this.getMbx()
-        }else{
+        } else {
           hideLoading()
         }
       }
@@ -391,9 +389,11 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
   .seckill-add{
-    height: 100vh;
+    min-height: 100vh;
     background-color: #FFFFFF;
   }
   .submits{
@@ -437,17 +437,7 @@
     color: #999999;
     font-size: 26rpx;
   }
-  .submitLast{
-    width: 750rpx;
-    height: 86rpx;
-    line-height: 86rpx;
-    text-align: center;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    background-color: #00A8FF;
-    color: #FFFFFF;
-  }
+
   .product-mbx{
     width: 750rpx;
     box-sizing: border-box;
@@ -458,6 +448,7 @@
     width: 150rpx;
     height: 150rpx;
     margin-right: 24rpx;
+    @include cover-img();
   }
   .color-my{
     color: #FF0000;

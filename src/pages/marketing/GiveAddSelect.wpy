@@ -32,7 +32,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { ls } from '../../common/helper'
-  import { back, error } from '../../common/fun'
+  import { back } from '../../common/fun'
 
   wepy.page({
     store,

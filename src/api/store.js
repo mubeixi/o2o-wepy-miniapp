@@ -1,9 +1,13 @@
 import { fetch } from '../common/request'
 
-
-
 // 电子面单合作公司列表和详情
 export const getCoopCompany = (param, options) => fetch({act: 'getCoopCompany', param, options})
+
+// 获取支持的快递公司
+export const getShippingCompany = (param, options) => fetch({act: 'getShippingCompany', param, options})
+
+// 添加或编辑
+export const opCoopCompany = (param, options) => fetch({act: 'opCoopCompany', param, options})
 
 export const opBizStore = (param, options) => fetch({act: 'opBizStore', param, options})
 // 获取商家门店列表
@@ -118,7 +122,6 @@ export const getNewOldTradeStatistic = (param, options) => fetch({act: 'getNewOl
 
 // 商品销售情况统计
 export const systemProdSales = (param, options) => fetch({act: 'systemProdSales', param, options})
-
 
 // 商家资金流水
 export const bizMoneyRecord = (param, options) => fetch({act: 'bizMoneyRecord', param, options})

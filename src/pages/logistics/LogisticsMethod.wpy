@@ -1,5 +1,5 @@
 <template>
-  <div class="mail-all">
+  <div class="mail-all page-wrap">
     <div class="first">
       <span class="first-title">默认运费：</span>
       <input type="digit" class="input-out"  v-model="express_start"/> kg内，
@@ -61,9 +61,18 @@
     <div class="submit-last"  @click="addList">
       为指定区域设置运费
     </div>
+    <div class="h20"></div>
+
+
     <city @onConfirm="selectValue" :has="hasValue"  @close="close"   deep="2"  :show="showSelect"></city>
-    <div style="height: 86rpx;width: 100%"></div>
-    <div class="submit-main" @click="saveNext">
+
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary" @click="saveNext">
       提交
     </div>
 
@@ -74,9 +83,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {ls, getString} from '../../common/helper'
-
-  import {getCityList} from '../../api/store'
+  import { getString, ls } from '../../common/helper'
 
   wepy.page({
     store,
@@ -126,8 +133,11 @@
         wx.navigateBack({delta: -1})
       },
       addList() {
+        console.log(1)
         const time1 = new Date().getTime()
+        console.log(2)
         this.special_content.push({express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''})
+        console.log(3)
         const time2 = new Date().getTime()
         console.log(time2 - time1)
       },
@@ -177,9 +187,13 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+
+  .page-wrap{
+    padding-bottom: 44px;
+  }
   .mail-all{
     background-color: #f6f6f6;
-    height: 100vh;
+    min-height: 100vh;
   }
   .mail-item{
     width: 710rpx;

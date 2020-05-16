@@ -11,7 +11,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { error } from '../../common/fun'
-  import {getOrderDetail} from '../../api/order'
+  import { getOrderDetail } from '../../api/order'
 
   wepy.page({
     store,

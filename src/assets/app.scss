@@ -103,6 +103,19 @@ page{
 
 }
 
+//底部用
+.safearea-box{
+  height: constant(safe-area-inset-bottom);
+  height: env(safe-area-inset-bottom);
+  width: 100%;
+  &.fixed{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+}
+
+
 .color-gray{
   color: $fun-gray-color;
 }
@@ -114,6 +127,10 @@ page{
 }
 .color-blue{
   color: $fun-blue-color;
+}
+
+.color-white{
+  color: #fff;
 }
 
 .text-left{
@@ -247,17 +264,7 @@ page{
 
 
 
-//底部用
-.safearea-box{
-  height: constant(safe-area-inset-bottom);
-  height: env(safe-area-inset-bottom);
-  width: 100%;
-  &.fixed{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-  }
-}
+
 
 .posi{
   position: absolute;
@@ -304,5 +311,11 @@ page{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  &-through{
+    text-decoration: line-through;
+  }
+  &-underline{
+    text-decoration: underline;
   }
 }

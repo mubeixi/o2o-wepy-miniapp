@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrap">
-    <div class="group-cell">
-      <div class="cell-item">
+    <div class="group-cell" >
+      <div class="cell-item" @click="$openPop('computedType')">
         <div class="label">运费计算方式</div>
         <div class="content"></div>
         <icon type="iconarrowleft" color="#999" class="right"></icon>
@@ -12,6 +12,25 @@
         <icon type="iconarrowleft" color="#999" class="right"></icon>
       </div>
     </div>
+
+    <popup-layer title="计算方式" ref="computedType" >
+      <radio-group class="p-l-10 p-r-10"  @change="setComputedType">
+        <label class="flex flex-vertical-center m-b-10">
+          <radio style="transform: scale(0.8)" color="#00A8FF" value="0" :checked="computedType === 0"></radio>
+          <div class="label p-10">
+            商品累加
+          </div>
+        </label>
+        <label class="flex flex-vertical-center">
+          <radio style="transform: scale(0.8)" color="#00A8FF" value="0" :checked="computedType === 1"></radio>
+          <div class="label p-10">
+            组合计算
+          </div>
+        </label>
+
+      </radio-group>
+      <button class="btn btn-primary m-t-35" @click="closePop('type')">确认</button>
+    </popup-layer>
 
 
   </div>
@@ -26,10 +45,12 @@
     store,
     mixins: [pageMixin],
     data: {
-
+      computedType: ''
     },
     methods: {
-
+      setComputedType(e) {
+        this.computedType = e.$wx.detail.value ? 1 : 0
+      }
     },
     created() {
 
@@ -62,6 +83,7 @@
     "navigationBarTitleText": "普通物流",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "popup-layer": "~@/components/popup-layer",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "ad": "~@/components/ad"

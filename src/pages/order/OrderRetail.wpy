@@ -66,7 +66,7 @@
             </div>
       </div>
 
-    <div class="zhezhao" catchtouchmove='true' v-if="show">
+    <div class="zhezhao" catchtouchmove="true" v-if="show">
       <div class="input-wrap">
         <div>请输入拒单原因</div>
         <textarea auto-height  class="input" placeholder="请输入原因" v-model="reason" style="width: 100%;"></textarea>
@@ -84,56 +84,56 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getOrder,systemRejectOrder} from '../../api/order'
+  import { getOrder, systemRejectOrder } from '../../api/order'
   import { error, toast } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      show:false,
+      show: false,
       prod_name: '',
       page: 1,
       pageSize: 4,
       totalCount: 0,
       status: -1,
       list: [],
-      reason:'',
-      orderId:'',//拒单id
+      reason: '',
+      orderId: ''// 拒单id
     },
     onShow() {
       this.page = 1
       this.getOrder(1)
     },
     methods: {
-      sendOrder(id){
-        let data='/pages/order/OrderRetailSend?order_id='+id
+      sendOrder(id) {
+        let data = '/pages/order/OrderRetailSend?order_id=' + id
         this.$linkTo(data)
       },
-      confirmInput(){
-        if(!this.reason){
+      confirmInput() {
+        if (!this.reason) {
           error('拒单原因必填')
           return
         }
-        this.show=false
-        let data={
-          Order_ID:this.orderId,
+        this.show = false
+        let data = {
+          Order_ID: this.orderId,
           reason: this.reason
         }
-        systemRejectOrder(data,{tip:'loading',mask:true}).then(res=>{
+        systemRejectOrder(data, {tip: 'loading', mask: true}).then(res => {
           toast('拒单成功')
           this.getOrder(1)
-        }).catch(e=>{})
+        }).catch(e => {})
       },
-      rejectOrder(id){
-        this.orderId=id
-        this.show=true
+      rejectOrder(id) {
+        this.orderId = id
+        this.show = true
       },
-      cancelInput(){
-        this.reason=''
-        this.show=false
+      cancelInput() {
+        this.reason = ''
+        this.show = false
       },
-      searchList(){
+      searchList() {
         this.page = 1
         this.getOrder(1)
       },
@@ -166,12 +166,11 @@
 
         for (let item of this.list) {
           for (let it of item['prod_list']) {
-            if (it.attr_info!=='') {
+            if (it.attr_info !== '') {
               it.attr_info = JSON.parse(it.attr_info)
             }
           }
         }
-
       }
     },
     onReachBottom() {

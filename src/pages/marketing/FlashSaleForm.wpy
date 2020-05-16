@@ -2,6 +2,10 @@
   @import "../../assets/app.scss";
   @import "../../assets/mixins.scss";
 
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
+
   .form{
     background: #f8f8f8;
     .group-cell{
@@ -28,6 +32,7 @@
       height: env(safe-area-inset-bottom);
     }
   }
+
   .add-btn{
     width: 155rpx;
     height: 56rpx;
@@ -44,6 +49,7 @@
     height: 800rpx;
     overflow: scroll;
   }
+
   .product-item{
     padding: 30rpx 0;
     background: white;
@@ -158,12 +164,14 @@
       }
     }
   }
+
   .model-seckill{
     width: 500rpx;
     box-sizing: border-box;
     padding: 30rpx 44rpx;
     border-radius: 10rpx;
   }
+
   .input-all{
     width: 410rpx;
     height: 66rpx;
@@ -171,6 +179,7 @@
     border: 1px solid #D6D6D6;
     box-sizing: border-box;
   }
+
   .btns{
     width: 130rpx;
     height: 50rpx;
@@ -181,13 +190,16 @@
     background-color: #BEBEBE;
     border-radius: 6rpx;
   }
+
   .btns-submit{
     background-color: #00A8FF;
   }
+
   .placeholder{
     font-size: 12px;
     color:#C2C2C2;
   }
+
   .search-input{
     width: 300rpx;
     height: 60rpx;
@@ -196,6 +208,7 @@
     line-height: 60rpx;
     border: 1px solid #eeeeee;
   }
+
   .search-btn{
     height: 60rpx;
     line-height: 60rpx;
@@ -362,10 +375,8 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
-  } from '../../common/helper'
-  import { error, modal, toast } from '../../common/fun'
+  import { findArrayIdx, getArrColumn, validateFun } from '../../common/helper'
+  import { error, toast } from '../../common/fun'
   import { bizProdList } from '../../api/product'
   import { bizAddSpike, bizSpikeDetail } from '../../api/store'
 
@@ -506,7 +517,7 @@
               discount: '商品折扣只能在0.1到9.9之间'
             }
           },
-          spike_id: !this.spike_id ? {}:{
+          spike_id: !this.spike_id ? {} : {
             required: true,
             message: {
               required: '编辑模式下spike_id必填'

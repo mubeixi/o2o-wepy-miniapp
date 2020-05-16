@@ -31,23 +31,16 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    validateFun
-  } from '../../common/helper'
-  import {
-    opBizOrderTemplate,getBizOrderTemplateList
-  } from '../../api/order'
+  import { getBizOrderTemplateList, opBizOrderTemplate } from '../../api/order'
 
-  import { error, toast, modal, showLoading, hideLoading } from '../../common/fun'
-  import {
-    eleTypeList
-  } from '../../lib/form/form'
+  import { error, hideLoading, modal, showLoading } from '../../common/fun'
+  import { eleTypeList } from '../../lib/form/form'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      formCheckResult:[],
+      formCheckResult: [],
       id: '',
       title: '',
       ready: false,
@@ -91,7 +84,7 @@
       async _init_func() {
         try {
           showLoading('loading')
-          const tmplData = await getBizOrderTemplateList({id:this.id},{onlyData:true}).catch((e)=>{throw Error(e.msg)})
+          const tmplData = await getBizOrderTemplateList({id: this.id}, {onlyData: true}).catch((e) => { throw Error(e.msg) })
           const tempInfo = JSON.parse(tmplData.temp_info)
           this.formData = tempInfo.formData
           this.title = tempInfo.title
@@ -99,7 +92,7 @@
         } catch (e) {
           console.log(e)
           wx.$errorHandle(e)
-        }finally{
+        } finally {
           hideLoading()
         }
       }
@@ -109,12 +102,11 @@
     },
     onLoad(options) {
       this.id = options.id
-      if(options.id){
+      if (options.id) {
         this._init_func()
-      }else{
+      } else {
         this.ready = true
       }
-
     },
     onShow() {
 

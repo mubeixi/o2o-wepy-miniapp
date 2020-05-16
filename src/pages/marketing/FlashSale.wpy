@@ -2,11 +2,16 @@
   @import "../../assets/app.scss";
   @import "../../assets/mixins.scss";
   .page-wrap{
-    padding-bottom: 100rpx;
+    padding-bottom: 44px; //.btn的是44px
   }
+
+  .safearea-bottom-btn{
+
+  }
+
+  //底部距离全局有了
   .action-btn{
     position: fixed;
-    bottom: 0;
     left: 0;
     display: flex;
     align-items: center;
@@ -78,7 +83,7 @@
 
 </style>
 <template>
-  <div class="page-wrap safearea bottom-btn">
+  <div class="page-wrap">
     <div class="container">
       <div class="list">
         <div class="item" v-for="(item,idx) in list" :key="idx" >
@@ -98,17 +103,28 @@
             </div>
           </div>
           <div class="actions">
-            <div class="action" @click="$linkTo('/pages/marketing/FlashSaleForm?spike_id='+item.id)"><icon type="iconyanjing" size="20" color="#999"></icon><span class="m-l-4">预览</span></div>
-            <div class="action" v-if="item.status==1" @click="update(item.id,2,idx)"><icon type="iconfenxiang1" size="14" color="#999"></icon><span class="m-l-4">禁用</span> </div>
-            <div class="action" v-else @click="update(item.id,1,idx)"><icon type="iconfenxiang1" size="14" color="#999"></icon><span class="m-l-4">启用</span> </div>
-            <div class="action"><icon type="iconfenxiang1" size="14" color="#999"></icon><span class="m-l-4">分享</span> </div>
+            <div class="action" @click.stop="$linkTo('/pages/marketing/FlashSaleForm?spike_id='+item.id)">
+              <icon type="iconbianji1" size="20" color="#999"></icon><span class="m-l-4">编辑</span>
+            </div>
+            <div class="action" v-if="item.status==1" @click.stop="update(item.id,2,idx)">
+              <icon type="iconIcon-jinyong" size="16" color="#666"></icon><span class="m-l-4">禁用</span>
+            </div>
+            <div class="action" v-else @click.stop="update(item.id,1,idx)">
+              <icon type="iconqiyongzhanghao" size="16" color="#666"></icon><span class="m-l-4">启用</span>
+            </div>
+            <div class="action">
+              <icon type="iconfenxiang1" size="16" color="#666"></icon><span class="m-l-4">分享</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
-    <div class="btn action-btn btn-primary" @click="$linkTo('/pages/marketing/FlashSaleForm')">
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary safearea-bottom-btn" @click="$linkTo('/pages/marketing/FlashSaleForm')">
       <icon type="iconadd1" color="#fff" size="16"></icon>
       <span class="p-l-10">添加限时折扣</span>
     </div>
@@ -118,13 +134,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    chooseImageByPromise, getArrColumn, uploadImages
-  } from '../../common/helper'
-  import { error } from '../../common/fun'
-  import {
-    bizSpikeList, bizSpikeStatus
-  } from '../../api/store'
+  import { bizSpikeList, bizSpikeStatus } from '../../api/store'
 
   wepy.page({
     store,
@@ -138,8 +148,8 @@
           spike_id: id,
           status: status
         }
-        bizSpikeStatus(data,{tip:'修改中',mask:true}).then(res => {
-         this._init_func()
+        bizSpikeStatus(data, {tip: '修改中', mask: true}).then(res => {
+          this._init_func()
         }).catch(e => {
 
         })

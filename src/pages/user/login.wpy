@@ -191,10 +191,10 @@
       <div class="channel-item" >
         <button class="btn" open-type="getUserInfo" @getuserinfo="weixinlogin"><icon size="24" class="icon" color="#09bb07" type="iconlogo-wechat"></icon><span class="text fz-14">微信登录</span></button>
       </div>
-      <div class="channel-item" open-type="getUserInfo" @click="mode='code'" v-if="mode==='password'">
+      <div class="channel-item" @click="mode='code'" v-if="mode==='password'">
         <icon size="24" class="icon" color="#09bb07" type="iconphone"></icon><span class="text fz-14">验证码登录</span>
       </div>
-      <div class="channel-item" open-type="getUserInfo" @click="mode='password'" v-if="mode==='code'">
+      <div class="channel-item" @click="mode='password'" v-if="mode==='code'">
         <icon size="24" class="icon" color="#09bb07" type="iconmimadenglu"></icon><span class="text fz-14">密码登录</span>
       </div>
     </div>
@@ -238,22 +238,12 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls, emptyObject, validateFun
-  } from '../../common/helper'
-  import { error, toast } from '../../common/fun'
-  import {
-    bizRegSms, opBizInfo
-  } from '../../api/store'
-  import {
-    bizLogin
-  } from '../../api/system'
-  import {
-    regPhone
-  } from '../../common/regs'
+  import { ls, validateFun } from '../../common/helper'
+  import { error } from '../../common/fun'
+  import { bizRegSms, opBizInfo } from '../../api/store'
+  import { bizLogin } from '../../api/system'
+  import { regPhone } from '../../common/regs'
   import wxPromisify from '../../common/promisify'
-
-  import Schema from 'validate'
 
   wepy.page({
     store,
@@ -280,7 +270,7 @@
       bindBackFn() {
         console.log('拦截返回成功了')
         if (this.binbPhoneShow) {
-          //toast('请绑定手机号', 'none')
+          // toast('请绑定手机号', 'none')
           this.$refs.phone.close()
           return
         }

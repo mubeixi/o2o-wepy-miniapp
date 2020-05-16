@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show" @touchmove.prevent.stop="noop">
+  <div v-show="isshow" @touchmove.prevent.stop="noop">
     <div class="mask" @click="close" ></div>
     <div class="wrap" >
       <div class="title">
@@ -26,9 +26,7 @@
 <script>
 
   import wepy from '@wepy/core'
-  import {
-    getCityList
-  } from '../api/store'
+  import { getCityList } from '../api/store'
 
   wepy.component({
     props: {
@@ -54,6 +52,7 @@
       }
     },
     data: {
+      isshow: false,
       isReady: false,
       // showTree: false,
       timer: null,
@@ -65,7 +64,7 @@
         // icon:'iconname',
         children: '_child', // 指定子树为节点对象的某个属性值
         label: 'area_name', // 指定节点标签为节点对象的某个属性值
-        disabled: 'disabled' //	指定节点选择框是否禁用为节点对象的某个属性值
+        disabled: 'disabled' // 指定节点选择框是否禁用为节点对象的某个属性值
       }
     },
     watch: {
@@ -74,25 +73,24 @@
           val && this.open()
           !val && this.close()
         }
-      },
-      deep: {
-        immediate: true,
-        handler(val) {
-          if (val < 1) return
-          console.log('deep',val)
-          getCityList({'deep': val}).then(res => {
-            this.treeData = res.data// mockData
-            this.isReady = true
-          })
-        }
       }
-    },
-    created() {
+      // deep: {
+      //   immediate: true,
+      //   handler(val) {
+      //     if (val < 1) return
       //
-      // getCityList({'deep':this.deep}).then(res => {
-      //   this.treeData = res.data// mockData
-      //   this.isReady = true
-      // })
+      //   }
+      // }
+    },
+    ready() {
+      //
+      if (this.deep > 1) {
+        getCityList({'deep': this.deep}).then(res => {
+          console.log('load cityData ready',Object.prototype.toString.call(res.data))
+          this.treeData = res.data.splice(0,13)// mockData
+          this.isReady = true
+        })
+      }
     },
     methods: {
       subFn() {
@@ -105,10 +103,11 @@
 
       },
       close() {
+        this.isshow = false
         this.$emit('close')
       },
       open() {
-
+        this.isshow = true
       },
       handleNodeClick(obj) {
         console.log('handleNodeClick', obj)
@@ -163,7 +162,7 @@
   }
   .mbx{
     height: 840rpx;
-    overflow: scroll;
+    overflow-y: scroll;
   }
 
 </style>

@@ -1,13 +1,8 @@
 import * as ENV from './env'
 // import store from '../store'
-import {
-  error, toast
-} from './fun'
-import {
-  emptyObject,
-  ls
-} from './helper'
-import {hexMD5} from './tool/md5'
+import { error } from './fun'
+import { emptyObject, ls } from './helper'
+import { hexMD5 } from './tool/md5'
 import Base64 from './tool/base64.js'
 
 export const getUsersID = () => ls.get('users_id') ? ls.get('users_id') : 'wkbq6nc2kc'
@@ -102,7 +97,17 @@ class XHR {
 }
 
 const hookErrorCode = [0, 66001, 88001]
-export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
+/**
+ *
+ * @param url
+ * @param method
+ * @param data
+ * @param options
+ * @param isAddHost 是否无需自动加host
+ * @param headerExt 额外请求头
+ * @returns {Promise<unknown>}
+ */
+export const ajax = ({url, method = 'post', data = {}, options = {}, isAddHost = true, headerExt = {}}) => {
   let {
     tip = '', // loading text
     mask = false,
@@ -118,10 +123,11 @@ export const ajax = ({url, method = 'post', data = {}, options = {}}) => {
   // let token
   var header = {
     // 'Authorization': 'Bearer ' + token,
-    'content-type': 'application/x-www-form-urlencoded'
+    'content-type': 'application/x-www-form-urlencoded',
+    ...headerExt
   }
 
-  const _url = ENV.apiBaseUrl + url
+  const _url = isAddHost ? (ENV.apiBaseUrl + url) : url
 
   return new Promise((resolve, reject) => {
     wx.request({
@@ -220,31 +226,28 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
       name,
       formData,
       success: (res) => {
-        
-        console.log('upload file result',res)
-        let {data:body} = res
+        console.log('upload file result', res)
+        let {data: body} = res
         if (typeof body === 'string' && body) {
           body = JSON.parse(body)
         }
 
-        console.log('body is',body)
-        if(body.hasOwnProperty('data') && typeof body.data ==='object'){
+        console.log('body is', body)
+        if (body.hasOwnProperty('data') && typeof body.data === 'object') {
 
-        }else{
+        } else {
           reject(body.msg)
-          return;
+          return
         }
 
-        const {errorCode=0,data} = body
+        const {errorCode = 0, data} = body
 
-        if(errorCode === 0 && data.hasOwnProperty('path') && data.path){
+        if (errorCode === 0 && data.hasOwnProperty('path') && data.path) {
           resolve(data.path)
-        }else{
+        } else {
           console.log(res)
           reject(body.msg)
         }
-
-        
       },
       fail: (err) => {
         reject(err)

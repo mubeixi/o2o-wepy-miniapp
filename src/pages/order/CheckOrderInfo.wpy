@@ -68,7 +68,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {checkOrderByCode, getOrderDetail} from '../../api/order'
+  import { checkOrderByCode, getOrderDetail } from '../../api/order'
   import { back } from '../../common/fun'
 
   wepy.page({

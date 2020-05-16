@@ -10,8 +10,5 @@ export const bizLogin = (param, options) => fetch({act: 'bizLogin', param, optio
 // 用户登出
 export const bizLogout = (param, options) => fetch({act: 'bizLogout', param, options})
 
-//获取三级联动地址
+// 获取三级联动地址
 export const getAreaByPid = (param, options) => fetch({act: 'getAreaByPid', param, options})
-
-
-

@@ -1,5 +1,5 @@
 <template>
-  <div class="store-all">
+  <div class="store-all page-wrap">
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
         模板名称
@@ -42,8 +42,12 @@
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </picker>
     </div>
-
-    <div class="submit-main" @click="save">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary" @click="save">
       保存
     </div>
   </div>
@@ -53,13 +57,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    hideLoading,
-    showLoading, linkTo
-  } from '../../common/fun'
-  import {ls} from '../../common/helper'
+  import { hideLoading, linkTo, showLoading } from '../../common/fun'
+  import { ls } from '../../common/helper'
 
-  import {opShippingTemplate, getTemplateDetail} from '../../api/store'
+  import { getTemplateDetail, opShippingTemplate } from '../../api/store'
 
   wepy.page({
     store,
@@ -90,18 +91,16 @@
       goMail() {
         if (this.temp_id) {
           linkTo('/pages/logistics/LogisticsAddsMail?temp_id=' + this.temp_id)
-        }else{
+        } else {
           linkTo('/pages/logistics/LogisticsAddsMail')
         }
-
       },
       goMethods() {
         if (this.temp_id) {
           linkTo('/pages/logistics/LogisticsMethod?temp_id=' + this.temp_id)
-        }else{
+        } else {
           linkTo('/pages/logistics/LogisticsMethod')
         }
-
       },
       getDetail() {
         showLoading('加载中')
@@ -163,7 +162,7 @@
           data.temp_id = this.temp_id
         }
 
-        opShippingTemplate(data,{tip:'加载中'}).then(res => {
+        opShippingTemplate(data, {tip: '加载中'}).then(res => {
           if (this.temp_id) {
             wx.showToast({
               title: '修改成功',
@@ -192,7 +191,9 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
+  .page-wrap{
+    padding-bottom: 44px;
+  }
   .store-all{
     background-color: #FFFFFF;
     height: 100vh;

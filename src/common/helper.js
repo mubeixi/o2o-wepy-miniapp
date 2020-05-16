@@ -1,12 +1,6 @@
-import {
-  staticUrl
-} from './env'
-import {
-  error, toast
-} from './fun'
-import {
-  upload, getAccessToken
-} from './request'
+import { staticUrl } from './env'
+import { error } from './fun'
+import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
 
@@ -72,18 +66,25 @@ export const emptyObject = (obj, strice, tip, clearValues = [null, undefined, ''
  */
 
 export const plainArray = (arr, key, newArr) => {
-  if (!arr || !key) return false
-
-  for (var item of arr) {
-    let tempObj = objTranslate(item)
-    if (tempObj.hasOwnProperty(key)) {
-      delete tempObj[key]
+  try {
+    if (!arr || !key) return false
+    if (!Array.isArray(arr) || !Array.isArray(newArr)) {
+      return false
+      // throw Error('两个参数都要为数组')
     }
-    newArr.push(tempObj)
+    for (var item of arr) {
+      let tempObj = objTranslate(item)
+      if (tempObj.hasOwnProperty(key)) {
+        delete tempObj[key]
+      }
+      newArr.push(tempObj)
 
-    if (item && item[key] && Array.isArray(item[key])) {
-      plainArray(item[key], key, newArr)
+      if (item && item[key] && Array.isArray(item[key])) {
+        plainArray(item[key], key, newArr)
+      }
     }
+  } catch (e) {
+    console.log(e)
   }
 }
 
@@ -197,7 +198,7 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = []}) =>
     Promise.all(taskList).then((urls) => {
       resolve(urls)
     }).catch((err) => {
-      const errMsg = err.hasOwnProperty('errMsg')?err.errMsg:err
+      const errMsg = err.hasOwnProperty('errMsg') ? err.errMsg : err
       reject(errMsg)
     })
   })
@@ -311,3 +312,5 @@ export function sleep (fn, par, time = 3000) {
     setTimeout(() => resolve(fn(par)), time)
   })
 }
+
+export const setNavigationBarTitle = (title) => wx.setNavigationBarTitle({title})

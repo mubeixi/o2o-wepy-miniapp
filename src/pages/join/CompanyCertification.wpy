@@ -1,6 +1,11 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
+
   .form{
 
     &-panel{
@@ -89,15 +94,22 @@
   }
   .actions{
 
-    &-subbtn{
-      position: fixed;
-      bottom: 0;
-      width: 750rpx;
-      border-radius: 0;
-      background: #00A8FF;
-      color: #fff;
-      border: none;
-      z-index: 2;
+
+  }
+
+  .back-pay-box{
+    color: #333;
+    .back-pay-btn{
+      line-height: 50rpx;
+      text-align: center;
+      width:126rpx;
+      height:50rpx;
+      background:rgba(0,168,255,1);
+      border-radius:5rpx;
+
+    }
+    .div-cell{
+      background: #f8f8f8;
     }
   }
 
@@ -106,6 +118,18 @@
 <template>
   <div class="page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
+    <div class="bgwhite back-pay-box fz-14" v-if="action==='show'">
+      <div class="div-cell flex flex-justify-between flex-vertical-center p-10">
+        <div>认证时间</div>
+        <div>认证时间</div>
+      </div>
+      <div class="h10 bgwhite"></div>
+      <div class="div-cell flex flex-justify-between flex-vertical-center p-10">
+        <div>保证金：5000</div>
+        <div class="back-pay-btn color-white fz-12" @click="$linkTo('/pages/store/StoreWithdrawal?type=4')">申请退款</div>
+      </div>
+      <div class="h10 bgwhite"></div>
+    </div>
     <form class="form" @submit="formSubmit" @reset="formReset">
 
       <div class="form-panel">
@@ -125,7 +149,7 @@
             </div>
           </div>
           <template v-if="materialForms.length>0">
-            <diy-form @update="upMaterial"  eid="material" ref="material" :forms="materialForms"></diy-form>
+            <diy-form :action="action" :isshow="action==='show'" :isedit="action==='edit'"  @update="upMaterial"  eid="material" ref="material" :forms="materialForms"></diy-form>
           </template>
 
 
@@ -139,15 +163,21 @@
         </div>
         <div class="form-cell">
           <template v-if="permissionsForms.length>0">
-            <diy-form2 @update="upPermissions" eid="permissions" ref="permissions" :forms="permissionsForms"></diy-form2>
+            <diy-form2 :action="action" :isshow="action==='show'" :isedit="action==='edit'" @update="upPermissions" eid="permissions" ref="permissions" :forms="permissionsForms"></diy-form2>
           </template>
 
         </div>
       </div>
-      <button @click="sub" class="actions-subbtn">提交</button>
+
     </form>
 
-    <div style="height: 50px"></div>
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <button @click="sub" v-if="action!='show'" class="btn action-btn btn-primary">{{action==='add'?'提交资料':'修改资料'}}</button>
+
 
     <select-trade :single="true" :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
 
@@ -158,14 +188,16 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getBizConfig, bizIndustryDetail, bizApply } from '../../api/store'
+  import { bizApply, bizIndustryDetail, getBizConfig, getBizInfo } from '../../api/store'
   import { objTranslate, validateFun } from '../../common/helper'
-  import { error, modal, toast } from '../../common/fun'
+  import { modal, toast } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      action: '',
+      has: false,
       showTrade: false,
       formCheckResult: false,
       trade: {
@@ -182,7 +214,7 @@
     },
     watch: {
       industry_id(newVal) {
-        if (newVal) {
+        if (this.action === 'add' && newVal) {
           bizIndustryDetail({industry_id: newVal}, {tip: '加载所需资质'}).then(res => {
             const {person = []} = res.data.industry_form
             this.permissionsForms = person
@@ -204,7 +236,7 @@
         // const permissions = this.$refs.permissions.getData()
         // const material = this.$refs.material.getData
 
-        const {permissions=[],material=[]} = this.auth_info
+        const {permissions = [], material = []} = this.auth_info
 
         console.log(permissions, material)
         for (let item of permissions) {
@@ -252,11 +284,11 @@
           return
         }
 
-        bizApply(postData, {tip: 'loading', mask: 1},{errtip:false}).then(res => {
+        bizApply(postData, {tip: 'loading', mask: 1}, {errtip: false}).then(res => {
           toast('提交成功')
           wx.navigateBack()
         }).catch((err) => {
-          modal('提交失败:'+err.msg)
+          modal('提交失败:' + err.msg)
         })
       },
       openTradeSelect() {
@@ -267,7 +299,8 @@
       },
       handleTradeSelect(select_trade_list) {
         if (Array.isArray(select_trade_list) && select_trade_list.length > 0) {
-          let trade_names = [], trade_ids = []
+          let trade_names = []
+          let trade_ids = []
           for (let trade of select_trade_list) {
             trade_names.push(trade.industry_name)
             trade_ids.push(trade.id)
@@ -279,12 +312,36 @@
         }
         this.handleTradeSelectClose()
       },
-      _init_func() {
-        getBizConfig().then(res => {
-          const {person = [], company = []} = res.data.industry_form
-          this.materialForms = company
-        })
+      async _init_func() {
+        if (this.action === 'add') {
+          getBizConfig().then(res => {
+            const {person = [], company = []} = res.data.industry_form
+            this.materialForms = company
+          })
+        } else {
+          const bizInfo = await getBizInfo().then(res => {
+            return res.data[0]
+          }).catch(() => {})
+
+          this.materialForms = bizInfo.apply_info.auth_info.material
+          this.permissionsForms = bizInfo.apply_info.auth_info.permissions
+
+          this.trade.list.push(bizInfo.industry_id) // 设置选中的类别
+          this.industry_id = bizInfo.industry_id
+
+          const industryDetail = await bizIndustryDetail({industry_id: this.industry_id}).then(res => {
+            return res.data
+          }).catch(err => {
+            console.log(err)
+          })
+          console.log(industryDetail)
+          this.trade.label = industryDetail.industry_name
+        }
       }
+    },
+    onLoad(options) {
+      const {action = 'add'} = options
+      this.action = action
     },
     onShow() {
       this._init_func()

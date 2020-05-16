@@ -1,5 +1,5 @@
 <template>
-    <div class="all">
+    <div class="all page-wrap">
       <div class="counpon-name">
           <div>
             优惠券名称
@@ -125,8 +125,12 @@
       </div>
       <div class="line"></div>
 
-      <div style="height: 86rpx;width: 100%"></div>
-      <div class="submit-main" @click="saveCoupon">
+      <!--占住底部的位置-->
+      <div class="safearea-box fixed bgwhite"></div>
+      <!--放置页面底部内容被挡住，额外给的高度-->
+      <div class="safearea-box"></div>
+      <!--action-btn全局有样式-->
+      <div class="btn action-btn btn-primary" @click="saveCoupon">
         {{Coupon_ID?'保存':'新增'}}
       </div>
 
@@ -211,18 +215,14 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {opCoupon, getCouponList} from '../../api/store'
-  import {bizProdList} from '../../api/product'
+  import { getCouponList, getUserLevel, opCoupon } from '../../api/store'
+  import { bizProdList } from '../../api/product'
+  import { chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '../../common/helper'
+  import { error, hideLoading, showLoading } from '../../common/fun'
+  import { dateTimePicker, getMonthDay, getNewDateArry } from '../../common/time'
+
   const moment = require('moment')
 
-  import {chooseImageByPromise, uploadImages, getArrColumn, getDomain} from '../../common/helper'
-  import {
-    hideLoading,
-    linkTo, showLoading, error, toast
-  } from '../../common/fun'
-  import {dateTimePicker, getMonthDay, getNewDateArry, getArr} from '../../common/time'
-
-  import {getUserLevel} from '../../api/store'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -465,7 +465,7 @@
                 this.front_show = item.front_show
 
                 this.imgTempList.push(item.Coupon_PhotoPath)
-                console.log(item.Coupon_PhotoPath, this.imgTempList,"sss")
+                console.log(item.Coupon_PhotoPath, this.imgTempList, 'sss')
                 // 初始化开始时间
                 let date = item.Coupon_StartTime
                 let defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()
@@ -534,7 +534,9 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
   .all{width: 750rpx;overflow: hidden}
   .full-img{width: 100%;height: 100%}
   .flex1{flex: 1}
@@ -673,19 +675,7 @@
     font-size: 26rpx;
     color: #777777;
   }
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
-    line-height: 86rpx;
-    text-align: center;
-    color: #FFFFFF;
-    font-size: 32rpx;
-    background:rgba(0,168,255,1);
-    position: fixed;
-    bottom: 0rpx;
-    left: 0rpx;
-    z-index: 9;
-  }
+
   .select-pro{
     font-size: 24rpx;
     color: #00A8FF;

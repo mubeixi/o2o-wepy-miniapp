@@ -27,7 +27,8 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import {componentMixins} from '../mixins'
+  import { componentMixins } from '../mixins'
+
   wepy.component({
     mixins: [componentMixins],
     props: {

@@ -59,26 +59,27 @@
           <div class="station-button"  >
             已完成
           </div>
-          <div class="look-info" @click="goShow">
+          <div class="look-info" @click="goShow('show')">
             查看资料
           </div>
         </div>
         <block v-else>
           <block v-if="info.apply_info.apply_status==1">
-            <div class="right-div"  @click="goShow">
+            <div class="right-div"  @click="goShow('show')">
               <div class="station-button active"  >
                 审核中
               </div>
             </div>
           </block>
           <block v-else-if="info.apply_info.apply_status==-1">
-            <div class="right-div"  @click="goShow">
-              <div class="station-button active"  >
+            <div class="right-div"  @click="goShow('showReason')">
+              <div class="station-button danger"  >
                 已驳回
               </div>
+              <div class="fz-12 color-red">查看原因</div>
             </div>
           </block>
-          <div class="right-div"  v-else  @click="goShow">
+          <div class="right-div"  v-else  @click="goShow('add')">
             <div class="station-button active"  >
               去提交
             </div>
@@ -134,9 +135,10 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getBizInfo} from '../../api/store'
+  import { getBizInfo } from '../../api/store'
   import { linkTo } from '../../common/fun'
   import { ls } from '../../common/helper'
+  import {confirm} from '../../common/helper'
 
   wepy.page({
     store,
@@ -148,42 +150,67 @@
       this.getBizInfo()
     },
     methods: {
-      goShow() {
-        if (this.info.apply_info && this.info.apply_info.principal_type) {
-          if (this.info.apply_info.principal_type == 1) {
-            linkTo('/pages/join/CompanyCertification')
-          } else {
-            linkTo('/pages/join/PersonalCertification')
-          }
-        } else {
-          if (this.info.principal_type == 0) {
-            wx.showActionSheet({
-              itemList: ['个人认证', '企业认证'],
-              success: (res) => {
-                const {tapIndex} = res
-                console.log(tapIndex)
-                if (tapIndex === 0) {
-                  linkTo('/pages/join/PersonalCertification')
-                }
-                if (tapIndex === 1) {
-                  linkTo('/pages/join/CompanyCertification')
-                }
-              },
-              fail (res) {
+      // 利用isHasInfo标记为已经有信息了
+      goShow(action) {
+        if (action === 'showReason') {
+          confirm({
+            title: '审核原因',
+            content: this.info.apply_info.reject_reason || '为通过审核，请完善资料后再次提交',
+            confirmText: '完善资料',
+            cancelText: '下次再说'
+          }).then(() => {
+            this.goShow('edit')
+          }).catch(() => {})
 
+          return
+        }
+
+        if (action === 'add') {
+          wx.showActionSheet({
+            itemList: ['个人认证', '企业认证'],
+            success: (res) => {
+              const {tapIndex} = res
+              console.log(tapIndex)
+              if (tapIndex === 0) {
+                linkTo('/pages/join/PersonalCertification?action=add')
               }
-            })
+              if (tapIndex === 1) {
+                linkTo('/pages/join/CompanyCertification?action=add')
+              }
+            },
+            fail (res) {
+
+            }
+          })
+          return
+        }
+
+        const principal_type = this.info.apply_info.principal_type
+
+        if (action === 'show') {
+          if (principal_type === 1) {
+            linkTo('/pages/join/CompanyCertification?action=show')
+          } else {
+            linkTo('/pages/join/PersonalCertification?action=show')
+          }
+          return
+        }
+
+        if (action === 'edit') {
+          if (principal_type === 1) {
+            linkTo('/pages/join/CompanyCertification?action=edit')
+          } else {
+            linkTo('/pages/join/PersonalCertification?action=edit')
           }
         }
       },
       async getBizInfo() {
         let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
-        this.info=arr[0]
+        this.info = arr[0]
         if (!this.info.entry_process) {
           this.info.entry_process = {}
         }
-        ls.set('status',this.info.status)
-
+        ls.set('status', this.info.status)
       }
     }
 
@@ -243,6 +270,9 @@
     font-size: 12px;
     background-color: #CACACA;
     color: #FFFFFF;
+    &.danger{
+      background: $fun-red-color;
+    }
   }
   .active{
     background-color: #00A8FF !important;

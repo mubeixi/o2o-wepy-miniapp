@@ -61,8 +61,8 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import { error, toast } from '../common/fun'
   import { chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '../common/helper'
+
   wepy.component({
     props: {
       // 额外参数，可以带回去

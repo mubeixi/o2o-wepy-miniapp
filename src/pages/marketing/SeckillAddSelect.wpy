@@ -109,13 +109,13 @@
         this.$closePop('myModel')
       },
       show(ind) {
-        let sum=0
+        let sum = 0
         for (let it in this.skuvaljosn) {
-          if(this.skuvaljosn[it].check){
+          if (this.skuvaljosn[it].check) {
             sum++
           }
         }
-        if(sum<=0){
+        if (sum <= 0) {
           error('请先勾选对应的规格')
           return
         }

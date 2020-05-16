@@ -43,7 +43,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getStoreList, opBizStore} from '../../api/store'
+  import { getStoreList, opBizStore } from '../../api/store'
   import { hideLoading, linkTo, showLoading } from '../../common/fun'
 
   wepy.page({

@@ -15,15 +15,15 @@
           <div class="info">
             <div class="title">{{product.Products_Name}}</div>
             <div class="price-box">
-              <span class="sign color-gray" style="margin-right: 4rpx">秒杀价: ¥</span>
-              <span class="font-15">{{product.attr_json.price}}</span>
+              <span class="sign" style="margin-right: 4rpx">秒杀价: ¥</span>
+              <span class="font-15">{{product.price}}</span>
               <span class="p-l-20 p-r-4 fz-12 color-gray">原价:</span>
-              <span class="sign color-gray">￥</span>
-              <span class="color-gray font-13">{{product.Products_PriceX}}</span>
+              <span class="sign color-gray text-through">￥</span>
+              <span class="color-gray font-13 text-through">{{product.Products_PriceX}}</span>
             </div>
             <div class="stock-box">
               <span class="stock">限购:{{product.limits}}件</span>
-              <span class="sale p-l-40">活动库存:{{product.attr_json.count}}</span>
+              <span class="sale p-l-40">活动库存:{{product.stock}}</span>
             </div>
           </div>
         </div>
@@ -36,9 +36,9 @@
             <span class="title">编辑</span>
           </div>
           <div class="action"   @click="del(product.id,product.status,idx)">
-            <icon size="18" type="iconshanchu"></icon>
+            <icon size="18" :type="product.status==1?'iconIcon-jinyong':'iconqiyongzhanghao'"></icon>
             <span class="title" v-if="product.status==1">禁用</span>
-            <span class="title" v-else>已失效</span>
+            <span class="title" v-else>启用</span>
           </div>
 
           <div class="action">
@@ -53,11 +53,16 @@
       </div>
     </div>
 
-    <div style="width: 750rpx;height: 86rpx;"></div>
-    <div class="submits flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/SeckillAdd')">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/SeckillAdd')">
       <icon type="iconadd" color="#fff"  size="20"  class="m-r-9"></icon>
       添加秒杀
     </div>
+
   </div>
 </template>
 
@@ -66,7 +71,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {bizFlashsaleList, bizFlashsaleStatus} from '../../api/product'
+  import { bizFlashsaleList, bizFlashsaleStatus } from '../../api/product'
   import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
 
   wepy.page({
@@ -86,13 +91,13 @@
     },
     methods: {
       del(id, status, idx) {
-        showLoading('修改中')
+        showLoading()
         let data = {
           flashsale_id: id,
           status: status == 1 ? 2 : 1
         }
         bizFlashsaleStatus(data).then(res => {
-          toast('修改成功')
+          toast('操作成功')
           this.seckillData[idx].status = status == 1 ? 2 : 1
           hideLoading()
         }).catch(e => { hideLoading() })
@@ -107,7 +112,7 @@
           pageSize: this.pageSize
         }
         bizFlashsaleList(data).then(res => {
-          for(let item of res.data){
+          for (let item of res.data) {
             this.seckillData.push(item)
           }
           this.totalCount = res.totalCount
@@ -115,7 +120,7 @@
       }
     },
     onShow() {
-      this.seckillData=[]
+      this.seckillData = []
       this.page = 1
       this.init()
     },
@@ -129,43 +134,9 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
-  /* 底部的操作栏start */
-  .handle-box{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    height: 90rpx;
-    width: 750rpx;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    padding: 0 20rpx;
-    box-sizing: border-box;
-    border-top: 1px solid #eee;
-    .btn-list{
-      display: flex;
-      align-items: center;
-      .btn{
-        width:96rpx;
-        height: 54rpx;
-        line-height: 54rpx;
-        text-align: center;
-        border-radius: 10rpx;
-        border:1px solid $fun-red-color;
-        color: $fun-red-color;
-        background: white;
-        margin-left: 20rpx;
-        &.btn-up{
-          color: white;
-          background: $fun-red-color;
-        }
-      }
-    }
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
   }
-  /*底部操作栏 end*/
 
   /** 顶部start **/
   .action{
@@ -276,17 +247,7 @@
     padding-left: 20rpx;
     line-height: 11px;
   }
-  .submits{
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 750rpx;
-    height: 86rpx;
-    background-color: #00A8FF;
-    color: #FFFFFF;
-    font-size: 32rpx;
-    line-height: 86rpx;
-  }
+
 
 
 </style>

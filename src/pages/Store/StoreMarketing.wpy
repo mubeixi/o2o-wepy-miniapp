@@ -44,13 +44,6 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {
-    getSystemInfo
-  } from '../../api/system'
-  import {
-    toast
-  } from '../../common/fun'
-
   wepy.page({
     store,
     mixins: [pageMixin],

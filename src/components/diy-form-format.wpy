@@ -92,6 +92,14 @@
     }
 
   }
+
+  .show-div-value{
+
+  }
+  .show-img{
+    width: 120rpx;
+    height: 120rpx;
+  }
 </style>
 <template>
   <div class="form-cell" v-if="formList.length>0">
@@ -99,16 +107,41 @@
       <div v-if="item.type==='input'" class="form-cell-item cell-item" :class="{nobor:idx===formList.length-1}">
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
-          <input placeholder-class="__placeholder" @input="inputChange($event,idx)" :value="item.value" class="input" :placeholder="item.desc" />
+
+
+          <block v-if="action==='show'">
+            <div class="show-div-value">{{item.value}}</div>
+          </block>
+          <block v-else>
+            <input placeholder-class="__placeholder" @input="inputChange($event,idx)" :value="item.value" class="input" :placeholder="item.desc" />
+          </block>
+
         </div>
       </div>
       <div v-if="item.type==='picker'" class="form-cell-item cell-item" :class="{nobor:idx===formList.length-1}">
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
-          <picker style="width: 100%" :range="item.options" @change="pickerChange">
-            <div class="" v-if="item.value">{{item.value}}</div>
-            <div class="__placeholder" v-else>{{item.desc||'请选择'}}</div>
-          </picker>
+
+          <block v-if="action==='show'">
+            <div class="show-div-value">{{item.value}}</div>
+          </block>
+
+          <block v-if="action==='edit'">
+            <picker style="width: 100%" :value="item.selectOptIdx" :range="item.options" @change="pickerChange">
+              <div class="" v-if="item.value">{{item.value}}</div>
+              <div class="__placeholder" v-else>{{item.desc||'请选择'}}</div>
+            </picker>
+          </block>
+
+          <block v-if="action==='add'">
+            <picker style="width: 100%" :range="item.options" @change="pickerChange">
+              <div class="" v-if="item.value">{{item.value}}</div>
+              <div class="__placeholder" v-else>{{item.desc||'请选择'}}</div>
+            </picker>
+          </block>
+
+
+
         </div>
         <div class="form-cell-item__right">
           <span class="wzwicon iconright font16" style="color: #666"></span>
@@ -118,12 +151,29 @@
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
 
-          <address @up="updateAddress" ref="address">
-            <div @click="openPop('address')">
-              <div class="__placeholder" v-if="!item.value">{{item.desc||'选择位置'}}</div>
-              <div v-if="item.value">{{item.value}}</div>
-            </div>
-          </address>
+          <block v-if="action==='show'">
+            <div class="show-div-value">{{item.value}}</div>
+          </block>
+
+          <block v-if="action==='edit'">
+            <address @up="updateAddress" ref="address">
+              <div @click="openPop('address')">
+                <div v-if="item.value">{{item.value}}</div>
+                <div class="__placeholder" v-if="!item.value">{{item.desc||'选择位置'}}</div>
+              </div>
+            </address>
+          </block>
+
+          <block v-if="action==='add'">
+
+            <address @up="updateAddress" ref="address">
+              <div @click="openPop('address')">
+                <div class="__placeholder" >{{item.desc||'选择位置'}}</div>
+              </div>
+            </address>
+          </block>
+
+
         </div>
         <div class="form-cell-item__right">
           <icon  type="iconarrowleft" size="16"  color="#666"></icon>
@@ -132,12 +182,17 @@
       <div v-if="item.type==='img'" class="form-upload-item cell-item" :class="{nobor:idx===formList.length-1}">
         <div class="form-upload-item__label">{{item.label}}</div>
         <div class="form-upload-item__content">
-            <upload-image
-              :key="idx"
-              :limit="1"
-              :ext="idx"
-              @done="upImgSuccess"
-            ></upload-image>
+          <block v-if="action==='show'">
+            <image class="show-img" :src="item.value"></image>
+          </block>
+          <block v-if="action==='add'">
+            <upload-image :key="idx" :limit="1" :ext="idx" @done="upImgSuccess"></upload-image>
+          </block>
+
+          <block v-if="action==='edit'">
+            <upload-image :key="idx" :has="item.hasImg" :limit="1" :ext="idx" @done="upImgSuccess"></upload-image>
+          </block>
+
         </div>
       </div>
     </div>
@@ -146,17 +201,30 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import {
-    objTranslate, sleep,
-    strSplit
-  } from '../common/helper'
+  import { objTranslate } from '../common/helper'
   import { hideLoading, showLoading } from '../common/fun'
+  import {getDomain} from '../common/helper'
 
   wepy.component({
     props: {
       eid: {
         type: String,
         require: true
+      },
+      // 编辑模式
+      action: {
+        type: String,
+        default: 'add'
+      },
+      // 编辑模式
+      isedit: {
+        type: Boolean,
+        default: false
+      },
+      // 显示模式
+      isshow: {
+        type: Boolean,
+        default: false
       },
       forms: {
         type: Array,
@@ -179,28 +247,51 @@
         }
       }
     },
-
     ready() {
       const _arr = objTranslate(this.forms)
+      console.log(_arr)
       // 我也太聪明了
       if (Array.isArray(_arr) && _arr.length > 0) {
         this.formList = _arr.map(row => {
           // 只有picker是要特殊处理的
-          if (row.type === 'picker') {
+          if (row.type === 'picker' && this.action === 'add') {
             row.options = row.value.split('|')
             row.value = ''
           }
+
+          if (row.type === 'picker' && this.action === 'edit') {
+            // 下标
+            const selectOptIdx = row.options.indexOf(row.value)
+            if (selectOptIdx !== -1) {
+              row.selectOptIdx = selectOptIdx
+            }
+          }
+
+          // 编辑和显示模式下图片格式化
+          if (this.action === 'show' && row.type === 'img') {
+            row.src = getDomain(row.value)
+          }
+
+          if (this.action === 'edit' && row.type === 'img') {
+            row.hasImg = []
+            if (row.value) {
+              row.src = getDomain(row.value)
+              row.hasImg = [getDomain(row.value)]
+            }
+          }
+
           return row
         })
         console.log(this.formList)
       }
     },
     methods: {
-      openPop(name){
+      getDomain,
+      openPop(name) {
         this.$refs[name].show()
       },
-      updateAddress(data){
-        //console.log(data)
+      updateAddress(data) {
+        // console.log(data)
         this.setVal(data.strArr.join(''))
       },
       getData() {
@@ -227,9 +318,9 @@
         const val = e.$wx.detail.value
         this.setVal(this.formList[this.idx].options[val])
       },
-      inputChange(e,idx) {
+      inputChange(e, idx) {
         const val = e.$wx.detail.value
-        this.setVal(val,idx)
+        this.setVal(val, idx)
       },
       addressCall({province, city, area, town}) {
         // const val = e.$wx.detail.value

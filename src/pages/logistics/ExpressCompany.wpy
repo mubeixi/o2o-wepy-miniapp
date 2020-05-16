@@ -1,44 +1,19 @@
 <template>
   <div class="page-wrap">
     <div class="group-cell">
-      <div class="cell-item">
-        <div class="label">顺丰</div>
+      <div class="cell-item" v-for="(company,idx) in lists" :key="idx" @click="$linkTo('/pages/logistics/AoAuth?coop_id='+company.id)">
+        <div class="label">{{company.Shipping_Name}}</div>
         <div class="content"></div>
         <icon type="iconarrowleft" color="#999" class="right"></icon>
       </div>
-      <div class="cell-item">
-        <div class="label">中通</div>
-        <div class="content"></div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">申通</div>
-        <div class="content"></div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">百世</div>
-        <div class="content"></div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">中通</div>
-        <div class="content"></div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">韵达</div>
-        <div class="content"></div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">邮政</div>
-        <div class="content"></div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
+
     </div>
 
-    <div class="actions">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <div class="actions" @click="$linkTo('/pages/logistics/AoAuth')">
       <icon type="iconadd" size="20" color="#00a8ff"></icon>
       <span class="p-l-6">新增合作公司</span>
     </div>
@@ -51,21 +26,23 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import  {getCoopCompany} from '../../api/store'
+  import {
+    getCoopCompany
+  } from '../../api/store'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      lists: []
     },
     methods: {
-      getCoopCompany(){
-
+      async _init_func() {
+        this.lists = await getCoopCompany().then(res => res.data).catch((e) => { throw Error(e.msg || '获取电子面单列表失败') })
       }
     },
     onShow() {
-      this.getCoopCompany()
+      this._init_func()
     }
 
   })
@@ -75,6 +52,7 @@
 
   .page-wrap{
     min-height: 100vh;
+    padding-bottom: 90rpx;
     background: white;
   }
   .group-cell{
@@ -97,7 +75,8 @@
 
   .actions{
     position: fixed;
-    bottom: 0;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
     left: 0;
     width: 750rpx;
     height: 90rpx;

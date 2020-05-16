@@ -146,9 +146,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {
-    getBizProdCateList, editBizProdCate, delBizProdCate, addBizProdCate
-  } from '../../api/store'
+  import { addBizProdCate, delBizProdCate, editBizProdCate, getBizProdCateList } from '../../api/store'
   import { confirm } from '../../common/helper'
 
   wepy.page({

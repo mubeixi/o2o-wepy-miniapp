@@ -1,5 +1,5 @@
 <template>
-  <div class="seckill-add">
+  <div class="seckill-add page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
     <block v-if="pro_id">
       <div  class="flex  product-mbx" @click="openPop('product')">
@@ -95,8 +95,12 @@
 
 
 
-    <div style="height: 86rpx;width: 750rpx"></div>
-    <div class="submitLast fz-16"  @click="addSeckill">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary fz-16"  @click="addSeckill">
       确定
     </div>
 
@@ -194,18 +198,17 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls, confirm, validateFun, objTranslate, getArrColumn, findArrayIdx
-  } from '../../common/helper'
-  import { bizProdList, opBizGift, getShopGiftInfo, getShippingTemplate } from '../../api/product'
+  import { ls, validateFun } from '../../common/helper'
+  import { bizProdList, getShippingTemplate, getShopGiftInfo, opBizGift } from '../../api/product'
   import { back, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+
   const moment = require('moment')
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      Template_Name:'',
+      Template_Name: '',
       weight: '',
       is_shipping: 0,
       sort: '',
@@ -249,7 +252,7 @@
           item.check = false
         })
         this.emsData[index].check = !this.emsData[index].check
-        this.Template_Name=this.emsData[index].Template_Name
+        this.Template_Name = this.emsData[index].Template_Name
       },
       selectPro() {
         this.$closePop('myModal')
@@ -334,7 +337,7 @@
           pro_id: this.pro_id
         }
         if (this.selectValue.Products_Type != 0) {
-          if(!selectSku.Attr_Value){
+          if (!selectSku.Attr_Value) {
             this.formCheckResult = ['请设置赠品规格']
             return
           }
@@ -419,7 +422,7 @@
         getShopGiftInfo({id: this.id }).then(res => {
           this.editData = res.data
           for (let item of this.proData) {
-            console.log(item,this.editData.product_id,"ss")
+            console.log(item, this.editData.product_id, 'ss')
             if (item.Products_ID == this.editData.product_id) {
               this.selectValue = item
               item.check = true
@@ -439,11 +442,11 @@
 
             this.shipping_id = shipping.shipping_id
             if (this.shipping_type == 1) {
-              this.weight=shipping.value
+              this.weight = shipping.value
               this.emsData.map(item => {
                 item.Template_ID == this.shipping_id ? item.check = true : item.check = false
               })
-            }else{
+            } else {
               this.shipping_price = shipping.value
             }
           }
@@ -486,6 +489,10 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+
+  .page-wrap{
+    padding-bottom: 44px;
+  }
 
   .picker{
     height: 110rpx;
@@ -542,18 +549,7 @@
     color: #999999;
     font-size: 26rpx;
   }
-  .submitLast{
-    width: 750rpx;
-    height: 86rpx;
-    line-height: 86rpx;
-    text-align: center;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    background-color: #00A8FF;
-    color: #FFFFFF;
-    z-index: 99;
-  }
+
   .product-mbx{
     width: 750rpx;
     box-sizing: border-box;

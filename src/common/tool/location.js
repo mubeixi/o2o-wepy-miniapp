@@ -3,9 +3,9 @@
  *
  */
 
-import {isWeiXin} from "../tool";
-import {WX_JSSDK_INIT} from "../mixin";
-import permision from "../permission";
+import { isWeiXin } from '../tool'
+import { WX_JSSDK_INIT } from '../mixin'
+import permision from '../permission'
 
 const failOpt = {
     'osNotAllow': {code: 2001, msg: '无获取位置权限'},

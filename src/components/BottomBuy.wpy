@@ -93,6 +93,7 @@
 </template>
 <script>
   import wepy from '@wepy/core'
+
   wepy.component({
     props: {
       imgs: {
@@ -104,17 +105,17 @@
 
     },
     methods: {
-      myPay(){
-        this.$emit('myPay');
+      myPay() {
+        this.$emit('myPay')
       },
-      allPay(){
-        this.$emit('allPay');
+      allPay() {
+        this.$emit('allPay')
       },
-      goStore(){
-        this.$emit('goStore');
+      goStore() {
+        this.$emit('goStore')
       },
-      goShare(){
-        this.$emit('goShare');
+      goShare() {
+        this.$emit('goShare')
       }
     }
   })

@@ -1,5 +1,5 @@
 <template>
-    <div class="alls">
+    <div class="alls page-wrap">
           <div class="flex flex-vertical-center   items " v-for="(item,index) of infoData"  :key="index">
             满 <input type="digit" v-model="item.reach" class="input-full m-l-5 m-r-5" />元 减 <input type="digit" v-model="item.award"  class="input-full m-l-5 m-r-5" />元
           </div>
@@ -9,8 +9,12 @@
         添加满减
       </div>
 
-      <div style="height: 86rpx;width: 750rpx"></div>
-      <div class="submit" @click="submit">
+      <!--占住底部的位置-->
+      <div class="safearea-box fixed bgwhite"></div>
+      <!--放置页面底部内容被挡住，额外给的高度-->
+      <div class="safearea-box"></div>
+      <!--action-btn全局有样式-->
+      <div class="btn action-btn btn-primary" @click="submit">
         保存
       </div>
     </div>
@@ -20,7 +24,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getActiveInfo, opActive} from '../../api/product'
+  import { getActiveInfo, opActive } from '../../api/product'
   import { back, error, hideLoading, showLoading } from '../../common/fun'
 
   wepy.page({
@@ -36,16 +40,16 @@
             error('请输入金额')
             return
           }
-          if(parseFloat(item.reach)<=parseFloat(item.award)){
+          if (parseFloat(item.reach) <= parseFloat(item.award)) {
             error('满减设置有误')
             return
           }
         }
-        let data={
-          type:'manjian',
-          start_time:0,
-          end_time:0,
-          active_info:JSON.stringify(this.infoData)
+        let data = {
+          type: 'manjian',
+          start_time: 0,
+          end_time: 0,
+          active_info: JSON.stringify(this.infoData)
         }
         showLoading('保存中')
         opActive(data).then(res => {
@@ -57,8 +61,8 @@
         this.infoData.push({reach: '', award: ''})
       },
       async init() {
-        let arr = await getActiveInfo({type: 'manjian'},{onlyData:true}).catch(e => { error('获取列表失败') })
-        console.log(arr,"ss")
+        let arr = await getActiveInfo({type: 'manjian'}, {onlyData: true}).catch(e => { error('获取列表失败') })
+        console.log(arr, 'ss')
         if (arr.active_info.length > 0) {
           this.infoData = arr.active_info
         }
@@ -77,6 +81,9 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
   .alls{
     height: 100vh;
     background-color: #FFFFFF;

@@ -35,8 +35,12 @@
       </div>
     </div>
 
-    <div style="width: 750rpx;height: 86rpx;"></div>
-    <div class="submits flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/GiveAdd')">
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/GiveAdd')">
       <icon type="iconadd" color="#fff"  size="20"  class="m-r-9"></icon>
       添加赠品
     </div>
@@ -48,7 +52,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import {getShopGiftList, bizFlashsaleStatus,delGift} from '../../api/product'
+  import { delGift, getShopGiftList } from '../../api/product'
   import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
 
   wepy.page({
@@ -70,12 +74,12 @@
       del(id) {
         showLoading('删除中')
         let data = {
-          id: id,
+          id: id
         }
         delGift(data).then(res => {
           toast('删除成功')
-          this.page=1
-          this.seckillData=[]
+          this.page = 1
+          this.seckillData = []
           this.init()
           hideLoading()
         }).catch(e => { hideLoading() })
@@ -90,7 +94,7 @@
           pageSize: this.pageSize
         }
         getShopGiftList(data).then(res => {
-          for(let item of res.data){
+          for (let item of res.data) {
             this.seckillData.push(item)
           }
           this.totalCount = res.totalCount
@@ -98,7 +102,7 @@
       }
     },
     onShow() {
-      this.seckillData=[]
+      this.seckillData = []
       this.page = 1
       this.init()
     },
@@ -113,6 +117,9 @@
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
 
+  .page-wrap{
+    padding-bottom: 44px;
+  }
   /* 底部的操作栏start */
   .handle-box{
     position: fixed;
