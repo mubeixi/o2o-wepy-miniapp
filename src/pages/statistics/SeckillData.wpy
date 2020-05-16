@@ -1,0 +1,224 @@
+<style lang="scss">
+
+  @import "../../assets/variables.scss";
+  .page-wrap{
+    background-color: #f3f5f8;
+    width: 750rpx;
+    padding: 40rpx 20rpx;
+    box-sizing: border-box;
+    min-height: 100vh;
+  }
+  .seckill-data-list{
+    flex-wrap: wrap;
+    justify-content: space-around;
+    &-item{
+      width: 222rpx;
+      height: 120rpx;
+      background:rgba(255,255,255,1);
+      border:1px solid rgba(219,227,255,1);
+      box-shadow:0px 4rpx 12rpx 0px rgba(46,91,255,0.07);
+      border-radius:6rpx;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      padding: 0rpx 20rpx;
+      &-icon{
+        width: 48rpx;
+        height: 48rpx;
+        border-radius: 50%;
+        background-color: #E1F3E0;
+      }
+      &-right{
+        width: 100rpx;
+        text-align: center;
+        font-size: 10px;
+        height: 120rpx;
+        box-sizing: border-box;
+        padding: 30rpx 0rpx;
+        overflow: hidden;
+        color: #8798AD;
+        .seckill-data-list-number{
+          font-size: 30rpx;
+          height: 24rpx;
+          line-height: 24rpx;
+          color:#2E384D;
+          margin-bottom: 18rpx;
+        }
+      }
+    }
+  }
+  .icon-bg2{
+    background-color: #D9F6F9;
+  }
+  .icon-bg3{
+    background-color: #EEE6FF;
+  }
+
+  .seckill-data-echarts{
+    width: 710rpx;
+    height: 570rpx;
+    margin: 20rpx auto;
+    border-radius: 10rpx;
+    background-color: #FFFFff;
+    &-title{
+      height: 100rpx;
+      padding: 36rpx 30rpx;
+      width: 100%;
+      box-sizing: border-box;
+      line-height: 28rpx;
+      font-size:30rpx;
+      color: #333333;
+      font-weight: bold;
+    }
+  }
+
+  .pie-echarts{
+    display: block;
+    width: 680rpx;
+    height: 460rpx;
+  }
+
+
+
+</style>
+<template>
+  <div class="page-wrap p-b-30">
+      <div class="seckill-data-list flex ">
+            <div class="seckill-data-list-item flex flex-vertical-center">
+                <div class="seckill-data-list-item-icon flex-vertical-center flex flex-justify-center m-r-10">
+                  <icon type="iconyuyue" size="12" color="#33AC2E"></icon>
+                </div>
+                <div class="seckill-data-list-item-right">
+                  <div class="seckill-data-list-number">
+                    56
+                  </div>
+                  <div>
+                    预约人数
+                  </div>
+                </div>
+            </div>
+
+            <div class="seckill-data-list-item flex flex-vertical-center">
+              <div class="seckill-data-list-item-icon flex-vertical-center flex flex-justify-center m-r-10 icon-bg2">
+                <icon type="iconliulan" size="12" color="#00C1D4"></icon>
+              </div>
+              <div class="seckill-data-list-item-right">
+                <div class="seckill-data-list-number">
+                  56
+                </div>
+                <div>
+                  浏览人数
+                </div>
+              </div>
+            </div>
+            <div class="seckill-data-list-item flex flex-vertical-center">
+              <div class="seckill-data-list-item-icon flex-vertical-center flex flex-justify-center m-r-10 icon-bg3">
+                <icon type="iconcishu" size="12" color="#8B54FE"></icon>
+              </div>
+              <div class="seckill-data-list-item-right">
+                <div class="seckill-data-list-number">
+                  56
+                </div>
+                <div>
+                  浏览次数
+                </div>
+              </div>
+            </div>
+            <div class="seckill-data-list-item flex flex-vertical-center">
+              <div class="seckill-data-list-item-icon flex-vertical-center flex flex-justify-center m-r-10 icon-bg3">
+                <icon type="iconxiadan" size="12" color="#8B54FE"></icon>
+              </div>
+              <div class="seckill-data-list-item-right">
+                <div class="seckill-data-list-number">
+                  56
+                </div>
+                <div>
+                  下单人数
+                </div>
+              </div>
+            </div>
+            <div class="seckill-data-list-item flex flex-vertical-center">
+              <div class="seckill-data-list-item-icon flex-vertical-center flex flex-justify-center m-r-10">
+                <icon type="iconziyuan" size="12" color="#33AC2E"></icon>
+              </div>
+              <div class="seckill-data-list-item-right">
+                <div class="seckill-data-list-number">
+                  56
+                </div>
+                <div>
+                  支付人数
+                </div>
+              </div>
+            </div>
+            <div class="seckill-data-list-item flex flex-vertical-center">
+              <div class="seckill-data-list-item-icon flex-vertical-center flex flex-justify-center m-r-10 icon-bg2">
+                <icon type="iconjinrong" size="12" color="#00C1D4"></icon>
+              </div>
+              <div class="seckill-data-list-item-right">
+                <div class="seckill-data-list-number">
+                  56
+                </div>
+                <div>
+                  客单价
+                </div>
+              </div>
+            </div>
+
+      </div>
+
+
+      <div class="seckill-data-echarts">
+          <div class="seckill-data-echarts-title">
+            时段成交分析
+          </div>
+        <echarts ref="pie" :propData="newOldTradeStatistic.circles" :conf="newOldTradeStatistic.circlesConf"  class="pie-echarts" :onInit="onInitChartPie" ></echarts>
+      </div>
+
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+
+
+
+  /**
+   * 求某个对象组成数组中，某个对象的值占百分比。方便配合f2-chart做饼图
+   * @param item
+   * @param arr
+   * @param key
+   * @returns {*}
+   */
+  function getPercent(item, arr, key = 'value') {
+    let arrSum = 0
+    for (let row of arr) {
+      arrSum += row[key]
+    }
+    // 如果都是0的话，大家就一起穷。
+    return arrSum === 0 ? (parseInt(1 / arr.length * 100) / 100) : (parseInt(item[key] / arrSum * 100) / 100)
+  }
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+
+    }
+
+  })
+</script>
+<config>
+  {
+  "navigationBarTitleText": "秒杀数据",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "echarts": "~@/components/echarts",
+  "icon": "~@/components/icon",
+  "popup-layer": "~@/components/popup-layer"
+  }
+  }
+</config>

@@ -96,6 +96,7 @@ wepy.app({
       "pages/product/form",
       "pages/user/login",
       "pages/statistics/dashboard",
+      "pages/statistics/SeckillData",
       "pages/marketing/Seckill",
       "pages/marketing/SeckillAdd",
       "pages/marketing/SeckillAddSelect",
