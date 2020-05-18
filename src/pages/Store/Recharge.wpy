@@ -18,7 +18,7 @@
         立即充值
       </view>
       <view class="lishi flex flex-vertical-center" @click="goRecord">
-        充值记录 <icon type="iconarrowleft" class="lishi-image" size="14" color="#999"  class="m-l-10"></icon>
+        充值记录 <icon type="iconarrowleft"  size="14" color="#999"  class="m-l-10 lishi-image"></icon>
       </view>
 
     </view>

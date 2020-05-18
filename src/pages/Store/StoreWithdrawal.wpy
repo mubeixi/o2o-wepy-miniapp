@@ -37,7 +37,7 @@
         立即{{isBond?'退款':'提现'}}
       </view>
       <view class="lishi flex flex-vertical-center" @click="goRecord">
-        {{isBond?'退款':'提现'}}记录 <icon type="iconarrowleft" class="lishi-image" size="14" color="#999"  class="m-l-10"></icon>
+        {{isBond?'退款':'提现'}}记录 <icon type="iconarrowleft"  size="14" color="#999"  class="m-l-10 lishi-image"></icon>
       </view>
     </view>
   </view>
