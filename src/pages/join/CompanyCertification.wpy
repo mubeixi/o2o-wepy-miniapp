@@ -125,8 +125,11 @@
       </div>
       <div class="h10 bgwhite"></div>
       <div class="div-cell flex flex-justify-between flex-vertical-center p-10">
-        <div>保证金：5000</div>
-        <div class="back-pay-btn color-white fz-12" @click="$linkTo('/pages/store/StoreWithdrawal?type=4')">申请退款</div>
+        <div>保证金：{{bond_fee}}</div>
+        <div class="flex flex-vertical-center">
+          <div class="back-pay-btn color-white fz-12 m-r-10" @click="$linkTo('/pages/join/BusinessPay?type=3')">保证金追加</div>
+          <div class="back-pay-btn color-white fz-12" @click="$linkTo('/pages/store/StoreWithdrawal?type=4')">申请退款</div>
+        </div>
       </div>
       <div class="h10 bgwhite"></div>
     </div>
@@ -196,6 +199,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      bond_fee: '',
       action: '',
       has: false,
       showTrade: false,
@@ -322,6 +326,8 @@
           const bizInfo = await getBizInfo().then(res => {
             return res.data[0]
           }).catch(() => {})
+
+          this.bond_fee = bizInfo.bond_fee
 
           this.materialForms = bizInfo.apply_info.auth_info.material
           this.permissionsForms = bizInfo.apply_info.auth_info.permissions

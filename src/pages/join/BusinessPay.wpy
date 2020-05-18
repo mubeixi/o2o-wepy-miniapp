@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="form-cell-items">
+    <div class="form-cell-items"  v-if="type!=3">
       <div class="form-cell-item__labels">
         选择年限
       </div>
@@ -114,9 +114,14 @@
       pay_money: 0, // 支付金额
       year_fee: [], // 年费选项
       ind: 0,
-      order_id: ''
+      order_id: '',
+      type: 1
     },
-    async onLoad() {
+    async onLoad(options) {
+      if (options.type) {
+        this.type = options.type
+      }
+
       await this.getBizConfig()
       await this.proCate()
     },
@@ -152,9 +157,11 @@
       },
       async pay(open) {
         let data = {
-          year: this.year_fee[this.ind].name,
           bond_money: this.bondMoney,
-          pay_type: 1
+          pay_type: this.type
+        }
+        if (this.type != 3) {
+          data.year = this.year_fee[this.ind].name
         }
         showLoading('提交中')
         await addBizOrder(data).then(res => {
@@ -204,8 +211,11 @@
           return
         }
         let data = {
-          year: this.year_fee[this.ind].name,
-          bond_money: this.bondMoney
+          bond_money: this.bondMoney,
+          pay_type: this.type
+        }
+        if (this.type != 3) {
+          data.year = this.year_fee[this.ind].name
         }
         getBizPayAmount(data).then(res => {
           this.pay_money = res.data.pay_money
@@ -234,8 +244,11 @@
         let arrs = getArrColumn(checkNodeList, 'Category_Name')
         this.bondName = arrs.join(',')
         let data = {
-          year: this.year_fee[this.ind].name,
-          bond_money: this.bondMoney
+          bond_money: this.bondMoney,
+          pay_type: this.type
+        }
+        if (this.type != 3) {
+          data.year = this.year_fee[this.ind].name
         }
         getBizPayAmount(data).then(res => {
           this.pay_money = res.data.pay_money
