@@ -39,7 +39,7 @@ module.exports = {
     }
   },
   plugins: [
-    TypeScriptCompiler()
+    TypeScriptCompiler(),
     // UglifyPlugin()
   ],
   appConfig: {

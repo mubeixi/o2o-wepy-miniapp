@@ -6,8 +6,7 @@ export class TreeHub {
   checks = []
   ENV = null
   eid = ''
-  constructor(options) {
-    const {treeData, nodeKey, eid, has = [], childrenName} = options
+  constructor({treeData, nodeKey, eid, has = [], childrenName, plainArrayList = false}) {
 
     if (!nodeKey) {
       throw Error('nodeKey必须设置')
@@ -17,12 +16,16 @@ export class TreeHub {
     }
 
     this.eid = eid
-
     let nodes = []
+    if (Array.isArray(plainArrayList) && plainArrayList.length > 0) {
+      nodes = plainArrayList.concat([])
+    } else {
+      nodes = []
+      plainArray(treeData, childrenName, nodes)
+    }
 
-    ls.set('n',1)
-    plainArray(treeData, childrenName, nodes)
-    console.log('plainArray ready')
+    // console.log('plainArray ready')
+
     // has
     if (has.length > 0) {
       for (let i in nodes) {
@@ -47,9 +50,12 @@ export class TreeHub {
   }
 
   static addCheck(eid, item, key) {
+    // console.log(eid)
     let nodes = ls.get(eid)
+    // console.log(nodes)
     // let nodes = getApp().globalData[eid]
     const idx = findArrayIdx(nodes, {[key]: item[key]})
+    // console.log(idx)
     // 得不存在，才能加入
     if (idx !== false) {
       nodes[idx].check = true

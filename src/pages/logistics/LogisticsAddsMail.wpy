@@ -48,7 +48,7 @@
         为指定区域设置运费
       </div>
 
-    <city @onConfirm="selectValue" :has="hasValue"  @close="close"   deep="2"  :show="showSelect"></city>
+    <city @onConfirm="selectValue" :has.sync="hasValue"  deep="2"   ref="cityPopup"></city>
 
     <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
@@ -74,7 +74,7 @@
       ind: 0, // 当前修改的是哪个
       temp_id: '',
       editData: [{areas: '', areas_desc: '', designated: '0', prefrrendial_qty: '', prefrrendial_money: ''}],
-      showSelect: false,
+      // showSelect: false,
       hasValue: [],
       designated: '0',
       preferentialMoney: '',
@@ -109,13 +109,15 @@
       edit(ind) {
         this.hasValue = this.editData[this.ind].areas_desc.split(',')
         this.ind = ind
-        this.showSelect = true
+        // this.showSelect = true
+        this.$refs.cityPopup.open()
       },
       close() {
-        this.showSelect = false
+        // this.showSelect = false
+        this.$refs.cityPopup.close()
       },
       selectValue(value) {
-        this.showSelect = false
+        this.close()
         this.editData[this.ind].areas_desc = getString(value, 'area_name', ',')
         this.editData[this.ind].areas = getString(value, 'area_code', ',')
         console.log(value)

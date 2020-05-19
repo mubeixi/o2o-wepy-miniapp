@@ -29,6 +29,7 @@
 
   import wepy from '@wepy/core'
   import { bizIndustryList } from '../api/store'
+  import { error } from '../common/fun'
 
   wepy.component({
     props: {
@@ -90,6 +91,10 @@
     methods: {
       subFn() {
         let checkNodeList = this.$refs.tree.getCheckedNodes()
+        if (checkNodeList.length < 1) {
+          error('请至少选择一个选项')
+          return
+        }
         this.$emit('onConfirm', checkNodeList)
       },
       loadNode() {
