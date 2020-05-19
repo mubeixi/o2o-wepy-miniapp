@@ -72,6 +72,7 @@ export const plainArray = (arr, key, newArr) => {
       return false
       // throw Error('两个参数都要为数组')
     }
+
     for (var item of arr) {
       let tempObj = objTranslate(item)
       if (tempObj.hasOwnProperty(key)) {

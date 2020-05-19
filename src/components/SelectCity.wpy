@@ -1,25 +1,27 @@
 <template>
-  <div v-show="isshow" @touchmove.prevent.stop="noop">
-    <div class="mask" @click="close" ></div>
-    <div class="wrap" >
+  <div class="plugin-wrap" :animation="animationData">
+    <div class="mask" @touchmove.prevent.stop="noop" @click="close" ></div>
+    <div class="wrap">
       <div class="title">
         <div class="text">选择城市</div>
         <div @click="subFn" class="btn">确认</div>
       </div>
-      <div v-if="isReady"  class="mbx">
+      <scroll-view v-if="isReady" scroll-y class="mbx" :style="{height:systemInfo.windowHeight*0.6+'px'}">
         <fun-tree
-          ele-id="select_city"
+          :ele-id="'select_city'+idx"
           ref="tree"
           :has="has"
+          @done="doneFn"
           :conf="propsConf"
           :tree-data="treeData"
+          :plain-array-list="plainArrayList"
           :show-checkbox="true"
           :check-only-leaf="true"
           nodeKey="area_name"
         >
         </fun-tree>
-      </div>
-      <!--      <div @click="subFn" class="btn">提交</div>-->
+      </scroll-view>
+
     </div>
   </div>
 </template>
@@ -27,9 +29,15 @@
 
   import wepy from '@wepy/core'
   import { getCityList } from '../api/store'
+  import { error, hideLoading, modal, showLoading } from '../common/fun'
+  import store from '../store'
 
   wepy.component({
     props: {
+      idx: {
+        default: 0,
+        type: Number
+      },
       has: {
         type: Array,
         default: []
@@ -52,13 +60,16 @@
       }
     },
     data: {
+      animationData: [],
       isshow: false,
       isReady: false,
+      systemInfo: {},
       // showTree: false,
       timer: null,
       iftoggle: false,
       translateValue: -100, // 位移距离
       treeData: [],
+      plainArrayList: [],
       maskOpacity: 0,
       propsConf: {
         // icon:'iconname',
@@ -73,6 +84,17 @@
           val && this.open()
           !val && this.close()
         }
+      },
+      idx(nweVal) {
+        // this.isReady = false
+        // setTimeout(() => {
+        //   this.isReady = true
+        // })
+      },
+      has: {
+        handler(newVal) {
+          console.log('has改变', newVal)
+        }
       }
       // deep: {
       //   immediate: true,
@@ -83,18 +105,51 @@
       // }
     },
     ready() {
-      //
-      if (this.deep > 1) {
-        getCityList({'deep': this.deep}).then(res => {
-          console.log('load cityData ready',Object.prototype.toString.call(res.data))
-          this.treeData = res.data.splice(0,13)// mockData
-          this.isReady = true
-        })
-      }
+      this.systemInfo = wx.getSystemInfoSync()
+      showLoading()
+      this._init_func()
     },
     methods: {
+      openPluginDrawer () {
+        // this.commentDrawerOpen = true
+        var animation = wx.createAnimation({
+          duration: 400,
+          timingFunction: 'ease'
+        })
+        animation.translateX(0).step()
+        this.animationData = animation.export()
+      },
+      closePluginDrawer () {
+        // this.commentDrawerOpen = false
+        var animation = wx.createAnimation({
+          duration: 400,
+          timingFunction: 'ease'
+        })
+        animation.translateX(this.systemInfo.windowWidth).step()
+        this.animationData = animation.export()
+      },
+      doneFn() {
+        console.log('城市选择组件ok')
+        hideLoading()
+        // console.log(new Date().getTime())
+      },
+      async _init_func() {
+        if (this.deep > 1) {
+          this.treeData = await getCityList({'deep': this.deep}).then(res => {
+            return res.data
+          }).catch(err => {
+            modal(err.msg || '初始化地区数据失败')
+          })
+          this.isReady = true
+        }
+      },
       subFn() {
         let checkNodeList = this.$refs.tree.getCheckedNodes()
+        if (checkNodeList.length < 1) {
+          error('请至少选择一个选项')
+          return
+        }
+        console.log(checkNodeList)
         this.$emit('onConfirm', checkNodeList)
       },
       loadNode() {
@@ -102,12 +157,16 @@
       noop() {
 
       },
+
       close() {
-        this.isshow = false
+        this.closePluginDrawer()
+        // this.isshow = false
         this.$emit('close')
       },
       open() {
-        this.isshow = true
+        this.openPluginDrawer()
+
+        // this.isshow = true
       },
       handleNodeClick(obj) {
         console.log('handleNodeClick', obj)
@@ -119,6 +178,16 @@
   })
 </script>
 <style lang="scss">
+
+  .plugin-wrap{
+    z-index: 9;
+    position: fixed;
+    width: 750rpx;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(100%);
+  }
 
   @import "../assets/variables.scss";
   .title{
@@ -141,7 +210,7 @@
   }
 
   .mask{
-    position: fixed;
+    position: absolute;
     z-index: 9;
     background: rgba(0, 0, 0 , .6);
     height: 100%;
@@ -152,7 +221,7 @@
   }
   .wrap{
     padding: 15px 0 30px;
-    position: fixed;
+    position: absolute;
     left: 0;
     width: 750rpx;
     z-index: 10;
@@ -161,7 +230,6 @@
     bottom: 0;
   }
   .mbx{
-    height: 840rpx;
     overflow-y: scroll;
   }
 

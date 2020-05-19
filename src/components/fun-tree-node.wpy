@@ -5,15 +5,22 @@
   <div :style="{paddingLeft:val.pid === 0 ? 0:indent+'px'}" class="m-t-15 p-r-10">
     <div class="flex" @tap.stop="clickFn(val)">
       <div v-show="(!checkOnlyLeaf || isLeaf)">
-<!--        <checkbox v-if="!single" size="mini" :checked="isCheck" color="#F53636" />-->
-<!--        <radio v-if="single" size="mini" :checked="isCheck" color="#F53636" />-->
         <icon :type="isCheck?'iconcheckbox-check':'iconcheckbox'" :color="isCheck?'#F53636':'#ccc'"></icon>
       </div>
       <div class="flex1 p-l-10 fz-14 c6">{{ labelText }}</div>
     </div>
     <div v-if="children.length>0"  :style="{paddingLeft:indent+'px'}">
       <div v-for="(item, index) in children" :key="index" class="m-t-10">
-        <fun-tree-node :ref="'item-item'+index" @clear="bingClearFn" :single="single" :has="has" :indent="indent" :eid="eid" :nodeKey="nodeKey" :conf="conf" :val="item"></fun-tree-node>
+        <fun-tree-node-child
+          :ref="'item-item'+index"
+          @clear="bingClearFn"
+          :single="single"
+          :has="has"
+          :indent="indent"
+          :eid="eid"
+          :nodeKey="nodeKey"
+          :conf="conf"
+          :val="item"></fun-tree-node-child>
       </div>
     </div>
   </div>
@@ -23,7 +30,7 @@
   import wepy from '@wepy/core'
   import { TreeHub } from './TreeHub'
   import { ls } from '../common/helper'
-
+  import store from '../store'
   wepy.component({
     props: {
       checkOnlyLeaf: {
@@ -66,12 +73,14 @@
     },
     data: {
       isCheck: false,
+      treeData: [],
       expanded: true
     },
     computed: {
-      treeData() {
-        return ls.get(this.eid)
-      },
+      // treeData() {
+      //   // return store.state.treeData
+      //   return ls.get(this.eid)
+      // },
       // 叶子目录
       isLeaf() {
         try {
@@ -97,31 +106,19 @@
       }
     },
     watch: {
-      // treeData: {
-      //   immediate: true,
-      //   deep: true,
-      //   handler(newVal) {
-      //     console.log('treeData变化')
-      //     let nodes = newVal
-      //     for (let idx in nodes) {
-      //       if (nodes[idx][this.nodeKey] === this.val[this.nodeKey]) {
-      //         this.isCheck = !!nodes[idx][this.nodeKey].check
-      //       }
-      //     }
-      //   }
-      // },
-      val(newVal) {
-        // console.log(newVal)
+      eleId: {
+        handler(val) {
+          // console.log('eleId变动' + val)
+        }
       },
       has: {
         immediate: true,
         deep: true,
         handler(newVal) {
+          // console.log('has变动', newVal)
           try {
             let isHas = newVal.includes(this.val[this.nodeKey]) || newVal.includes('' + this.val[this.nodeKey])
-            if (isHas) {
-              this.isCheck = true
-            }
+            this.isCheck = !!isHas
           } catch (e) {
 
           }
@@ -139,7 +136,6 @@
         this.$emit('clear', {item, nodeKey})
       },
       clickFn(item) {
-        // console.log(item)
         if (!this.checkOnlyLeaf || this.isLeaf) {
           if (!item.hasOwnProperty(this.nodeKey)) {
             throw new Error('nodeKey参数有误')
@@ -149,7 +145,6 @@
           if (this.isCheck) {
             // 单选的话，需要先清空其他的
             if (this.single) {
-              // console.log(333333)
               this.$emit('clear', {item, nodeKey: this.nodeKey})
               TreeHub.removeAllCheck(this.eid, this.nodeKey)
             }
@@ -160,9 +155,9 @@
         }
       }
     },
-
-    created() {
-
+    ready() {
+      // this.treeData = ls.get(this.eid)
+      this.treeData = store.state.treeData
     }
 
   })
@@ -172,7 +167,7 @@
   {
     "usingComponents": {
       "icon": "~@/components/icon",
-      "fun-tree-node": "~@/components/fun-tree-node"
+      "fun-tree-node-child": "~@/components/fun-tree-node"
     }
   }
 </config>

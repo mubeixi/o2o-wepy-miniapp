@@ -35,13 +35,18 @@
   import wepy from '@wepy/core'
   import { TreeHub } from './TreeHub'
   import { objTranslate } from '../common/helper'
+  import store from '../store'
 
   wepy.component({
     data: {
+      treeData: [],
       hub: null,
       tree: []
     },
     props: {
+      plainArrayList: {
+        default: false
+      },
       // 数据存在哪里 vuex表示放在vuex里面 runtime放在global， ls表示放在LocalStorage里面 默认runtime
       storage: {
         type: String,
@@ -85,7 +90,7 @@
       },
       eleId: {
         type: String,
-        require: true
+        required: true
       },
       conf: {
         type: Object,
@@ -100,17 +105,23 @@
     },
     computed: {
       isEmpty() {
-        return false
+        return this.tree.length < 1
       }
     },
     watch: {
-
+      eleId: {
+        handler(val) {
+          // console.log('eleId变动' + val)
+        }
+      },
       treeData: {
         deep: true,
-        immediate: true,
         handler(newVal) {
           // console.log(newVal)
-          this.tree = objTranslate(newVal)
+          if (Array.isArray(newVal) && newVal.length > 0) {
+            this.tree = newVal
+            this._init_func && this._init_func()
+          }
           // this.store.setData(newVal)
         }
       }
@@ -126,12 +137,17 @@
       },
       getCheckedNodes() {
         return TreeHub.getCHeckList('tree_' + this.eleId)
+      },
+      _init_func() {
+        console.log('this.eleId is ', this.eleId)
+        this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has, plainArrayList: this.plainArrayList})
+        // 用来告诉父组件我好了，可以搞事
+        console.log('fun-tree component done')
+        this.$emit('done')
       }
     },
     ready() {
-      this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has})
-      // 用来告诉父组件我好了，可以搞事
-      this.$emit('done')
+
     }
   })
 </script>
