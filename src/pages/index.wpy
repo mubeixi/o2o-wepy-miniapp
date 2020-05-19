@@ -5,7 +5,7 @@
         <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
         <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
-      <div class="action"  v-if="status==2" @click.stop="$linkTo('/pages/join/BusinessStation')">
+      <div class="action"  v-if="status==2" @click.stop="goBusiness">
         <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft"  class="iconarrowleft"></icon>
       </div>
@@ -106,6 +106,7 @@
   import { spaceImg } from '../common/env'
 
   import { bizLogin, initInfo } from '../api/system'
+  import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
   import { checkIsLogin, ls } from '../common/helper'
 
@@ -117,7 +118,8 @@
         volidate: false
       },
       info: {},
-      status: 1
+      status: 1,
+      infoData:{}
     },
     computed: {
       userInfo() {
@@ -125,6 +127,17 @@
       }
     },
     methods: {
+      goBusiness(){
+        const principal_type = this.infoData.apply_info.principal_type
+
+
+          if (principal_type === 1) {
+            linkTo('/pages/join/CompanyCertification?action=show')
+          } else {
+            linkTo('/pages/join/PersonalCertification?action=show')
+          }
+
+      },
       toProfile() {
         if (checkIsLogin(false, false)) this.$linkTo('/pages/store/StoreInfo')
       },
@@ -140,8 +153,8 @@
 
         })
       },
-      getInit() {
-        initInfo().then(res => {
+      async getInit() {
+        await initInfo().then(res => {
           this.info = res.data
           if (!this.info.entry_process) {
             wx.showModal({
@@ -161,6 +174,9 @@
           //   linkTo('/pages/join/BusinessStation')
           // }
         }).catch(err => {})
+
+        let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+        this.infoData = arr[0]
       }
     },
     onload() {

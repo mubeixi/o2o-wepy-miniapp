@@ -18,6 +18,15 @@
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('store-invoice')">
+        <div class="store-title">
+          开具发票
+        </div>
+        <div class="store-titles">
+          {{invoice_switch==1?'开启':'关闭'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
       <div class="store-item flex flex-vertical-center flex-justify-between" @click="$linkTo('/pages/store/StoreSettingConfig')">
         <div class="store-title">
           提现配置
@@ -100,20 +109,37 @@
       </model>
 
       <model ref="store-setting">
-          <div class="wzw-title">
-            到店自提
+      <div class="wzw-title">
+        到店自提
+      </div>
+      <div class="flex flex-vertical-center flex-justify-between wzw-content">
+        <div>
+          开启
+        </div>
+        <div>
+          <switch :checked="arrive_get==1" bindchange="switch1Change" style="transform: scale(.8)"></switch>
+        </div>
+      </div>
+      <div class="wzw-info">
+        开启此开关后，消费者在下订单时可以选择直接到店里提取上去，无需发货
+      </div>
+    </model>
+
+      <model ref="store-invoice">
+        <div class="wzw-title">
+          开具发票
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content">
+          <div>
+            开启
           </div>
-          <div class="flex flex-vertical-center flex-justify-between wzw-content">
-            <div>
-              开启
-            </div>
-            <div>
-              <switch :checked="arrive_get==1" bindchange="switch1Change" style="transform: scale(.8)"></switch>
-            </div>
+          <div>
+            <switch :checked="invoice_switch==1" bindchange="switch1Changes" style="transform: scale(.8)"></switch>
           </div>
-          <div class="wzw-info">
-            开启此开关后，消费者在下订单时可以选择直接到店里提取上去，无需发货
-          </div>
+        </div>
+        <div class="wzw-info">
+          开启此开关后，消费者有效的订单均可申领发票
+        </div>
       </model>
 
 
@@ -147,6 +173,7 @@
       arrive_get: 0,
       start_time: '',
       end_time: '',
+      invoice_switch: 0, // 开具发票
       print_config: {
         sn: '',
         secret: '',
@@ -195,6 +222,7 @@
         getBizInfo().then(res => {
           this.infoData = res.data[0]
           this.arrive_get = this.infoData.arrive_get
+          this.invoice_switch = this.infoData.invoice_switch
           this.start_time = this.infoData.business_start
           this.end_time = this.infoData.business_end
           this.print_config.sn = this.infoData.print_config.sn
@@ -245,6 +273,27 @@
         } else {
           this.print_config.auto = 0
         }
+      },
+      switch1Changes(e) {
+        let boo = e.$wx.detail.value
+        let data = {}
+        if (boo) {
+          showLoading('开启中')
+          data.invoice_switch = 1
+        } else {
+          showLoading('关闭中')
+          data.invoice_switch = 0
+        }
+        opBizInfo(data).then(res => {
+          if (boo) {
+            this.invoice_switch = 1
+          } else {
+            this.invoice_switch = 0
+          }
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
       },
       switch1Change(e) {
         let boo = e.$wx.detail.value

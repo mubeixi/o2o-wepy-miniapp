@@ -10,7 +10,7 @@ export const systemOperateProd = (param, options) => fetch({act: 'system_operate
 export const getProductDetail = (param, options) => fetch({act: 'system_prod_detail', param, options})
 
 // 产品删除
-export const bizProdDel = (param, options) => fetch({act: 'bizProdDel', param, options})
+export const bizProdDel = (param, options) => fetch({act: 'batch_setting', param, options})
 
 // 获取商品列表
 export const bizProdList = (param, options) => fetch({act: 'bizProdList', param, options})
@@ -39,10 +39,10 @@ export const bizFlashsaleDetail = (param, options) => fetch({act: 'bizFlashsaleD
 export const bizFlashsaleStatus = (param, options) => fetch({act: 'bizFlashsaleStatus', param, options})
 
 // 产品上架
-export const bizProdUp = (param, options) => fetch({act: 'bizProdUpdown', param: {...param, updown_sales: 'up'}, options})
+export const bizProdUp = (param, options) => fetch({act: 'batch_setting', param: {...param, type: 2}, options})
 
 // 产品下架
-export const bizProdDown = (param, options) => fetch({act: 'bizProdUpdown', param: {...param, updown_sales: 'down'}, options})
+export const bizProdDown = (param, options) => fetch({act: 'batch_setting', param: {...param, type: 1}, options})
 
 // 获取活动详情
 export const getActiveInfo = (param, options) => fetch({act: 'getActiveInfo', param: {...param, updown_sales: 'down'}, options})
