@@ -131,9 +131,9 @@
         const principal_type = this.infoData.apply_info.principal_type
 
         if (principal_type === 1) {
-          linkTo('/pages/join/CompanyCertification?action=show')
+          linkTo('/pages/join/CompanyCertification?action=show&show=1')
         } else {
-          linkTo('/pages/join/PersonalCertification?action=show')
+          linkTo('/pages/join/PersonalCertification?action=show&show=1')
         }
       },
       toProfile() {
