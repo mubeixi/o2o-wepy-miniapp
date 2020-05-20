@@ -19,7 +19,6 @@
           选择地区
         </div>
         <div class="flex1 area-all">
-
           {{item.express_desc}}
           <span style="color: #00A8FF" @click="edit(index)">编辑</span>
         </div>
@@ -64,7 +63,7 @@
     <div class="h20"></div>
 
 
-    <city @onConfirm="selectValue" :has="hasValue"  @close="close"   deep="2"  :show="showSelect"></city>
+    <city @onConfirm="selectValue" :idx="ind" :has="hasValue" deep="2" ref="cityPopup"></city>
 
 
     <!--占住底部的位置-->
@@ -83,7 +82,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getString, ls } from '../../common/helper'
+  import { getArrColumn, getString, ls } from '../../common/helper'
 
   wepy.page({
     store,
@@ -92,26 +91,18 @@
       ind: 0,
       temp_id: '',
       editData: {},
-      showSelect: false,
+      // showSelect: false,
       hasValue: [],
+      hasAllList: [],
       special_content: [], // {express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''}
       express_start: '',
       express_postage: '',
       express_plus: '',
       express_postageplus: ''
     },
-    watch: {
-      special_content: {
-        immediate: true,
-        deep: true,
-        handler(val) {
-          console.log(val)
-        }
-      }
-    },
     methods: {
       del(index) {
-        if (this.special_content.length > 1) {
+        if (this.special_content.length > 0) {
           this.special_content.splice(index, 1)
         }
       },
@@ -133,24 +124,24 @@
         wx.navigateBack({delta: -1})
       },
       addList() {
-        console.log(1)
-        const time1 = new Date().getTime()
-        console.log(2)
         this.special_content.push({express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''})
-        console.log(3)
-        const time2 = new Date().getTime()
-        console.log(time2 - time1)
       },
       edit(index) {
         this.ind = index
-        this.hasValue = []
-        this.showSelect = true
+        this.hasValue = this.hasAllList.hasOwnProperty(this.ind)?this.hasAllList[this.ind]:[]
+
+        // this.showSelect = true
+        this.$refs.cityPopup.open()
       },
       close() {
-        this.showSelect = false
+        // this.showSelect = false
+        this.$refs.cityPopup.close()
       },
       selectValue(value) {
-        this.showSelect = false
+        // this.showSelect = false
+
+        this.$set(this.hasAllList, this.ind, getArrColumn(value, 'area_name'))
+        this.close()
         this.special_content[this.ind].express_desc = getString(value, 'area_name', ',')
         this.special_content[this.ind].express_areas = getString(value, 'area_code', ',')
         console.log(value)

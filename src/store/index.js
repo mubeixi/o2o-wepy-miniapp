@@ -2,7 +2,8 @@ import Vuex from '@wepy/x'
 
 export default new Vuex.Store({
   state: {
-    userInfo: null
+    userInfo: null,
+    treeData:[]
   },
   mutations: {
     increment (state) {
