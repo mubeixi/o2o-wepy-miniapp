@@ -127,7 +127,7 @@
 <template>
   <div class="page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
-    <div class="bgwhite back-pay-box fz-14" v-if="action==='show'">
+    <div class="bgwhite back-pay-box fz-14" v-if="action==='show'&&showBond">
       <div class="div-cell flex flex-justify-between flex-vertical-center p-10">
         <div>认证时间</div>
         <div>认证时间</div>
@@ -207,7 +207,8 @@
     store,
     mixins: [pageMixin],
     data: {
-      bond_fee:'',
+      showBond: false,
+      bond_fee: '',
       action: '',
       has: false,
       showTrade: false,
@@ -334,14 +335,14 @@
           const bizInfo = await getBizInfo().then(res => {
             return res.data[0]
           }).catch(() => {})
-          
-          this.bond_fee=bizInfo.bond_fee
+
+          this.bond_fee = bizInfo.bond_fee
 
           this.materialForms = bizInfo.apply_info.auth_info.material
           this.permissionsForms = bizInfo.apply_info.auth_info.permissions
 
-          this.trade.list.push(bizInfo.industry_id) // 设置选中的类别
-          this.industry_id = bizInfo.industry_id
+          this.trade.list.push(bizInfo.apply_info.industry_id) // 设置选中的类别
+          this.industry_id = bizInfo.apply_info.industry_id
 
           const industryDetail = await bizIndustryDetail({industry_id: this.industry_id}).then(res => {
             return res.data
@@ -356,6 +357,9 @@
     onLoad(options) {
       const {action = 'add'} = options
       this.action = action
+      if (options.show) {
+        this.showBond = true
+      }
     },
     onShow() {
       this._init_func()
