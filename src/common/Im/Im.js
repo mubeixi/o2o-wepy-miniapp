@@ -1,9 +1,10 @@
 import { IM_APPID, IM_APPSECRET, IM_WSS_URL } from '../env'
-
-import { bindUid, getAccessToken, sendMsg } from './Fetch'
+import { bindUid, getAccessToken, sendMsg, getMsgList } from './Fetch'
 import moment from 'moment'
-import { ls as Storage } from '../helper'
+import Promisify from '../promisify'
+import { ls as Storage, createUpTaskArr, uploadImages, getDomain } from '../helper'
 import { modal } from '../fun'
+import {Exception} from '../Exception'
 
 // 消息类,就先不用继承了吧
 /**
@@ -11,13 +12,15 @@ import { modal } from '../fun'
  *
  */
 class Message {
-  constructor ({ content = '', type }) {
+  constructor (type, content = '', ext) {
     if (!type) throw Error('type必须指定')
     this.content = content
     this.type = type
+
+    this.ext = ext
   }
 
-  getContent () {
+  async getContent () {
     let rt = null
     switch (this.type) {
       case 'text':
@@ -37,6 +40,112 @@ class Message {
   }
 }
 
+Message.prototype.imgWidthMax = 120 // px
+Message.prototype.imgHeightMax = 160 // px
+
+/**
+ * 图片类，会额外用到加载进度、以及本地临时路径（加快显示，然后方便显示进度)
+ */
+class Image extends Message {
+  constructor (type = 'image', content = '', ext) {
+    super(type, content)
+    const { tempPath } = ext
+    this.tempPath = tempPath
+    this.taskList = createUpTaskArr()
+    this.styleObj = { width: 0, height: 0, mode: 'widthFix' }
+  }
+
+  async getImgInfo() {
+    try {
+      // 本地图片，所以获取图片信息非常快
+      const res = await Promisify('getImageInfo', { src: this.tempPath }).catch(err => {
+        throw Error(err.errMsg)
+      })
+      console.log(res)
+      const { height, width } = res
+
+      this.styleObj.mode = height > width ? 'heightFix' : 'widthFix'// 横还是竖直
+
+      const widthScale = width / this.imgWidthMax
+      const heightScale = height / this.imgHeightMax
+
+      var imgScale = 1
+
+      if (height >= width) {
+        if (widthScale > 1) {
+          imgScale = widthScale
+        }
+        // 长边优先，覆盖掉
+        if (heightScale > 1) {
+          imgScale = heightScale
+        }
+      } else {
+        if (heightScale > 1) {
+          imgScale = heightScale
+        }
+        // 长边优先，覆盖掉
+        if (widthScale > 1) {
+          imgScale = widthScale
+        }
+      }
+
+      this.styleObj.width = width / imgScale
+      this.styleObj.height = height / imgScale
+      console.log(this.styleObj)
+    } catch (e) {
+      modal(e.message)
+    }
+
+    return true
+  }
+
+  async getContent (chatIdx, chatList) {
+    const ossUrls = await uploadImages({ imgs: [this.tempPath], progressList: this.taskList }).catch(msg => { throw Error(msg) })
+
+    for (var i = 0; i < ossUrls.length; i++) {
+      ossUrls[i] = getDomain(ossUrls[i])
+    }
+    const imgurl = ossUrls[0]
+
+    // 这是真实的content
+    this.content = imgurl
+    // 设置到list中
+    chatList[chatIdx].content = imgurl
+    return imgurl
+  }
+}
+
+class Product extends Message {
+  constructor (type = 'prod', content = {}, ext) {
+    console.log(content, ext)
+    super(type, content)
+
+    const { isTip = 0 } = ext
+    this.isTip = isTip // 如果为1则不需要发送，代表仅仅是显示产品信息
+
+    // 如果不是消息提示，那么就要格式化了
+    if (!isTip) {
+      const _content = {
+        prod_name: content.Products_Name,
+        price: content.Products_PriceX,
+        img: content.ImgPath,
+        url: `/pages/product/detail?prod_id=${this.content.Products_ID}`
+      }
+      // 走到这里就代表已经发送了
+      this.content = _content
+    }
+  }
+
+  async getContent () {
+    // {"prod_name":"商品一","img":"图片路径","price":"100","url":"商品卡片点击跳转的URL"}
+
+    // 走到这里就代表已经发送了
+    return JSON.stringify(this.content)
+  }
+}
+
+// const voiceInstance = new Voice()
+
 class IM {
   /**
    * 初始化Im类
@@ -49,10 +158,17 @@ class IM {
    */
   constructor ({ productId, orderId, origin, ...extConf } = {}) {
     // this.createInstance = false
-    this.productId = productId
-    this.orderId = orderId
+    // this.productId = productId
+    // this.orderId = orderId
+    // 发送人的消息
+    this.sendName = ''
+    this.sendAvatar = ''
+    this.sendIdentity = ''
+    this.sendId = ''
+
     this.origin = origin
     this.extConf = extConf
+    this.page = 1 // 初始化页码
 
     this.chatList = []
 
@@ -70,6 +186,28 @@ class IM {
   }
 
   /**
+   * 获取以往信息
+   */
+  async getHistory () {
+    const pageSize = this.historyPageSize
+    const page = this.page
+
+    const out_uid = this.getOutUid()
+    const historyList = await getMsgList({ page_size: pageSize, page, out_uid, to: this.getToUid() }).then(res => {
+      return res.data.map(row => {
+        row.direction = row.from_uid === out_uid ? 'to' : 'accept' // 标记哪些是自己的
+        return row
+      })
+    }).catch(err => { throw Error(err.msg || '获取历史消息失败') })
+
+    if (historyList.length > 0) {
+      this.chatList = historyList.concat(this.chatList)
+      this.page++
+    }
+    return true
+  }
+
+  /**
    * 设置本地用户信息
    * @param type
    * @param id
@@ -78,6 +216,14 @@ class IM {
   setSendInfo ({ type, id, ...ext }) {
     // 获取发送人的信息要用的
     this.setIdentity({ type, id })
+
+    const { name = '', avatar = '' } = ext
+    this.sendName = name
+    this.sendAvatar = avatar
+  }
+
+  getSendInfo () {
+    return { name: this.sendName, avatar: this.sendAvatar }
   }
 
   /**
@@ -175,13 +321,36 @@ class IM {
    * @param content
    * @param type
    */
-  async sendMessage (content, type = 'text') {
-    const message = new Message({ content, type })
+  async sendImMessage ({ content, type = 'text', ...ext }) {
+    var message = null
+    switch (type) {
+      case 'image':
+        message = new Image(type, content, ext)
+        break
+      case 'prod':
+        message = new Product(type, content, ext)
+        break
+      default:
+        message = new Message(type, content, ext)
+        break
+    }
+
+    if (type === 'image') {
+      await message.getImgInfo()
+    }
 
     if (this.socketOpen) {
+
       this.chatList.push({ ...message, direction: 'to', sendStatus: 0 })
+      // 不需要发送
+      if (message.type === 'prod' && message.isTip) return
+
       const chatIdx = this.chatList.length - 1
-      sendMsg({ type, content: message.getContent(), out_uid: this.getOutUid(), to: this.getToUid() }).then(res => {
+
+      // 为了预防有需要异步上传的情况
+      const content = await message.getContent(chatIdx, this.chatList)
+
+      sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }).then(res => {
         console.log('发送成功', res)
         this.chatList[chatIdx].sendStatus = 1 // 标记成功
         return res.data
@@ -222,14 +391,17 @@ class IM {
   }
 
   _takeMessage (messageObj) {
-    const { type, content, from } = messageObj
+    const { type, from } = messageObj
 
     // 需要绑定
     if (type === 'login') {
       this.setClientId(from)
+      const sendUserInfo = this.getSendInfo()
       bindUid({
         client_id: this.getClientId(),
-        out_uid: this.getOutUid()
+        out_uid: this.getOutUid(),
+        name: sendUserInfo.name,
+        avatar: sendUserInfo.avatar
       }).catch(res => {}).catch(e => { throw Error('绑定用户失败') })
       return
     }
@@ -241,7 +413,7 @@ class IM {
   async _craeteSocket () {
     /** add event listen **/
 
-    // 好像对异步的wx.connectSocket没什么作用
+      // 好像对异步的uni.connectSocket没什么作用
     let SocketTask = null
     await new Promise(resolve => {
       SocketTask = wx.connectSocket({
@@ -259,7 +431,7 @@ class IM {
       console.log('WebSocket连接已打开！')
       this.socketOpen = true
       for (var i = 0; i < this.msgQueue.length; i++) {
-        this.sendMessage(this.msgQueue[i])
+        this.sendImMessage(this.msgQueue[i])
       }
       this.msgQueue = []
     })
@@ -306,7 +478,7 @@ IM.prototype.appsecret = IM_APPSECRET
 IM.prototype.heartBeatTimout = 30 * 1000 // 心跳保持时间，默认三十秒
 IM.prototype.heartBeatFailMax = 3 // 最大心跳丢失次数，错误3次重新建立socket请求
 IM.prototype.tryRequestMax = 5 // 最大重连次数，重连超过5次不成功，就直接报错提醒用户洗洗睡
-
+IM.prototype.historyPageSize = 20 // 一次加载以往消息20条
 // 1.创建实例
 // 2.拿到token(阻塞操作，带mask的全屏loading)
 // 3.获取最近的20条信息

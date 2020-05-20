@@ -125,6 +125,19 @@ export const compareObj = (obj1, obj2) => {
 }
 
 /**
+ * 创建配套的task数组
+ * @param len
+ * @returns {*[]}
+ */
+export const createUpTaskArr = (len=1) => {
+  const arr = []
+  for (var i = 0; i < len; i++) {
+    arr[i] = {  }
+  }
+  return arr.concat([])
+}
+
+/**
  * 从元素是对象的一维数组中，获取指定的键名对应的值组成的简单值一维数组
  * @param arr
  * @param column

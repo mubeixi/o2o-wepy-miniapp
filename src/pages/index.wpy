@@ -175,6 +175,8 @@
 
         let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
         this.infoData = arr[0]
+
+        this.$store.commit('SET_BIZ_INFO', this.infoData)
       }
     },
     onload() {
