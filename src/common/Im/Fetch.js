@@ -26,3 +26,9 @@ export const bindUid = (param, options) => Fetch({ url: '/chat/bindUid', param, 
 
 // 发送消息
 export const sendMsg = (param, options) => Fetch({ url: '/chat/sendMsg', param, options })
+
+// 获取更多消息
+export const getMsgList = (param, options) => Fetch({ url: '/chat/getMsgList', param, options })
+
+// 查询会话列表
+export const getChatList = (param, options) => Fetch({ url: '/chat/getChatList', param, options })

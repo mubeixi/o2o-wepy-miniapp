@@ -119,7 +119,7 @@
       },
       info: {},
       status: 1,
-      infoData:{}
+      infoData: {}
     },
     computed: {
       userInfo() {
@@ -127,16 +127,14 @@
       }
     },
     methods: {
-      goBusiness(){
+      goBusiness() {
         const principal_type = this.infoData.apply_info.principal_type
 
-
-          if (principal_type === 1) {
-            linkTo('/pages/join/CompanyCertification?action=show')
-          } else {
-            linkTo('/pages/join/PersonalCertification?action=show')
-          }
-
+        if (principal_type === 1) {
+          linkTo('/pages/join/CompanyCertification?action=show')
+        } else {
+          linkTo('/pages/join/PersonalCertification?action=show')
+        }
       },
       toProfile() {
         if (checkIsLogin(false, false)) this.$linkTo('/pages/store/StoreInfo')
@@ -177,6 +175,8 @@
 
         let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
         this.infoData = arr[0]
+
+        this.$store.commit('SET_BIZ_INFO', this.infoData)
       }
     },
     onload() {

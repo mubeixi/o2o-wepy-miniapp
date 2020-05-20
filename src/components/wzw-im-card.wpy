@@ -1,11 +1,71 @@
 <template>
-  <div class="card-item">
+  <div class="card-item" :id="msgId">
     <div class="time"></div>
-    <div class="content-wrap">
-      <div class="content-label">
-        <div class="headimg" :style="{backgroundImage:'url('+headimg+')'}"></div>
+
+    <div class="goods-tip-box flex" v-if="message.type==='prod' && message.isTip">
+      <div class="cover" :style="{backgroundImage: 'url('+message.content.ImgPath+')'}"></div>
+      <div class="info flex1 flex flex-column flex-justify-between">
+        <div class="goods-title fz-14 c4">{{message.content.Products_Name}}</div>
+        <div class="flex flex-justify-between flex-vertical-c">
+          <div class="fz-14 price-selling"><span class="fz-12">￥</span>{{message.content.Products_PriceX}}</div>
+          <div @click="bindProductSend" class="action-btn fz-14">发给商家</div>
+        </div>
+
       </div>
-      <div class="content-text">{{message.content}}</div>
+    </div>
+    <div v-else class="content-wrap" :class="{reverse:message.direction==='to'}">
+      <div class="content-label">
+        <div class="flex flex-vertical-c">
+
+          <div v-if="message.direction==='to'" class="content-arrow">
+            <block v-if="message.type==='text'">
+              <image mode="widthFix" class="arrow-icon" src="/static/im/chat-arrow-right.png"></image>
+            </block>
+            <block v-else>
+              <div class="arrow-icon"></div>
+            </block>
+          </div>
+          <div class="headimg" :style="{backgroundImage:'url('+headimg+')'}"></div>
+          <div v-if="message.type==='text' && message.direction!=='to'" class="content-arrow">
+            <block v-if="message.type==='text'">
+              <image mode="widthFix" class="arrow-icon" src="/static/im/chat-arrow-let.png"></image>
+            </block>
+            <block v-else>
+              <div class="arrow-icon"></div>
+            </block>
+          </div>
+        </div>
+      </div>
+      <div class="content-box">
+
+        <div class="content-text" v-if="message.type==='text'">{{message.content}}</div>
+
+        <div v-if="message.type==='image'" class="content-img-wrap">
+          <block v-if="message.tempPath">
+            <image @click="previewImg" :style="{width:message.styleObj.width+'px',height:message.styleObj.height+'px'}"  class="content-img" :src="message.tempPath||message.content" ></image>
+          </block>
+          <block v-else>
+            <image mode="widthFix" @click="previewImg" class="content-img" :src="message.content" ></image>
+          </block>
+
+          <div class="progress-box" v-if="message.taskList[0].progress<100">
+            <div class="loading-box text-center">
+              <image src="/static/loading.gif" class="loading-img"></image>
+            </div>
+            <!--<progress :percent="message.taskList[0].progress" stroke-width="2" />-->
+            <div class="fz-12 color-white text-center">{{message.taskList[0].progress||0}}%</div>
+          </div>
+        </div>
+
+        <div v-if="message.type==='prod' && !message.isTip" class="goods-info-box" @click="toGoods(message.content)">
+          <div class="cover" :style="{backgroundImage: 'url('+message.content.img+')'}"></div>
+          <div class="info">
+            <div class="fz-16 price-selling"><span class="fz-14">￥</span>{{message.content.price}}</div>
+            <div class="goods-title fz-14 c4 m-t-10">{{message.content.prod_name}}</div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </template>
@@ -13,9 +73,14 @@
 <script>
   // 消息卡片组件
   import wepy from '@wepy/core'
+  import { error, linkTo as linkToEasy, modal } from '../common/fun'
+  import {objTranslate} from '../common/helper'
 
   wepy.component({
     props: {
+      msgId: {
+        type: Number
+      },
       headimg: {
         type: String,
         default: 'https://newo2o.bafangka.com/uploadfiles/wkbq6nc2kc/image/202005120942194787.jpg'
@@ -26,43 +91,172 @@
       }
     },
     data: {
-
+      toGoods (content) {
+        error('暂时无法查看产品')
+        //if (content.hasOwnProperty('url'))linkToEasy(content.url)
+      },
+      bindProductSend () {
+        // 还是不要有任何关联的好
+        this.$emit('bindProductSend', objTranslate(this.message.content))
+      },
+      previewImg () {
+        const urls = [this.message.content]
+        wx.previewImage({
+          urls: urls
+        })
+      }
     }
 })
 </script>
 <style lang="scss">
-.from{
-  background:rgba(255,255,255,1);
-  border:1px solid rgba(224, 224, 224, 1);
-}
-.to{
-  background:rgba(157,233,77,1);
-  border:1px solid rgba(224, 224, 224, 1);
-}
-.card-item{
-  .content-wrap{
-    display: flex;
-    .content-label{
-      display: flex;
-      align-items: center;
-      .headimg{
-        width: 84rpx;
-        height: 84rpx;
-        border-radius: 4rpx;
-      }
-      .content-arrow{
 
+  @import "../assets/app.scss";
+
+  .card-item{
+    padding: 20rpx;
+    .goods-tip-box{
+      width: 710rpx;
+      height: 200rpx;
+      border-radius:20rpx;
+      padding: 20rpx;
+      box-sizing: border-box;
+      overflow: hidden;
+      background: #fff;
+      .cover{
+        width: 160rpx;
+        height: 160rpx;
+        margin-right: 20rpx;
+        @include cover-img();
+      }
+      .info{
+        .goods-price{
+
+        }
+        .action-btn{
+          width:160rpx;
+          height:56rpx;
+          background:linear-gradient(270deg,rgba(255,0,6,1),rgba(255,132,23,1));
+          border-radius:28rpx;
+          text-align: center;
+          line-height: 56rpx;
+          color: #fff;
+        }
       }
     }
+    .content-wrap{
+      display: flex;
+      flex-direction: row;
 
-    .content-text{
-      color: #333333;
-      font-size: 14px;
-      padding: 14px 18px;
+      .content-label{
+        //display: flex;
+        //align-items: center;
+        .headimg{
+          width: 84rpx;
+          height: 84rpx;
+          border-radius: 4rpx;
+        }
+        .content-arrow{
+          position: relative;
+          width: 16px;
+          height: 16px;
+          .arrow-icon{
+            width: 8px;
+            position: absolute;
+            left: 0;
+            top: 0;
+          }
+
+        }
+      }
+
+      .content-box{
+        max-width: 490rpx;
+        overflow: hidden;
+
+        .goods-info-box{
+          width: 486rpx;
+          border-radius:20rpx;
+          box-sizing: border-box;
+          overflow: hidden;
+          background: #fff;
+          .cover{
+            width: 486rpx;
+            height: 486rpx;
+            @include cover-img();
+          }
+          .info{
+            padding: 20rpx;
+            .goods-price{
+
+            }
+
+          }
+        }
+
+        .content-text{
+          border-radius: 10rpx;
+          word-break: break-all;
+          color: #333333;
+          font-size: 14px;
+          padding: 10px 15px;
+          background: #fff;
+
+        }
+
+        .content-img-wrap{
+          position: relative;
+          .content-img{
+            max-width: 240rpx;
+            max-height: 320rpx;
+            vertical-align: top;
+          }
+          .progree-title{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+          }
+
+          .progress-box{
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            top:0;
+            z-index: 3;
+            background: rgba(0,0,0,.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .loading-img{
+              width: 14px;
+              height: 14px;
+            }
+          }
+        }
+
+      }
+
+    }
+
+    .content-wrap.reverse{
+      flex-direction: row-reverse;
+      .content-text{
+        background: #9de94d;
+      }
+      .content-label{
+
+        .content-arrow{
+
+          .arrow-icon{
+
+          }
+        }
+      }
     }
 
   }
-}
 </style>
 <config>
   {
