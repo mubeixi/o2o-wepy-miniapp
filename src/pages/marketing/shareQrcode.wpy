@@ -128,6 +128,7 @@
             nickname: this.bizInfo.biz_shop_name,
             qrcode: this.qrcode
           }
+          console.log(userInfo)
 
           ctx.fillRect(wrapWidth, wrapHeight, 0, 0)
 
@@ -143,7 +144,7 @@
 
 
           ctx.setFontSize(itemInfo.nickname.size)
-          ctx.setFillStyle('#333')
+          ctx.setFillStyle('#333333')
           ctx.fillText(userInfo.nickname, itemInfo.nickname.left, itemInfo.nickname.left)
 
           await new Promise(resolve => {

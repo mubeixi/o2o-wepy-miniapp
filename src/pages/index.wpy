@@ -107,7 +107,7 @@
 
   import { bizLogin, initInfo } from '../api/system'
   import { getBizInfo } from '../api/store'
-  import { linkTo } from '../common/fun'
+  import { error, linkTo } from '../common/fun'
   import { checkIsLogin, ls } from '../common/helper'
 
   wepy.page({
@@ -137,7 +137,13 @@
         }
       },
       toShare() {
-        if (checkIsLogin(false, false)) this.$linkTo('/pages/marketing/shareQrcode')
+        if (checkIsLogin(false, false)) {
+          if (this.status !== 2) {
+            error('请先完成认证')
+            return
+          }
+          this.$linkTo('/pages/marketing/shareQrcode')
+        }
       },
       toProfile() {
         if (checkIsLogin(false, false)) this.$linkTo('/pages/store/StoreInfo')
