@@ -8,7 +8,7 @@
     <div class="handle-box">
       <div class="remind-title fz-13 c3 text-center">选择海报模板</div>
       <div class="swiper">
-        <div class="swiper-item" @click="setSelect(idx)" v-for="(poster,idx) in poster_list">
+        <div class="swiper-item" @click="setSelect(idx)" v-for="(poster,idx) in poster_list" :key="idx">
           <image class="swiper-itm-img" :src="poster.thumb_bg_img"></image>
         </div>
       </div>
