@@ -128,3 +128,8 @@ export const bizMoneyRecord = (param, options) => fetch({act: 'bizMoneyRecord', 
 
 // 修改限时抢购状态
 export const bizSpikeStatus = (param, options) => fetch({act: 'bizSpikeStatus', param, options})
+
+// 秒杀活动统计
+export const bizFlashsaleStatustic = (param, options) => fetch({act: 'bizFlashsaleStatustic', param, options})
+
+
