@@ -129,6 +129,12 @@ export const bizMoneyRecord = (param, options) => fetch({act: 'bizMoneyRecord', 
 // 修改限时抢购状态
 export const bizSpikeStatus = (param, options) => fetch({act: 'bizSpikeStatus', param, options})
 
+
+// 秒杀活动统计
+export const bizFlashsaleStatustic = (param, options) => fetch({act: 'bizFlashsaleStatustic', param, options})
+
+
+
 // 获取分销微信二维码
 export const getDistributeWxQrcode = (param, options) => fetch({act: 'get_distribute_wxqrcode', param, options})
 
@@ -137,3 +143,4 @@ export const getPosterList = (param, options) => fetch({ act: 'getPosterList', p
 
 // 获取商家的分享码
 export const getBizShare = (param, options) => fetch({ act: 'getBizShare', param, options })
+
