@@ -40,12 +40,18 @@
                   </div>
                 </div>
                 <div>
-                  <div class="stock-box">
+                  <div class="check-status fz-12 color-red " v-if="product.Products_Status===-1" @click="showRejectReasn(product)">
+                    <span>审核未通过</span><span class="m-l-6" style="text-decoration: underline;">查看原因</span>
+                  </div>
+                  <div class="check-status color-blue fz-12" v-if="product.Products_Status===0">
+                    <span>审核中</span>
+                  </div>
+                  <div class="check-status color-primary fz-12" v-if="product.Products_Status===1">
+                    <span>审核通过</span>
+                  </div>
+                  <div class="stock-box m-t-6">
                     <span class="stock">库存:{{product.Products_Count}}</span>
                     <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
-                  </div>
-                  <div class="check-status fz-12 color-red  m-t-6" v-if="product.Products_Status===-1" @click="showRejectReasn(product)">
-                    <span>审核未通过</span><span class="m-l-6" style="text-decoration: underline;">查看原因</span>
                   </div>
                 </div>
               </div>
