@@ -130,10 +130,10 @@ export const compareObj = (obj1, obj2) => {
  * @param len
  * @returns {*[]}
  */
-export const createUpTaskArr = (len=1) => {
+export const createUpTaskArr = (len = 1) => {
   const arr = []
   for (var i = 0; i < len; i++) {
-    arr[i] = {  }
+    arr[i] = { }
   }
   return arr.concat([])
 }
@@ -361,3 +361,30 @@ export function sleep (fn, par, time = 3000) {
 }
 
 export const setNavigationBarTitle = (title) => wx.setNavigationBarTitle({title})
+
+/**
+ * 检查是否入驻
+ */
+export const checkIsSettle = (redirect = 1, tip = 0) => {
+  let status = Number(ls.get('status'))
+
+  if (status === 2) {
+    return true
+  }
+  if (redirect) {
+    if (!tip) {
+      wx.navigateTo({
+        url: '/pages/join/BusinessStation'
+      })
+      return
+    }
+
+    confirm({title: '提示', content: '该操作需要入驻,请问是否入驻?', confirmText: '去入驻', cancelText: '暂不入驻'}).then(() => {
+      wx.navigateTo({
+        url: '/pages/join/BusinessStation'
+      })
+    }).catch(() => {})
+  }
+
+  return false
+}

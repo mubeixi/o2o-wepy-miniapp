@@ -11,9 +11,18 @@
             <block v-else-if="storeWith.type=='alipay'">
               支付宝({{storeWith.account}})
             </block>
-            <block v-else>
+            <block v-else-if="storeWith.type=='wx_zhuanzhang'">
               微信转账
             </block>
+            <div v-else class="flex flex-justify-between flex-vertical-center bank-no" >
+              <div>
+                您还未配置结算方式
+              </div>
+              <div class="bank-setting" @click="goSetting">
+                去配置
+                <icon type="iconarrowleft" color="#00A8FF"  class="iconarrowleft"></icon>
+              </div>
+            </div>
         </view>
       </view>
       <view class="tiMoney">
@@ -48,7 +57,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {getBizInfo, getWithdrawMethods, bizWithdrawApply} from '../../api/store'
-  import { error, toast } from '../../common/fun'
+  import { error, linkTo, toast } from '../../common/fun'
 
   wepy.page({
     store,
@@ -71,6 +80,9 @@
       }
     },
     methods: {
+      goSetting(){
+        linkTo('/pages/store/StoreSettingConfig')
+      },
       goRecord() {
         if (this.isBond) {
           this.$linkTo('/pages/store/Record?type=4')
@@ -108,7 +120,7 @@
       },
       async getDetail() {
         await getBizInfo({}, {tip: '加载中'}).then(res => {
-          if (res.data[0].settle_config) {
+          if (res.data[0]) {
             this.storeInfo = res.data[0]
             this.storeWith = res.data[0].settle_config
             if (this.storeWith.type == 'bank_card') {
@@ -283,6 +295,14 @@
         margin-left: 6rpx;
       }
     }
+  }
+  .bank-no{
+    width:650rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+  }
+  .bank-setting{
+    color: #00A8FF;
   }
 </style>
 <config>
