@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrap">
-    <div class="head" @click.stop="$linkTo('/pages/store/StoreSetting')">
-      <div class="base">
+    <div class="head" >
+      <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')">
         <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
         <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
@@ -203,10 +203,12 @@
   /** 顶部start **/
   .head{
     display: flex;
-    align-items: center;
+    //align-items: center;
     justify-content: space-between;
-    padding: 10px 0;
+
     .base{
+      flex:1;
+      padding: 10px 0;
       display: flex;
       align-items: center;
       .store-logo{
@@ -222,6 +224,7 @@
       }
     }
     .action{
+      padding: 10px 0;
       display: flex;
       align-items: center;
       .validate{
