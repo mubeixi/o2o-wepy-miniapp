@@ -124,15 +124,15 @@
           const ctx = canvasInstance
 
           const userInfo = {
-            avatar: this.bizInfo.biz_logo,
+            avatar: getDomain(this.bizInfo.biz_logo),
             nickname: this.bizInfo.biz_shop_name,
-            qrcode: this.qrcode
+            qrcode: getDomain(this.qrcode)
           }
           console.log(userInfo)
 
           ctx.fillRect(wrapWidth, wrapHeight, 0, 0)
 
-          const wrapTempFile = await wxPromisify('getImageInfo', { src: posterInfo.bg_img }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
+          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(posterInfo.bg_img) }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
           ctx.drawImage(wrapTempFile.path, 0, 0, wrapWidth, wrapHeight)
 
           const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
