@@ -239,7 +239,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { ls, validateFun } from '../../common/helper'
-  import { error } from '../../common/fun'
+  import { error, toast } from '../../common/fun'
   import { bizRegSms, opBizInfo } from '../../api/store'
   import { bizLogin } from '../../api/system'
   import { regPhone } from '../../common/regs'
@@ -270,8 +270,9 @@
       bindBackFn() {
         console.log('拦截返回成功了')
         if (this.binbPhoneShow) {
-          // toast('请绑定手机号', 'none')
-          this.$refs.phone.close()
+          error('请绑定手机号')
+          // this.pageTitle = '登录'
+          // this.$refs.phone.close()
           return
         }
         if (this.bindPwdShow) {

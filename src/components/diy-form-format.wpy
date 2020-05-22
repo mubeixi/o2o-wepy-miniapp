@@ -147,17 +147,17 @@
           <span class="wzwicon iconright font16" style="color: #666"></span>
         </div>
       </div>
-      <div v-if="item.type==='area'" class="form-cell-item cell-item" :class="{nobor:idx===formList.length-1}">
+      <div v-if="item.type==='area'" class="form-cell-item cell-item" @click="openPop('address')" :class="{nobor:idx===formList.length-1}">
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
 
           <block v-if="action==='show'">
-            <div class="show-div-value">{{item.value}}</div>
+            <div class="show-div-value" style="overflow: hidden;text-overflow: ellipsis;line-height: 16px;">{{item.value}}</div>
           </block>
 
           <block v-if="action==='edit'">
             <address @up="updateAddress" ref="address">
-              <div @click="openPop('address')">
+              <div style="overflow: hidden;text-overflow: ellipsis;line-height: 16px;">
                 <div v-if="item.value">{{item.value}}</div>
                 <div class="__placeholder" v-if="!item.value">{{item.desc||'选择位置'}}</div>
               </div>
@@ -167,8 +167,10 @@
           <block v-if="action==='add'">
 
             <address @up="updateAddress" ref="address">
-              <div @click="openPop('address')">
-                <div class="__placeholder" >{{item.desc||'选择位置'}}</div>
+              <div style="overflow: hidden;text-overflow: ellipsis;line-height: 16px;">
+                <template v-if="item.value"><div>{{item.value}}</div></template>
+                <template v-else-if="item.desc"><div class="__placeholder" >{{item.desc}}</div></template>
+                <template v-else><div class="__placeholder" >选择位置</div></template>
               </div>
             </address>
           </block>

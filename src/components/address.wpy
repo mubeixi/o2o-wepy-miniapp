@@ -352,7 +352,7 @@
   }
   .masks{
     position: fixed;
-    z-index: 2;
+    z-index: 5;
     background: rgba(0, 0, 0 , .6);
     height: 100%;
     width: 100%;
@@ -366,7 +366,7 @@
     left: 0;
     bottom: 0;
     width: 750rpx;
-    z-index: 3;
+    z-index: 6;
     background: #FFFFFF;
     overflow: hidden;
 

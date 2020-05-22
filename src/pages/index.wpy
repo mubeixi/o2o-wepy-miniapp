@@ -26,7 +26,7 @@
         <span class="title">今日来访</span>
       </div>
       <div class="space-line"></div>
-      <div class="finance-item">
+      <div class="finance-item" @click="toShare">
         <icon  type="iconfenxiang" size="22" weight="bold" color="#333"></icon>
         <span class="title">分享</span>
       </div>
@@ -136,6 +136,9 @@
           linkTo('/pages/join/PersonalCertification?action=show&show=1')
         }
       },
+      toShare() {
+        if (checkIsLogin(false, false)) this.$linkTo('/pages/marketing/shareQrcode')
+      },
       toProfile() {
         if (checkIsLogin(false, false)) this.$linkTo('/pages/store/StoreInfo')
       },
@@ -175,6 +178,8 @@
 
         let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
         this.infoData = arr[0]
+
+        this.$store.commit('SET_BIZ_INFO', this.infoData)
       }
     },
     onload() {
