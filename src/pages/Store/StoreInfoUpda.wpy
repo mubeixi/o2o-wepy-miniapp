@@ -23,7 +23,7 @@
     <block v-if="type==3">
       <view class="dizhi flex flex-vertical-center" @click.stop="$openPop('address')">
         <span class="p-r-20">地址</span>
-        <address @up="updateAddress" :lazy-load="true" :province="province" :city="city" :area="area" :town="town" class="address" ref="address"><span>{{info.area_address?info.area_address:'请选择地址'}}</span></address>
+        <address @up="updateAddress" :lazy-load="true" :province="province" :city="city" :area="area" :town="town" class="address" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
 
       </view>
       <view class="xinxi">
@@ -201,6 +201,7 @@
         this.area = this.info.biz_area
         this.town = this.info.biz_town
         this.biz_address = this.info.biz_address
+        this.selectArea = this.info.area_address
 
         this.$refs.address._init_func()
       }
