@@ -284,7 +284,7 @@
               <div class="title">{{product.Products_Name}}</div>
               <div class="flex flex-vertical-center flex-justify-between">
                 <div class="price-box">
-                  <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{product.Products_PriceY}}</span></div>
+                  <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{product.Products_PriceX}}</span></div>
                   <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{product.Products_PriceY}}</span></div>
                 </div>
                 <icon @click="delPro(idx,product.Products_ID)" size="18" type="iconshanchu" color="#999"></icon>
@@ -341,9 +341,9 @@
               <div class="title">{{product.Products_Name}}{{product.Products_ID}}</div>
               <div class="price-box">
                 <span class="sign">￥</span>
-                <span>{{product.Products_PriceY}}</span>
+                <span>{{product.Products_PriceX}}</span>
                 <span style="text-decoration: line-through" class="sign m-l-10 color-gray">￥</span>
-                <span style="text-decoration: line-through" class="color-gray">{{product.Products_PriceX}}</span>
+                <span style="text-decoration: line-through" class="color-gray">{{product.Products_PriceY}}</span>
               </div>
               <div class="stock-box">
                 <span class="stock">库存:{{product.Products_Count}}</span>

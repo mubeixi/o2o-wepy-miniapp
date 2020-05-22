@@ -35,7 +35,7 @@
         秒杀价格
       </div>
       <div class="flex flex1 fz-13" >
-        <input type="number" v-model="price"  class="flex flex1 p-l-26" placeholder="请输入秒杀价格"  placeholder-class="place"/>
+        <input type="digit" v-model="price"  class="flex flex1 p-l-26" placeholder="请输入秒杀价格"  placeholder-class="place"/>
         元
       </div>
     </div>

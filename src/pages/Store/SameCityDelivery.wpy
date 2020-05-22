@@ -24,6 +24,9 @@
       </div>
       <div class="store-titles">
 
+        <block v-if="dada.provider_status===2||meituan.provider_status===2||fengniao.provider_status===2">
+          已配置
+        </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -41,7 +44,9 @@
         费用配置
       </div>
       <div class="store-titles">
-
+        <block v-if="cityData.distance_money_config.start_distance>0">
+          已配置
+        </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -50,6 +55,9 @@
         续重收费
       </div>
       <div class="store-titles">
+        <block v-if="cityData.weight_money_config.free_weight>0">
+          已配置
+        </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -58,6 +66,9 @@
         配送限制
       </div>
       <div class="store-titles">
+        <block v-if="cityData.limit_config.send_distance>0">
+          已配置
+        </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -82,7 +93,7 @@
         <div class="wzw-title">
           服务商
         </div>
-        <div class="list-item flex flex-justify-between">
+        <div class="list-item flex flex-justify-between"  v-if="(provider.dada)===1">
               <div class="list-item-q">
                 达达
               </div>
@@ -94,10 +105,10 @@
                     <div v-else-if="dada.provider_status==1">
                       审核中
                     </div>
-                    <div v-else-if="dada.provider_status==-1">
-                      未开通
-                    </div>
-                    <div class="font-wzw"  v-else>
+<!--                    <div v-else-if="dada.provider_status==-1">-->
+<!--                      未开通-->
+<!--                    </div>-->
+                    <div class="font-wzw"   v-else-if="dada.provider_status==-1">
                       <div >
                         已驳回
                       </div>
@@ -108,11 +119,11 @@
 
                   </div>
                   <div>
-                    <switch :checked="provider.dada" bindchange="switch1Changes('dada',$event)" style="transform: scale(.8)"></switch>
+                    <switch :checked="dada.status===1" bindchange="switch1Changes('dada',$event)" style="transform: scale(.8)"></switch>
                   </div>
               </div>
         </div>
-        <div class="list-item flex flex-justify-between">
+        <div class="list-item flex flex-justify-between" v-if="(provider.meituan)===1">
           <div class="list-item-q">
             美团
           </div>
@@ -124,10 +135,10 @@
               <div v-else-if="meituan.provider_status==1">
                 审核中
               </div>
-              <div v-else-if="meituan.provider_status==-1">
-                未开通
-              </div>
-              <div class="font-wzw"  v-else>
+<!--              <div v-else-if="meituan.provider_status==-1">-->
+<!--                未开通-->
+<!--              </div>-->
+              <div class="font-wzw"  v-else-if="meituan.provider_status==-1">
                 <div >
                   已驳回
                 </div>
@@ -138,11 +149,11 @@
 
             </div>
             <div>
-              <switch checked="{{provider.meituan}}" bindchange="switch1Changes('meituan',$event)" style="transform: scale(.8)"></switch>
+              <switch :checked="meituan.status===1" bindchange="switch1Changes('meituan',$event)" style="transform: scale(.8)"></switch>
             </div>
           </div>
         </div>
-        <div class="list-item flex flex-justify-between">
+        <div class="list-item flex flex-justify-between" v-if="(provider.fengniao)===1">
           <div class="list-item-q">
             蜂鸟
           </div>
@@ -154,10 +165,10 @@
               <div v-else-if="fengniao.provider_status==1">
                 审核中
               </div>
-              <div v-else-if="fengniao.provider_status==-1">
-                未开通
-              </div>
-              <div class="font-wzw"  v-else>
+<!--              <div v-else-if="fengniao.provider_status==-1">-->
+<!--                未开通-->
+<!--              </div>-->
+              <div class="font-wzw" v-else-if="fengniao.provider_status==-1">
                 <div >
                   已驳回
                 </div>
@@ -168,7 +179,7 @@
 
             </div>
             <div>
-              <switch :checked="provider.fengniao"  bindchange="switch1Changes('fengniao',$event)" style="transform: scale(.8)"></switch>
+              <switch :checked="fengniao.status===1"  bindchange="switch1Changes('fengniao',$event)" style="transform: scale(.8)"></switch>
             </div>
           </div>
         </div>
@@ -197,7 +208,8 @@
       business_type: {},
       dada: {},
       meituan: {},
-      fengniao: {}
+      fengniao: {},
+      cityData:{}
     },
     onShow() {
       this.init()
@@ -256,6 +268,7 @@
         getCityExpressConfig().then(res => {
           let arr = res.data.business_type
           this.businessTypeValue = res.data.city_express_config.business_type
+          this.cityData=res.data.city_express_config
           this.provider = res.data.provider
           for (let item of res.data.express_info) {
             if (item.provider === 'dada') {
