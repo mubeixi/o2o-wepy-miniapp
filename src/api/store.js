@@ -128,3 +128,12 @@ export const bizMoneyRecord = (param, options) => fetch({act: 'bizMoneyRecord', 
 
 // 修改限时抢购状态
 export const bizSpikeStatus = (param, options) => fetch({act: 'bizSpikeStatus', param, options})
+
+// 获取分销微信二维码
+export const getDistributeWxQrcode = (param, options) => fetch({act: 'get_distribute_wxqrcode', param, options})
+
+// 获取海报模板
+export const getPosterList = (param, options) => fetch({ act: 'getPosterList', param, options })
+
+// 获取商家的分享码
+export const getBizShare = (param, options) => fetch({ act: 'getBizShare', param, options })

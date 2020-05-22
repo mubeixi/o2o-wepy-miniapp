@@ -229,7 +229,11 @@
       industry_id(newVal) {
         if (this.action === 'add' && newVal) {
           bizIndustryDetail({industry_id: newVal}, {tip: '加载所需资质'}).then(res => {
-            const {person = []} = res.data.industry_form
+            const {industry_form} = res.data
+            let person = []
+            if (industry_form && industry_form.hasOwnProperty('person') && Array.isArray(industry_form.person)) {
+              person = industry_form.person
+            }
             this.permissionsForms = person
             this.upPermissions([])
           })
@@ -328,7 +332,11 @@
       async _init_func() {
         if (this.action === 'add') {
           getBizConfig().then(res => {
-            const {person = [], company = []} = res.data.industry_form
+            const {industry_form} = res.data
+            let person = [], company = []
+            if (industry_form && industry_form.hasOwnProperty('person') && Array.isArray(industry_form.person)) {
+              person = industry_form.person
+            }
             this.materialForms = person
           })
         } else {

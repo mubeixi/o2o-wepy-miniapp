@@ -91,7 +91,7 @@
     <scroll-view
       scroll-y
       class="im-card-box"
-      :scroll-into-view='toViewIdx'
+      :scroll-into-view="toViewIdx"
       :style="{paddingBottom:'110rpx'}"
       :refresher-enabled="true"
       :refresher-threshold="100"

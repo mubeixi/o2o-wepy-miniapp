@@ -3,6 +3,7 @@ import { error } from './fun'
 import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
+import wxPromisify from './promisify'
 
 export const objTranslate = (obj) => JSON.parse(JSON.stringify(obj))
 
@@ -230,6 +231,38 @@ export const validateFun = (data, rule) => {
   const errors = rules.validate(_data)
   const rt = errors.map(item => item.message)
   return JSON.stringify(rt) === '[]' ? true : rt
+}
+
+/**
+ * 下载文件
+ * @param url
+ * @returns {Promise<boolean>}
+ */
+const downLoadFile = async (url) => {
+  try {
+    const downRT = await wxPromisify('downloadFile', { url }).catch(e => { throw Error(e.errMsg) })
+    const { tempFilePath } = downRT
+    if (!tempFilePath) throw Error('图片下载失败')
+    return tempFilePath
+  } catch (e) {
+    return false
+  }
+}
+
+/**
+ * 保存图片到本地
+ * @param fileUrl
+ * @param type
+ * @returns {Promise<boolean|*>}
+ */
+export const saveImageToDisk = async ({ fileUrl, type = 'local' }) => {
+  try {
+    const fileTempPath = type === 'local' ? fileUrl : await downLoadFile(fileUrl)
+    await wxPromisify('saveImageToPhotosAlbum', { filePath: fileTempPath }).catch(e => { throw Error(e.errMsg) })
+    return fileTempPath
+  } catch (e) {
+    return false
+  }
 }
 
 /**
