@@ -199,7 +199,7 @@
     store,
     mixins: [pageMixin],
     data: {
-      showBond:false,
+      showBond: false,
       bond_fee: '',
       action: '',
       has: false,
@@ -301,6 +301,7 @@
         })
       },
       openTradeSelect() {
+        if (this.action === 'show') return
         this.showTrade = true
       },
       handleTradeSelectClose() {

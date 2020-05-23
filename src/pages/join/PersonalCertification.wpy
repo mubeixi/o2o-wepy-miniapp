@@ -309,6 +309,7 @@
         })
       },
       openTradeSelect() {
+        if (this.action === 'show') return
         this.showTrade = true
       },
       handleTradeSelectClose() {
