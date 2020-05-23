@@ -217,7 +217,7 @@
   import pageMixin from '../../mixins'
   import { getCouponList, getUserLevel, opCoupon } from '../../api/store'
   import { bizProdList } from '../../api/product'
-  import { chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '../../common/helper'
+  import { chooseImageByPromise, findArrayIdx, getArrColumn, getDomain, uploadImages } from '../../common/helper'
   import { error, hideLoading, showLoading } from '../../common/fun'
   import { dateTimePicker, getMonthDay, getNewDateArry } from '../../common/time'
 
@@ -326,10 +326,16 @@
 
         startTime = moment(startTime).format('YYYY-MM-DD HH:mm:ss')
         endTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+
         let boo = moment(endTime).isAfter(startTime)
         if (!boo) {
           hideLoading()
           error('结束时间必须大于开始时间')
+          return
+        }
+
+        if (!this.canUse.hasOwnProperty(this.index)) {
+          error('请选择使用条件')
           return
         }
 
@@ -460,7 +466,9 @@
                 // this.imgs[0] = item.Coupon_PhotoPath
                 this.Coupon_Cash = item.Coupon_Cash
                 this.Coupon_Condition = item.Coupon_Condition
-                this.index = String(item.Coupon_UsedTimes)
+                const idx = findArrayIdx(this.canUse, {id: item.Coupon_UsedTimes})
+                if (idx >= 0) this.index = idx
+                // this.index = String(item.Coupon_UsedTimes)
                 this.Coupon_UserLevel = String(item.Coupon_UserLevel)
                 this.front_show = item.front_show
 

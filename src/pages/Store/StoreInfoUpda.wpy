@@ -203,7 +203,9 @@
         this.biz_address = this.info.biz_address
         this.selectArea = this.info.area_address
 
-        this.$refs.address._init_func()
+        if (this.type === 3) {
+          this.$refs.address._init_func()
+        }
       }
     },
     onShow() {
