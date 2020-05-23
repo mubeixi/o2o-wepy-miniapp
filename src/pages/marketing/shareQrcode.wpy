@@ -1,13 +1,15 @@
 <template>
   <view class="page-wrap">
 
-    <image class="preview" @click="preFn" :src="getDomain(current_url)" mode="widthFix" />
+    <image v-show="drawPosterDone" class="preview" @click="preFn" :src="current_url" mode="widthFix" />
+
+    <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
 
     <div class="handle-box">
       <div class="remind-title fz-13 c3 text-center">选择海报模板</div>
       <div class="swiper">
-        <div class="swiper-item" @click="setSelect(poster)" v-for="(poster,idx) in poster_list">
-          <image class="swiper-itm-img" :src="getDomain(poster.img)"></image>
+        <div class="swiper-item" @click="setSelect(idx)" v-for="(poster,idx) in poster_list" :key="idx">
+          <image class="swiper-itm-img" :src="poster.thumb_bg_img"></image>
         </div>
       </div>
       <div class="share-btn" @click="saveFn">保存海报</div>
@@ -15,15 +17,21 @@
   </view>
 </template>
 <script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getPosterList, getDistributeWxQrcode,getBizShare} from '../../api/store'
-  import {error, toast} from '../../common/fun'
-
+  import {getPosterList, getDistributeWxQrcode, getBizShare} from '../../api/store'
+  import { error, hideLoading, showLoading, toast } from '../../common/fun'
   import {getDomain, saveImageToDisk} from '../../common/helper'
+  import wxPromisify from '../../common/promisify'
 
-  export default {
+  let canvasInstance = null
+  wepy.page({
+    store,
     mixins: [pageMixin],
     data: {
+      qrcode: '',
+      drawPosterDone: false,
       type: '',
       again: '',
       current_url: '',
@@ -42,14 +50,13 @@
       }//
     },
     computed: {
-      bizInfo(){
+      bizInfo() {
         return this.$store.getters.getBizInfo()
-      },
-      initData () {
-        return this.$store.state.system.initData
       }
     },
     onReady () {
+      canvasInstance = wx.createCanvasContext('myCanvas')
+      this.initFunc(this.type, this.again)
       // var context = wx.createCanvasContext('firstCanvas')
       // context.arc(120, 80, 5, 0, 2 * Math.PI, true)
       // context.stroke()
@@ -62,7 +69,6 @@
       const { type, again } = options
       this.type = type
       this.again = again
-      this.initFunc(type, again)
     },
     methods: {
       getDomain,
@@ -77,17 +83,8 @@
         }
         toast('保存成功')
       },
-      setSelect (poster) {
-        this.current_poster = poster
-        getDistributeWxQrcode({
-          type: this.type,
-          again: this.again,
-          owner_id: this.userInfo.User_ID,
-          poster_id: poster.id
-        }, { tip: '生成中' }).then(res => {
-          this.current_url = res.data.img_url
-        })
-        // this.current_url = poster.img
+      setSelect (idx) {
+        this.drawPoster(idx)
       },
       preFn () {
         if (!this.current_url) {
@@ -107,29 +104,106 @@
       handleChange (e) {
         this.currentIdx = e.detail.current
       },
+      async drawPoster(idx) {
+        try {
+          this.drawPosterDone = false
+          showLoading('生成中')
+
+          const posterInfo = this.poster_list[idx]
+
+          if (!posterInfo) throw Error('模板信息有误')
+
+          const itemInfo = {}
+          for (var i in posterInfo.position) {
+            itemInfo[i] = {...posterInfo.position[i], ...posterInfo.size[i]}
+          }
+          console.log(itemInfo)
+
+          const wrapHeight = 1500
+          const wrapWidth = 1100
+          const ctx = canvasInstance
+
+          const userInfo = {
+            avatar: getDomain(this.bizInfo.biz_logo),
+            nickname: this.bizInfo.biz_shop_name,
+            qrcode: getDomain(this.qrcode)
+          }
+          console.log(userInfo)
+
+          ctx.fillRect(wrapWidth, wrapHeight, 0, 0)
+
+          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(posterInfo.bg_img) }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
+          ctx.drawImage(wrapTempFile.path, 0, 0, wrapWidth, wrapHeight)
+
+          const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          ctx.drawImage(qrcodeTempFile.path, itemInfo.qrcode.left, itemInfo.qrcode.top, itemInfo.qrcode.width, itemInfo.qrcode.height)
+
+
+          const avatarTempFile = await wxPromisify('getImageInfo', { src: userInfo.avatar }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          ctx.drawImage(avatarTempFile.path, itemInfo.avatar.left, itemInfo.avatar.top, itemInfo.avatar.width, itemInfo.avatar.height)
+
+
+          ctx.setFontSize(itemInfo.nickname.size)
+          ctx.setFillStyle('#333333')
+          ctx.fillText(userInfo.nickname, itemInfo.nickname.left, itemInfo.nickname.left)
+
+          ctx.setFontSize(itemInfo.follow.size)
+          ctx.setFillStyle('#333333')
+          ctx.fillText(userInfo.follow, itemInfo.follow.left, itemInfo.follow.left)
+
+          await new Promise(resolve => {
+            ctx.draw(false, function () {
+              console.log('draw done')
+              resolve()
+            })
+          })
+
+          const { tempFilePath } = await wxPromisify('canvasToTempFilePath', { canvasId: 'myCanvas' })
+          console.log(tempFilePath)
+
+          this.current_url = tempFilePath
+          this.drawPosterDone = true
+
+        // 绘制底部白色
+        // ctx.setFillStyle('#f2f2f2')
+        } catch (e) {
+          console.log(e)
+          error(e.message)
+        } finally {
+          hideLoading()
+        }
+      },
       async initFunc (type, again) {
         try {
           // 先获取二维码
           // let qrRet = await getDistributeWxQrcode({type,again,owner_id:this.userInfo.User_ID},{tip:'生成中'})
           // this.qrimg = qrRet.data.img_url;
 
-          const getPosterListResult = await getBizShare({ pageSize: 999,qrcode_type:'wx_lp',biz_id:this.bizInfo.biz_id })
-          const lists = getPosterListResult.data
-          this.poster_list = lists.map(item => {
-            item.img += '-r200'
-            return item
-          })
-
-          if (this.poster_list.length > 0) {
-            getDistributeWxQrcode({
-              type,
-              again,
-              owner_id: this.userInfo.User_ID,
-              poster_id: this.poster_list[0].id
-            }, { tip: '生成中' }).then(res => {
-              this.current_url = res.data.img_url
+          const {bg_img: lists, qrcode} = await getBizShare({ pageSize: 999, qrcode_type: 'wx_lp', biz_id: this.bizInfo.id })
+            .then(res => {
+              return res.data
+            })
+            .catch((err) => {
+              throw Error(err.msg)
             })
 
+          this.poster_list = lists.map(row => {
+            row.thumb_bg_img = getDomain(row.thumb_bg_img)
+            return row
+          })
+
+          if (qrcode) this.qrcode = qrcode
+
+          if (this.poster_list.length > 0) {
+            this.drawPoster(0)
+            // getDistributeWxQrcode({
+            //   type,
+            //   again,
+            //   owner_id: this.userInfo.User_ID,
+            //   poster_id: this.poster_list[0].id
+            // }, { tip: '生成中' }).then(res => {
+            //   this.current_url = res.data.img_url
+            // })
           }
         } catch (e) {
           error(e.msg || '获取海报模板失败')
@@ -139,10 +213,19 @@
         this.$back()
       }
     }
-  }
+  })
 </script>
 <style lang="scss" scoped>
 @import "../../assets/variables.scss";
+
+.myCanvas {
+  position: fixed;
+  left: 100%;
+  top: 0;
+  background: white;
+  width: 1100px;
+  height: 1500px;
+}
   .preview {
     position: absolute;
     top: 20rpx;

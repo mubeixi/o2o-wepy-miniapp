@@ -117,6 +117,7 @@ wepy.app({
       "pages/order/CheckOrderInfo",
       "pages/order/SettlementList",
       "pages/order/Settlement",
+      "pages/marketing/shareQrcode",
       "pages/demo"
 
     ],
