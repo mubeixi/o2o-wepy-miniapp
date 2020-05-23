@@ -44,6 +44,9 @@
           <block v-if="print_config.sn&&print_config.secret&&print_config.count">
             已配置
           </block>
+          <block v-else>
+            未配置
+          </block>
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
