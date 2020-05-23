@@ -19,7 +19,7 @@
       </div>
       <div class="second"  >
         每超出
-        <input type="digit" class="input-out" v-model="weight_money_config.plus_weight"/>km费用增加
+        <input type="digit" class="input-out" v-model="weight_money_config.plus_weight"/>kg费用增加
         <input type="digit"  class="input-out" v-model="weight_money_config.plus_money"/>元
       </div>
     </block>

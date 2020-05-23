@@ -446,8 +446,10 @@
     onReady() {
 
     },
-    onLoad() {
-
+    onLoad(options) {
+      if (options.tabActiveIdx >= 0) {
+        this.tabActiveIdx = Number(options.tabActiveIdx)
+      }
     }
   })
 </script>

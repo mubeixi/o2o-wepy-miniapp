@@ -98,6 +98,7 @@
           this.withDrawData.map(item => {
             item.type == 'bank_card' && (this.cardDate = item['card'])
           })
+          this.type = this.withDrawData[this.ind].type
           hideLoading()
           this.getDetail()
         }).catch(e => {

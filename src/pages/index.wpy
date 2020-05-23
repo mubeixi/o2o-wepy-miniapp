@@ -21,7 +21,7 @@
         <span class="title">店铺余额</span>
       </div>
       <div class="space-line"></div>
-      <div class="finance-item">
+      <div class="finance-item" @click="goTodayPerson">
         <div class="fz-18">{{info.view_person_count}}</div>
         <span class="title">今日来访</span>
       </div>
@@ -34,12 +34,12 @@
 
     <div class="container">
       <div class="count-box">
-        <div class="count-item">
+        <div class="count-item" @click="goTodayOrder">
           <div class="val"><icon class="icon" type="iconyuanhuan" color="#FA9981"></icon><div class="fz-16 c333 text-center">{{info.today_order_count}}</div></div>
           <span class="title">今日订单</span>
         </div>
         <div style="width: 50rpx;"></div>
-        <div class="count-item">
+        <div class="count-item"  @click="goTodayOrderMoney">
           <div class="val"><icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon><div class="fz-12 c333 text-center">￥<span class="fz-16">{{info.today_order_money}}</span></div></div>
           <span class="title">今日订单金额</span>
         </div>
@@ -51,7 +51,7 @@
             <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
             <div class="grid-item-title">店铺模板</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/product/ProductManager')">
+          <div class="grid-item" @click="goPro">
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
           </div>
@@ -61,15 +61,15 @@
           </div>
         </div>
         <div class="grid-row">
-          <div class="grid-item" @click="$linkTo('/pages/statistics/dashboard')">
+          <div class="grid-item" @click="goStatistics">
             <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
             <div class="grid-item-title">数据统计</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/store/StoreMarketing')">
+          <div class="grid-item" @click="goMarketing">
             <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title">推广营销</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/order/OrderRetail')">
+          <div class="grid-item" @click="goOrder">
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
             <div class="grid-item-title">订单管理</div>
           </div>
@@ -79,7 +79,7 @@
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/logistics/LogisticsMain')">
+          <div class="grid-item" @click="goLogistics">
             <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
             <div class="grid-item-title">物流管理</div>
           </div>
@@ -107,8 +107,8 @@
 
   import { bizLogin, initInfo } from '../api/system'
   import { getBizInfo } from '../api/store'
-  import { error, linkTo } from '../common/fun'
-  import { checkIsLogin, ls } from '../common/helper'
+  import { linkTo } from '../common/fun'
+  import { checkIsLogin, ls, checkIsSettle } from '../common/helper'
 
   wepy.page({
     store,
@@ -127,6 +127,38 @@
       }
     },
     methods: {
+      goTodayPerson(){
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=0')
+      },
+      goTodayOrderMoney() {
+       // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=3')
+      },
+      goTodayOrder() {
+        //if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=1')
+      },
+      goLogistics() {
+        //if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/logistics/LogisticsMain')
+      },
+      goOrder() {
+       // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/order/OrderRetail')
+      },
+      goMarketing() {
+        //if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/store/StoreMarketing')
+      },
+      goStatistics() {
+        //if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/statistics/dashboard')
+      },
+      goPro() {
+        //if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/product/ProductManager')
+      },
       goBusiness() {
         const principal_type = this.infoData.apply_info.principal_type
 
@@ -137,13 +169,8 @@
         }
       },
       toShare() {
-        if (checkIsLogin(false, false)) {
-          if (this.status !== 2) {
-            error('请先完成认证')
-            return
-          }
-          this.$linkTo('/pages/marketing/shareQrcode')
-        }
+        if (!checkIsSettle(1, 1)) return
+        if (checkIsLogin(false, false)) this.$linkTo('/pages/marketing/shareQrcode')
       },
       toProfile() {
         if (checkIsLogin(false, false)) this.$linkTo('/pages/store/StoreInfo')
