@@ -59,12 +59,13 @@
             <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
             <div class="grid-item-title">修改资料</div>
           </div>
-        </div>
-        <div class="grid-row">
           <div class="grid-item" @click="goStatistics">
             <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
             <div class="grid-item-title">数据统计</div>
           </div>
+        </div>
+        <div class="grid-row">
+
           <div class="grid-item" @click="goMarketing">
             <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title">推广营销</div>
@@ -73,15 +74,20 @@
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
             <div class="grid-item-title">订单管理</div>
           </div>
-        </div>
-        <div class="grid-row">
           <div class="grid-item"  @click="$linkTo('/pages/store/StoreSetting')">
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
+        </div>
+        <div class="grid-row">
+
           <div class="grid-item" @click="goLogistics">
             <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
             <div class="grid-item-title">物流管理</div>
+          </div>
+          <div class="grid-item" @click="goSettlementList">
+            <icon type="iconjiesuan" class="grid-item-icon" size="24" color="#6058fd"></icon>
+            <div class="grid-item-title">结算</div>
           </div>
           <div class="grid-item">
 
@@ -127,7 +133,7 @@
       }
     },
     methods: {
-      goTodayPerson(){
+      goTodayPerson() {
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard?tabActiveIdx=0')
       },
@@ -136,11 +142,15 @@
         linkTo('/pages/statistics/dashboard?tabActiveIdx=3')
       },
       goTodayOrder() {
-        //if (!checkIsSettle(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard?tabActiveIdx=1')
       },
+      goSettlementList() {
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/order/SettlementList')
+      },
       goLogistics() {
-        //if (!checkIsSettle(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/logistics/LogisticsMain')
       },
       goOrder() {
@@ -148,15 +158,15 @@
         linkTo('/pages/order/OrderRetail')
       },
       goMarketing() {
-        //if (!checkIsSettle(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/store/StoreMarketing')
       },
       goStatistics() {
-        //if (!checkIsSettle(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard')
       },
       goPro() {
-        //if (!checkIsSettle(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/product/ProductManager')
       },
       goBusiness() {
@@ -400,8 +410,7 @@
     "navigationBarBackgroundColor": "#f8f8f8",
     "usingComponents": {
       "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon",
-      "ad": "~@/components/ad"
+      "icon": "~@/components/icon"
     }
   }
 </config>
