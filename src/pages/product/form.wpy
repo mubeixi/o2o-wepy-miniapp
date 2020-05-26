@@ -57,6 +57,15 @@
 
         <div class="group-cell">
           <div class="cell-item">
+            <div class="label">商品利润</div>
+            <div class="content">
+              <input type="text" v-model="formData.Products_Profit" placeholder="请输入商品利润" />
+            </div>
+          </div>
+        </div>
+
+        <div class="group-cell">
+          <div class="cell-item">
             <div class="label">商品价格</div>
             <div class="content">
               <div class="flex flex-justify-center flex-vertical-center">
@@ -534,11 +543,11 @@
     <popup-layer title="支持外卖"  ref="delivery" >
       <div class="p-l-15 p-r-15" @touchmove.stop.prevent>
         <div class="flex flex-vertical-center flex-justify-between m-b-15">
-          <div class="label p-r-10">开关</div>
+          <div class="label p-r-10">支持外卖</div>
           <switch style="transform: scale(.8)" checked="{{formData.is_waimai}}" @change="bindDeliveryChange" color="#00A8FF" />
         </div>
         <div class="c9 fz-12">
-          平台可以设置的是否支持外卖功能，平台可以设置的是否支持外卖功能 是否支持外卖功能。
+          开启该开关，消费者可以在外卖中心看到该商品，请留意外卖订单，需要具备配送的时效性
         </div>
       </div>
       <button  class="btn btn-primary m-t-35" @click="closePop('delivery')">确定</button>
@@ -847,7 +856,12 @@
           Products_Weight: {
             use: {
               // 如果前面没有申明prod_order_type这个校验的方法，那么其实row是不会有这个属性的。这个不好说是算bug还是这个类库刻意要求人严谨的
-              limit: (val, row) => row.prod_order_type === 0 && floatNumber.test(val) && parseFloat(val) > 0
+              limit: (val, row) => {
+                if (row.prod_order_type === 0) {
+                  return floatNumber.test(val) && parseFloat(val) > 0
+                }
+                return true
+              }
             },
             message: {
               limit: '实物订单必须设置重量'
@@ -1047,6 +1061,7 @@
       },
 
       setOrderType(e) {
+        console.log(e.$wx.detail.value)
         this.formData.prod_order_type = parseInt(e.$wx.detail.value)
       },
       addSpecsRow() {
