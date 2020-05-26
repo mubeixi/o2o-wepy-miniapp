@@ -66,6 +66,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { getString, ls } from '../../common/helper'
+  import eventHub from '../../common/eventHub'
 
   wepy.page({
     store,
@@ -97,6 +98,7 @@
       },
       // 保存返回
       saveNext() {
+        eventHub.$emit('bind_free_method', {...this.editData})
         ls.set('Free_Content', this.editData)
         wx.navigateBack({delta: -1})
       },

@@ -22,7 +22,7 @@
         运送方式
       </div>
       <div class="store-titles">
-        <block v-if="temp_id&&listData">
+        <block v-if="(temp_id&&listData) ||isMehtodSet">
           已配置
         </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
@@ -33,7 +33,7 @@
         指定包邮条件
       </div>
       <div class="store-titles">
-        <block v-if="listData.Free_Content.length>0">
+        <block v-if="listData.Free_Content.length>0 || isFreeSet">
           已配置
         </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
@@ -67,11 +67,14 @@
   import { ls } from '../../common/helper'
 
   import { getTemplateDetail, opShippingTemplate } from '../../api/store'
+  import eventHub from '../../common/eventHub'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      isMehtodSet: false,
+      isFreeSet:false,
       listData: {},
       By_Method: ['按重量计费', '按件数计费'],
       status: ['禁用', '启用'],
@@ -92,6 +95,16 @@
         ls.remove('Template_Content')
         ls.remove('Free_Content')
       }
+
+      eventHub.$on('bind_send_method', (params) => {
+        console.log('bind_send_method event emitted, the params are:')
+        console.log(params)
+        this.isMehtodSet = true
+      })
+      eventHub.$on('bind_free_method', (params) => {
+
+        this.isFreeSet = true
+      })
     },
     methods: {
       goMail() {
