@@ -84,6 +84,7 @@
   import pageMixin from '../../mixins'
   import { getArrColumn, getString, ls } from '../../common/helper'
   import { error } from '../../common/fun'
+  import eventHub from '../../common/eventHub'
 
   wepy.page({
     store,
@@ -124,6 +125,7 @@
           error('请配置默认运费')
           return
         }
+        eventHub.$emit('bind_send_method', {Template_Content})
         ls.set('Template_Content', Template_Content)
         wx.navigateBack({delta: -1})
       },

@@ -256,6 +256,8 @@
           if (findProvinceIdx !== false) {
             this.selectIdxList[0] = parseInt(findProvinceIdx)
             province = this.provinceList[findProvinceIdx]
+          } else {
+            return this.provinceList
           }
           this.selectFn(0, this.selectIdxList[0])
 
@@ -266,7 +268,7 @@
             this.areaList = []
             this.townList = []
             this.selectIdxList[1] = -1
-            return
+            return this.cityList
           }
           this.selectIdxList[1] = parseInt(findCityIdx)
           const city = this.cityList[findCityIdx]
@@ -279,7 +281,7 @@
             this.townList = []
             this.selectIdxList[2] = -1
             this.currentSwiperIndex = 2 // 第三屏
-            return
+            return this.areaList
           }
           this.selectIdxList[2] = parseInt(findAreaIdx)
           const area = this.areaList[findAreaIdx]
@@ -291,7 +293,7 @@
             if (findTownIdx === false) {
               this.selectIdxList[3] = -1
               this.currentSwiperIndex = 3 // 第三屏
-              return
+              return this.townList
             }
             this.selectIdxList[3] = parseInt(findTownIdx)
             this.selectFn(3, this.selectIdxList[3])
@@ -303,7 +305,11 @@
       noop() {
 
       },
-      show() {
+      async show() {
+        if (this.lazyLoad) {
+          const rt = await this._init_func()
+          console.log(rt)
+        }
         this.active = true
       },
       close() {

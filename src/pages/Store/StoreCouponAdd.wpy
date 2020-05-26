@@ -218,10 +218,14 @@
   import { getCouponList, getUserLevel, opCoupon } from '../../api/store'
   import { bizProdList } from '../../api/product'
   import { chooseImageByPromise, findArrayIdx, getArrColumn, getDomain, uploadImages } from '../../common/helper'
-  import { error, hideLoading, showLoading } from '../../common/fun'
+  import { error, hideLoading, modal, showLoading } from '../../common/fun'
   import { dateTimePicker, getMonthDay, getNewDateArry } from '../../common/time'
 
   const moment = require('moment')
+  const fromNum = (num) => {
+    const _num = parseInt(num)
+    return _num >= 10 ? _num : `0${_num}`
+  }
 
   wepy.page({
     store,
@@ -321,22 +325,21 @@
       },
       saveCoupon() {
         showLoading()
-        let startTime = parseInt(this.dateTimeArray1[0][this.dateTime1[0]]) + '-' + parseInt(this.dateTimeArray1[1][this.dateTime1[1]]) + '-' + parseInt(this.dateTimeArray1[2][this.dateTime1[2]]) + ' ' + parseInt(this.dateTimeArray1[3][this.dateTime1[3]]) + ':' + parseInt(this.dateTimeArray1[4][this.dateTime1[4]]) + ':' + parseInt(this.dateTimeArray1[5][this.dateTime1[5]])
-        let endTime = parseInt(this.dateTimeArray2[0][this.dateTime2[0]]) + '-' + parseInt(this.dateTimeArray2[1][this.dateTime2[1]]) + '-' + parseInt(this.dateTimeArray2[2][this.dateTime2[2]]) + ' ' + parseInt(this.dateTimeArray2[3][this.dateTime2[3]]) + ':' + parseInt(this.dateTimeArray2[4][this.dateTime2[4]]) + ':' + parseInt(this.dateTimeArray2[5][this.dateTime2[5]])
+        const startTimeDate = parseInt(this.dateTimeArray1[0][this.dateTime1[0]]) + '-' + fromNum(this.dateTimeArray1[1][this.dateTime1[1]]) + '-' + fromNum(this.dateTimeArray1[2][this.dateTime1[2]]) + ' ' + fromNum(this.dateTimeArray1[3][this.dateTime1[3]]) + ':' + fromNum(this.dateTimeArray1[4][this.dateTime1[4]]) + ':' + fromNum(this.dateTimeArray1[5][this.dateTime1[5]])
+        const endTimeDate = parseInt(this.dateTimeArray2[0][this.dateTime2[0]]) + '-' + fromNum(this.dateTimeArray2[1][this.dateTime2[1]]) + '-' + fromNum(this.dateTimeArray2[2][this.dateTime2[2]]) + ' ' + fromNum(this.dateTimeArray2[3][this.dateTime2[3]]) + ':' + fromNum(this.dateTimeArray2[4][this.dateTime2[4]]) + ':' + fromNum(this.dateTimeArray2[5][this.dateTime2[5]])
 
-        startTime = moment(startTime).format('YYYY-MM-DD HH:mm:ss')
-        endTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        const startTime = moment(startTimeDate).format('YYYY-MM-DD HH:mm:ss')
+        const endTime = moment(endTimeDate).format('YYYY-MM-DD HH:mm:ss')
 
         let boo = moment(endTime).isAfter(startTime)
         if (!boo) {
           hideLoading()
-          error('结束时间必须大于开始时间')
+          modal('结束时间必须大于开始时间' + JSON.stringify({startTimeDate, endTimeDate, startTime, endTime}))
           return
         }
 
         if (!this.canUse.hasOwnProperty(this.index)) {
           error('请选择使用条件')
-          return
         }
 
         let data = {
@@ -353,7 +356,6 @@
         if (this.useCan === 1) {
           if (!this.coupon_prod) {
             error('你还没有选择指定商品')
-            return
           }
           data.coupon_prod = this.coupon_prod
         } else {
