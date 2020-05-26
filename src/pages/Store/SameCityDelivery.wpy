@@ -5,7 +5,7 @@
         取货地址
       </div>
       <div class="store-titles flex flex-vertical-center">
-        <span class="address">{{address}}</span>
+        <span class="address">{{address||''}}</span>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>

@@ -59,8 +59,9 @@
           <div class="cell-item">
             <div class="label">商品利润</div>
             <div class="content">
-              <input type="text" v-model="formData.Products_Profit" placeholder="请输入商品利润" />
+              <input type="digit" v-model="formData.Products_Profit" placeholder="请输入商品利润" />
             </div>
+            <div class="right">%</div>
           </div>
         </div>
 
@@ -171,7 +172,13 @@
           <div class="cell-item">
             <div class="label">特殊属性</div>
             <div class="content"></div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.Products_SoldOut||formData.Products_IsNew||formData.Products_IsHot||formData.Products_IsRecommend||formData.one_hour_send">已设置</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -182,7 +189,13 @@
               <div class="flex1"></div>
               <div class="text-right fz-14 text-nowrap" style="width: 400rpx;">{{bizCateHasStr}}</div>
             </div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="bizCateHasStr"></span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -190,7 +203,13 @@
           <div class="cell-item">
             <div class="label">商品承诺</div>
             <div class="content"></div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="promiseList.length>0">已设置</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -198,7 +217,13 @@
           <div class="cell-item">
             <div class="label">详情</div>
             <div class="content"></div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.Products_Description">已设置</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -271,7 +296,13 @@
           <div class="cell-item" @click="openPop('delivery')">
             <div class="label">支持外卖</div>
             <div class="content"></div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.is_waimai">支持</span>
+                <span class="c6 fz-12" v-else>不支持</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -279,7 +310,13 @@
           <div class="cell-item" @click="openPop('share')">
             <div class="label">分享有礼</div>
             <div class="content"></div>
-            <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.share_commission!==''">{{formData.share_commission}}</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -798,16 +835,16 @@
               compareMarketPrice: '拼团价必须小于原价'
             }
           },
-          // Products_Profit:{
-          //   match: floatNumber,
-          //   required: true,
-          //   size: {min: 0},
-          //   message: {
-          //     required: '利润必填',
-          //     type: '利润必须为数字',
-          //     size: '利润必须大于0'
-          //   }
-          // },
+          Products_Profit: {
+            match: floatNumber,
+            required: true,
+            size: {min: 0, max: 100},
+            message: {
+              required: '利润必填',
+              type: '利润必须为数字',
+              size: '利润百分比必须在0-100之间'
+            }
+          },
           fee_type: {
             required: true,
             message: {
