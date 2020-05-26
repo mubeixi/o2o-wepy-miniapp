@@ -22,6 +22,9 @@
         运送方式
       </div>
       <div class="store-titles">
+        <block v-if="temp_id&&listData">
+          已配置
+        </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -30,6 +33,9 @@
         指定包邮条件
       </div>
       <div class="store-titles">
+        <block v-if="listData.Free_Content.length>0">
+          已配置
+        </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -57,7 +63,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { hideLoading, linkTo, showLoading } from '../../common/fun'
+  import { error, hideLoading, linkTo, showLoading } from '../../common/fun'
   import { ls } from '../../common/helper'
 
   import { getTemplateDetail, opShippingTemplate } from '../../api/store'
@@ -153,11 +159,20 @@
         }
 
         let Template_Content = ls.get('Template_Content').express
+        if (!Template_Content) {
+          error('请配置默认运费')
+          return
+        }
         data.express_start = Template_Content.default.start
         data.express_postage = Template_Content.default.postage
         data.express_plus = Template_Content.default.plus
         data.express_postageplus = Template_Content.default.postageplus
         data.special_temp = JSON.stringify(Template_Content.special_content)
+
+        if (data.express_start === '' || data.express_postage === '' || data.express_plus === '' || data.express_postageplus === '') {
+          error('请配置默认运费')
+          return
+        }
         if (this.temp_id) {
           data.temp_id = this.temp_id
         }

@@ -127,6 +127,12 @@
         showLoading('加载中')
         await getBizInfo().then(res => {
           this.info = res.data[0]
+          if (!this.info.city_express_config) {
+            console.log(this.info.city_express_config, 'ssss')
+            this.info.city_express_config = {
+              business_type: ''
+            }
+          }
         }).catch(e => {
           hideLoading()
         })
@@ -139,7 +145,7 @@
           }
           this.business_type = arrData
           for (let it = 0; it < arrData.length; it++) {
-            if (arrData[it].name == this.info.city_express_config.business_type) {
+            if (arrData[it].name === this.info.city_express_config.business_type) {
               this.index = it
             }
           }

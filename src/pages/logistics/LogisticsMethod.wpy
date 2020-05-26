@@ -83,6 +83,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { getArrColumn, getString, ls } from '../../common/helper'
+  import { error } from '../../common/fun'
 
   wepy.page({
     store,
@@ -119,8 +120,11 @@
             special_content: this.special_content
           }
         }
+        if (this.express_start === '' || this.express_postage === '' || this.express_plus === '' || this.express_postageplus === '') {
+          error('请配置默认运费')
+          return
+        }
         ls.set('Template_Content', Template_Content)
-        console.log(Template_Content)
         wx.navigateBack({delta: -1})
       },
       addList() {
@@ -128,7 +132,7 @@
       },
       edit(index) {
         this.ind = index
-        this.hasValue = this.hasAllList.hasOwnProperty(this.ind)?this.hasAllList[this.ind]:[]
+        this.hasValue = this.hasAllList.hasOwnProperty(this.ind) ? this.hasAllList[this.ind] : []
 
         // this.showSelect = true
         this.$refs.cityPopup.open()

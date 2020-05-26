@@ -247,6 +247,7 @@
     color: #333333;
   }
   .address{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    z-index: 10;
     height: 108rpx;
     flex: 1;}
   .__placeholder{

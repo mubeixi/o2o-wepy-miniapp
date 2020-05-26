@@ -65,7 +65,7 @@
           付款时间：{{listData.Order_CreateTime | timeFormat}}
         </div>
         <div class="divHeight">
-          收货信息： {{listData.Address_Name}} {{listData.Address_Province}} {{listData.Address_City}} {{listData.Address_Area}} {{listData.Address_Town}} {{listData.Address_Detailed}}
+          收货信息： {{listData.Address_Name}} {{listData.Address_Province_name}} {{listData.Address_City_name}} {{listData.Address_Area_name}} {{listData.Address_Town_name}} {{listData.Address_Detailed_name}}
         </div>
       </div>
     </div>
@@ -191,10 +191,10 @@
           data.ShippingID = this.ship_num
         }
         systemSendOrder(data).then(res => {
-          toast({
-            title: res.msg
-          })
-          back()
+          toast(res.msg)
+          setTimeout(function() {
+            back()
+          }, 1000)
         }).catch(err => {
           error(err.msg)
         })
