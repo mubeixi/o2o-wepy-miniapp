@@ -72,7 +72,12 @@
           </div>
           <div class="grid-item" @click="goOrder">
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
-            <div class="grid-item-title">订单管理</div>
+            <div class="grid-item-title" style="display: flex;justify-content: center;">
+              订单管理<span v-if="orderNum.waitsend" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>
+<!--              <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)">-->
+<!--                 -->
+<!--              </div>-->
+            </div>
           </div>
           <div class="grid-item"  @click="$linkTo('/pages/store/StoreSetting')">
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
@@ -114,6 +119,7 @@
   import { bizLogin, initInfo } from '../api/system'
   import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
+  import { get_order_num } from '../api/order'
   import { checkIsLogin, ls, checkIsSettle } from '../common/helper'
 
   wepy.page({
@@ -123,6 +129,7 @@
       storeInfo: {
         volidate: false
       },
+      orderNum: {waitsend: 0},
       info: {},
       status: 1,
       infoData: {}
@@ -208,7 +215,6 @@
                 if (res.confirm) {
                   linkTo('/pages/join/BusinessStation')
                 } else if (res.cancel) {
-
                 }
               }
             })
@@ -223,6 +229,8 @@
         this.infoData = arr[0]
 
         this.$store.commit('SET_BIZ_INFO', this.infoData)
+
+        this.orderNum = await get_order_num({}).then(res => res.data).catch(err => {})
       }
     },
     onload() {
@@ -243,6 +251,20 @@
 <style lang="scss">
   @import "../assets/variables.scss";
   @import "../assets/mixins.scss";
+
+  .order-tag{
+    color:#fff;
+    display: block;
+    width: 10px;
+    height:10px;
+    font-size:10px;
+    text-align: center;
+    line-height: 10px;
+    border-radius: 50%;
+    padding: 2px;
+    background: red;
+    margin-left: 4px;
+  }
   /** 顶部start **/
   .head{
     display: flex;

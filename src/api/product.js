@@ -51,3 +51,9 @@ export const opActive = (param, options) => fetch({act: 'opActive', param: {...p
 
 // 获取产品分类
 export const getProductCategory = (param, options) => fetch({act: 'pro_cate', param, options})
+
+// 分享秒杀活动（产品）
+export const flashsaleShare = (param, options) => fetch({act: 'flashsaleShare', param, options})
+
+// 分享限时抢购活动（产品）
+export const spikeShare = (param, options) => fetch({act: 'spikeShare', param, options})

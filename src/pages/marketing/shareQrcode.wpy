@@ -138,18 +138,16 @@
           const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
           ctx.drawImage(qrcodeTempFile.path, itemInfo.qrcode.left, itemInfo.qrcode.top, itemInfo.qrcode.width, itemInfo.qrcode.height)
 
-
           const avatarTempFile = await wxPromisify('getImageInfo', { src: userInfo.avatar }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
           ctx.drawImage(avatarTempFile.path, itemInfo.avatar.left, itemInfo.avatar.top, itemInfo.avatar.width, itemInfo.avatar.height)
 
-
           ctx.setFontSize(itemInfo.nickname.size)
           ctx.setFillStyle('#333333')
-          ctx.fillText(userInfo.nickname, itemInfo.nickname.left, itemInfo.nickname.left)
+          ctx.fillText(userInfo.nickname, itemInfo.nickname.left, itemInfo.nickname.top)
 
           ctx.setFontSize(itemInfo.follow.size)
           ctx.setFillStyle('#333333')
-          ctx.fillText(userInfo.follow, itemInfo.follow.left, itemInfo.follow.left)
+          ctx.fillText(this.bizInfo.follow, itemInfo.follow.left, itemInfo.follow.top)
 
           await new Promise(resolve => {
             ctx.draw(false, function () {

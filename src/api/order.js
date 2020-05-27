@@ -34,3 +34,6 @@ export const opBizSettle = (param, options) => fetch({act: 'opBizSettle', param,
 
 // 处理结算单
 export const dealBizSettle = (param, options) => fetch({act: 'dealBizSettle', param, options})
+
+// 订单状态角标数
+export const get_order_num = (param, options) => fetch({act: 'get_order_num', param, options})

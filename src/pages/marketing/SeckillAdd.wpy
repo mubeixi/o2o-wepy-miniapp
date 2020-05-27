@@ -95,42 +95,44 @@
     <popup-layer title="选择商品" ref="product" :autoClose="true">
       <div class="product-list">
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
-          <div class="info-box" @click="taggleProductCheck(idx)">
-            <div class="check"   >
-              <div v-show="!product.disalbed">
-                <icon
-                  class="check-icon"
-                  :color="product.check?'#F53636':'#999'"
-                  size="20"
-                  :type="product.check?'iconblchecked':'iconCircle'"
-                ></icon>
-              </div>
-              <div v-show="product.disalbed">
-                <icon
-                  class="check-icon"
-                  color="#eee"
-                  size="20"
-                  type="iconblchecked"
-                ></icon>
-              </div>
+          <template v-if="product.Products_Status===1">
+            <div class="info-box" @click="taggleProductCheck(idx)">
+              <div class="check"   >
+                <div v-show="!product.disalbed">
+                  <icon
+                    class="check-icon"
+                    :color="product.check?'#F53636':'#999'"
+                    size="20"
+                    :type="product.check?'iconblchecked':'iconCircle'"
+                  ></icon>
+                </div>
+                <div v-show="product.disalbed">
+                  <icon
+                    class="check-icon"
+                    color="#eee"
+                    size="20"
+                    type="iconblchecked"
+                  ></icon>
+                </div>
 
-            </div>
-            <image class="thumb" :src="product.ImgPath"></image>
-            <div class="info">
-              <div class="title">{{product.Products_Name}}{{product.Products_ID}}</div>
-              <div class="price-box">
-                <span class="sign">￥</span>
-                <span>{{product.Products_PriceY}}</span>
-                <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
-                <span class="sign">￥</span>
-                <span>{{product.Products_PriceX}}</span>
               </div>
-              <div class="stock-box">
-                <span class="stock">库存:{{product.Products_Count}}</span>
-                <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+              <image class="thumb" :src="product.ImgPath"></image>
+              <div class="info">
+                <div class="title">{{product.Products_Name}}{{product.Products_ID}}</div>
+                <div class="price-box">
+                  <span class="sign">￥</span>
+                  <span>{{product.Products_PriceY}}</span>
+                  <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
+                  <span class="sign">￥</span>
+                  <span>{{product.Products_PriceX}}</span>
+                </div>
+                <div class="stock-box">
+                  <span class="stock">库存:{{product.Products_Count}}</span>
+                  <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
       <button class="btn btn-primary m-t-35" @click="surePro">确认</button>

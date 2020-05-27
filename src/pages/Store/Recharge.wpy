@@ -9,7 +9,7 @@
       </view>
       <view class="inputMoney">
         <view class="input-money-inner">
-          ¥  <input class="input-money-input" type="number" placeholder="请输入充值金额" placeholder-class="_place" v-model="money">
+          ¥  <input class="input-money-input" type="digit" placeholder="请输入充值金额" placeholder-class="_place" v-model="money">
         </view>
       </view>
 
@@ -91,7 +91,7 @@
             },
             fail (res) {
               if (res.errMsg === 'requestPayment:fail cancel') {
-                toast('取消支付，请重新支付')
+                error('取消支付，请重新支付')
               }
             }
           })
