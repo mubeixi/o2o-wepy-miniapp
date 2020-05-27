@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap" >
+    <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
     <div class="product-list">
       <div class="product-item" v-for="(product,idx) in seckillData" :key="idx">
         <div class="info-box">
@@ -45,7 +46,7 @@
               <icon type="iconshuju"></icon>
               <span class="title">数据</span>
           </div>
-          <div class="action">
+          <div class="action" @click="bindShare(product.id)">
             <icon size="14" type="iconfenxiang1"></icon>
             <span class="title">分享</span>
           </div>
@@ -71,9 +72,12 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import { bizFlashsaleList, bizFlashsaleStatus } from '../../api/product'
+  import { bizFlashsaleList, bizFlashsaleStatus, flashsaleShare } from '../../api/product'
   import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
-
+  import { Exception } from '../../common/Exception'
+  import { getDomain } from '../../common/helper'
+  import wxPromisify from '../../common/promisify'
+  let canvasInstance = null
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -90,6 +94,68 @@
       }
     },
     methods: {
+      async bindShare(id) {
+        try {
+          showLoading('生成中')
+          const posterInfo = await flashsaleShare({flashsale_id: id}).then(res => res.data).catch((err) => { throw Error(err.msg || '获取分享海报错误') })
+          console.log(posterInfo)
+
+          if (!posterInfo) throw Error('模板信息有误')
+
+          // bg_img: "https://newo2o.bafangka.com/static/images/spike.jpg?t=1590569988"
+          // biz_info:
+          //   biz_logo: "https://newo2o.bafangka.com/static/images/moren.png"
+          //   biz_shop_name: "不要总是开天窗"
+          // __proto__: Object
+          // qrcode_img: "https://newo2o.bafangka.com/uploadfiles/wkbq6nc2kc/qrcode/lpflashsale_wkbq6nc2kc_0_4.png?t=1590569988"
+
+          const wrapHeight = 1335
+          const wrapWidth = 750
+          const ctx = canvasInstance
+
+          const userInfo = {
+            avatar: getDomain(posterInfo.biz_info.biz_logo),
+            nickname: posterInfo.biz_info.biz_shop_name,
+            qrcode: getDomain(posterInfo.qrcode_img)
+          }
+          console.log(userInfo)
+
+          ctx.fillRect(wrapWidth, wrapHeight, 0, 0)
+
+          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(posterInfo.bg_img) }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
+          ctx.drawImage(wrapTempFile.path, 0, 0, wrapWidth, wrapHeight)
+
+          const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          ctx.drawImage(qrcodeTempFile.path, 468, 1020, 164, 164)
+
+          const avatarTempFile = await wxPromisify('getImageInfo', { src: userInfo.avatar }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          ctx.drawImage(avatarTempFile.path, 120, 1056, 100, 100)
+
+          ctx.setFontSize(26)
+          ctx.setFillStyle('#333333')
+          ctx.fillText(userInfo.nickname, 235, 1115) //1086
+
+          await new Promise(resolve => {
+            ctx.draw(false, function () {
+              console.log('draw done')
+              resolve()
+            })
+          })
+
+          const { tempFilePath } = await wxPromisify('canvasToTempFilePath', { canvasId: 'myCanvas' })
+          console.log(tempFilePath)
+          console.log(tempFilePath)
+          wx.previewImage({
+            urls: [tempFilePath]
+          })
+
+          hideLoading()
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
+      },
       del(id, status, idx) {
         showLoading()
         let data = {
@@ -124,6 +190,9 @@
       this.page = 1
       this.init()
     },
+    onReady () {
+      canvasInstance = wx.createCanvasContext('myCanvas')
+    },
     onLoad() {
 
     }
@@ -134,6 +203,15 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+
+  .myCanvas {
+    position: fixed;
+    left: 100%;
+    top: 0;
+    background: white;
+    width: 750px;
+    height: 1334px;
+  }
   .page-wrap{
     padding-bottom: 44px; //.btn的是44px
   }

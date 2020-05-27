@@ -60,9 +60,12 @@
                 <div class="item-btn c6" @click="rejectOrder(item.Order_ID)">
                   拒单
                 </div>
-                <div class="item-btn item-btn-active m-l-10" @click="sendOrder(item.Order_ID)">
-                  去发货
-                </div>
+              <div v-if="!item.Order_IsVirtual" class="item-btn item-btn-active m-l-10" @click="sendOrder(item.Order_ID)">
+                去发货
+              </div>
+              <div v-if="item.Order_IsVirtual" class="item-btn item-btn-active m-l-10" @click="$linkTo('/pages/order/CheckChannel')">
+                核销
+              </div>
             </div>
       </div>
 
@@ -166,7 +169,7 @@
 
         for (let item of this.list) {
           for (let it of item['prod_list']) {
-            if (it.attr_info !== '') {
+            if (typeof it.attr_info === 'string' && it.attr_info !== '') {
               it.attr_info = JSON.parse(it.attr_info)
             }
           }

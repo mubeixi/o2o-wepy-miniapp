@@ -205,7 +205,7 @@
           </div>
         </div>
 
-        <div class="group-cell">
+        <div class="group-cell" v-if="formData.prod_order_type!=1">
           <div class="cell-item" @click="openPop('fee')">
             <div class="label">运费</div>
             <div class="content">
