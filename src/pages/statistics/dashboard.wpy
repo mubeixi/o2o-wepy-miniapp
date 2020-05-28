@@ -122,24 +122,24 @@
       <div class="title"><span class="before"></span><span class="text">实时数据</span></div>
       <div class="main">
         <div class="tab-list">
-          <div class="tab-item" :class="{active:tabActiveIdx===0}" @click="tabIdx(0)">
-            <div v-if="tabActiveIdx===0" class="underline"></div>
+          <div class="tab-item" :class="{active:tabActiveIdx===5}" @click="tabIdx(5)">
+            <div v-if="tabActiveIdx===5" class="underline"></div>
             <div class="label">{{tabData.view_person_count.name}}</div><div class="val">{{tabData.view_person_count.value}}</div>
           </div>
-          <div class="tab-item" :class="{active:tabActiveIdx===1}" @click="tabIdx(1)">
-            <div v-if="tabActiveIdx===1" class="underline"></div>
+          <div class="tab-item" :class="{active:tabActiveIdx===4}" @click="tabIdx(4)">
+            <div v-if="tabActiveIdx===4" class="underline"></div>
             <div class="label">{{tabData.order_count.name}}</div><div class="val">{{tabData.order_count.value}}</div>
           </div>
           <div class="tab-item" :class="{active:tabActiveIdx===2}" @click="tabIdx(2)">
             <div v-if="tabActiveIdx===2" class="underline"></div>
             <div class="label">{{tabData.order_pay_count.name}}</div><div class="val">{{tabData.order_pay_count.value}}</div>
           </div>
-          <div class="tab-item" :class="{active:tabActiveIdx===3}" @click="tabIdx(3)">
-            <div v-if="tabActiveIdx===3" class="underline">
+          <div class="tab-item" :class="{active:tabActiveIdx===1}" @click="tabIdx(1)">
+            <div v-if="tabActiveIdx===1" class="underline">
             </div><div class="label">{{tabData.order_pay_money.name}}</div><div class="val">{{tabData.order_pay_money.value}}</div>
           </div>
-          <div class="tab-item" :class="{active:tabActiveIdx===4}" @click="tabIdx(4)">
-            <div v-if="tabActiveIdx===4" class="underline"></div>
+          <div class="tab-item" :class="{active:tabActiveIdx===2}" @click="tabIdx(2)">
+            <div v-if="tabActiveIdx===2" class="underline"></div>
             <div class="label">{{tabData.order_pay_person_count.name}}</div><div class="val">{{tabData.order_pay_person_count.value}}</div>
           </div>
         </div>
@@ -280,7 +280,7 @@
       max_num: 0,
       max_rate: 0,
       tradeStatistic: {},
-      tabActiveIdx: 0,
+      tabActiveIdx: 5, // 浏览人数
       onInitChartPie(el, config, data) {
         if (!el) return
 

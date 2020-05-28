@@ -220,6 +220,7 @@
   import { chooseImageByPromise, findArrayIdx, getArrColumn, getDomain, uploadImages } from '../../common/helper'
   import { error, hideLoading, modal, showLoading } from '../../common/fun'
   import { dateTimePicker, getMonthDay, getNewDateArry } from '../../common/time'
+  import { Exception } from '../../common/Exception'
 
   const moment = require('moment')
   const fromNum = (num) => {
@@ -428,7 +429,7 @@
       async addImg() {
         try {
           if (this._click) throw Error('操作过快')
-          const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch(() => { throw Error('未选择图片') })
+          const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch((err) => { throw Error(err.errMsg) })
           const arr1 = files.map(file => {
             return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
           })
@@ -442,6 +443,7 @@
           this.imgTempList = ossUrls
           this._click = false
         } catch (e) {
+          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
           wx.$errorHandle(e)
         }
       },

@@ -32,3 +32,4 @@ export const getMsgList = (param, options) => Fetch({ url: '/chat/getMsgList', p
 
 // 查询会话列表
 export const getChatList = (param, options) => Fetch({ url: '/chat/getChatList', param, options })
+

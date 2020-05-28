@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="head" >
       <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')">
         <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
@@ -120,7 +121,9 @@
   import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
   import { get_order_num } from '../api/order'
-  import { checkIsLogin, ls, checkIsSettle } from '../common/helper'
+  import { checkIsLogin, ls, checkIsSettle, confirm } from '../common/helper'
+  import IM from '../common/Im/Im'
+  import { Exception } from '../common/Exception'
 
   wepy.page({
     store,
@@ -205,32 +208,38 @@
         })
       },
       async getInit() {
-        await initInfo().then(res => {
-          this.info = res.data
-          if (!this.info.entry_process) {
-            wx.showModal({
-              title: '提示',
-              content: '你还未入驻成功，即将前往入驻页面',
-              success (res) {
-                if (res.confirm) {
-                  linkTo('/pages/join/BusinessStation')
-                } else if (res.cancel) {
-                }
-              }
-            })
+        try {
+        // 初始化商户信息
+          await initInfo().then(res => {
+            this.info = res.data
+            if (!this.info.entry_process) {
+              confirm({ title: '提示', content: '你还未入驻成功，即将前往入驻页面' }).then(() => {
+                linkTo('/pages/join/BusinessStation')
+              }).catch(() => { throw Error('nocare') })
+            }
+          }).catch(err => { throw Error(err.msg) })
+
+          let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+          this.infoData = arr[0]
+          this.$store.commit('SET_BIZ_INFO', this.infoData)
+
+          // 订单角标
+          this.orderNum = await get_order_num({}).then(res => res.data).catch(() => { throw Error('nocare') })
+
+          if(!ls.get('listenStatus')){
+            // IM全局
+            const imInstance = new IM()
+            // 设置本地用户信息
+            imInstance.setSendInfo({ type: 'biz', id: this.infoData.id, name: this.infoData.biz_shop_name, avatar: this.infoData.biz_logo })
+            await imInstance.start() // 等拿token
+
+            imInstance.openListen()
           }
-          // this.is_auth = this.info.entry_process.is_auth
-          // if (1 || this.is_auth !== 1) {
-          //   linkTo('/pages/join/BusinessStation')
-          // }
-        }).catch(err => {})
 
-        let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
-        this.infoData = arr[0]
 
-        this.$store.commit('SET_BIZ_INFO', this.infoData)
-
-        this.orderNum = await get_order_num({}).then(res => res.data).catch(err => {})
+        } catch (e) {
+          Exception.handle(e)
+        }
       }
     },
     onload() {
@@ -431,6 +440,7 @@
     "navigationBarTextStyle": "black",
     "navigationBarBackgroundColor": "#f8f8f8",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon"
     }

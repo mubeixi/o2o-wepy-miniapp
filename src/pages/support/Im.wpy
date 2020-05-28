@@ -1,93 +1,94 @@
 <style lang="scss">
-@import "../assets/variables.scss";
-.im-card-box{
-  position: fixed;
-  top: 0;
-  bottom: constant(safe-area-inset-bottom);
-  bottom: env(safe-area-inset-bottom);
-  overflow-y: scroll;
-  width: 750rpx;
-  background: #e5e5e5;
-}
-.im-bottom-action{
-  position: fixed;
-  width: 750rpx;
-  left: 0;
-  bottom: 0;
-  background: #f2f2f2;
-  .safearea-space{
-    height: constant(safe-area-inset-bottom);
-    height: env(safe-area-inset-bottom);
-  }
-  .onther{
-    padding: 40rpx 0;
-    display: flex;
-    .onther-item{
-      width: 96rpx;
-      height: 126rpx;
-      margin-left: 70rpx;
-      text-align: center;
-      .label{
-        font-size: 28rpx;
-        height: 30rpx;
-        line-height: 30rpx;
-        color: #666;
-      }
-      .icon-box{
-        width: 96rpx;
-        height: 96rpx;
-      }
-
-    }
-  }
-  .text{
-    display: flex;
-    align-items: center;
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .im-card-box{
+    position: fixed;
+    top: 0;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
+    overflow-y: scroll;
     width: 750rpx;
-    height: 110rpx;
-    border-bottom: 1px solid #E2E2E2;
-    .input-box{
-      margin-left: 20rpx;
-      flex: 1;
+    background: #e5e5e5;
+  }
+  .im-bottom-action{
+    position: fixed;
+    width: 750rpx;
+    left: 0;
+    bottom: 0;
+    background: #f2f2f2;
+    .safearea-space{
+      height: constant(safe-area-inset-bottom);
+      height: env(safe-area-inset-bottom);
+    }
+    .onther{
+      padding: 40rpx 0;
+      display: flex;
+      .onther-item{
+        width: 96rpx;
+        height: 126rpx;
+        margin-left: 70rpx;
+        text-align: center;
+        .label{
+          font-size: 28rpx;
+          height: 30rpx;
+          line-height: 30rpx;
+          color: #666;
+        }
+        .icon-box{
+          width: 96rpx;
+          height: 96rpx;
+        }
+
+      }
+    }
+    .text{
       display: flex;
       align-items: center;
-      .input-ele{
-        flex: 1;
-        margin-right: 20rpx;
-        padding: 0 20rpx;
-        background: #fff;
-        border: 1px solid #eee;
-        height: 70rpx;
-        line-height: 70rpx;
-        border-radius: 70rpx;
-        font-size: 28rpx;
-      }
-    }
-    .submit-btn{
-      padding-right: 20rpx;
+      width: 750rpx;
       height: 110rpx;
-      .img-btn{
-        margin-top: 31rpx;
-        width: 48rpx;
-        height: 48rpx;
+      border-bottom: 1px solid #E2E2E2;
+      .input-box{
+        margin-left: 20rpx;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        .input-ele{
+          flex: 1;
+          margin-right: 20rpx;
+          padding: 0 20rpx;
+          background: #fff;
+          border: 1px solid #eee;
+          height: 70rpx;
+          line-height: 70rpx;
+          border-radius: 70rpx;
+          font-size: 28rpx;
+        }
       }
-      .btn{
-        width: 120rpx;
-        text-align: center;
-        line-height: 70rpx;
-        height: 70rpx;
-        border-radius: 70rpx;
-        background: $fun-primary-color;
-        color: #fff;
-        font-size: 28rpx;
+      .submit-btn{
+        padding-right: 20rpx;
+        height: 110rpx;
+        .img-btn{
+          margin-top: 31rpx;
+          width: 48rpx;
+          height: 48rpx;
+        }
+        .btn{
+          width: 120rpx;
+          text-align: center;
+          line-height: 70rpx;
+          height: 70rpx;
+          border-radius: 70rpx;
+          background: $fun-primary-color;
+          color: #fff;
+          font-size: 28rpx;
+        }
       }
     }
-  }
 
-}
+  }
 </style>
 <template>
-<div class="page-wrap">
+  <div class="page-wrap" :style="{width:systemInfo.safeArea.width+'px',height: systemInfo.safeArea.height+'px'}">
     <scroll-view
       scroll-y
       class="im-card-box"
@@ -137,13 +138,13 @@
 </template>
 <script>
   import wepy from '@wepy/core'
-  import store from '../store'
-  import pageMixin from '../mixins'
-  import { ls, setNavigationBarTitle, getArrColumn, chooseImageByPromise, checkIsLogin } from '../common/helper'
-  import IM from '../common/Im/Im'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { ls, setNavigationBarTitle, getArrColumn, chooseImageByPromise, checkIsLogin } from '../../common/helper'
+  import IM from '../../common/Im/Im'
 
-  import { error } from '../common/fun'
-  import {Exception} from '../common/Exception'
+  import { error, modal } from '../../common/fun'
+  import {Exception} from '../../common/Exception'
 
   let imInstance = null
 
@@ -151,6 +152,8 @@
     store,
     mixins: [pageMixin],
     data: {
+      toid: '',
+      totype: '',
       isFreshing: false,
       triggered: false,
       mode: '',
@@ -164,6 +167,14 @@
       bizInfo () {
         return this.$store.getters.getBizInfo()
       },
+      toViewPosition () {
+        try {
+          // - 1指向最后一个占位的就好了
+          return this.imInstance.chatList.length * 1000
+        } catch (e) {
+          return 0
+        }
+      },
       chatList () {
         try {
           const list = this.imInstance.chatList
@@ -174,6 +185,16 @@
       }
     },
     methods: {
+      /**
+       * 手动让视图到底部，适用于高度变化的情况
+       */
+      refreshScrollBottomPostion() {
+        const toViewIdx = this.toViewIdx
+        this.toViewIdx = ''
+        setTimeout(() => {
+          this.toViewIdx = toViewIdx
+        }, 50)
+      },
       // 更新记录用，用于添加的时候
       setViewIdx (val) {
         this.toViewIdx = val || ('msg-' + (this.imInstance.chatList.length - 1))
@@ -195,7 +216,10 @@
         if (!this.triggered) this.triggered = true
 
         // 不论成功还是失败
-        this.imInstance.getHistory().finally(() => {
+        this.imInstance.getHistory().then(() => {
+          this.triggered = false
+          this.isFreshing = false
+        }).catch(() => {
           this.triggered = false
           this.isFreshing = false
         })
@@ -210,17 +234,18 @@
           this.setViewIdx()
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
-          Exception.handle(e)
         }
       },
       async sendCamera () {
         try {
-          const files = await chooseImageByPromise({ sizeType: 1, sourceType: ['camera'] }).catch(err => { throw Error(err.errMsg || '选择照片失败') })
+          const files = await chooseImageByPromise({ sizeType: 1, sourceType: ['camera'] }).catch(err => {
+            throw Error(err.errMsg || '选择照片失败')
+          })
           const imgs = getArrColumn(files, 'path')
           await imInstance.sendImMessage({ content: '', type: 'image', tempPath: imgs[0] })
           this.setViewIdx()
         } catch (e) {
-          Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
         }
       },
       inputBlur () {
@@ -230,6 +255,7 @@
       },
       taggleMore () {
         this.showOnther = !this.showOnther
+        if (this.showOnther) this.refreshScrollBottomPostion()
       },
       async _init_func (options) {
         const { productId, orderId, origin } = options
@@ -240,7 +266,7 @@
         // 设置本地用户信息
         imInstance.setSendInfo({ type: 'biz', id: ls.get('biz_id'), name: this.bizInfo.biz_name, avatar: this.bizInfo.biz_logo })
         // 设置接收人的信息
-        imInstance.setReceiveInfo({type: 'user', id: 48})
+        imInstance.setReceiveInfo({type: this.totype, id: this.toid})
 
         await imInstance.start() // 等拿token
 
@@ -283,6 +309,13 @@
     },
     onLoad(options) {
       if (!checkIsLogin(1, 0)) return
+      const { tid, type } = options
+      if (!tid || !type) {
+        modal('参数错误')
+        return
+      }
+      this.toid = tid
+      this.totype = type
       this._init_func(options)
     },
     created() {
@@ -292,10 +325,10 @@
 </script>
 <config>
   {
-    "navigationBarTitleText": "demo",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "wzw-im-card":"~@/components/wzw-im-card"
-    }
+  "navigationBarTitleText": "demo",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-card":"~@/components/wzw-im-card"
+  }
   }
 </config>

@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  globals: { wx: true,getApp:true },
+  globals: { wx: true,getApp:true,getCurrentPages:"readonly" },
   parser: 'babel-eslint',
   parserOptions: {
     sourceType: 'module'

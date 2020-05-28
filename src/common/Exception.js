@@ -1,5 +1,5 @@
 
-import {modal,toast} from './fun'
+import {modal, toast} from './fun'
 
 /**
  * 异常类——构造函数模式
@@ -24,6 +24,7 @@ export function Exception () {
  * @constructor
  */
 function handle (e) {
+  if (e === 'nocare') return
   let { message = '错误信息', type = 'toast', icon = 'none' } = e
   if (typeof e !== 'object') {
     message = e
