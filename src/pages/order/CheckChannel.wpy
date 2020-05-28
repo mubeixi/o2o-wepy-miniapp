@@ -9,7 +9,7 @@
       <div class="items p-t-10" style="margin-top: 70rpx !important;" @click="goOrderCode">
         <image @click="toCode" class="scan"  src="/static/order/juanma.png" />
         <div>
-          卷码核销
+          劵码核销
         </div>
       </div>
 

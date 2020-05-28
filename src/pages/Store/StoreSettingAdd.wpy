@@ -9,11 +9,11 @@
         <input type="text" v-model="store_name"  placeholder="请输入门店名称" placeholder-class="__placeholder"  class="input-logistics" >
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between"  @click.stop="$openPop('address')">
-      <div class="store-title">
+    <div class="store-item "  @click.stop="$openPop('address')">
+      <div class="store-title" style="float: left;height: 108rpx;line-height: 108rpx">
         所属区域
       </div>
-      <address @up="updateAddress" :visiable="false"   class="address m-l-10 flex flex-vertical-center" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
+      <address  @up="updateAddress" :visiable="false" :province="province" :city="city" :area="area"   class="address m-l-10 flex flex-vertical-center" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
 
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
@@ -116,6 +116,9 @@
           let arr = res.data[0]
           this.store_name = arr.store_name
           this.store_address = arr.store_address
+          this.province = arr.store_province
+          this.city = arr.store_city
+          this.area = arr.store_area
           this.store_mobile = arr.store_mobile
           this.business_start = arr.business_start
           this.business_end = arr.business_end
@@ -246,10 +249,13 @@
     font-size: 26rpx;
     color: #333333;
   }
-  .address{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  .address{
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
     z-index: 10;
     height: 108rpx;
-    flex: 1;}
+    width: 560rpx;
+    float: left;
+  }
   .__placeholder{
     color: #CAC8C8;
   }

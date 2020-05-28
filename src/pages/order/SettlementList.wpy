@@ -1,5 +1,5 @@
 <template>
-  <div class="settlement-list p-t-20">
+  <div class="settlement-list p-t-20 page-wrap">
         <div class="settlement-list-item" v-for="(item,index) of listData" :key="index">
             <div class="settlement-list-item-title flex flex-vertical-center flex-justify-between p-l-13 p-r-10 fz-14">
                   <div class="c3">
@@ -44,6 +44,11 @@
         </div>
 
         <div style="height: 86rpx;width: 750rpx"></div>
+
+        <!--占住底部的位置-->
+        <div class="safearea-box fixed bgwhite"></div>
+        <!--放置页面底部内容被挡住，额外给的高度-->
+        <div class="safearea-box"></div>
         <div class="submit" @click="$linkTo('/pages/order/Settlement')">
           申请结算
         </div>

@@ -1,5 +1,17 @@
 import { fetch } from '../common/request'
 
+
+
+// 收取退款退货申请
+export const systemReceiptRefundProd = (param, options) => fetch({act: 'system_receipt_refund_prod', param, options})
+// 驳回退款退货申请
+export const systemRefuseApply = (param, options) => fetch({act: 'system_refuse_apply', param, options})
+// 同意退款退货申请
+export const systemConfirmApply = (param, options) => fetch({act: 'system_confirm_apply', param, options})
+// 获取退款单详情
+export const getBackOrderDetail = (param, options) => fetch({act: 'get_back_order_detail', param, options})
+// 获取退款单列表
+export const getBackOrder = (param, options) => fetch({act: 'get_back_order', param, options})
 // 订单列表
 export const getOrder = (param, options) => fetch({act: 'get_order', param, options})
 
