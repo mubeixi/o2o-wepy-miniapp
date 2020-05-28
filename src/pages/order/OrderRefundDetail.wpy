@@ -61,10 +61,10 @@
         <div class="divHeight">
           退款时间： <span class="fontColor">{{listData.Back_CreateTime}}</span>
         </div>
-        <div class="divHeight">
+        <div class="divHeight" v-if="listData.Back_Shipping">
           退款物流名称： <span class="fontColor">{{listData.Back_Shipping}}</span>
         </div>
-        <div class="divHeight">
+        <div class="divHeight" v-if="listData.Back_ShippingID">
           退款物流单号： <span class="fontColor">{{listData.Back_ShippingID}}</span>
         </div>
 
