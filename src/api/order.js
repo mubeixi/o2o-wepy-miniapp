@@ -3,6 +3,8 @@ import { fetch } from '../common/request'
 
 
 // 收取退款退货申请
+export const getBackOrderNum = (param, options) => fetch({act: 'getBackOrderNum', param, options})
+// 收取退款退货申请
 export const systemReceiptRefundProd = (param, options) => fetch({act: 'system_receipt_refund_prod', param, options})
 // 驳回退款退货申请
 export const systemRefuseApply = (param, options) => fetch({act: 'system_refuse_apply', param, options})

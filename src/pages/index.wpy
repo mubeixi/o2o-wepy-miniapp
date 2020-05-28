@@ -94,9 +94,12 @@
             <icon type="iconjiesuan" class="grid-item-icon" size="24" color="#6058fd"></icon>
             <div class="grid-item-title">结算</div>
           </div>
+
           <div class="grid-item" @click="goOrderRefund">
             <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
-            <div class="grid-item-title">退款售后</div>
+            <div class="grid-item-title" style="display: flex;justify-content: center;">
+              退款售后<span v-if="orderNum.waitsend" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -120,7 +123,7 @@
   import { bizLogin, initInfo } from '../api/system'
   import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
-  import { get_order_num } from '../api/order'
+  import { get_order_num, getBackOrderNum } from '../api/order'
   import { checkIsLogin, ls, checkIsSettle } from '../common/helper'
 
   wepy.page({
@@ -129,6 +132,11 @@
     data: {
       storeInfo: {
         volidate: false
+      },
+      orderBackNum: {
+        orderSum: 0,
+        waitprocess: 0,
+        waitconfirm: 0
       },
       orderNum: {waitsend: 0},
       info: {},
@@ -236,6 +244,9 @@
         this.$store.commit('SET_BIZ_INFO', this.infoData)
 
         this.orderNum = await get_order_num({}).then(res => res.data).catch(err => {})
+        this.orderBackNum = await getBackOrderNum({}).then(res => res.data).catch(err => {})
+
+        this.orderBackNum.orderSum = this.orderBackNum.waitprocess * 1 + this.orderBackNum.waitconfirm * 1
       }
     },
     onload() {
