@@ -4,26 +4,22 @@
           <div class="order-item" :class="{'active':status==-1}" @click="changeTab(-1)">
             全部
           </div>
-          <div class="order-item" :class="{'active':status==1}"   @click="changeTab(1)">
-            待付款
+          <div class="order-item" :class="{'active':status==0}"   @click="changeTab(0)">
+            待处理
           </div>
-          <div class="order-item"  :class="{'active':status==2}"   @click="changeTab(2)">
+          <div class="order-item"  :class="{'active':status==1}"   @click="changeTab(1)">
             待发货
           </div>
-          <div class="order-item"  :class="{'active':status==0}"  @click="changeTab(0)">
+          <div class="order-item"  :class="{'active':status==2}"  @click="changeTab(2)">
             待确认
           </div>
-          <div class="order-item"  :class="{'active':status==4}"   @click="changeTab(4)">
-            已完成
+          <div class="order-item"  :class="{'active':status==3}"   @click="changeTab(3)">
+            待退款
           </div>
       </div>
-      <div class="m-t-15 m-l-10 order-search flex flex-vertical-center">
+      <div class="m-t-15  order-search flex flex-vertical-center  input-div">
         <input type="text" bindconfirm="searchList"  v-model="prod_name" placeholder="请输入商品关键字" confirm-type="search" class="input-search"  placeholder-class="_place"/>
         <icon  type="iconsearch1" size="16"  color="#999" class="icon-search"></icon>
-        <div class="erweima m-l-15" @click="$linkTo('/pages/order/CheckChannel')">
-          <icon  type="iconsaoma" size="20"  color="#00A8FF" ></icon>
-          <div>核销</div>
-        </div>
       </div>
 
       <div class="list-item p-b-13" v-for="(item,index) of list" :key="index">
@@ -32,12 +28,12 @@
                   订单号：{{item.Order_ID}}
                 </div>
                 <div>
-                  {{item.Order_Status_desc}}
+                  {{item.Back_Status_desc}}
                 </div>
             </div>
-            <div class="item-center p-t-10  p-l-7 p-r-12 flex " v-for="(pro,ind) of item.prod_list" :key="ind"  @click="sendOrder(item.Order_ID)">
+            <div class="item-center p-t-10  p-l-7 p-r-12 flex " v-for="(pro,ind) of item.prod_list" :key="ind"  @click="sendOrder(item.Back_ID)">
               <fun-img class="thumb m-r-14" :src="pro.prod_img"></fun-img>
-              <div class="flex1" >
+              <div class="flex1">
                   <div class="fz-14 c3 item-title m-b-10">
                     {{pro.prod_name}}
                   </div>
@@ -48,7 +44,7 @@
                     <div style="height: 50rpx;" v-else>
                     </div>
                     <div>
-                      ×{{pro.prod_count}}
+                      ×{{pro.is_back_num}}
                     </div>
                   </div>
                   <div class="item-price">
@@ -56,16 +52,13 @@
                   </div>
               </div>
             </div>
-            <div class="item-bottom m-t-15 fz-14"  v-if="item.Order_Status==2">
-                <div class="item-btn c6" @click="rejectOrder(item.Order_ID)">
-                  拒单
+            <div class="item-bottom m-t-15 fz-14"  >
+                <div class="item-btn c6" v-if="item.Back_Status===2" @click="rejectOrder(item.Order_ID)">
+                  查看物流
                 </div>
-              <div v-if="!item.Order_IsVirtual" class="item-btn item-btn-active m-l-10" @click="sendOrder(item.Order_ID)">
-                去发货
-              </div>
-              <div v-if="item.Order_IsVirtual" class="item-btn item-btn-active m-l-10" @click="$linkTo('/pages/order/CheckChannel')">
-                核销
-              </div>
+                <div v-if="item.Back_Status===0||item.Back_Status===2"  class="item-btn item-btn-active m-l-10" @click="sendOrder(item.Back_ID)">
+                  去处理
+                </div>
             </div>
       </div>
 
@@ -87,7 +80,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getOrder, systemRejectOrder } from '../../api/order'
+  import { getBackOrder, systemRejectOrder } from '../../api/order'
   import { error, toast } from '../../common/fun'
 
   wepy.page({
@@ -110,7 +103,7 @@
     },
     methods: {
       sendOrder(id) {
-        let data = '/pages/order/OrderRetailSend?order_id=' + id
+        let data = '/pages/order/OrderRefundDetail?order_id=' + id
         this.$linkTo(data)
       },
       confirmInput() {
@@ -126,11 +119,13 @@
         systemRejectOrder(data, {tip: 'loading', mask: true}).then(res => {
           toast('拒单成功')
           this.getOrder(1)
-        }).catch(e => {})
+        }).catch(e => {
+          error(e.msg)
+        })
       },
       rejectOrder(id) {
         this.orderId = id
-        this.show = true
+        //this.show = true
       },
       cancelInput() {
         this.reason = ''
@@ -150,15 +145,15 @@
         let data = {
           page: this.page,
           pageSize: this.pageSize,
-          source: 'biz',
+          Back_Type: 'shop,pintuan,offline,offline_st,offline_qrcode',
           prod_name: this.prod_name
         }
         if (this.status >= 0) {
-          data.Order_Status = this.status
+          data.Back_Status = this.status
         }
-        let arr = await getOrder(data, {tip: '加载中'}).catch(e => { throw error('获取列表错误') })
+        let arr = await getBackOrder(data, {tip: '加载中'}).catch(e => { throw error('获取列表错误') })
 
-        if (order == 1) {
+        if (order === 1) {
           this.list = arr.data
         } else {
           arr.data.map(item => {
@@ -212,11 +207,17 @@
   .icon-search{
     position: absolute;
     top:20rpx ;
-    left:540rpx ;
+    right:40rpx ;
   }
   .order-search{position: relative}
+  .input-div{
+    width: 750rpx;
+    box-sizing: border-box;
+    padding: 0rpx 10px;
+    position: relative;
+  }
   .input-search{
-    width: 600rpx;
+    width: 710rpx;
     height:70rpx;
     line-height: 70rpx;
     box-sizing: border-box;
@@ -332,7 +333,7 @@
 </style>
 <config>
   {
-  "navigationBarTitleText": "零售订单",
+  "navigationBarTitleText": "退款订单",
   "usingComponents": {
   "icon": "~@/components/icon",
   "fun-img": "~@/components/fun-img"

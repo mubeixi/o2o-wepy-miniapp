@@ -2,12 +2,12 @@
   <div class="mail-all page-wrap">
     <div class="first">
       <span class="first-title">默认运费：</span>
-      <input type="digit" class="input-out"  v-model="express_start"/> kg内，
+      <input type="digit" class="input-out"  v-model="express_start"/> {{index===0?'kg':'件'}}内，
       <input type="digit"  class="input-out" v-model="express_postage"/> 元
     </div>
     <div class="second">
       每增加
-      <input type="digit" class="input-out" v-model="express_plus"/> kg，增加运费
+      <input type="digit" class="input-out" v-model="express_plus"/> {{index===0?'kg':'件'}}，增加运费
       <input type="digit"  class="input-out" v-model="express_postageplus"/> 元
     </div>
 
@@ -90,6 +90,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      index:0,
       ind: 0,
       temp_id: '',
       editData: {},
@@ -156,6 +157,9 @@
     onLoad(options) {
       if (options.temp_id) {
         this.temp_id = options.temp_id
+      }
+      if (options.ind) {
+        this.index = Number(options.ind)
       }
       this.editData = ls.get('Template_Content')
       if (this.editData) {

@@ -119,7 +119,7 @@
 
                   </div>
                   <div>
-                    <switch :checked="dada.status===1" bindchange="switch1Changes('dada',$event)" style="transform: scale(.8)"></switch>
+                    <switch :checked="dada.status===1" bindchange="switch1Changes('dada',$event,dada)" style="transform: scale(.8)"></switch>
                   </div>
               </div>
         </div>
@@ -149,7 +149,7 @@
 
             </div>
             <div>
-              <switch :checked="meituan.status===1" bindchange="switch1Changes('meituan',$event)" style="transform: scale(.8)"></switch>
+              <switch :checked="meituan.status===1" bindchange="switch1Changes('meituan',$event,meituan)" style="transform: scale(.8)"></switch>
             </div>
           </div>
         </div>
@@ -179,7 +179,7 @@
 
             </div>
             <div>
-              <switch :checked="fengniao.status===1"  bindchange="switch1Changes('fengniao',$event)" style="transform: scale(.8)"></switch>
+              <switch :checked="fengniao.status===1"  bindchange="switch1Changes('fengniao',$event,fengniao)" style="transform: scale(.8)"></switch>
             </div>
           </div>
         </div>
@@ -206,10 +206,10 @@
       businessTypeValue: '',
       free_shipping: 1,
       business_type: {},
-      dada: {},
+      dada: {status:0},
       meituan: {},
       fengniao: {},
-      cityData:{}
+      cityData: {}
     },
     onShow() {
       this.init()
@@ -219,16 +219,31 @@
         let url = '/pages/store/SameCityUpda?type=' + item
         linkTo(url)
       },
-      async switch1Changes(item, e) {
+      async switch1Changes(item, e,objData) {
         let boo = e.$wx.detail.value
         if (boo) {
           showLoading('开启中')
+          objData.status = 1
         } else {
+          objData.status = 0
           showLoading('关闭中')
         }
-        await cityExpressProvider({type: item}).then(res => {}).catch(e => {})
+        await cityExpressProvider({type: item}).then(res => {
+          if (boo) {
+            objData.status = 1
+          } else {
+            objData.status = 0
+          }
+        }).catch(e => {
+          if (boo) {
+            objData.status = 0
+          } else {
+            objData.status = 1
+          }
+        })
         hideLoading()
-        this.initCityExpress()
+
+        // this.initCityExpress()
       },
       switch1Change(e) {
         let boo = e.$wx.detail.value
@@ -268,7 +283,7 @@
         getCityExpressConfig().then(res => {
           let arr = res.data.business_type
           this.businessTypeValue = res.data.city_express_config.business_type
-          this.cityData=res.data.city_express_config
+          this.cityData = res.data.city_express_config
           this.provider = res.data.provider
           for (let item of res.data.express_info) {
             if (item.provider === 'dada') {

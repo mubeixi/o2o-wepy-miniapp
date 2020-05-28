@@ -94,8 +94,9 @@
             <icon type="iconjiesuan" class="grid-item-icon" size="24" color="#6058fd"></icon>
             <div class="grid-item-title">结算</div>
           </div>
-          <div class="grid-item">
-
+          <div class="grid-item" @click="goOrderRefund">
+            <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
+            <div class="grid-item-title">退款售后</div>
           </div>
         </div>
       </div>
@@ -151,6 +152,10 @@
       goTodayOrder() {
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard?tabActiveIdx=1')
+      },
+      goOrderRefund() {
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/order/OrderRefund')
       },
       goSettlementList() {
         // if (!checkIsSettle(1, 1)) return
