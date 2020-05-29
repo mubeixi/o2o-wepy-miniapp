@@ -57,3 +57,10 @@ export const flashsaleShare = (param, options) => fetch({act: 'flashsaleShare', 
 
 // 分享限时抢购活动（产品）
 export const spikeShare = (param, options) => fetch({act: 'spikeShare', param, options})
+
+// 获取商品海报
+export const getProductSharePic = (param, options) => fetch({
+  act: 'shareProduct',
+  param,
+  options
+})

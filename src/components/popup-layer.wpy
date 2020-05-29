@@ -68,6 +68,11 @@
       }
     },
     watch: {
+      isShow: {
+        handler(val) {
+          console.log('ifshow居然变化了？', val)
+        }
+      }
       // showPop(value) {
       //   if (value) {
       //     this.show()

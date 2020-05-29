@@ -136,7 +136,6 @@
           this.$emit('done', {imgs: this.imgs, ext: this.ext})
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
-          wx.$errorHandle(e)
         }
       }
     }

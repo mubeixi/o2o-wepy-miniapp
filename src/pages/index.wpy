@@ -154,15 +154,15 @@
     methods: {
       goTodayPerson() {
         // if (!checkIsSettle(1, 1)) return
-        linkTo('/pages/statistics/dashboard?tabActiveIdx=0')
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=7&today=1')
       },
       goTodayOrderMoney() {
        // if (!checkIsSettle(1, 1)) return
-        linkTo('/pages/statistics/dashboard?tabActiveIdx=3')
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=2&today=1')
       },
       goTodayOrder() {
         // if (!checkIsSettle(1, 1)) return
-        linkTo('/pages/statistics/dashboard?tabActiveIdx=1')
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=0&today=1')
       },
       goOrderRefund() {
         // if (!checkIsSettle(1, 1)) return

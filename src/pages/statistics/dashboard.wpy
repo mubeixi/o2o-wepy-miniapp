@@ -111,41 +111,145 @@
     }
   }
 
+  .time-box{
+    width: 710rpx;
+    margin: 0 25rpx 30rpx;
+    .time-tab{
+      display: flex;
+      padding: 30rpx 0;
+      .time-tab-item{
+        flex: 1;
+        padding: 20rpx 0;
+        text-align: center;
+        box-sizing: border-box;
+        &.active{
+          border-bottom: 4rpx solid $fun-blue-color;
+          color: $fun-blue-color;
+        }
+      }
 
+    }
+    .time-line{
+      background: #fff;
+      border-radius: 10rpx;
+      height: 97rpx;
+      padding: 20rpx;
+      box-sizing: border-box;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .start-end{
+        display: flex;
+        .start{
+          width: 230rpx;
+          height:  55rpx;
+          line-height: 55rpx;
+          border:1px solid #eee;
+          box-sizing: border-box;
+          padding: 0 16rpx;
+        }
+        .hr{
+          height: 1px;
+          background: #eee;
+          width: 10rpx;
+          margin: 0 10rpx;
+        }
+        .end{
 
+          width: 230rpx;
+          height:  55rpx;
+          line-height: 55rpx;
+          box-sizing: border-box;
+          padding: 0 16rpx;
+          border:1px solid #eee;
+
+        }
+      }
+      .search-btn{
+        width:90rpx;
+        height:50rpx;
+        text-align: center;
+        line-height: 50rpx;
+        background:$fun-blue-color;
+        border-radius:5rpx;
+        color: #fff;
+
+      }
+    }
+  }
 
 </style>
 <template>
   <div class="page-wrap p-b-30">
 
+    <div class="time-box">
+      <div class="time-tab fz-14 c3">
+        <div class="time-tab-item" @click="setTimeTabIdx(0)" :class="{active:timeTabIdx===0}">今日</div>
+        <div class="time-tab-item" @click="setTimeTabIdx(1)" :class="{active:timeTabIdx===1}">昨日</div>
+        <div class="time-tab-item" @click="setTimeTabIdx(2)" :class="{active:timeTabIdx===2}">7天</div>
+        <div class="time-tab-item" @click="setTimeTabIdx(3)" :class="{active:timeTabIdx===3}">30天</div>
+      </div>
+      <div class="time-line">
+        <div class="start-end">
+          <div class="start">
+            <picker mode="date" :value="startTime" :start="timeLimitStart" :end="timeLimitEnd" @change="bindStartTimeChange">
+              <div class="flex flex-vertical-center flex-justify-between">
+                <div class="fz-12 c6">{{startTime||'请选择'}}</div>
+                <icon color="#999" type="iconrili"></icon>
+              </div>
+            </picker>
+
+          </div>
+          <div class="hr"></div>
+          <div class="end">
+            <picker class="flex-1" mode="date" :value="endTime" :start="timeLimitStart" :end="timeLimitEnd" @change="bindEndTimeChange">
+              <div class="flex flex-vertical-center flex-justify-between">
+                <div class="fz-12 c6">{{endTime||'请选择'}}</div>
+                <icon color="#999" type="iconrili"></icon>
+              </div>
+            </picker>
+          </div>
+        </div>
+        <div class="search-btn fz-12" @click="restData">搜索</div>
+      </div>
+    </div>
+
     <div class="section">
       <div class="title"><span class="before"></span><span class="text">实时数据</span></div>
       <div class="main">
         <div class="tab-list">
-          <div class="tab-item" :class="{active:tabActiveIdx===5}" @click="tabIdx(5)">
-            <div v-if="tabActiveIdx===5" class="underline"></div>
+          <div class="tab-item" :class="{active:tabActiveIdx===7}" @click="tabIdx(7)">
+            <div v-if="tabActiveIdx===7" class="underline"></div>
             <div class="label">{{tabData.view_person_count.name}}</div><div class="val">{{tabData.view_person_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===0}" @click="tabIdx(0)">
+            <div v-if="tabActiveIdx===0" class="underline"></div>
+            <div class="label">{{tabData.order_count.name}}</div><div class="val">{{tabData.order_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===1}" @click="tabIdx(1)">
+            <div v-if="tabActiveIdx===1" class="underline"></div>
+            <div class="label">{{tabData.order_pay_count.name}}</div><div class="val">{{tabData.order_pay_count.value}}</div>
+          </div>
+          <div class="tab-item" :class="{active:tabActiveIdx===2}" @click="tabIdx(2)">
+            <div v-if="tabActiveIdx===2" class="underline">
+            </div><div class="label">{{tabData.order_pay_money.name}}</div><div class="val">{{tabData.order_pay_money.value}}</div>
           </div>
           <div class="tab-item" :class="{active:tabActiveIdx===4}" @click="tabIdx(4)">
             <div v-if="tabActiveIdx===4" class="underline"></div>
-            <div class="label">{{tabData.order_count.name}}</div><div class="val">{{tabData.order_count.value}}</div>
-          </div>
-          <div class="tab-item" :class="{active:tabActiveIdx===2}" @click="tabIdx(2)">
-            <div v-if="tabActiveIdx===2" class="underline"></div>
-            <div class="label">{{tabData.order_pay_count.name}}</div><div class="val">{{tabData.order_pay_count.value}}</div>
-          </div>
-          <div class="tab-item" :class="{active:tabActiveIdx===1}" @click="tabIdx(1)">
-            <div v-if="tabActiveIdx===1" class="underline">
-            </div><div class="label">{{tabData.order_pay_money.name}}</div><div class="val">{{tabData.order_pay_money.value}}</div>
-          </div>
-          <div class="tab-item" :class="{active:tabActiveIdx===2}" @click="tabIdx(2)">
-            <div v-if="tabActiveIdx===2" class="underline"></div>
             <div class="label">{{tabData.order_pay_person_count.name}}</div><div class="val">{{tabData.order_pay_person_count.value}}</div>
           </div>
         </div>
 
 
-        <echarts ref="catTime" :propData="charts[tabActiveIdx].data" :conf="charts[tabActiveIdx].conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
+        <echarts
+          ref="catTime"
+          :propData="charts[tabActiveIdx].data"
+          :conf="charts[tabActiveIdx].conf"
+          :lazyLoad="chartReady"
+          class="swiper-echarts"
+          :onInit="onInitChart1"
+        ></echarts>
 <!--        <div class="foot">-->
 <!--          <span>查看详情</span>-->
 <!--          <icon type="iconarrowleft" size="14" color="#999"></icon>-->
@@ -245,9 +349,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { hideLoading, modal, showLoading } from '../../common/fun'
+  import { error, hideLoading, modal, showLoading } from '../../common/fun'
   import { getNewOldTradeStatistic, getTradeStatistic, systemProdSales } from '../../api/store'
   import { createF2Chart } from '../../mixins/f2'
+  import {ls} from '../../common/helper'
 
   const moment = require('moment')
 
@@ -267,10 +372,19 @@
     return arrSum === 0 ? (parseInt(1 / arr.length * 100) / 100) : (parseInt(item[key] / arrSum * 100) / 100)
   }
 
+  function getChartMask(){
+    return ls.get('today') ? 'HH' : 'MM-DD'
+  }
+
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      timeTabIdx: 0,
+      startTime: '',
+      endTime: '',
+      timeLimitStart: '',
+      timeLimitEnd: '',
       newOldTradeStatistic: {},
       systemProdSalesData: {list: []},
       tabData: {},
@@ -280,7 +394,7 @@
       max_num: 0,
       max_rate: 0,
       tradeStatistic: {},
-      tabActiveIdx: 5, // 浏览人数
+      tabActiveIdx: 7, // 浏览人数
       onInitChartPie(el, config, data) {
         if (!el) return
 
@@ -353,7 +467,7 @@
           date: {
             range: [0, 1],
             type: 'timeCat',
-            mask: 'HH'
+            mask: getChartMask()
           },
           value: {
             min: config.min,
@@ -374,18 +488,64 @@
 
     },
     methods: {
+      restData() {
+        if (this.startTime && this.endTime) {
+          if (moment(this.startTime).isAfter(this.endTime)) {
+            error('结束时间应该大于开始时间')
+            return
+          }
+        }
+        this._init_func('refresh')
+      },
+      setTimeTabIdx(idx) {
+        this.timeTabIdx = idx
+        var start = '', end = ''
+
+        switch (idx) {
+          case 0:
+            // 今天
+            start = moment().format('YYYY-MM-DD')
+            ls.set('today', 1)
+            break;
+          case 1:
+            // 昨天
+            start = moment().subtract(1, 'days').format('YYYY-MM-DD')
+            ls.set('today', 1)
+            break;
+          case 2:
+            // 7天
+            start = moment().subtract(7, 'days').format('YYYY-MM-DD')
+            ls.set('today', 0,1)
+            break;
+          case 3:
+            // 30天
+            start = moment().subtract(30, 'days').format('YYYY-MM-DD')
+            ls.set('today', 0,1)
+            break;
+        }
+        this.startTime = start
+        this.endTime = end
+      },
+      bindEndTimeChange(e) {
+        console.log(e)
+        this.endTime = e.$wx.detail.value
+      },
+      bindStartTimeChange(e) {
+        console.log(e)
+        this.startTime = e.$wx.detail.value
+      },
       tabIdx(idx) {
         this.tabActiveIdx = idx
         setTimeout(() => {
           this.$refs.catTime.init()
         })
       },
-      async _init_func() {
+      async _init_func(action) {
         try {
           showLoading('初始化信息')
 
           // 线图
-          const {data: tradeStatistic} = await getTradeStatistic().catch(() => { throw new Error('获取统计失败') })
+          const {data: tradeStatistic} = await getTradeStatistic({start_time: this.startTime, end_time: this.endTime}).catch(() => { throw new Error('获取统计失败') })
           const {data: tabData = {}, titles = [], time_list = [], charts = [], max_num = 0, max_rate = 0} = tradeStatistic
           this.tabData = tabData
           this.titles = titles
@@ -409,10 +569,14 @@
           this.charts = charts
           this.max_num = max_num
           this.max_rate = max_rate
-          this.$refs.catTime.init()
+          if (action === 'refresh') {
+            this.$refs.catTime.refresh()
+          } else {
+            this.$refs.catTime.init()
+          }
 
           // 饼图
-          let {data: newOldTradeStatistic} = await getNewOldTradeStatistic().catch(() => { throw new Error('获取统计失败') })
+          let {data: newOldTradeStatistic} = await getNewOldTradeStatistic({search_time: this.startTime}).catch(() => { throw new Error('获取统计失败') })
           // for (let item of newOldTradeStatistic.circles) {
           //   item.value = Math.random() * 100
           // }
@@ -430,7 +594,7 @@
           this.$refs.pie.init()
 
           // 底部
-          const proPostData = {time: 'desc', start_time: moment().format('YYYY-MM-DD')}
+          const proPostData = {time: 'desc', start_time: this.startTime, end_time: this.endTime}
           const {data: systemProdSalesData} = await systemProdSales(proPostData).catch(() => { throw new Error('获取商品销售数据失败') })
           this.systemProdSalesData = systemProdSalesData
 
@@ -441,7 +605,7 @@
       }
     },
     onShow() {
-      this._init_func()
+
     },
     onReady() {
 
@@ -450,6 +614,21 @@
       if (options.tabActiveIdx >= 0) {
         this.tabActiveIdx = Number(options.tabActiveIdx)
       }
+
+      if (options.today) {
+        ls.set('today', 1)
+        this.timeTabIdx = 0
+      } else {
+        ls.set('today', 0,1)
+      }
+
+      this.timeLimitEnd = moment().format('YYYY-MM-DD')
+      this.timeLimitStart = '' // 服务器强大，不限制开始时间
+
+      this.startTime = moment().format('YYYY-MM-DD')
+      // this.endTime = moment().format('YYYY-MM-DD')
+
+      this._init_func()
     }
   })
 </script>

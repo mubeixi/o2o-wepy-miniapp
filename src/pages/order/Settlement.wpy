@@ -37,6 +37,9 @@
             <span class="fz-14">退款金额：</span>¥{{listData.back_amount}}
           </div>
           <div>
+            <span class="fz-14">分享赚发放：</span>¥{{listData.share_commission}}
+          </div>
+          <div>
             <span class="fz-14">商家优惠：</span>¥{{listData.biz_discount}}
           </div>
           <div>
@@ -64,6 +67,9 @@
             退款
           </div>
           <div class="settlement-tr flex1">
+            分享赚
+          </div>
+          <div class="settlement-tr flex1">
             平台分佣
           </div>
           <div class="settlement-tr flex1">
@@ -79,6 +85,9 @@
           </div>
           <div class="settlement-tr flex1">
             ¥{{order.back_amount}}
+          </div>
+          <div class="settlement-tr flex1">
+            ¥{{order.share_commission}}
           </div>
           <div class="settlement-tr flex1">
             ¥{{order.platform_money}}

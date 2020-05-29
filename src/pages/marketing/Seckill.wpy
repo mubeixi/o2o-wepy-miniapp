@@ -42,7 +42,7 @@
             <span class="title" v-else>启用</span>
           </div>
 
-          <div class="action">
+          <div class="action" @click="toData(product)">
               <icon type="iconshuju"></icon>
               <span class="title">数据</span>
           </div>
@@ -94,6 +94,9 @@
       }
     },
     methods: {
+      toData(product) {
+        this.$linkTo('/pages/statistics/SeckillData?flashsale_id=' + product.id)
+      },
       async bindShare(id) {
         try {
           showLoading('生成中')
@@ -133,7 +136,7 @@
 
           ctx.setFontSize(26)
           ctx.setFillStyle('#333333')
-          ctx.fillText(userInfo.nickname, 235, 1115) //1086
+          ctx.fillText(userInfo.nickname, 235, 1115) // 1086
 
           await new Promise(resolve => {
             ctx.draw(false, function () {

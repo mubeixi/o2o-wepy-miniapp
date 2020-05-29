@@ -12,7 +12,7 @@
       background: white;
       border-radius: 10rpx;
       .title{
-        font-weight: bold;
+
       }
       .placeholder,.title{
         border-bottom: 1px solid #eee;
@@ -38,7 +38,10 @@
     <div class="container">
       <div class="list">
         <div class="item" v-for="(row,idx) in list" :key="idx" @click="selectFn(row)">
-          <div class="title c3 fz-16 p-b-15 p-t-15">{{row.title}}</div>
+          <div class="title flex flex-justify-between flex-vertical-center">
+            <span class="fz-bold fz-16 p-b-15 p-t-15 c3 ">{{row.title}}</span>
+            <span class="color-primary fz-12" v-if="select==row.id">已选中</span>
+          </div>
           <div class="placeholder c8  fz-14 p-t-10 p-b-10">买家下单时需要填写：{{row.placeholder}}等信息</div>
           <div class="actions p-t-10" @click.stop>
             <div @click.stop="$linkTo('/pages/order/OrderTmpl?id='+row.id)" class="action"><icon size="18"  color="#444" type="iconbianji1"></icon><span class="fz-14 c8 p-l-8">编辑</span></div>
@@ -81,6 +84,7 @@
     methods: {
       selectFn(row) {
         if (this.mode === 'none') return
+        this.select = row.id
         eventHub.$emit('goods-order-tmpl', {tmpl: row})
         this.$back()
       },

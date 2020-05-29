@@ -96,6 +96,7 @@
         type: Object,
         default () {
           return {
+            pidKey: 'Category_ParentID',
             children: 'children', // 指定子树为节点对象的某个属性值
             label: 'label', // 指定节点标签为节点对象的某个属性值
             disabled: 'disabled' // 指定节点选择框是否禁用为节点对象的某个属性值

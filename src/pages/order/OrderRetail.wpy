@@ -27,9 +27,14 @@
       </div>
 
       <div class="list-item p-b-13" v-for="(item,index) of list" :key="index">
-            <div class="item-top flex flex-vertical-center flex-justify-between fz-13">
+            <div class="item-top flex flex-vertical-center flex-justify-between fz-12">
                 <div class="c7">
                   订单号：{{item.Order_ID}}
+                  <block v-if="item.Order_Type ==='pintuan' && item.teamstatus_desc">
+                    <span class="m-l-10 c9">拼团状态:</span>
+                    <span class="color-red m-l-4">{{item.teamstatus_desc}}</span>
+                  </block>
+
                 </div>
                 <div>
                   {{item.Order_Status_desc}}
@@ -56,18 +61,30 @@
                   </div>
               </div>
             </div>
-            <div class="item-bottom m-t-15 fz-14"  v-if="item.Order_Status==2">
-                <div class="item-btn c6" @click="rejectOrder(item.Order_ID)">
-                  拒单
-                </div>
-              <div v-if="!item.Order_IsVirtual" class="item-btn item-btn-active m-l-10" @click="sendOrder(item.Order_ID)">
-                去发货
+            <div class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between" v-if="item.Order_Status==2">
+              <div class="item-btn c6" @click="rejectOrder(item.Order_ID)">
+                拒单
               </div>
+              <block v-if="item.Order_Type ==='pintuan'">
+                <!--0拼团中，1拼团成功，4拼团失败-->
+                <div v-if="!item.Order_IsVirtual && item.teamstatus ==1" class="item-btn item-btn-active m-l-10" @click="sendOrder(item.Order_ID)">
+                  去发货
+                </div>
+              </block>
+              <block v-else>
+                <div v-if="!item.Order_IsVirtual" class="item-btn item-btn-active m-l-10" @click="sendOrder(item.Order_ID)">
+                  去发货
+                </div>
+              </block>
+
               <div v-if="item.Order_IsVirtual" class="item-btn item-btn-active m-l-10" @click="$linkTo('/pages/order/CheckChannel')">
                 核销
               </div>
+
             </div>
       </div>
+
+      <div class="h30"></div>
 
     <div class="zhezhao" catchtouchmove="true" v-if="show">
       <div class="input-wrap">
