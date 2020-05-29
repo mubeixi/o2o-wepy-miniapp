@@ -20,6 +20,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
+  import { error } from '../../common/fun'
 
   wepy.page({
     store,
@@ -28,12 +29,43 @@
 
     },
     methods: {
+      translateQrData (origin) {
+        if (!origin) {
+          error('信息为空')
+          return
+        }
+
+        const dataArr = origin.split('##')
+        if (dataArr.length < 2) {
+          error('信息有误')
+          return
+        }
+        const act = dataArr[0]
+        const valArr = dataArr[1].split(';;')
+
+        const valObj = {}
+        for (var valStr of valArr) {
+          const tempArr = valStr.split('::')
+          valObj[tempArr[0]] = tempArr[1]
+        }
+        return {
+          act,
+          params: valObj
+        }
+      },
       scanFn() {
+        let _self = this
         wx.scanCode({
           scanType: 'qrCode',
           success: function (res) {
-            var result = res.resultStr // 当needResult 为 1 时，扫码返回的结果
-            console.log(result, 'ss')
+            const rt = _self.translateQrData(res.result)
+            const { act = '', params = {} } = rt
+
+            if (act === 'IsVirtualOrderCheck' && params.Order_Code) {
+              _self.$linkTo('/pages/order/CheckOrderInfo?Order_Code=' + params.Order_Code)
+            } else {
+              error('参数有误')
+            }
           },
           fail: function (err) {
 

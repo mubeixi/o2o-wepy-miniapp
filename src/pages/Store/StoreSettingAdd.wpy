@@ -270,7 +270,7 @@
     position: fixed;
     bottom: 0rpx;
     left: 0rpx;
-    z-index: 9;
+    z-index: 4;
   }
   .picker-mbx{
     flex: 1;

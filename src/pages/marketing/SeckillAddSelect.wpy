@@ -22,7 +22,7 @@
               {{it.Attr_Value.mobile_prod_attr_name}}
             </div>
             <div class="flex flex-vertical-center seckill-price fz-14 c9 m-b-12">
-              秒杀价格 <input v-model="it.price" type="number" placeholder="请输入秒杀价格"  placeholder-class="placeholder" class="input-sec m-l-11 m-r-10"/> 元
+              秒杀价格 <input v-model="it.price" type="digit" placeholder="请输入秒杀价格"  placeholder-class="placeholder" class="input-sec m-l-11 m-r-10"/> 元
             </div>
             <div class="flex flex-vertical-center seckill-price fz-14 c9 m-b-12">
               活动库存 <input v-model="it.count" type="number" placeholder="请输入活动库存" placeholder-class="placeholder"  class="input-sec m-l-11 m-r-10"/> 件

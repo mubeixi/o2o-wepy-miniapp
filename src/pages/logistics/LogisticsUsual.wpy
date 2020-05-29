@@ -22,14 +22,14 @@
           </div>
         </label>
         <label class="flex flex-vertical-center">
-          <radio style="transform: scale(0.8)" color="#00A8FF" value="0" :checked="computedType === 1"></radio>
+          <radio style="transform: scale(0.8)" color="#00A8FF" value="1" :checked="computedType === 1"></radio>
           <div class="label p-10">
             组合计算
           </div>
         </label>
 
       </radio-group>
-      <button class="btn btn-primary m-t-35" @click="closePop('type')">确认</button>
+      <button class="btn btn-primary m-t-35" @click="saveData">确认</button>
     </popup-layer>
 
 
@@ -40,20 +40,33 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-
+  import {getBizInfo, opBizInfo} from '../../api/store'
+  import { error, toast } from '../../common/fun'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      computedType: ''
+      computedType: 0
     },
     methods: {
+      saveData() {
+        opBizInfo({express_fee_type: this.computedType}).then(res => {
+          toast('保存成功')
+        }).catch(e => {
+          error(e.msg || '保存失败')
+        })
+        this.$closePop('computedType')
+      },
       setComputedType(e) {
-        this.computedType = e.$wx.detail.value ? 1 : 0
+        this.computedType = Number(e.$wx.detail.value )
+      },
+      async init() {
+        let arr = await getBizInfo({}, {onlyData: true}).catch(e => { error(e.msg || '获取商户信息失败') })
+        this.computedType = Number(arr[0].express_fee_type)
       }
     },
-    created() {
-
+    onShow() {
+      this.init()
     }
 
   })

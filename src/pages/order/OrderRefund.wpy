@@ -53,7 +53,7 @@
               </div>
             </div>
             <div class="item-bottom m-t-15 fz-14"  >
-                <div class="item-btn c6" v-if="item.Back_Status===2" @click="rejectOrder(item.Order_ID)">
+                <div class="item-btn c6" v-if="item.Back_Status===2&&item.Back_ShippingID" @click="goLogistics(item)">
                   查看物流
                 </div>
                 <div v-if="item.Back_Status===0||item.Back_Status===2"  class="item-btn item-btn-active m-l-10" @click="sendOrder(item.Back_ID)">
@@ -102,6 +102,10 @@
       this.getOrder(1)
     },
     methods: {
+      goLogistics(item) {
+        let data = '/pages/order/logistics?shipping_id=' + item.Back_ShippingID
+        this.$linkTo(data)
+      },
       sendOrder(id) {
         let data = '/pages/order/OrderRefundDetail?order_id=' + id
         this.$linkTo(data)
@@ -125,7 +129,7 @@
       },
       rejectOrder(id) {
         this.orderId = id
-        //this.show = true
+        // this.show = true
       },
       cancelInput() {
         this.reason = ''

@@ -59,7 +59,13 @@
           运费： ¥<span class="fontColor">{{listData.Order_Shipping && listData.Order_Shipping.Price || 0}}</span>
         </div>
         <div class="divHeight">
-          实付： <span class="fontColorRed">¥</span><span class=" fontColor fontColorRed">{{listData.Order_TotalPrice}}</span>
+          实付： <span class="fontColorRed">¥</span><span class=" fontColor fontColorRed">
+                  {{listData.Order_TotalPrice}}
+                  <block v-if="listData.Order_Type==='flashsale'||listData.Order_Type==='spike'">
+                     ({{listData.Order_Type==='flashsale'?'秒杀':'限时折扣'}})
+                  </block>
+
+        </span>
         </div>
         <div class="divHeight">
           付款时间：{{listData.Order_CreateTime }}
@@ -67,6 +73,20 @@
         <div class="divHeight">
           收货信息： {{listData.Address_Name}} {{listData.Address_Province_name}} {{listData.Address_City_name}} {{listData.Address_Area_name}} {{listData.Address_Town_name}} {{listData.Address_Detailed_name}}
         </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="orderDetail" v-if="listData.order_temp&&listData.order_temp.length>0">
+      <div class="orderDetailTop">
+        <div class="leftDiv"></div>
+        <div>下单模板</div>
+      </div>
+
+      <div class="orderDetailOther">
+          <diy-form :action="action" :isshow="'true'"    eid="material" ref="material" :forms="listData.order_temp"></diy-form>
       </div>
     </div>
 
@@ -77,17 +97,18 @@
       </div>
 
       <div class="orderDetailOther">
+
         <div class="inputView">
-          <div style="width: 160rpx;">
+          <div style="width: 180rpx;">
             联系人
           </div>
           <div style="width: 100%;">
-            <input type="text" v-model="name" placeholder="请输入联系人" style="width: 100%;">
+            <input type="text" v-model="nameValue" placeholder="请输入联系人" style="width: 100%;">
           </div>
         </div>
 
         <div class="inputView">
-          <div style="width: 160rpx;">
+          <div style="width: 180rpx;">
             手机号
           </div>
           <div style="width: 100%;">
@@ -106,7 +127,7 @@
         </div>
         <block v-if="listData.Order_Shipping.Express!='同城配送'">
           <div class="inputView" >
-            <div style="width: 160rpx;">
+            <div style="width: 180rpx;">
               快递单号
             </div>
             <div style="width: 100%;">
@@ -114,7 +135,7 @@
             </div>
           </div>
           <div class="inputView">
-            <div style="width: 160rpx;">
+            <div style="width: 180rpx;">
               备注
             </div>
             <div style="width: 100%;">
@@ -123,7 +144,7 @@
           </div>
         </block>
         <div class="inputView" v-else>
-          <div style="width: 140rpx;">
+          <div style="width: 180rpx;">
             合作公司
           </div>
           <picker @change="bindPickerChange" :value="index" :range="arr" class="picker ">
@@ -168,7 +189,7 @@
       listData: [],
       ship_num: '',
       remark: '',
-      name: '',
+      nameValue: '',
       tong: [],
       mobile: ''
     },
@@ -181,7 +202,7 @@
       send() {
         let data = {
           Order_ID: this.listData.Order_ID,
-          Address_Name: this.name,
+          Address_Name: this.nameValue,
           Address_Mobile: this.mobile,
           Order_Remark: this.remark
         }
@@ -212,6 +233,8 @@
         let arr = await getOrderDetail({Order_ID: this.order_id}, {onlyData: true, tip: 'loading'}).catch(e => {})
         this.listData = arr
 
+        this.mobile = this.listData.Address_Mobile
+        this.nameValue = this.listData.Address_Name
         this.listData.Order_CreateTime = moment(arr.Order_CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
         getAvailableCityExpress().then(res => {
           for (let item in res.data) {
@@ -406,6 +429,7 @@
         border-bottom: 1px solid #EBEBEB;
         display: flex;
         align-items: center;
+        padding: 0px 10px;
       }
       .picker{
         flex: 1;
@@ -454,6 +478,7 @@
   "navigationBarTitleText": "订单详情",
   "usingComponents": {
   "icon": "~@/components/icon",
+  "diy-form": "~@/components/diy-form-format",
   "fun-img": "~@/components/fun-img"
   }
   }

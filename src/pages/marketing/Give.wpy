@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="time-my">
-          {{product.valid_days}}
+          {{product.valid_days_desc}}
         </div>
         <div class="actions">
           <div class="action" @click="edit(product.id)">

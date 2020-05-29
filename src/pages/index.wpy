@@ -99,7 +99,7 @@
           <div class="grid-item" @click="goOrderRefund">
             <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
-              退款售后<span v-if="orderNum.waitsend" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+              退款售后<span v-if="orderBackNum.orderSum" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
             </div>
           </div>
         </div>
@@ -234,6 +234,12 @@
 
           let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
           this.infoData = arr[0]
+          // 每次刷新请求接口 是否入驻
+          if (this.infoData.status) {
+            this.status = this.infoData.status
+            ls.set('status', this.infoData.status)
+          }
+
           this.$store.commit('SET_BIZ_INFO', this.infoData)
 
           // 订单角标

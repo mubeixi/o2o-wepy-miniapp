@@ -989,8 +989,11 @@
           this.formCheckResult = checkRt
           return
         }
+        // Products_Status
 
-        systemOperateProd(productInfo, {tip: '保存商品'}).then(res => {
+        let {Products_Status, ...productInfoLast} = productInfo
+
+        systemOperateProd(productInfoLast, {tip: '保存商品'}).then(res => {
           toast('操作成功')
           wx.navigateBack()
           // wx.navigateTo({
