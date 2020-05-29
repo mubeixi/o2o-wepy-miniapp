@@ -98,7 +98,7 @@
       <div class="list">
         <div class="item" v-for="(item,idx) in list" :key="idx" >
           <div class="title">{{item.name}}</div>
-          <div class="goods-list">
+          <div class="goods-list"  @click.stop="$linkTo('/pages/marketing/FlashSaleForm?spike_id='+item.id)">
             <div class="goods-item flex flex-vertical-center">
 <!--              <div class="goods-thumb" :style="{backgroundImage:'url('+item.spike_goods[0].ImgPath+')'}"></div>-->
               <image class="goods-thumb" :src="item.spike_goods[0].ImgPath"></image>

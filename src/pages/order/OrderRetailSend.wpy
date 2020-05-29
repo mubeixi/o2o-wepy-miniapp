@@ -82,7 +82,7 @@
             联系人
           </div>
           <div style="width: 100%;">
-            <input type="text" v-model="name" placeholder="请输入联系人" style="width: 100%;">
+            <input type="text" v-model="nameValue" placeholder="请输入联系人" style="width: 100%;">
           </div>
         </div>
 
@@ -168,7 +168,7 @@
       listData: [],
       ship_num: '',
       remark: '',
-      name: '',
+      nameValue: '',
       tong: [],
       mobile: ''
     },
@@ -181,7 +181,7 @@
       send() {
         let data = {
           Order_ID: this.listData.Order_ID,
-          Address_Name: this.name,
+          Address_Name: this.nameValue,
           Address_Mobile: this.mobile,
           Order_Remark: this.remark
         }
@@ -212,6 +212,8 @@
         let arr = await getOrderDetail({Order_ID: this.order_id}, {onlyData: true, tip: 'loading'}).catch(e => {})
         this.listData = arr
 
+        this.mobile = this.listData.Address_Mobile
+        this.nameValue = this.listData.Address_Name
         this.listData.Order_CreateTime = moment(arr.Order_CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
         getAvailableCityExpress().then(res => {
           for (let item in res.data) {

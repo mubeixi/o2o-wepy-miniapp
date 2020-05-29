@@ -119,9 +119,9 @@
   <div class="page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
     <div class="bgwhite back-pay-box fz-14" v-if="action==='show'&&showBond">
-      <div class="div-cell flex flex-justify-between flex-vertical-center p-10">
+      <div class="div-cell flex flex-justify-between flex-vertical-center p-10" v-if="biz_apply_time">
         <div>认证时间</div>
-        <div>认证时间</div>
+        <div>{{biz_apply_time}}</div>
       </div>
       <div class="h10 bgwhite"></div>
       <div class="div-cell flex flex-justify-between flex-vertical-center p-10">
@@ -199,6 +199,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      biz_apply_time:'',
       showBond: false,
       bond_fee: '',
       action: '',
@@ -336,7 +337,7 @@
           const bizInfo = await getBizInfo().then(res => {
             return res.data[0]
           }).catch(() => {})
-
+          this.biz_apply_time=bizInfo.biz_apply_time
           this.bond_fee = bizInfo.bond_fee
 
           this.materialForms = bizInfo.apply_info.auth_info.material
