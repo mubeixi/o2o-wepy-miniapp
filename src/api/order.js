@@ -1,7 +1,8 @@
 import { fetch } from '../common/request'
 
 
-
+//  获取订单物流追踪
+export const getOrderExpress = (param, options) => fetch({act: 'get_order_express', param, options})
 // 收取退款退货申请
 export const getBackOrderNum = (param, options) => fetch({act: 'getBackOrderNum', param, options})
 // 收取退款退货申请

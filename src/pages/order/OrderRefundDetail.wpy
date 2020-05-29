@@ -69,6 +69,21 @@
         </div>
 
       </div>
+      <div class="orderDetail" v-if="listData.back_detail.length>0">
+        <div class="orderDetailTop">
+          <div class="leftDiv"></div>
+          <div>退款流程</div>
+        </div>
+
+        <div class="orderDetailBottom">
+          <div class="divHeight-list flex " v-for="(item,index) of listData.back_detail" :key="index">
+            <div style="width: 270rpx">
+              {{item.createtime}}：
+            </div>
+            <div class="fontColor" style="width: 420rpx">{{item.detail}}</div>
+          </div>
+
+        </div>
     </div>
 
 
@@ -429,11 +444,14 @@
 
     }
     .orderDetailBottom{
-      padding: 26rpx 0rpx 40rpx 21rpx;
+      padding: 26rpx 0rpx 40rpx 20rpx;
       font-size: 13px;
       color: #333333;
       .divHeight{
         height: 48rpx;
+        line-height: 48rpx;
+      }
+      .divHeight-list{
         line-height: 48rpx;
       }
 
