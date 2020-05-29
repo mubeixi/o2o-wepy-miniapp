@@ -18,7 +18,7 @@
               无规格
             </div>
             <div class="allPrice">
-              ×{{item.prod_count}}
+              ×{{item.is_back_num}}
             </div>
           </div>
           <div class="buttonLast">
@@ -41,98 +41,32 @@
           订单号：<span class="fontColor">{{listData.Order_ID}}</span>
         </div>
         <div class="divHeight">
-          免单金额：<span class="fontColor">{{listData.free_money}}</span>
+          退款单号：<span class="fontColor">{{listData.Back_ID}}</span>
         </div>
         <div class="divHeight">
-          商品总价： ¥<span class="fontColor">{{listData.Order_TotalAmount}}</span>
+          订单金额： ¥<span class="fontColor">{{listData.Order_TotalPrice}}</span>
         </div>
         <div class="divHeight">
-          平台优惠： ¥<span class="fontColor">{{listData.users_coupon_money}}</span>
+          退款单金额： ¥<span class="fontColor">{{(listData.refund_pay_fee*1)+(listData.refund_money_fee*1)}}</span>
         </div>
         <div class="divHeight">
-          商家优惠： ¥<span class="fontColor">{{listData.Coupon_Money}}</span>
+          退款单状态： <span class="fontColor">{{listData.Back_Status_desc}}</span>
         </div>
         <div class="divHeight">
-          分享赚佣金： ¥<span class="fontColor">{{listData.share_commission}}</span>
+          退款类型： <span class="fontColor">{{listData.Refund_Type}}</span>
         </div>
         <div class="divHeight">
-          运费： ¥<span class="fontColor">{{listData.Order_Shipping && listData.Order_Shipping.Price || 0}}</span>
+          退款原因： <span class="fontColor">{{listData.Refund_Reason}}</span>
         </div>
         <div class="divHeight">
-          实付： <span class="fontColorRed">¥</span><span class=" fontColor fontColorRed">{{listData.Order_TotalPrice}}</span>
+          退款时间： <span class="fontColor">{{listData.Back_CreateTime}}</span>
         </div>
-        <div class="divHeight">
-          付款时间：{{listData.Order_CreateTime }}
+        <div class="divHeight" v-if="listData.Back_Shipping">
+          退款物流名称： <span class="fontColor">{{listData.Back_Shipping}}</span>
         </div>
-        <div class="divHeight">
-          收货信息： {{listData.Address_Name}} {{listData.Address_Province_name}} {{listData.Address_City_name}} {{listData.Address_Area_name}} {{listData.Address_Town_name}} {{listData.Address_Detailed_name}}
+        <div class="divHeight" v-if="listData.Back_ShippingID">
+          退款物流单号： <span class="fontColor">{{listData.Back_ShippingID}}</span>
         </div>
-      </div>
-    </div>
-
-    <div class="orderDetail" v-if="listData.Order_Status==2&&!listData.Order_IsVirtual">
-      <div class="orderDetailTop">
-        <div class="leftDiv"></div>
-        <div>发货信息</div>
-      </div>
-
-      <div class="orderDetailOther">
-        <div class="inputView">
-          <div style="width: 160rpx;">
-            联系人
-          </div>
-          <div style="width: 100%;">
-            <input type="text" v-model="name" placeholder="请输入联系人" style="width: 100%;">
-          </div>
-        </div>
-
-        <div class="inputView">
-          <div style="width: 160rpx;">
-            手机号
-          </div>
-          <div style="width: 100%;">
-            <input type="text" v-model="mobile" placeholder="请输入手机号" style="width: 100%;">
-          </div>
-        </div>
-
-        <div class="inputView flex flex-justify-between flex-vertical-center">
-          <div>
-            配送方式
-          </div>
-          <div>
-            {{listData.Order_Shipping.Express}}
-          </div>
-
-        </div>
-        <block v-if="listData.Order_Shipping.Express!='同城配送'">
-          <div class="inputView" >
-            <div style="width: 160rpx;">
-              快递单号
-            </div>
-            <div style="width: 100%;">
-              <input type="text" v-model="ship_num" placeholder="请输入快递单号" style="width: 100%;">
-            </div>
-          </div>
-          <div class="inputView">
-            <div style="width: 160rpx;">
-              备注
-            </div>
-            <div style="width: 100%;">
-              <input type="text" v-model="remark" placeholder="请输入备注内容" style="width: 100%;">
-            </div>
-          </div>
-        </block>
-        <div class="inputView" v-else>
-          <div style="width: 140rpx;">
-            合作公司
-          </div>
-          <picker @change="bindPickerChange" :value="index" :range="arr" class="picker ">
-            {{arr[index]}}
-            <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-          </picker>
-
-        </div>
-
 
       </div>
     </div>
@@ -143,9 +77,39 @@
     <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
     <!--action-btn全局有样式-->
+    <div class="submit"  v-if="listData.Back_Status==2"  @click="sureOrder">
+      确认收货
+    </div>
+    <div class="submit-button"  v-if="listData.Back_Status==0">
+      <div class="button-sub" style="background-color: #cccccc"  @click="refundOrder">
+        拒绝退款
+      </div>
+      <div class="button-sub" @click="confirmOrder">
+        接受退款
+      </div>
+    </div>
 
-    <div class="submit" @click="send" v-if="listData.Order_Status==2&&!listData.Order_IsVirtual">
-      立即发货
+    <div class="zhezhao" catchtouchmove="true" v-if="show">
+      <div class="input-wrap">
+        <div>请输入拒绝原因</div>
+        <textarea auto-height  class="input" placeholder="请输入原因" v-model="reason" style="width: 100%;"></textarea>
+        <div class="btns">
+          <div @click="show=false" class="btn">取消</div>
+          <div @click="confirmInput" class="btn">确定</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="zhezhao" catchtouchmove="true" v-if="showSure">
+      <div class="input-wrap">
+        <div>确认收货</div>
+        <input   type="digit" class="input"  placeholder="请输入退款金额" v-model="Amount" style="width: 100%;"></input>
+        <textarea auto-height   class="input" placeholder="请输入原因" v-model="reasonSure" style="width: 100%;"></textarea>
+        <div class="btns">
+          <div @click="showSure=false" class="btn">取消</div>
+          <div @click="confirmSure" class="btn">确定</div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -155,7 +119,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getAvailableCityExpress, getOrderDetail, systemSendOrder} from '../../api/order'
+  import { getBackOrderDetail, systemSendOrder, systemRefuseApply, systemConfirmApply, systemReceiptRefundProd } from '../../api/order'
   import { back, error, toast } from '../../common/fun'
   const moment = require('moment')
   wepy.page({
@@ -170,7 +134,12 @@
       remark: '',
       name: '',
       tong: [],
-      mobile: ''
+      mobile: '',
+      show: false,
+      reason: '',
+      showSure: false,
+      reasonSure: '',
+      Amount: ''
     },
     onLoad(options) {
       if (!options.order_id) return
@@ -178,6 +147,80 @@
       this.getOrderDetail()
     },
     methods: {
+      confirmSure() {
+        let money = (this.listData.refund_pay_fee * 1) + (this.listData.refund_money_fee * 1)
+        if (!this.Amount) {
+          error('退款金额必填')
+          return
+        }
+        if (this.Amount > money) {
+          error('退款金额不能大于退款单金额')
+          return
+        }
+        if (!this.reasonSure) {
+          error('退款原因必填')
+          return
+        }
+        let data = {
+          Back_ID: this.listData.Back_ID,
+          reason: this.reasonSure,
+          Amount: this.Amount
+        }
+        let that = this
+        systemReceiptRefundProd(data, {tip: 'loading', mask: true}).then(res => {
+          toast('退款成功')
+          this.showSure = false
+          setTimeout(function() {
+            that.$back()
+          }, 1000)
+        }).catch(e => {
+          error(e.msg||'收货失败')
+          this.showSure = false
+        })
+      },
+      sureOrder() {
+        this.showSure = true
+      },
+      confirmOrder() {
+        let data = {
+          Back_ID: this.listData.Back_ID,
+          reason: this.reason
+        }
+        let that = this
+        systemConfirmApply(data, {tip: 'loading', mask: true}).then(res => {
+          toast('接受退款成功')
+
+          setTimeout(function() {
+            that.$back()
+          }, 1000)
+        }).catch(e => {
+          error(e.msg)
+        })
+      },
+      confirmInput() {
+        if (!this.reason) {
+          error('拒绝退款原因必填')
+          return
+        }
+        this.show = false
+        let data = {
+          Back_ID: this.listData.Back_ID,
+          reason: this.reason
+        }
+        let that = this
+        systemRefuseApply(data, {tip: 'loading', mask: true}).then(res => {
+          toast('拒绝退款成功')
+
+          setTimeout(function() {
+            that.$back()
+          }, 1000)
+        }).catch(e => {
+          error(e.msg)
+        })
+      },
+      refundOrder() {
+        this.show = true
+      },
       send() {
         let data = {
           Order_ID: this.listData.Order_ID,
@@ -209,18 +252,18 @@
         this.index = e.$wx.detail.value
       },
       async getOrderDetail() {
-        let arr = await getOrderDetail({Order_ID: this.order_id}, {onlyData: true, tip: 'loading'}).catch(e => {})
+        let arr = await getBackOrderDetail({Back_ID: this.order_id}, {onlyData: true, tip: 'loading'}).catch(e => { error(e.msg)})
         this.listData = arr
 
         this.listData.Order_CreateTime = moment(arr.Order_CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
-        getAvailableCityExpress().then(res => {
-          for (let item in res.data) {
-            let it = {}
-            it[item] = res.data[item]
-            this.tong.push(it)
-            this.arr.push(res.data[item])
-          }
-        })
+        // getAvailableCityExpress().then(res => {
+        //   for (let item in res.data) {
+        //     let it = {}
+        //     it[item] = res.data[item]
+        //     this.tong.push(it)
+        //     this.arr.push(res.data[item])
+        //   }
+        // })
 
         for (let item of this.listData) {
           for (let it of item['prod_list']) {
@@ -229,6 +272,8 @@
             }
           }
         }
+
+        this.Amount = (this.listData.refund_pay_fee * 1) + (this.listData.refund_money_fee * 1)
       }
     },
     onReachBottom() {
@@ -436,7 +481,7 @@
 
   .submit{
     width:750rpx;
-    height:85rpx;
+    height:86rpx;
     background-color: #00A8FF;
     line-height: 85rpx;
     text-align: center;
@@ -444,14 +489,74 @@
     color: #FFFFFF;
     position: fixed;
     bottom: 0rpx;
-    z-index: 999;
+    z-index: 9;
   }
+  .submit-button{
+    width:750rpx;
+    height:86rpx;
+    background-color: #00A8FF;
+    line-height: 85rpx;
+    font-size: 32rpx;
+    color: #FFFFFF;
+    position: fixed;
+    bottom: 0rpx;
+    z-index: 9;
+    display: flex;
+    align-items: center;
+  }
+  .button-sub{
+    height: 86rpx;
+    flex: 1;
+    text-align: center;
+    line-height: 86rpx;
+  }
+  .zhezhao {
+     left: 0;
+     top: 0;
+     position: fixed;
+     width: 100%;
+     height: 100%;
+     background: rgba(0,0,0,.3);
+     z-index: 100;
+
+     .input-wrap {
+       background: #fff;
+       color: #000;
+       text-align: center;
+       width: 90%;
+       margin: 400rpx auto;
+       padding: 40rpx 50rpx 30rpx;
+       box-sizing: border-box;
+       font-size: 28rpx;
+       border-radius: 10rpx;
+       .input {
+         margin: 40rpx 0;
+         border: 1px solid #efefef;
+         min-height: 20px;
+         line-height: 20px;
+         padding: 10px 0px;
+         text-align: left;
+         padding-left: 10rpx;
+       }
+
+       .btns {
+         display: flex;
+         justify-content: space-around;
+         height: 60rpx;
+         line-height: 60rpx;
+         .btn {
+           flex: 1;
+         }
+       }
+     }
+   }
+
 
 
 </style>
 <config>
   {
-  "navigationBarTitleText": "订单详情",
+  "navigationBarTitleText": "退款订单详情",
   "usingComponents": {
   "icon": "~@/components/icon",
   "fun-img": "~@/components/fun-img"

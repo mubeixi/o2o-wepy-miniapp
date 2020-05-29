@@ -95,8 +95,12 @@
             <icon type="iconjiesuan" class="grid-item-icon" size="24" color="#6058fd"></icon>
             <div class="grid-item-title">结算</div>
           </div>
-          <div class="grid-item">
 
+          <div class="grid-item" @click="goOrderRefund">
+            <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
+            <div class="grid-item-title" style="display: flex;justify-content: center;">
+              退款售后<span v-if="orderNum.waitsend" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -124,6 +128,8 @@
   import { checkIsLogin, ls, checkIsSettle, confirm } from '../common/helper'
   import IM from '../common/Im/Im'
   import { Exception } from '../common/Exception'
+  import { get_order_num, getBackOrderNum } from '../api/order'
+  import { checkIsLogin, ls, checkIsSettle } from '../common/helper'
 
   wepy.page({
     store,
@@ -131,6 +137,11 @@
     data: {
       storeInfo: {
         volidate: false
+      },
+      orderBackNum: {
+        orderSum: 0,
+        waitprocess: 0,
+        waitconfirm: 0
       },
       orderNum: {waitsend: 0},
       info: {},
@@ -154,6 +165,10 @@
       goTodayOrder() {
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard?tabActiveIdx=1')
+      },
+      goOrderRefund() {
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/order/OrderRefund')
       },
       goSettlementList() {
         // if (!checkIsSettle(1, 1)) return
@@ -224,7 +239,10 @@
           this.$store.commit('SET_BIZ_INFO', this.infoData)
 
           // 订单角标
-          this.orderNum = await get_order_num({}).then(res => res.data).catch(() => { throw Error('nocare') })
+          this.orderNum = await get_order_num({}).then(res => res.data).catch(err => {})
+          this.orderBackNum = await getBackOrderNum({}).then(res => res.data).catch(err => {})
+
+          this.orderBackNum.orderSum = this.orderBackNum.waitprocess * 1 + this.orderBackNum.waitconfirm * 1
 
           if(!ls.get('listenStatus')){
             // IM全局
@@ -240,6 +258,7 @@
         } catch (e) {
           Exception.handle(e)
         }
+        
       }
     },
     onload() {
