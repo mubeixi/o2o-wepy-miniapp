@@ -124,12 +124,10 @@
   import { bizLogin, initInfo } from '../api/system'
   import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
-  import { get_order_num } from '../api/order'
-  import { checkIsLogin, ls, checkIsSettle, confirm } from '../common/helper'
+  import { get_order_num, getBackOrderNum } from '../api/order'
+  import { checkIsLogin, checkIsSettle, confirm, ls } from '../common/helper'
   import IM from '../common/Im/Im'
   import { Exception } from '../common/Exception'
-  import { get_order_num, getBackOrderNum } from '../api/order'
-  import { checkIsLogin, ls, checkIsSettle } from '../common/helper'
 
   wepy.page({
     store,
@@ -244,7 +242,7 @@
 
           this.orderBackNum.orderSum = this.orderBackNum.waitprocess * 1 + this.orderBackNum.waitconfirm * 1
 
-          if(!ls.get('listenStatus')){
+          if (!ls.get('listenStatus')) {
             // IM全局
             const imInstance = new IM()
             // 设置本地用户信息
@@ -253,12 +251,9 @@
 
             imInstance.openListen()
           }
-
-
         } catch (e) {
           Exception.handle(e)
         }
-        
       }
     },
     onload() {
