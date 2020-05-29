@@ -99,7 +99,7 @@
           <div class="grid-item" @click="goOrderRefund">
             <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
-              退款售后<span v-if="orderNum.waitsend" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+              退款售后<span v-if="orderBackNum.orderSum" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
             </div>
           </div>
         </div>

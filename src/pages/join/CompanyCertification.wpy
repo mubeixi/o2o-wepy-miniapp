@@ -148,7 +148,7 @@
               <div v-if="trade.label">{{trade.label}}</div>
             </div>
             <div class="form-cell-item__right">
-              <icon  type="iconarrowleft" size="16"  color="#666"></icon>
+              <icon  type="iconarrowleft" size="16"  color="#666"  v-if="action !== 'show'"></icon>
             </div>
           </div>
           <template v-if="materialForms.length>0">
