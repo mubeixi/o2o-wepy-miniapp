@@ -69,18 +69,16 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { checkOrderByCode, getOrderDetail } from '../../api/order'
-  import { back } from '../../common/fun'
+  import { back, error, toast } from '../../common/fun'
 
   wepy.page({
     store,
     mixins: [pageMixin],
-    data() {
-      return {
-        JSSDK_INIT: false,
-        orderInfo: {},
-        Order_ID: 0,
-        Order_Code: ''
-      }
+    data: {
+      JSSDK_INIT: false,
+      orderInfo: {},
+      Order_ID: 0,
+      Order_Code: ''
     },
     onLoad(options) {
       if (options.Order_Code) {
@@ -92,47 +90,52 @@
     },
     methods: {
       async subFn() {
-        let confirmConf = {title: '操作提示', confirmText: '继续核销', showCancel: true, cancelText: '回到首页', content: ''}
+        let that = this
+        // let confirmConf = {title: '操作提示', confirmText: '继续核销', showCancel: true, cancelText: '回到首页', content: ''}
         await checkOrderByCode({Order_Code: this.Order_Code, store_id: this.Stores_ID}).then(res => {
-          confirmConf.content = '核销成功'
+          toast('核销成功')
+          setTimeout(function() {
+            that.$back()
+          }, 1000)
         }).catch(err => {
-
+          error(err.msg)
         })
 
-        if (!confirmConf.content) return
-
-        confirm(confirmConf).then(res => {
-          back()
-        }).catch(err => {
-
-        })
+        // if (!confirmConf.content) return
+        //
+        // confirm(confirmConf).then(res => {
+        //   back()
+        // }).catch(err => {
+        //
+        // })
       },
 
       // 订单详情
       getOrderDetail() {
         let _self = this
+
         getOrderDetail({
-          Order_Code: this.Order_Code
+          Order_Code: _self.Order_Code
         }, {tip: '努力加载中'}).then(res => {
           if (res.data.Order_Status != 2) {
             confirm({title: '操作提示', content: '该订单状态不符:' + res.data.Order_Status_desc}).then(res => {
 
             }).catch(err => {})
           }
-          for (var i in res.data) {
-            if (i == 'Order_Shipping') {
-              res.data[i] = JSON.parse(res.data[i])
-            }
-            if (i == 'prod_list') {
-              for (var j in res.data[i]) {
-                for (var k in res.data[i][j]) {
-                  if (k == 'attr_info') {
-                    res.data[i][j][k] = res.data[i][j][k] && JSON.parse(res.data[i][j][k])
-                  }
-                }
-              }
-            }
-          }
+          // for (var i in res.data) {
+          //   if (i == 'Order_Shipping') {
+          //     res.data[i] = JSON.parse(res.data[i])
+          //   }
+          //   if (i == 'prod_list') {
+          //     for (var j in res.data[i]) {
+          //       for (var k in res.data[i][j]) {
+          //         if (k == 'attr_info') {
+          //           res.data[i][j][k] = res.data[i][j][k] && JSON.parse(res.data[i][j][k])
+          //         }
+          //       }
+          //     }
+          //   }
+          // }
           this.orderInfo = res.data
         }).catch(() => {})
       }

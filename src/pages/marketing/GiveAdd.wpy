@@ -174,7 +174,7 @@
               </div>
               <image class="thumb" :src="product.ImgPath"></image>
               <div class="info">
-                <div class="title">{{product.Products_Name}}{{product.Products_ID}}</div>
+                <div class="title">{{product.Products_Name}}</div>
                 <div class="price-box">
                   <span class="sign">￥</span>
                   <span>{{product.Products_PriceY}}</span>

@@ -335,7 +335,7 @@
         let boo = moment(endTime).isAfter(startTime)
         if (!boo) {
           hideLoading()
-          modal('结束时间必须大于开始时间' + JSON.stringify({startTimeDate, endTimeDate, startTime, endTime}))
+          error('结束时间必须大于开始时间')
           return
         }
 
