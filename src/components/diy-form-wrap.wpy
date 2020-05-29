@@ -15,16 +15,16 @@
   .specs-action-box{
     display: flex;
     justify-content: center;
-    margin: 30rpx auto;
+    margin: 15px auto;
     .add-btn{
-      width: 220rpx;
-      padding: 0 20rpx;
-      height: 60rpx;
+      width: 110px;
+      padding: 0 10px;
+      height: 30px;
       display: flex;
       align-items: center;
       border:1px solid $fun-blue-color;
       color:$fun-blue-color;
-      border-radius: 4rpx;
+      border-radius: 2px;
       justify-content: center
     }
   }

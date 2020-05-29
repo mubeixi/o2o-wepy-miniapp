@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap" :style="{paddingBottom:showHandle?'92rpx':'0'}">
+    <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="head-actions">
       <div class="item" @click="$linkTo('/pages/product/form')">
@@ -34,15 +35,16 @@
                   <div class="title">{{product.Products_Name}}</div>
                   <div class="price-box">
                     <span class="sign">￥</span>
-                    <span>{{product.Products_PriceY}}</span>
+                    <span>{{product.Products_PriceX}}</span>
                     <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
                     <span class="sign">￥</span>
-                    <span>{{product.Products_PriceX}}</span>
+                    <span>{{product.pintuan_pricex}}</span>
                   </div>
                 </div>
                 <div>
                   <div class="check-status fz-12 color-red " v-if="product.Products_Status===-1" @click="showRejectReasn(product)">
-                    <span>审核未通过</span><span class="m-l-6" style="text-decoration: underline;">查看原因</span>
+                    <span>审核未通过</span>
+                    <!-- <span class="m-l-6" style="text-decoration: underline;">查看原因</span> -->
                   </div>
                   <div class="check-status color-blue fz-12" v-if="product.Products_Status===0">
                     <span>审核中</span>
@@ -76,7 +78,7 @@
                   <span class="title">上架</span>
                 </template>
               </div>
-              <div class="action">
+              <div class="action" @click="bindShare(product)">
                 <icon size="14" type="iconfenxiang1"></icon>
                 <span class="title">分享</span>
               </div>
@@ -110,11 +112,12 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import { bizProdDel, bizProdDown, bizProdList, bizProdUp } from '../../api/product'
-  import { error } from '../../common/fun'
-  import { confirm, getArrColumn } from '../../common/helper'
+  import { bizProdDel, bizProdDown, bizProdList, bizProdUp, getProductSharePic } from '../../api/product'
+  import { error, hideLoading, showLoading } from '../../common/fun'
+  import { confirm, getArrColumn, cutstrFun } from '../../common/helper'
   import wxPromisify from '../../common/promisify'
-
+  import { Exception } from '../../common/Exception'
+  let canvasInstance = null
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -128,7 +131,122 @@
       allCheck: false,
       productList: []
     },
+    computed: {
+      bizInfo() {
+        return this.$store.getters.getBizInfo()
+      }
+    },
     methods: {
+      async bindShare(product) {
+        try {
+          showLoading('生成中')
+          const posterInfo = await getProductSharePic({product_id: product.Products_ID}).then(res=>res.data).catch(err => { throw Error(err.msg || '获取分享海报失败') })
+          console.log(posterInfo)
+
+          const wrapHeight = 1038
+          const ctx = canvasInstance
+
+          const thumbTempFile = await wxPromisify('getImageInfo', { src: product.ImgPath }).catch(e => { throw Error(e.errMsg || '缓存商品缩略图失败') })
+          const headimgTempFile = await wxPromisify('getImageInfo', { src: this.bizInfo.biz_logo }).catch(e => { throw Error(e.errMsg || '缓存商家头像失败') })
+          const qrimgTempFile = await wxPromisify('getImageInfo', { src: posterInfo.img_url }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          // const wrapTempFile = await wxPromisify('getImageInfo', { src: this.wrapPath }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
+          console.log(thumbTempFile.path)
+          // 绘制底部白色
+          // ctx.setFillStyle('#f2f2f2')
+
+          ctx.fillRect(0, 0, 700, wrapHeight)
+          ctx.drawImage('/static/share/cover-wrap.png', 0, 0, 700, wrapHeight)
+
+          // 商品缩略图
+          ctx.drawImage(thumbTempFile.path, 50, 50, 600, 600)
+
+          // 商品名称
+          ctx.setFillStyle('#333333')
+          ctx.setFontSize(28)
+          ctx.textAlign = 'center'
+          const showProductName = cutstrFun(product.Products_Name, parseInt(640 / 24)) // 只显示一行
+          ctx.fillText(showProductName, 350, 680)
+
+          // 商品价格box
+          ctx.textAlign = 'left'
+          ctx.setFontSize(24)
+          ctx.setFillStyle('#666666')
+          ctx.fillText('拼购价：', 63, 739)
+          ctx.setFillStyle('#E41515')
+
+          var price = product.Products_PriceX
+          if (product.is_pintuan) {
+            price = product.pintuan_pricex
+          }
+          ctx.fillText(`￥${price}`, 161, 739)
+
+          var Products_PriceY = product.Products_PriceY
+
+          ctx.setFillStyle('#999')
+          ctx.fillText(`￥${Products_PriceY}`, 286, 739)
+
+          ctx.setFillStyle('#eeeeee')
+          ctx.moveTo(286, 732)
+          ctx.setLineWidth(1)
+          ctx.lineTo(286 + (`￥${Products_PriceY}`).length * 16, 732)
+          ctx.stroke()
+
+          // 右侧
+
+          ctx.drawImage('/static/share/count-bg.png', 430, 710, 245, 38)
+          ctx.setFontSize(20)
+          ctx.setFillStyle('#fff')
+          ctx.textAlign = 'center'
+          ctx.fillText(`扫码参与抢购`, 520, 736, 170)
+
+          ctx.textAlign = 'left'
+
+          // 分割线
+          ctx.moveTo(71, 858)
+          ctx.setLineWidth(1)
+          ctx.lineTo(558 + 71, 858)
+          ctx.setFillStyle('#eee')
+          ctx.setLineDash([10, 6], 0)
+          ctx.stroke()
+
+          // 头像(需要画个圆角)
+          ctx.save()
+          ctx.beginPath()
+          ctx.arc(68 + 50, 886 + 50, 50, 0, 2 * Math.PI)
+          ctx.clip()
+          ctx.drawImage(headimgTempFile.path, 68, 886, 100, 100)
+          ctx.restore()
+
+          ctx.setFontSize(28)
+          ctx.setFillStyle('#333')
+          ctx.font = 'bold'
+          const showNickname = cutstrFun(this.bizInfo.biz_shop_name, 10)
+          ctx.fillText(showNickname, 191, 944)
+
+          ctx.font = 'normal'
+          ctx.fillText('为你推荐', 191 + 28 * (showNickname.length), 944)
+
+          // 二维码
+          ctx.drawImage(qrimgTempFile.path, 520, 883, 110, 110)
+
+          await new Promise(resolve => {
+            ctx.draw(false, function () {
+              console.log('draw done')
+              resolve()
+            })
+          })
+
+          const { tempFilePath } = await wxPromisify('canvasToTempFilePath', { canvasId: 'myCanvas' })
+          console.log(tempFilePath)
+          wx.previewImage({
+            urls: [tempFilePath] // 需要预览的图片http链接列表
+          })
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
+      },
       showRejectReasn(productInfo) {
         confirm({
           title: '审核详情',
@@ -160,7 +278,7 @@
           })
           if (!confirm) return
           const prod_ids = [pro_id]
-          await bizProdDel({ids: JSON.stringify(prod_ids),type:7}, {tip: 'loading'}).catch(() => { throw Error('删除商品失败') })
+          await bizProdDel({ids: JSON.stringify(prod_ids), type: 7}, {tip: 'loading'}).catch(() => { throw Error('删除商品失败') })
           this.productList.splice(idx, 1)
         } catch (e) {
           error(e.message())
@@ -227,6 +345,10 @@
     onShow() {
       this._init_func()
     },
+    onReady() {
+      canvasInstance = wx.createCanvasContext('myCanvas')
+      console.log(canvasInstance)
+    },
     created() {
 
     }
@@ -237,6 +359,15 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+
+  .myCanvas {
+    position: fixed;
+    left: 100%;
+    top: 0;
+    background: white;
+    width: 700px;
+    height: 1038px;
+  }
 
   /* 底部的操作栏start */
   .handle-box{

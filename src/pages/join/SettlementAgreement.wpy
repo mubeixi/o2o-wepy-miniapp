@@ -1,11 +1,20 @@
 <template>
   <div class="all">
-        <textarea class="edit" :value="info" disabled  auto-height="true" contenteditable="true" maxlength="-1" placeholder="请输入入驻协议" placeholder-style="place" >
+        <textarea
+          class="edit"
+          :value="info" disabled
+          auto-height="true"
+          contenteditable="true"
+          maxlength="-1" placeholder="入驻协议" placeholder-style="place" >
         </textarea>
 
     <div class="checks flex flex-vertical-center" >
       <checkbox-group  bindchange="checkboxChange">
-        <checkbox value="1"  :disabled="agree==1" :checked="agree==1">我已阅读、同意并接受《admin的微商城网络交易平台服务协议》</checkbox>
+        <label class="flex flex-vertical-center">
+          <checkbox style="transform: scale(0.8)" value="1"  :disabled="agree==1" :checked="agree==1"></checkbox>
+          <span class="fz-12">我已阅读、同意并接受《admin的微商城网络交易平台服务协议》</span>
+        </label>
+
       </checkbox-group>
 
 

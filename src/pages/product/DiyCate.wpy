@@ -24,7 +24,7 @@
       .content{
         flex: 1;
         padding-right: 10px;
-        color: #888;
+        color: #999;
       }
       .actions{
         display: flex;
@@ -148,6 +148,7 @@
 
   import { addBizProdCate, delBizProdCate, editBizProdCate, getBizProdCateList } from '../../api/store'
   import { confirm } from '../../common/helper'
+  import { Exception } from '../../common/Exception'
 
   wepy.page({
     store,
@@ -166,12 +167,12 @@
       // 自己handle错误
       async delCate(id) {
         try {
-          await confirm({content: '删除后无法恢复，是否确认删除?'}).catch(() => { throw Error('notip') })
+          await confirm({content: '删除后无法恢复，是否确认删除?'}).catch(() => { throw Error('nocare') })
           await delBizProdCate({cate_id: id}, {errtip: false}).catch(({msg}) => { throw Error(msg) })
           this.cancelEdit()
           this._init_func()
         } catch (e) {
-
+          Exception.handle(e)
         }
       },
       async confirmEdit() {

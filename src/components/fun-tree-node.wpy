@@ -19,6 +19,7 @@
           :indent="indent"
           :eid="eid"
           :nodeKey="nodeKey"
+          :check-only-leaf="checkOnlyLeaf"
           :conf="conf"
           :val="item"></fun-tree-node-child>
       </div>
@@ -49,6 +50,10 @@
       _clear: {
         type: Boolean,
         default: false
+      },
+      pidKey: {
+        type: String,
+        required: true
       },
       eid: {
         type: String,
@@ -84,7 +89,8 @@
       // 叶子目录
       isLeaf() {
         try {
-          return !this.children || this.children.length < 1
+          // 限制只有一级目录的情况
+          return this.val[this.conf.pidKey] && (!this.children || this.children.length < 1)
         } catch (e) {
           return false
         }
@@ -106,11 +112,7 @@
       }
     },
     watch: {
-      eleId: {
-        handler(val) {
-          // console.log('eleId变动' + val)
-        }
-      },
+
       has: {
         immediate: true,
         deep: true,

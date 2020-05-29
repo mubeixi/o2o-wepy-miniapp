@@ -265,6 +265,12 @@ export const saveImageToDisk = async ({ fileUrl, type = 'local' }) => {
   }
 }
 
+export const cutstrFun = (str, len, tip = '..') => {
+  if (!str) return ''
+  if (str.length < len) return str
+  return str.substring(0, len) + tip
+}
+
 /**
  * 传入一个数组对象和一个符号
  * @param

@@ -78,6 +78,14 @@
   }
 
 
+  .pie-echarts{
+    display: block;
+    margin: 0 auto;
+    width: 600rpx;
+    height: 500rpx;
+  }
+
+
 
 </style>
 <template>
@@ -89,7 +97,7 @@
                 </div>
                 <div class="seckill-data-list-item-right">
                   <div class="seckill-data-list-number">
-                    {{seckillData.count.appoints_count}}
+                    {{count.appoints_count}}
                   </div>
                   <div>
                     预约人数
@@ -103,7 +111,7 @@
               </div>
               <div class="seckill-data-list-item-right">
                 <div class="seckill-data-list-number">
-                  {{seckillData.count.view_person_count}}
+                  {{count.view_person_count}}
                 </div>
                 <div>
                   浏览人数
@@ -116,7 +124,7 @@
               </div>
               <div class="seckill-data-list-item-right">
                 <div class="seckill-data-list-number">
-                  {{seckillData.count.view_count}}
+                  {{count.view_count}}
                 </div>
                 <div>
                   浏览次数
@@ -129,7 +137,7 @@
               </div>
               <div class="seckill-data-list-item-right">
                 <div class="seckill-data-list-number">
-                  {{seckillData.count.order_person_count}}
+                  {{count.order_person_count}}
                 </div>
                 <div>
                   下单人数
@@ -142,7 +150,7 @@
               </div>
               <div class="seckill-data-list-item-right">
                 <div class="seckill-data-list-number">
-                  {{seckillData.count.order_pay_person_count}}
+                  {{count.order_pay_person_count}}
                 </div>
                 <div>
                   支付人数
@@ -155,7 +163,7 @@
               </div>
               <div class="seckill-data-list-item-right">
                 <div class="seckill-data-list-number">
-                  {{seckillData.count.order_avg_money}}
+                  {{count.order_avg_money}}
                 </div>
                 <div>
                   客单价
@@ -170,8 +178,15 @@
           <div class="seckill-data-echarts-title">
             时段成交分析
           </div>
-        <echarts ref="catTime" :propData="charts.data" :conf="charts.conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
+        <echarts ref="catTime" :propData="data_list" :conf="charts.conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
       </div>
+
+    <div class="seckill-data-echarts">
+      <div class="seckill-data-echarts-title">
+        成交地域分析
+      </div>
+      <echarts ref="pie" :propData="addressCircles.circles" :conf="addressCircles.circlesConf"  class="pie-echarts" :onInit="onInitChartPie" ></echarts>
+    </div>
 
   </div>
 </template>
@@ -179,9 +194,11 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {bizFlashsaleStatustic} from '../../api/store'
+  import { bizFlashsaleStatustic, getNewOldTradeStatistic } from '../../api/store'
   import { back, error} from '../../common/fun'
   import { createF2Chart } from '../../mixins/f2'
+  import { objTranslate } from '../../common/helper'
+  const moment = require('moment')
 
   /**
    * 求某个对象组成数组中，某个对象的值占百分比。方便配合f2-chart做饼图
@@ -190,11 +207,12 @@
    * @param key
    * @returns {*}
    */
-  function getPercent(item, arr, key = 'value') {
+  function getPercent(item, arr, key = 'pay_money') {
     let arrSum = 0
     for (let row of arr) {
-      arrSum += row[key]
+      arrSum += parseFloat(row[key])
     }
+    console.log(arrSum, item, arr, key)
     // 如果都是0的话，大家就一起穷。
     return arrSum === 0 ? (parseInt(1 / arr.length * 100) / 100) : (parseInt(item[key] / arrSum * 100) / 100)
   }
@@ -204,65 +222,80 @@
     mixins: [pageMixin],
     data: {
       flashsale_id: '',
-      seckillData: {
-        charts: {
-          name:	'成交金额（单位：元）',
-          type:	'line',
-          yAxisIndex: '',
-          conf: {},
-          data: [{}]
-        },
-        count: {
-          'appoints_count': 0,
-          'view_person_count': 0,
-          'view_count': 0,
-          'order_person_count': 2,
-          'order_pay_count': 8,
-          'order_pay_person_count': 2,
-          'order_total_money': 1328,
-          'order_avg_money': '664.00',
-          'pay_time_statistic': {
-            '2020-05-07': 1162,
-            '2020-05-13': 166,
-            '2020-05-19': 0,
-            '2020-05-25': 0,
-            '2020-05-31': 0,
-            '2020-06-06': 0,
-            '2020-06-12': 0,
-            '2020-06-18': 0,
-            '2020-06-24': 0,
-            '2020-06-30': 0,
-            '2020-07-06': 0,
-            '2020-07-12': 0,
-            '2020-07-18': 0,
-            '2020-07-24': 0,
-            '2020-07-30': 0,
-            '2020-08-05': 0,
-            '2020-08-11': 0,
-            '2020-08-17': 0,
-            '2020-08-23': 0,
-            '2020-08-29': 0,
-            '2020-09-04': 0
-          },
-          'address_pay_statistic': [
-            {
-              'Address_Province': '110000',
-              'pay_money': '166.00',
-              'address_name': '北京市'
-            },
-            {
-              'Address_Province': '110000',
-              'pay_money': '140.00',
-              'address_name': '郑州市'
-            },
-            {
-              'Address_Province': '110000',
-              'pay_money': '110.00',
-              'address_name': '漯河市'
-            }
-          ]
-        }
+      time_list: [],
+      data_list: [],
+      addressCircles: [],
+      count: {
+        'appoints_count': 0,
+        'view_person_count': 0,
+        'view_count': 0,
+        'order_person_count': 0,
+        'order_pay_count': 0,
+        'order_pay_person_count': 0,
+        'order_total_money': 0,
+        'order_avg_money': '0'
+      },
+      charts: {
+        name:	'成交金额（单位：元）',
+        type:	'line',
+        yAxisIndex: '',
+        conf: {}
+      },
+      onInitChartPie(el, config, data) {
+        if (!el) return
 
+        const {width, height} = config
+        let chart = createF2Chart({
+          el,
+          width,
+          height
+        })
+
+        console.log(config)
+        const map = config.map
+        const _data = data
+
+        chart.source(_data, {
+          percent: {
+            formatter: function formatter(val) {
+              return val * 100 + '%'
+            }
+          }
+        })
+        chart.legend({
+          position: 'right',
+          itemFormatter: function itemFormatter(val) {
+            console.log(val + '  ' + map[val])
+            return val + '  ' + map[val]
+          }
+        })
+        chart.tooltip(true)
+        chart.coord('polar', {
+          transposed: true,
+          radius: 0.85
+        })
+        chart.axis(false)
+        chart.interval()
+          .position('a*percent')
+          .color('name', [ '#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864', '#8543E0' ])
+          .adjust('stack')
+          .style({
+            lineWidth: 1,
+            stroke: '#fff',
+            lineJoin: 'round',
+            lineCap: 'round'
+          })
+          .animate({
+            appear: {
+              duration: 1200,
+              easing: 'bounceOut'
+            }
+          })
+
+        chart.render()
+
+        // 注意：需要把chart return 出来
+        return chart
       },
       onInitChart1(el, config, data) {
         if (!el) return
@@ -299,7 +332,51 @@
     },
     methods: {
       async initData() {
-        let arr = await bizFlashsaleStatustic({flashsale_id: this.flashsale_id}).catch(e => { error(e.msg || '获取秒杀失败') })
+        let {pay_time_statistic, count, address_pay_statistic} = await bizFlashsaleStatustic({flashsale_id: this.flashsale_id}).then(res => res.data).catch(e => { error(e.msg || '获取秒杀失败') })
+
+        this.count = count
+        console.log(pay_time_statistic)
+
+        const vallist = Object.values(pay_time_statistic)
+        this.charts.conf = {
+          max: Math.max.apply(null, vallist),
+          min: Math.min.apply(null, vallist)
+        }
+
+        const time_list = []
+        const data_list = []
+        for (var key in pay_time_statistic) {
+          var t = moment(`${key}:00:00`).format('YYYY-MM-DD HH:mm:ss')
+          time_list.push(t)
+          var item = {
+            value: pay_time_statistic[key], // + parseInt(Math.random() * 100) + 1,
+            label: '成交金额',
+            date: t
+          }
+          data_list.push(objTranslate(item))
+        }
+
+        this.time_list = time_list
+        this.data_list = data_list
+        console.log(data_list)
+        this.$refs.catTime.init()
+
+        // 饼图
+
+        const circles = address_pay_statistic.map(item => {
+          // 绘制饼图时，数据集中的每一条记录中必须包含一个常量字段（并且必须是字符串类型）
+          return {...item, a: '1', name: item.address_name, percent: getPercent(item, address_pay_statistic)}
+        })
+        const addressCircles = {}
+
+        addressCircles.circles = circles
+        let map = {}
+        for (let key in circles) {
+          map[circles[key].address_name] = parseInt(circles[key].percent * 100 * 100) / 100 + '%'
+        }
+        addressCircles.circlesConf = {map: map} // 配置
+        this.addressCircles = addressCircles
+        this.$refs.pie.init()
       }
     },
     onLoad(query) {
