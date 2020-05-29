@@ -33,7 +33,7 @@
 
     },
     data: {
-      ifshow:false,
+      ifshow: false,
       chat: {
         name: '',
         type: '',
@@ -43,12 +43,12 @@
     methods: {
       show(chat) {
         console.log('plugin is show', chat)
-        this.$set(this,'chat',chat)
+        this.$set(this, 'chat', chat)
         // this.chat = chat
         console.log(this.chat)
-        setTimeout(()=>{
+        setTimeout(() => {
           this.ifshow = true
-        },100)
+        }, 100)
       },
       close() {
         console.log('plugin is close')
