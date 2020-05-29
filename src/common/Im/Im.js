@@ -5,6 +5,7 @@ import Promisify from '../promisify'
 import { ls as Storage, createUpTaskArr, uploadImages, getDomain } from '../helper'
 import { modal } from '../fun'
 import {Exception} from '../Exception'
+import eventHub from '../eventHub'
 
 // 消息类,就先不用继承了吧
 /**
@@ -183,6 +184,8 @@ class IM {
     this.heartBeatFailNum = 0 // 心跳丢失次数
     this.connectFailNum = 0// 连接失败次数
     // console.log(extConf)
+
+    this.listenStatus = 0
   }
 
   /**
@@ -317,6 +320,21 @@ class IM {
   }
 
   /**
+   * 打开监听
+   */
+  openListen() {
+    eventHub.$emit('IM_EVENT', 'im listern start')
+    this.listenStatus = 1 // 开启监听
+    Storage.set('listenStatus', 1)
+  }
+
+  cancalListen() {
+    eventHub.$emit('IM_EVENT', 'im listern stop')
+    this.listenStatus = 0 // 开启监听
+    Storage.set('listenStatus', 0)
+  }
+
+  /**
    * 发送之前，需要先检查token是否过期，过期则刷新token
    * @param content
    * @param type
@@ -340,7 +358,6 @@ class IM {
     }
 
     if (this.socketOpen) {
-
       this.chatList.push({ ...message, direction: 'to', sendStatus: 0 })
       // 不需要发送
       if (message.type === 'prod' && message.isTip) return
@@ -406,7 +423,13 @@ class IM {
       return
     }
 
-    this.chatList.push({ ...messageObj, direction: 'from' })
+    // 只允许限定的类别
+    if (this.allowMsgType.includes(type)) {
+      this.chatList.push({ ...messageObj, direction: 'from' })
+      if (this.listenStatus) {
+        eventHub.$emit('IM_TAKE_MSG', {...messageObj})
+      }
+    }
   }
 
   // 建立连接
@@ -479,6 +502,7 @@ IM.prototype.heartBeatTimout = 30 * 1000 // 心跳保持时间，默认三十秒
 IM.prototype.heartBeatFailMax = 3 // 最大心跳丢失次数，错误3次重新建立socket请求
 IM.prototype.tryRequestMax = 5 // 最大重连次数，重连超过5次不成功，就直接报错提醒用户洗洗睡
 IM.prototype.historyPageSize = 20 // 一次加载以往消息20条
+IM.prototype.allowMsgType = ['text', 'image', 'video', 'prod', 'live_text', 'live_pop'] // 目前只handler这几种，不允许其他的
 // 1.创建实例
 // 2.拿到token(阻塞操作，带mask的全屏loading)
 // 3.获取最近的20条信息

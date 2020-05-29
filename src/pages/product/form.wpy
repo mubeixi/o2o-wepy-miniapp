@@ -636,6 +636,7 @@
   import { floatNumber, intNumber } from '../../common/regs'
 
   import eventHub from '../../common/eventHub'
+  import { Exception } from '../../common/Exception'
 
   export default {
     components: { Index }
@@ -1163,6 +1164,7 @@
             })
           }
         } catch (e) {
+          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
           console.log(e.message)
         } finally {
           hideLoading()
@@ -1171,7 +1173,7 @@
       async addImg() {
         try {
           if (this._click) throw Error('操作过快')
-          const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch(() => { throw Error('未选择图片') })
+          const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch((err) => { throw Error(err.errMsg) })
           const arr1 = files.map(file => {
             return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
           })
@@ -1185,6 +1187,7 @@
           this.imgs = this.imgs.concat(ossUrls)
           this._click = false
         } catch (e) {
+          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
           wx.$errorHandle(e)
         }
       },

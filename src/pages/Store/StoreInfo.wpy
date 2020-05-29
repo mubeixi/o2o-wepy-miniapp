@@ -78,6 +78,7 @@
   import { hideLoading, linkTo, showLoading } from '../../common/fun'
   import { chooseImageByPromise, uploadImages } from '../../common/helper'
   import { spaceImg } from '../../common/env'
+  import { Exception } from '../../common/Exception'
 
   wepy.page({
     store,
@@ -93,17 +94,20 @@
       },
       async updaImg() {
         let temp_file_list = []
-        let that = this
-        await chooseImageByPromise().then(tempFiles => {
-          temp_file_list.push(tempFiles[0].path)
-          showLoading('上传图片中')
-        })
-        await uploadImages({'imgs': temp_file_list}).then(urls => {
-          opBizInfo({biz_logo: urls[0]}).then(res => {
-            this.getDetail()
-            hideLoading()
-          })
-        })
+        try {
+          await chooseImageByPromise().then(tempFiles => {
+            temp_file_list.push(tempFiles[0].path)
+            showLoading('上传图片中')
+          }).catch(err => { throw Error(err.errMsg) })
+          await uploadImages({ 'imgs': temp_file_list }).then(urls => {
+            opBizInfo({ biz_logo: urls[0] }).then(res => {
+              this.getDetail()
+              hideLoading()
+            })
+          }).catch(err => { throw Error(err.msg) })
+        } catch (e) {
+          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+        }
       },
       bindPickerChange(e) {
         let ind = e.$wx.detail.value

@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap" :style="{paddingBottom:showHandle?'92rpx':'0'}">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="head-actions">
       <div class="item" @click="$linkTo('/pages/product/form')">
         <image class="icon" src="/static/goods/add.png"></image>
@@ -397,6 +398,7 @@
     "navigationBarTextStyle": "black",
     "navigationBarBackgroundColor": "#fff",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "fun-img": "~@/components/fun-img",

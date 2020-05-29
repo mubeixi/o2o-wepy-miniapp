@@ -62,6 +62,7 @@
 <script>
   import wepy from '@wepy/core'
   import { chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '../common/helper'
+  import { Exception } from '../common/Exception'
 
   wepy.component({
     props: {
@@ -115,7 +116,7 @@
       async addImg() {
         try {
           if (this._click) throw Error('操作过快')
-          const files = await chooseImageByPromise({count: this.limit - this.imgs.length}).catch((err) => { throw Error('请选择图片') })
+          const files = await chooseImageByPromise({count: this.limit - this.imgs.length}).catch((err) => { throw Error(err.errMsg) })
 
           const arr1 = files.map(file => {
             return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
@@ -134,6 +135,7 @@
           // 把ext带回去，方便弄一些骚操作。比如下标
           this.$emit('done', {imgs: this.imgs, ext: this.ext})
         } catch (e) {
+          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
           wx.$errorHandle(e)
         }
       }
