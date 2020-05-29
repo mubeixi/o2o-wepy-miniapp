@@ -134,9 +134,15 @@
         getCityExpressConfig().then(res => {
           if (!Array.isArray(res.data.city_express_config)) {
             this.listData = res.data.city_express_config
-            this.limit_config = this.listData.limit_config
-            this.distance_money_config = this.listData.distance_money_config
-            this.weight_money_config = this.listData.weight_money_config
+            if (this.listData.limit_config) {
+              this.limit_config = this.listData.limit_config
+            }
+            if (this.listData.distance_money_config) {
+              this.distance_money_config = this.listData.distance_money_config
+            }
+            if (this.listData.weight_money_config) {
+              this.weight_money_config = this.listData.weight_money_config
+            }
           }
 
           hideLoading()
