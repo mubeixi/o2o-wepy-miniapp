@@ -76,6 +76,14 @@
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/store/AlbumList')">
+        <div class="store-title">
+          相册
+        </div>
+        <div class="store-titles">
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
 
 
       <model ref="dayin">
