@@ -251,6 +251,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      wx_code: '',
       mode: 'password',
       binbPhoneShow: false,
       bindPwdShow: false,
@@ -331,10 +332,11 @@
        */
       async bingPhoneFn() {
         try {
-          // 获取暂存的userInfO和code
-          const lp_raw_data = JSON.stringify(this.bindPhoneTempData)
           const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
           const {code: lp_code} = wxLoginRt
+
+          // 获取暂存的userInfO和code
+          const lp_raw_data = JSON.stringify(this.bindPhoneTempData)
 
           const postData = {login_method: 'wx_lp', lp_code, lp_raw_data, account: this.phone, code: this.captcha}
           const rule = {
@@ -518,6 +520,10 @@
       },
       async weixinlogin(e) {
         try {
+          // 获取code
+          const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
+          const {code: lp_code} = wxLoginRt
+
           const checkSeting = await wxPromisify('getSetting').catch(() => { throw Error('获取配置失败') })
           // 未获得用户信息权限,需要让用户授权
           if (!checkSeting.authSetting['scope.userInfo']) {
@@ -527,11 +533,7 @@
           console.log(wxUserInfo)
           const {encryptedData, rawData, signature, userInfo, iv} = wxUserInfo
           if (!rawData) throw Error('请允许授权')
-          const lp_raw_data = JSON.stringify({encryptedData, rawData: JSON.parse(rawData),rawData1: rawData, signature, userInfo, iv})
-
-          // 获取code
-          const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
-          const {code: lp_code} = wxLoginRt
+          const lp_raw_data = JSON.stringify({encryptedData, rawData: JSON.parse(rawData), signature, userInfo, iv})
 
           // 请求接口
           console.log('snslogin data is', {login_method: 'wx_lp', lp_code, lp_raw_data})
@@ -546,6 +548,7 @@
             this.bindPhoneTempData = data
             this.pageTitle = '绑定手机'
             this.binbPhoneShow = true // 设置这个之后，无法后退
+
             this.$refs.phone.show()
           }
         } catch (e) {
