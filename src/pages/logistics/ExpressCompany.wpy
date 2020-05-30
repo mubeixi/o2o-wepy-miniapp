@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="group-cell">
       <div class="cell-item" v-for="(company,idx) in lists" :key="idx" @click="$linkTo('/pages/logistics/AoAuth?coop_id='+company.id)">
         <div class="label">{{company.Shipping_Name}}</div>
@@ -94,6 +95,7 @@
     "navigationBarTitleText": "合作公司",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "ad": "~@/components/ad"

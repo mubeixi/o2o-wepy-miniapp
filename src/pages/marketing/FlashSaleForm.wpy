@@ -221,6 +221,7 @@
 </style>
 <template>
   <div class="page-wrap safearea bottom-btn">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
     <div class="form">
       <div class="group-cell">
@@ -671,6 +672,7 @@
     "navigationBarTitleText": "限时抢购",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "err-msg": "~@/components/err-msg",
       "icon": "~@/components/icon",
       "model": "~@/components/ModelComponents",

@@ -1,5 +1,6 @@
 <template>
   <div class="store-all page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
         模板名称
@@ -283,6 +284,7 @@
   {
   "navigationBarTitleText": "新增快递模板",
   "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

@@ -1,5 +1,6 @@
 <template>
   <div class="mail-all page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
       <div class="mail-item"  v-for="(item,index) of editData" :key="index">
          <icon v-if="editData.length>1" type="icondel" @click="del(index)" color="#ccc"  size="24" class="del-icon"></icon>
          <div class="mail-item-top flex">
@@ -239,7 +240,8 @@
   "navigationBarTitleText": "指定包邮条件",
   "usingComponents": {
     "icon": "~@/components/icon",
-    "city": "~@/components/SelectCity"
+    "city": "~@/components/SelectCity",
+    "wzw-im-tip": "~@/components/wzw-im-tip"
   }
   }
 </config>

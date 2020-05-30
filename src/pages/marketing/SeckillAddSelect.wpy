@@ -1,5 +1,6 @@
 <template>
   <div class="seckill-all-add">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
       <div class="flex flex-vertical-center fz-12 c3 flex-justify-between  seckill-top">
             <div class="seckill-top-div " @click="show(1)">
               <image src="/static/goods/price.png" class="img-icon m-t-8"></image>
@@ -269,6 +270,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "model": "~@/components/ModelComponents",
   }

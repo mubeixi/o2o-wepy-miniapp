@@ -1,5 +1,6 @@
 <template>
   <div class="station-all flex ">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="station-left">
       <div class="circle" style="margin-top: 11px">
         1
@@ -299,6 +300,9 @@
 </style>
 <config>
   {
-  "navigationBarTitleText": "商家入驻"
+  "navigationBarTitleText": "商家入驻",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip"
+  }
   }
 </config>

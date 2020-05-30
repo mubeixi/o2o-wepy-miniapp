@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="channel-list">
       <div class="channel-item" @click="$linkTo('/pages/logistics/LogisticsUsual')">
         <div class="content">
@@ -98,6 +99,7 @@
     "navigationBarTitleText": "物流管理",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "ad": "~@/components/ad"

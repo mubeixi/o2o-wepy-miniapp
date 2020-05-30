@@ -1,6 +1,6 @@
 <template>
   <div class="seckill-all-add">
-
+<wzw-im-tip ref="wzwImTip"></wzw-im-tip>
 
     <div class="item " >
       <block v-for="(it,ind) in skuvaljosn" :key="ind">
@@ -178,6 +178,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "model": "~@/components/ModelComponents",
   }
