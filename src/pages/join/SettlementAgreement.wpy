@@ -1,5 +1,6 @@
 <template>
   <div class="all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
         <textarea
           class="edit"
           :value="info" disabled
@@ -116,6 +117,9 @@
 </style>
 <config>
   {
-  "navigationBarTitleText": "签署协议"
+  "navigationBarTitleText": "签署协议",
+  "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip"
+    }
   }
 </config>

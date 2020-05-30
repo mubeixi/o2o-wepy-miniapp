@@ -1,6 +1,6 @@
 <template>
   <view class="page-wrap">
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <image v-show="drawPosterDone" class="preview" @click="preFn" :src="current_url" mode="widthFix" />
 
     <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
@@ -289,3 +289,12 @@
 
   }
 </style>
+<config>
+  {
+    "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
+      "copyright": "~@/components/copyright",
+      "icon": "~@/components/icon"
+    }
+  }
+</config>

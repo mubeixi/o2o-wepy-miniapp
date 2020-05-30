@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="group-cell" >
       <div class="cell-item" @click="$openPop('computedType')">
         <div class="label">运费计算方式</div>
@@ -96,6 +97,7 @@
     "navigationBarTitleText": "普通物流",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "popup-layer": "~@/components/popup-layer",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",

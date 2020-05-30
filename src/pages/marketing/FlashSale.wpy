@@ -93,6 +93,7 @@
 </style>
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
     <div class="container">
       <div class="list">
@@ -253,6 +254,7 @@
     "navigationBarTitleText": "限时抢购",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "icon": "~@/components/icon",
       "popup-layer": "~@/components/popup-layer"
     }
