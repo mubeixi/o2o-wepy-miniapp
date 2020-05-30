@@ -240,15 +240,18 @@
   import pageMixin from '../../mixins'
   import { ls, validateFun } from '../../common/helper'
   import { error, toast } from '../../common/fun'
-  import { bizRegSms, opBizInfo } from '../../api/store'
+  import { bizRegSms, getBizInfo, opBizInfo } from '../../api/store'
   import { bizLogin } from '../../api/system'
   import { regPhone } from '../../common/regs'
   import wxPromisify from '../../common/promisify'
+  import IM from '../../common/Im/Im'
+  import eventHub from '../../common/eventHub'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      wx_code: '',
       mode: 'password',
       binbPhoneShow: false,
       bindPwdShow: false,
@@ -329,10 +332,11 @@
        */
       async bingPhoneFn() {
         try {
-          // 获取暂存的userInfO和code
-          const lp_raw_data = JSON.stringify(this.bindPhoneTempData)
           const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
           const {code: lp_code} = wxLoginRt
+
+          // 获取暂存的userInfO和code
+          const lp_raw_data = JSON.stringify(this.bindPhoneTempData)
 
           const postData = {login_method: 'wx_lp', lp_code, lp_raw_data, account: this.phone, code: this.captcha}
           const rule = {
@@ -478,7 +482,7 @@
         this.$refs.pwd.close()
         wx.navigateBack()
       },
-      loginCall(userData) {
+      async loginCall(userData) {
         const {access_token, status, Users_id, biz_account, id: biz_id} = userData
         ls.set('access_token', access_token)
         ls.set('users_id', Users_id)
@@ -486,6 +490,21 @@
         ls.set('biz_id', biz_id)
         ls.set('status', status)
         this.$store.dispatch('setUserInfo', userData)
+
+        // 新增全局监听
+        if (!ls.get('listenStatus')) {
+          let arr = await getBizInfo({}, {onlyData: true}).catch(e => { throw Error(e.msg) })
+          const infoData = arr[0]
+
+          // IM全局
+          const imInstance = new IM()
+          // 设置本地用户信息
+          imInstance.setSendInfo({ type: 'biz', id: biz_id, name: infoData.biz_shop_name, avatar: infoData.biz_logo })
+          await imInstance.start() // 等拿token
+
+          imInstance.openListen()
+          eventHub.imInstance = imInstance // 全局用一个句柄
+        }
 
         // 需要设置密码
         if (userData.hasOwnProperty('biz_passwd')) {
@@ -501,6 +520,10 @@
       },
       async weixinlogin(e) {
         try {
+          // 获取code
+          const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
+          const {code: lp_code} = wxLoginRt
+
           const checkSeting = await wxPromisify('getSetting').catch(() => { throw Error('获取配置失败') })
           // 未获得用户信息权限,需要让用户授权
           if (!checkSeting.authSetting['scope.userInfo']) {
@@ -511,10 +534,6 @@
           const {encryptedData, rawData, signature, userInfo, iv} = wxUserInfo
           if (!rawData) throw Error('请允许授权')
           const lp_raw_data = JSON.stringify({encryptedData, rawData: JSON.parse(rawData), signature, userInfo, iv})
-
-          // 获取code
-          const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
-          const {code: lp_code} = wxLoginRt
 
           // 请求接口
           console.log('snslogin data is', {login_method: 'wx_lp', lp_code, lp_raw_data})
@@ -529,6 +548,7 @@
             this.bindPhoneTempData = data
             this.pageTitle = '绑定手机'
             this.binbPhoneShow = true // 设置这个之后，无法后退
+
             this.$refs.phone.show()
           }
         } catch (e) {

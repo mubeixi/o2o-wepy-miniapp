@@ -159,6 +159,9 @@ export const getPhotoList = (param, options) => fetch({ act: 'getPhotoList', par
 // 添加或编辑相册分类
 export const movePhoto = (param, options) => fetch({ act: 'movePhoto', param, options })
 
+// 添加或者编辑相册
+export const opPhoto = (param, options) => fetch({ act: 'opPhoto', param, options })
+
 
 
 
