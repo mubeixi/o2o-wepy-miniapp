@@ -70,9 +70,16 @@
         <div class="divHeight">
           付款时间：{{listData.Order_CreateTime }}
         </div>
+        <div class="divHeight" v-if="listData.Order_Shipping">
+          快递方式：{{listData.Order_Shipping.Express }}
+        </div>
+        <div class="divHeight" v-if="listData.Order_ShippingID">
+          快递单号：{{listData.Order_ShippingID }}
+        </div>
         <div class="divHeight">
           收货信息： {{listData.Address_Name}} {{listData.Address_Province_name}} {{listData.Address_City_name}} {{listData.Address_Area_name}} {{listData.Address_Town_name}} {{listData.Address_Detailed_name}}
         </div>
+        
 
       </div>
 

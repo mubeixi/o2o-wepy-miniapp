@@ -12,8 +12,8 @@
               <block v-for="(item,index) of albumList" :key="index">
                 <div class="AlbumList-item"  @click="$linkTo('/pages/store/PhotoList?id='+item.id)">
                   <image  :src="item.cate_img" class="AlbumList-img"></image>
-                  <icon v-if="showEdit"  type="icondel"  color="#ccc"  size="24" class="del-icon"  @click="delImg(item.id)"></icon>
-                  <div class="AlbumList-img-rename" v-if="showEdit"  @click="renameMethod(item.id)">
+                  <icon v-if="showEdit"  type="icondel"  color="#ccc"  size="24" class="del-icon"  @click.stop="delImg(item.id)"></icon>
+                  <div class="AlbumList-img-rename" v-if="showEdit"  @click.stop="renameMethod(item.id)">
                     重命名
                   </div>
                   <div class="AlbumList-img-title">
@@ -84,6 +84,7 @@
         opPhotoAlbum({id:this.nameId,cate_name:this.cate_name}).then(res=>{
           toast('修改成功')
           this.showRename=false
+          this.cate_name=''
           this.init()
         }).catch(e=>{
           this.showRename=false
