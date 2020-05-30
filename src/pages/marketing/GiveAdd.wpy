@@ -78,7 +78,7 @@
         配送方式
       </div>
       <div class="fz-14 c9">
-        {{shipping_type===0?'固定费用':'物流模板'}}
+        {{shipping_type===2?'固定费用':'物流模板'}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -107,7 +107,7 @@
     <popup-layer title="配送方式" ref="myModal" :autoClose="true">
       <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
         <label class="type-item flex flex-vertical-center fz-14">
-          <radio color="#00A8FF" value="0" :checked="shipping_type === 0" />
+          <radio color="#00A8FF" value="0" :checked="shipping_type === 2" />
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">固定费用</div>
             <input type="digit" v-model="shipping_price"  class="input-price fz-12 m-r-5"/>
@@ -221,7 +221,7 @@
       shipping_price: '',
       shipping_id: '',
       emsData: [],
-      shipping_type: 0,
+      shipping_type: 2,
       array: ['固定运费', '系统模板'],
       mbx: [],
       formCheckResult: '',
@@ -330,7 +330,7 @@
           this.formCheckResult = checkRt
           return
         }
-        if (this.shipping_type == 0) {
+        if (this.shipping_type == 2) {
           data.shipping_price = this.shipping_price
         } else {
           data.weight = this.weight
