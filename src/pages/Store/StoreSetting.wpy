@@ -1,5 +1,6 @@
 <template>
     <div class="store-all page-wrap">
+      <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
       <err-msg :errs="formCheckResult"></err-msg>
       <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/store/StoreSettingList')">
         <div class="store-title">
@@ -479,6 +480,7 @@
   {
   "navigationBarTitleText": "店铺设置",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
     "icon": "~@/components/icon",
     "time": "~@/components/time",
     "err-msg": "~@/components/err-msg",

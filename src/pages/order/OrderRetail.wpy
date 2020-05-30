@@ -1,5 +1,6 @@
 <template>
   <div>
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
       <div class="order-tab flex flex-vertical-center fz14 c3 p-t-10">
           <div class="order-item" :class="{'active':status==-1}" @click="changeTab(-1)">
             全部
@@ -351,6 +352,7 @@
   {
   "navigationBarTitleText": "零售订单",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "fun-img": "~@/components/fun-img"
   }

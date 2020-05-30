@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="group-cell">
       <div class="cell-item" v-for="(item,index) of list" :key="index"  @click="goNext(item.id)">
         <div class="label">{{item.level_name}}</div>
@@ -106,6 +107,7 @@
   "navigationBarTitleText": "店铺会员",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
     "copyright": "~@/components/copyright",
     "icon": "~@/components/icon",
     "ad": "~@/components/ad"

@@ -1,5 +1,6 @@
 <template>
   <div class="store-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="store-item item-last flex flex-vertical-center flex-justify-between"  @click="updaImg">
       <div class="store-title">
         店铺logo
@@ -211,6 +212,7 @@
   {
   "navigationBarTitleText": "修改资料",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

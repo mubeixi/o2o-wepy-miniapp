@@ -1,5 +1,6 @@
 <template>
   <div class="store-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('store-setting')">
       <div class="store-title">
         付款方式
@@ -230,6 +231,7 @@
   {
   "navigationBarTitleText": "提现配置",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   }
   }

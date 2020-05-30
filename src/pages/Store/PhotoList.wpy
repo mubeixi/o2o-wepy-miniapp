@@ -1,5 +1,6 @@
 <template>
   <div class="AlbumList page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="AlbumList-title">
       {{title}}
       <div class="AlbumList-manage" @click="showEdit=!showEdit">
@@ -512,6 +513,7 @@
   {
   "navigationBarTitleText": "相册详情",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

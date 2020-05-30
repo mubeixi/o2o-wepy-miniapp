@@ -1,5 +1,6 @@
 <template>
   <div class="store-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
@@ -287,6 +288,7 @@
   {
   "navigationBarTitleText": "添加门店",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "err-msg": "~@/components/err-msg",
   "address": "~@/components/address",

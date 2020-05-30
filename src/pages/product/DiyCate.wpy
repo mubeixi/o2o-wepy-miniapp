@@ -78,6 +78,7 @@
 </style>
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="container">
       <div class="cate-item" v-for="(item,idx) in list" :key="idx">
         <div class="cate-item-row first">
@@ -227,6 +228,7 @@
     "navigationBarTitleText": "自定义分类",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
       "err-msg": "~@/components/err-msg",
       "icon": "~@/components/icon",
       "modal": "~@/components/ModelComponents"

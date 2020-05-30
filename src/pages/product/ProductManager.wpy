@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap" :style="{paddingBottom:showHandle?'92rpx':'0'}">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="head-actions">

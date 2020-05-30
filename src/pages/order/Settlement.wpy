@@ -1,5 +1,6 @@
 <template>
   <div class="settlement p-t-20 page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="settlement-time fz-15 c3">
         <div class="flex flex-vertical-center flex-justify-between p-l-6  settlement-time-item" style="border-bottom: 1px solid #EBEBEB">
           <div>
@@ -305,6 +306,7 @@ const moment = require('moment')
   "navigationBarTitleText": "发起结算",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "err-msg": "~@/components/err-msg",
   "icon": "~@/components/icon",
   "form-wrap": "~@/components/diy-form-wrap"

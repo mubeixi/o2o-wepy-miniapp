@@ -1,5 +1,6 @@
 <template>
   <div class="coupon-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="coupon-item flex flex-justify-between"  v-for="(item,index) of couponList" :key="index">
 <!--      <div class="item-left" @click="change(index)">-->
 <!--        <icon-->
@@ -192,6 +193,7 @@
   "navigationBarTitleText": "优惠券赠送",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

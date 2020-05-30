@@ -1,5 +1,6 @@
 <template>
     <div class="all page-wrap">
+      <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
       <div class="counpon-name">
           <div>
             优惠券名称
@@ -773,6 +774,7 @@
   "navigationBarTitleText": "添加优惠券",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "modal": "~@/components/ModelComponents",
   "popup-layer": "~@/components/popup-layer",

@@ -1,5 +1,6 @@
 <template>
   <div class="mail-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <block v-if="type==1">
       <div class="second"  >
         <input type="number" class="input-out" v-model="distance_money_config.start_distance" /> km内按
@@ -195,6 +196,7 @@
   {
   "navigationBarTitleText": "费用配置",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

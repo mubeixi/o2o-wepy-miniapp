@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="feature-list">
       <div class="feature-row">
         <div class="feature-item" @click="$linkTo('/pages/marketing/FlashSale')">
@@ -106,6 +107,7 @@
     "navigationBarTitleText": "营销推广",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "ad": "~@/components/ad"
