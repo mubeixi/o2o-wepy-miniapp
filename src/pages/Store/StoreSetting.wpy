@@ -191,6 +191,7 @@
   import { getBizInfo, opBizInfo } from '../../api/store'
   import { bizLogout } from '../../api/system'
   import { ls } from '../../common/helper'
+  import eventHub from '../../common/eventHub'
 
   const moment = require('moment')
   wepy.page({
@@ -202,7 +203,7 @@
       arrive_get: 0,
       start_time: '',
       end_time: '',
-      business_status:0,
+      business_status: 0,
       invoice_switch: 0, // 开具发票
       print_config: {
         sn: '',
@@ -245,6 +246,14 @@
           ls.remove('biz_account')
           ls.remove('biz_id')
           ls.remove('status')
+
+          // 取消监听
+          if (eventHub.imInstance) {
+            eventHub.imInstance.cancalListen()
+            eventHub.imInstance.close()
+            eventHub.imInstance = null
+          }
+
           linkTo('/pages/index')
         })
       },
@@ -296,7 +305,7 @@
           hideLoading()
         })
       },
-      async switchStatusChanges(e){
+      async switchStatusChanges(e) {
         showLoading()
         let boo = e.$wx.detail.value
         let data = {}

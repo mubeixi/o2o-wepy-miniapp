@@ -1,5 +1,5 @@
 <template>
-  <div class="im-tip-wrap" v-if="ifshow">
+  <div class="im-tip-wrap" v-if="ifshow" @click="toRoom">
     <div class="left">
       <icon display="inline" size="32" type="iconlaba" color="#999"></icon>
     </div>
@@ -15,8 +15,8 @@
         <block v-if="chat.type==='prod'">
           商品:[{{chat.content.prod_name}}]
         </block>
-        <block v-if="chat.type==='img'">
-          发送了一张图片
+        <block v-if="chat.type==='image'">
+          图片:收到一张照片
         </block>
       </div>
     </div>
@@ -26,7 +26,7 @@
 <script>
   // 消息卡片组件
   import wepy from '@wepy/core'
-  import {error} from '../common/fun'
+  import { error, linkTo, modal } from '../common/fun'
 
   wepy.component({
     props: {
@@ -40,7 +40,36 @@
         content: ''
       }
     },
+    watch: {
+      // 默认显示4S
+      ifshow(newVal) {
+        if (newVal) {
+          setTimeout(() => {
+            this.ifshow = false
+          }, 4000)
+        }
+      }
+    },
     methods: {
+      toRoom () {
+        const chatItem = this.chat
+        // 商家得找客户聊
+        const str = chatItem.from_uid
+
+        const breakStrIdx = str.indexOf('_')
+        if (breakStrIdx === -1) {
+          modal('进入聊天室失败')
+          return
+        }
+        const type = str.substr(0, breakStrIdx)
+        const id = str.substr(breakStrIdx + 1)
+        console.log(type, id, `/pages/support/Im?type=${type}tid=${id}`)
+        if (!type || !id) {
+          modal('聊天室参数错误')
+          return
+        }
+        linkTo(`/pages/support/Im?type=${type}&tid=${id}`)
+      },
       show(chat) {
         console.log('plugin is show', chat)
         this.$set(this, 'chat', chat)
@@ -50,12 +79,12 @@
           this.ifshow = true
         }, 100)
       },
+      hide() {
+        this.show = false
+      },
       close() {
         console.log('plugin is close')
         this.ifshow = false
-      },
-      toRoom (content) {
-        error('暂时无法查看产品')
       }
     }
 })
@@ -66,7 +95,7 @@
     position: fixed;
     z-index: 999;
     width: 700rpx;
-    top: 50px;
+    top: 80px;
     left: 25rpx;
     height: 140rpx;
     background: #fff;
@@ -92,6 +121,7 @@
       }
       .msg{
         max-width: 600rpx;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }

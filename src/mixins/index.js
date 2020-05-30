@@ -56,9 +56,12 @@ export default {
   created () {
     // console.log('created in mixin')
   },
-  onReady() {
+  onShow() {
+    // 这个机制还是要onShow 兼容返回的情况
     ls.set('currentPagePath', this.getCurrentPageRoute())// 标记当前的页面，这样就不会每个事件都响应了
     this.currentPagePath = this.getCurrentPageRoute()
+  },
+  onReady() {
     eventHub.$on('IM_EVENT', (res) => {
       console.log(res)
     })
@@ -67,7 +70,7 @@ export default {
       // 只有当前页面响应
       console.log(ls.get('currentPagePath'), this.currentPagePath)
       if (ls.get('currentPagePath') === this.currentPagePath) {
-        console.log(res,this.$refs)
+        console.log(res, this.$refs)
         if (this.$refs.hasOwnProperty('wzwImTip')) this.$refs.wzwImTip.show(res)
       }
     })

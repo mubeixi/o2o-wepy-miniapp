@@ -316,7 +316,10 @@ class IM {
   }
 
   close () {
-    this.task.close()
+    // this.task.close()
+    wx.closeSocket()
+    this.clearIntervalFn()
+    // this.task = null
   }
 
   /**
@@ -331,7 +334,7 @@ class IM {
   cancalListen() {
     eventHub.$emit('IM_EVENT', 'im listern stop')
     this.listenStatus = 0 // 开启监听
-    Storage.set('listenStatus', 0)
+    Storage.set('listenStatus', 0, 1)
   }
 
   /**
@@ -374,7 +377,7 @@ class IM {
       }).catch(err => {
         console.log('消息发送失败')
         this.chatList[chatIdx].sendStatus = -1 // 标记失败
-        Exception.handle(err)
+        Exception.handle(Error(err.msg))
       })
     } else {
       this.msgQueue.push(message)
@@ -399,12 +402,17 @@ class IM {
         // 丢失心跳达到最大次数之后需要重连
         if (this.heartBeatFailNum > this.heartBeatFailMax) {
           console.log('心跳请求超过三次错误')
-          clearInterval(this.intervalInstance)
+          // 先关掉
+          this.close()
           // 重连吧
           this.start()
         }
       }
     })
+  }
+
+  clearIntervalFn() {
+    clearInterval(this.intervalInstance)
   }
 
   _takeMessage (messageObj) {
@@ -426,6 +434,7 @@ class IM {
     // 只允许限定的类别
     if (this.allowMsgType.includes(type)) {
       this.chatList.push({ ...messageObj, direction: 'from' })
+      eventHub.$emit('getMsg', {...messageObj})
       if (this.listenStatus) {
         eventHub.$emit('IM_TAKE_MSG', {...messageObj})
       }

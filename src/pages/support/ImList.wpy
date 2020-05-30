@@ -15,12 +15,13 @@
         height: 96rpx;
         border-radius: 50%;
         overflow: hidden;
-        @include cover-img(cover,0);
+        //@include cover-img(cover,0);
       }
     }
     .right{
-      width: 690rpx;
+      width: 590rpx;
       padding: 30rpx 30rpx 30rpx 0;
+      box-sizing: border-box;
       border-bottom: 1px solid #ECECEC;
       display: flex;
       flex-direction: column;
@@ -55,7 +56,8 @@
     <div class="chat-list" v-if="chatList.length>0">
       <div class="chat-item flex" @click="toRoom(idx)" v-for="(chat,idx) in chatList" :key="idx">
         <div class="left">
-          <div class="cover" :style="{backgroundImage:'url('+chat.avatar+')'}"></div>
+<!--          <div class="cover" :style="{backgroundImage:'url(\''++'\')'}"></div>-->
+          <image class="cover" :src="chat.avatar"></image>
         </div>
         <div class="right">
           <div class="info flex flex-vertical-c flex-justify-between">
@@ -99,6 +101,7 @@
   import { error, modal } from '../../common/fun'
   import { Exception } from '../../common/Exception'
   import { getChatList } from '../../common/Im/Fetch'
+  import eventHub from '../../common/eventHub'
 
   let imInstance = null
 
@@ -175,7 +178,11 @@
     },
     onLoad(options) {
       if (!checkIsLogin(1, 0)) return
-      this.imInstance = imInstance = new IM()
+      if (eventHub.imInstance) {
+        this.imInstance = imInstance = eventHub.imInstance
+      } else {
+        this.imInstance = imInstance = new IM()
+      }
       // 设置本地用户信息
       imInstance.setSendInfo({ type: 'biz', id: ls.get('biz_id') })
       this.out_uid = imInstance.getOutUid()

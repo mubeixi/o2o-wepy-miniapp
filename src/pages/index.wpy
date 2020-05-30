@@ -128,6 +128,7 @@
   import { checkIsLogin, checkIsSettle, confirm, ls } from '../common/helper'
   import IM from '../common/Im/Im'
   import { Exception } from '../common/Exception'
+  import eventHub from '../common/eventHub'
 
   wepy.page({
     store,
@@ -256,6 +257,8 @@
             await imInstance.start() // 等拿token
 
             imInstance.openListen()
+
+            eventHub.imInstance = imInstance // 全局用一个句柄
           }
         } catch (e) {
           Exception.handle(e)

@@ -96,7 +96,7 @@ class XHR {
   }
 }
 
-const hookErrorCode = [0, 66001, 88001]
+const hookErrorCode = [0, 66001, 88001,200001]
 /**
  *
  * @param url
