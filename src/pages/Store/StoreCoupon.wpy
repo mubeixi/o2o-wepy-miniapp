@@ -18,7 +18,7 @@
 <!--          <div class="newuser">新用户专用</div>-->
         </div>
         <div class="right-q">{{item.Coupon_Subject}}</div>
-        <div class="right-w">全场满{{item.Coupon_Condition}}可用</div>
+        <div class="right-w">全场满{{item.Coupon_Condition}}可用 <span class="m-l-8 color-blue">{{item.front_show==1?'可领取':'用于赠送'}}</span></div>
       </div>
     </div>
     <div class="submits" @click="goAdd">
@@ -37,6 +37,7 @@
   import pageMixin from '../../mixins'
   import { getCouponList } from '../../api/store'
   import { hideLoading, linkTo, showLoading } from '../../common/fun'
+  const moment = require('moment')
 
   wepy.page({
     store,
@@ -66,7 +67,13 @@
         getCouponList(data).then(res => {
           let arr = res.data
           this.couponList = arr.map(item => {
-            return {...item, check: false}
+
+            return {
+              ...item,
+              check: false,
+              Coupon_StartTime: moment(item.Coupon_StartTime).format('YYYY-MM-DD HH:MM'),
+              Coupon_EndTime: moment(item.Coupon_EndTime).format('YYYY-MM-DD HH:MM')
+            }
           })
           hideLoading()
         }).catch(e => { hideLoading() })
@@ -107,7 +114,7 @@
       position:absolute;
       left: 48rpx;
       bottom: 24rpx;
-      font-size: 24rpx;
+      font-size: 10px;
       color: #999999;
     }
   }

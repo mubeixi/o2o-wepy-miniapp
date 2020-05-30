@@ -195,7 +195,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  * @param data 业务参数:{}
  * @returns {Promise<unknown>}
  */
-export const uploadImages = ({imgs, name = 'image', data, progressList = []}) => {
+export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj}) => {
   let taskList = []
   // console.log(imgs, 'ssss')
   for (let i = 0; i < imgs.length; i++) {
@@ -203,6 +203,7 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = []}) =>
       filePath: imgs[i],
       idx: i,
       name,
+      vmobj,
       progressList,
       formData: data
     })

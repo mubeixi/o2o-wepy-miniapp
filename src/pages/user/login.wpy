@@ -527,7 +527,7 @@
           console.log(wxUserInfo)
           const {encryptedData, rawData, signature, userInfo, iv} = wxUserInfo
           if (!rawData) throw Error('请允许授权')
-          const lp_raw_data = JSON.stringify({encryptedData, rawData: JSON.parse(rawData), signature, userInfo, iv})
+          const lp_raw_data = JSON.stringify({encryptedData, rawData: JSON.parse(rawData),rawData1: rawData, signature, userInfo, iv})
 
           // 获取code
           const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })

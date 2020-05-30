@@ -1210,7 +1210,7 @@
           this._click = false
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
-          wx.$errorHandle(e)
+
         }
       },
       _initBizProdCate() {

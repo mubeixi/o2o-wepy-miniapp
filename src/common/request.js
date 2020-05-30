@@ -1,7 +1,7 @@
 import * as ENV from './env'
 // import store from '../store'
 import { error } from './fun'
-import { emptyObject, ls } from './helper'
+import { emptyObject, ls, objTranslate } from './helper'
 import { hexMD5 } from './tool/md5'
 import Base64 from './tool/base64.js'
 
@@ -96,7 +96,7 @@ class XHR {
   }
 }
 
-const hookErrorCode = [0, 66001, 88001,200001]
+const hookErrorCode = [0, 66001, 88001, 200001]
 /**
  *
  * @param url
@@ -205,7 +205,7 @@ export const fetch = function ({act, param = {}, options = false, url = '/api/li
   }
 }
 
-export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressList = []}) => {
+export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressList = [],vmobj}) => {
   let _param = {
     access_token: getAccessToken(),
     Users_ID: getUsersID(),
@@ -257,15 +257,20 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
       }
     })
 
-    // uploadTask.onProgressUpdate((res) => {
-    //   // console.log('上传进度' + res.progress)
-    //   // console.log('已经上传的数据长度' + res.totalBytesSent)
-    //   // console.log('预期需要上传的数据总长度' + res.totalBytesExpectedToSend)
+    uploadTask.onProgressUpdate((res) => {
+      // console.log('上传进度' + res.progress)
+      // console.log('已经上传的数据长度' + res.totalBytesSent)
+      // console.log('预期需要上传的数据总长度' + res.totalBytesExpectedToSend)
+      console.log(vmobj)
+      if (vmobj && vmobj.$set && progressList.length > 0 && progressList[idx] && progressList[idx].hasOwnProperty('task')) {
+        // progressList[idx].task = objTranslate(res)
+        console.log('upload progress',objTranslate(res))
 
-    //   if (progressList.length > 0 && progressList[idx] && progressList[idx].hasOwnProperty('task')) {
-    //     progressList[idx].task = res
-    //   }
-    // })
+
+        vmobj.$set(progressList[idx], 'task_progress', res.progress)
+        vmobj.$set(progressList[idx], 'task', objTranslate(res))
+      }
+    })
   })
 }
 
