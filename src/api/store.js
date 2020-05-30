@@ -144,3 +144,22 @@ export const getPosterList = (param, options) => fetch({ act: 'getPosterList', p
 // 获取商家的分享码
 export const getBizShare = (param, options) => fetch({ act: 'getBizShare', param, options })
 
+// 获取商家相册列表
+export const getAlbumList = (param, options) => fetch({ act: 'getAlbumList', param, options })
+// 删除商家相册列表
+export const delPhoto = (param, options) => fetch({ act: 'delPhoto', param, options })
+// 删除商家相册分类
+export const delAlbum = (param, options) => fetch({ act: 'delAlbum', param, options })
+
+// 添加或编辑相册分类
+export const opPhotoAlbum = (param, options) => fetch({ act: 'opPhotoAlbum', param, options })
+
+// 添加或编辑相册分类
+export const getPhotoList = (param, options) => fetch({ act: 'getPhotoList', param, options })
+// 添加或编辑相册分类
+export const movePhoto = (param, options) => fetch({ act: 'movePhoto', param, options })
+
+
+
+
+
