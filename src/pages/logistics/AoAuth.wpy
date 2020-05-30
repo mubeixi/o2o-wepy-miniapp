@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
 
     <template v-if="forms.length>0">
       <diy-form :action="action" @update="upFormData"  eid="authForm" ref="refForm" :forms="forms"></diy-form>
@@ -205,6 +206,7 @@
     "navigationBarTitleText": "电子面单公司管理",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+       "wzw-im-tip": "~@/components/wzw-im-tip",
       "diy-form": "~@/components/diy-form-format",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",

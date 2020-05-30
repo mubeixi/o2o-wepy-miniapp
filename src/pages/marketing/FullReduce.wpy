@@ -1,5 +1,6 @@
 <template>
     <div class="alls page-wrap">
+      <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
           <div class="flex flex-vertical-center   items " v-for="(item,index) of infoData"  :key="index">
             满 <input type="digit" v-model="item.reach" class="input-full m-l-5 m-r-5" />元 减 <input type="digit" v-model="item.award"  class="input-full m-l-5 m-r-5" />元
           </div>
@@ -137,6 +138,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

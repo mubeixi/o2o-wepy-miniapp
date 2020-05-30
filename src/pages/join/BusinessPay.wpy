@@ -1,5 +1,6 @@
 <template>
   <div class="business-pay">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')">
       <div class="form-cell-item__label">选择分类</div>
       <div class="flex flex-vertical-center ">
@@ -407,6 +408,7 @@
   "icon": "~@/components/icon",
   "fun-tree": "~@/components/fun-tree",
   "popup-layer": "~@/components/popup-layer",
+  "wzw-im-tip": "~@/components/wzw-im-tip"
   }
   }
 </config>

@@ -1,5 +1,6 @@
 <template>
   <div class="seckill-add page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
     <block v-if="pro_id">
       <div  class="flex  product-mbx" @click="openPop('product')">
@@ -678,6 +679,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
   "fun-img": "~@/components/fun-img",
   "err-msg": "~@/components/err-msg",
   "icon": "~@/components/icon",

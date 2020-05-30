@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap" >
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="product-list">
       <div class="product-item" v-for="(product,idx) in seckillData" :key="idx">
         <div class="info-box">
@@ -286,6 +287,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
   "copyright": "~@/components/copyright",
   "icon": "~@/components/icon",
   "fun-img": "~@/components/fun-img",

@@ -118,6 +118,7 @@
 <template>
   <div class="page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="bgwhite back-pay-box fz-14" v-if="action==='show'&&showBond">
       <div class="div-cell flex flex-justify-between flex-vertical-center p-10" v-if="biz_apply_time">
         <div>认证时间</div>
@@ -382,7 +383,8 @@
       "diy-form2": "~@/components/diy-form-format",
       "icon": "~@/components/icon",
       "err-msg": "~@/components/err-msg",
-      "select-trade": "~@/components/SelectTrade"
+      "select-trade": "~@/components/SelectTrade",
+      "wzw-im-tip": "~@/components/wzw-im-tip"
     }
   }
 </config>

@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="group-cell">
       <div class="cell-item" v-for="(item,index) of list" :key="index"  @click="goNext(item.Template_ID)">
         <div class="label">{{item.Template_Name}}</div>
@@ -99,6 +100,7 @@
     "navigationBarTitleText": "物流模板",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "ad": "~@/components/ad"
