@@ -80,7 +80,7 @@
       title: '相册详情',
       cate_id: '',
       page: 1,
-      pageSize: 10,
+      pageSize: 100,
       totalCount: 0,
       albumList: [],
       showEdit: false,
@@ -138,7 +138,7 @@
       },
       bindThumbClick(idx, img) {
         wx.showActionSheet({
-          itemList: ['预览图片', '移除图片'],
+          itemList: ['预览图片'],//, '移除图片'
           success: (res) => {
             const { tapIndex } = res
             if (tapIndex === 0) {
@@ -146,9 +146,9 @@
                 urls: [img]
               })
             }
-            if (tapIndex === 1) {
-              this.albumList.splice(idx, 1)
-            }
+            // if (tapIndex === 1) {
+            //   this.albumList.splice(idx, 1)
+            // }
           },
           fail(res) {
 
