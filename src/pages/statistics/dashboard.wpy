@@ -182,6 +182,7 @@
 </style>
 <template>
   <div class="page-wrap p-b-30">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
 
     <div class="time-box">
       <div class="time-tab fz-14 c3">
@@ -637,6 +638,7 @@
     "navigationBarTitleText": "数据统计",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
       "echarts": "~@/components/echarts",
       "icon": "~@/components/icon",
       "popup-layer": "~@/components/popup-layer"

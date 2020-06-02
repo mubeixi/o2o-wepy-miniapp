@@ -1,6 +1,6 @@
 <template>
   <view class="all" >
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <!-- <page-title title="提现" rightHidden="true" bgcolor="#ffffff" ></page-title> -->
     <view class="content">
       <view class="bank"  >
@@ -309,6 +309,7 @@
   {
   "navigationBarTitleText": "提现",
     "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
     "icon": "~@/components/icon",
     }
   }

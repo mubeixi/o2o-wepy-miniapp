@@ -35,6 +35,7 @@
 </style>
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="container">
       <div class="list">
         <div class="item" v-for="(row,idx) in list" :key="idx" @click="selectFn(row)">
@@ -137,6 +138,7 @@
     "navigationBarTitleText": "下单模板",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
       "err-msg": "~@/components/err-msg",
       "icon": "~@/components/icon",
       "form-wrap": "~@/components/diy-form-wrap"

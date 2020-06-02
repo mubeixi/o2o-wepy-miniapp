@@ -90,6 +90,7 @@
 </style>
 <template>
   <div class="page-wrap p-b-30">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
       <div class="seckill-data-list flex ">
             <div class="seckill-data-list-item flex flex-vertical-center">
                 <div class="seckill-data-list-item-icon flex-vertical-center flex flex-justify-center m-r-10">
@@ -396,6 +397,7 @@
   "navigationBarTitleText": "秒杀数据",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "echarts": "~@/components/echarts",
   "icon": "~@/components/icon",
   "popup-layer": "~@/components/popup-layer"

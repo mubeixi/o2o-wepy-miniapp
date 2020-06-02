@@ -1,5 +1,6 @@
 <template>
   <div class="p-t-15">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="img m-b-16">
       <image src="/static/balance.png" class="full-img"></image>
       <div class="balance-store">店内余额</div>
@@ -129,6 +130,7 @@
   "navigationBarTitleText": "余额",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "err-msg": "~@/components/err-msg",
   "icon": "~@/components/icon",
   "fun-img": "~@/components/fun-img"

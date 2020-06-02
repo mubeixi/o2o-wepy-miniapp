@@ -1,5 +1,6 @@
 <template>
   <div class="all"  >
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <input v-if="type==1" type="text" class="my-info" v-model="biz_shop_name"  placeholder="请输入店铺名称"/>
     <input v-if="type==4" type="text" class="my-info" v-model="biz_name"  placeholder="请输入联系人"/>
     <block v-if="type==5">
@@ -300,6 +301,7 @@
   {
   "navigationBarTitleText": "修改资料",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
     "popup-layer": "~@/components/popup-layer",
     "icon": "~@/components/icon",
     "address": "~@/components/address"

@@ -1,5 +1,6 @@
 <template>
   <div class="AlbumList page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
         <div class="AlbumList-title">
           我的相册
           <div class="AlbumList-manage" @click="showEdit=!showEdit">
@@ -103,7 +104,7 @@
             }).catch(e=>{
               error(e.msg||'删除失败')
             })
-       
+
         }).catch(() => {})
 
       },
@@ -112,7 +113,7 @@
         arr.data.map(item=>{
             this.albumList.push(item)
         })
-        
+
         this.totalCount = arr.totalCount
       }
     },
@@ -259,6 +260,7 @@
   {
   "navigationBarTitleText": "相册",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

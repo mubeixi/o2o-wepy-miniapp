@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="form">
       <err-msg :errs="formCheckResult"></err-msg>
       <form>
@@ -1617,6 +1618,7 @@
     "navigationBarTitleText": "商品详情",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
       "err-msg": "~@/components/err-msg",
       "icon": "~@/components/icon",
       "fun-tree": "~@/components/fun-tree",

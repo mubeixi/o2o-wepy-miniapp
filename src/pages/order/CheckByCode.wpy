@@ -1,5 +1,6 @@
 <template>
   <div class="wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="input-box">
       <input confirm-type="done" v-model="Order_Code" class="input" type="digit" placeholder="请输入消费券码" />
     </div>
@@ -100,6 +101,7 @@
   "navigationBarTitleText": "卷码核销",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   }
   }

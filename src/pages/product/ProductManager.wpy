@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrap" :style="{paddingBottom:showHandle?'92rpx':'0'}">
-    <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
     <div class="head-actions">
       <div class="item" @click="$linkTo('/pages/product/form')">
         <image class="icon" src="/static/goods/add.png"></image>

@@ -1,4 +1,4 @@
-
+const moment = require('moment')
 function withData(param) {
   return param < 10 ? '0' + param : '' + param
 }
@@ -50,9 +50,15 @@ function getMonthDay(year, month) {
   }
   return array
 }
-function getNewDateArry() {
+function getNewDateArry(currentTime) {
   // 当前时间的处理
-  var newDate = new Date()
+  var newDate = null
+  if (!currentTime) {
+    newDate = new Date()
+  } else {
+    newDate = new Date(moment(currentTime).valueOf())
+  }
+
   const year = withData(newDate.getFullYear()),
     mont = withData(newDate.getMonth() + 1),
     date = withData(newDate.getDate()),
@@ -93,7 +99,7 @@ function dateTimePicker(startYear, endYear, date) {
   /* 年月日 时分秒 */
   dateTimeArray[0] = getLoopArray(start, end, '年')
   dateTimeArray[1] = getLoopArray(1, 12, '月')
-  const tempTime = getNewDateArry()
+  const tempTime = getNewDateArry(date)
   dateTimeArray[2] = getMonthDay(tempTime[0], tempTime[1])
   dateTimeArray[3] = getLoopArray(0, 23, '时')
   dateTimeArray[4] = getLoopArray(0, 59, '分')

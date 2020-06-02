@@ -1,6 +1,6 @@
 <template>
   <div class="p-b-50 page-wrap">
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="marginAuto">
       <div class="blockDiv" v-for="(item,index) in listData.prod_list" :key="index">
         <div class="imgDiv">
@@ -576,6 +576,7 @@
   {
   "navigationBarTitleText": "退款订单详情",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "fun-img": "~@/components/fun-img"
   }

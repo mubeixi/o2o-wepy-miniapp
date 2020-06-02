@@ -1,5 +1,6 @@
 <template>
   <div class="store-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="store-item flex flex-vertical-center flex-justify-between" >
       <div class="store-title">
         同城配送
@@ -457,6 +458,7 @@
   {
   "navigationBarTitleText": "同城配送",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
     "icon": "~@/components/icon",
     "wzw": "~@/components/ModelComponents"
   }

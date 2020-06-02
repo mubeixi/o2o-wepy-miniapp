@@ -1,5 +1,6 @@
 <template>
   <div class="settlement-list p-t-20 page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
         <div class="settlement-list-item" v-for="(item,index) of listData" :key="index">
             <div class="settlement-list-item-title flex flex-vertical-center flex-justify-between p-l-13 p-r-10 fz-14">
                   <div class="c3">
@@ -171,6 +172,7 @@
   "navigationBarTitleText": "结算",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "err-msg": "~@/components/err-msg",
   "icon": "~@/components/icon",
   "form-wrap": "~@/components/diy-form-wrap"

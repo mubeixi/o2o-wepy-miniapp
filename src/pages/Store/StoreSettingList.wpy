@@ -1,7 +1,6 @@
 <template>
   <div class="p-t-20">
-
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="list-item"  v-for="(item,index) of list" :key="index">
         <div class="flex flex-justify-between flex-vertical-center fz-14 c3 fz-bold p-l-10 p-r-10  item-title" @click="edit(item.id)">
           <div>{{item.store_name}}</div>
@@ -153,6 +152,7 @@
   {
   "navigationBarTitleText": "门店列表",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "time": "~@/components/time",
   }

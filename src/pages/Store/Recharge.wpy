@@ -1,6 +1,6 @@
 <template>
   <view class="all" >
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
 
     <view class="content">
 
@@ -260,6 +260,7 @@
   {
   "navigationBarTitleText": "充值",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   }
   }
