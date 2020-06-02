@@ -2,28 +2,33 @@
   <div class="page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="head" >
-      <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')">
+      <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')"  v-if="AccessToken">
         <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
         <span class="store-title">{{info.biz_shop_name}}</span>
+      </div>
+      <div class="base" @click.stop="$linkTo('/pages/user/login')"  v-else>
+          <div class="login-main">
+            登录/注册
+          </div>
       </div>
       <div class="action"  v-if="status==2" @click.stop="goBusiness">
         <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft"  class="iconarrowleft"></icon>
       </div>
-      <div class="action"  v-else  @click.stop="$linkTo('/pages/join/BusinessStation')">
+      <div class="action"  v-else  @click.stop="goBusinessMy">
         <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
         <icon type="iconarrowleft"  class="iconarrowleft"></icon>
       </div>
     </div>
 
     <div class="finance-box" >
-      <div class="finance-item"  @click="$linkTo('/pages/store/StoreBalance')">
-        <div><span class="fz-12">￥</span><span class="fz-18">{{info.biz_money}}</span></div>
+      <div class="finance-item"  @click="goBanlance">
+        <div><span class="fz-12" v-if="AccessToken">￥</span><span class="fz-18">{{AccessToken?info.biz_money:'-'}}</span></div>
         <span class="title">店铺余额</span>
       </div>
       <div class="space-line"></div>
       <div class="finance-item" @click="goTodayPerson">
-        <div class="fz-18">{{info.view_person_count}}</div>
+        <div class="fz-18">{{AccessToken?info.view_person_count:'-'}}</div>
         <span class="title">今日来访</span>
       </div>
       <div class="space-line"></div>
@@ -36,12 +41,12 @@
     <div class="container">
       <div class="count-box">
         <div class="count-item" @click="goTodayOrder">
-          <div class="val"><icon class="icon" type="iconyuanhuan" color="#FA9981"></icon><div class="fz-16 c333 text-center">{{info.today_order_count}}</div></div>
+          <div class="val"><icon class="icon" type="iconyuanhuan" color="#FA9981"></icon><div class="fz-16 c333 text-center">{{AccessToken?info.today_order_count:'-'}}</div></div>
           <span class="title">今日订单</span>
         </div>
         <div style="width: 50rpx;"></div>
         <div class="count-item"  @click="goTodayOrderMoney">
-          <div class="val"><icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon><div class="fz-12 c333 text-center">￥<span class="fz-16">{{info.today_order_money}}</span></div></div>
+          <div class="val"><icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon><div class="fz-12 c333 text-center"><block v-if="AccessToken">￥</block><span class="fz-16">{{AccessToken?info.today_order_money:'-'}}</span></div></div>
           <span class="title">今日订单金额</span>
         </div>
       </div>
@@ -56,7 +61,7 @@
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/store/StoreInfo')">
+          <div class="grid-item" @click="goStoreInfo">
             <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
             <div class="grid-item-title">修改资料</div>
           </div>
@@ -74,13 +79,13 @@
           <div class="grid-item" @click="goOrder">
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
-              订单管理<span v-if="orderNum.waitsend" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>
+              订单管理<span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>
 <!--              <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)">-->
 <!--                 -->
 <!--              </div>-->
             </div>
           </div>
-          <div class="grid-item"  @click="$linkTo('/pages/store/StoreSetting')">
+          <div class="grid-item"  @click="goStoreSetting">
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
@@ -99,7 +104,7 @@
           <div class="grid-item" @click="goOrderRefund">
             <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
-              退款售后<span v-if="orderBackNum.orderSum" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+              退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
             </div>
           </div>
         </div>
@@ -129,7 +134,7 @@
   import IM from '../common/Im/Im'
   import { Exception } from '../common/Exception'
   import eventHub from '../common/eventHub'
-
+  import { getAccessToken } from '../common/request'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -145,7 +150,8 @@
       orderNum: {waitsend: 0},
       info: {},
       status: 1,
-      infoData: {}
+      infoData: {},
+      AccessToken: {}
     },
     computed: {
       userInfo() {
@@ -153,31 +159,50 @@
       }
     },
     methods: {
+      goStoreSetting() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreSetting')
+      },
+      goStoreInfo() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreInfo')
+      },
+      goBanlance() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreBalance')
+      },
       goTodayPerson() {
+        if (!checkIsLogin(1, 1)) return
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard?tabActiveIdx=7&today=1')
       },
       goTodayOrderMoney() {
+        if (!checkIsLogin(1, 1)) return
        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard?tabActiveIdx=2&today=1')
       },
       goTodayOrder() {
+        if (!checkIsLogin(1, 1)) return
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard?tabActiveIdx=0&today=1')
       },
       goOrderRefund() {
+        if (!checkIsLogin(1, 1)) return
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/order/OrderRefund')
       },
       goSettlementList() {
+        if (!checkIsLogin(1, 1)) return
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/order/SettlementList')
       },
       goLogistics() {
+        if (!checkIsLogin(1, 1)) return
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/logistics/LogisticsMain')
       },
       goOrder() {
+        if (!checkIsLogin(1, 1)) return
        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/order/OrderRetail')
       },
@@ -186,14 +211,21 @@
         linkTo('/pages/store/StoreMarketing')
       },
       goStatistics() {
+        if (!checkIsLogin(1, 1)) return
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard')
       },
       goPro() {
+        if (!checkIsLogin(1, 1)) return
         // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/product/ProductManager')
       },
+      goBusinessMy() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/join/BusinessStation')
+      },
       goBusiness() {
+        if (!checkIsLogin(1, 1)) return
         const principal_type = this.infoData.apply_info.principal_type
 
         if (principal_type === 1) {
@@ -203,6 +235,7 @@
         }
       },
       toShare() {
+        if (!checkIsLogin(1, 1)) return
         if (!checkIsSettle(1, 1)) return
         if (checkIsLogin(false, false)) this.$linkTo('/pages/marketing/shareQrcode')
       },
@@ -269,9 +302,11 @@
 
     },
     onShow() {
+      this.AccessToken = getAccessToken()
+      if (this.AccessToken) {
+        this.getInit()
+      }
       this.status = ls.get('status')
-      if (!checkIsLogin(1, 0)) return
-      this.getInit()
     },
     created() {
 
@@ -454,6 +489,12 @@
     }
   }
   /*九宫格 end*/
+  .login-main{
+    width: 100%;
+    padding-left: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
 
 
 </style>
