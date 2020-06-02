@@ -28,7 +28,7 @@
       </div>
       <div class="space-line"></div>
       <div class="finance-item" @click="goTodayPerson">
-        <div class="fz-18">{{info.view_person_count?info.view_person_count:'-'}}</div>
+        <div class="fz-18">{{AccessToken?info.view_person_count:'-'}}</div>
         <span class="title">今日来访</span>
       </div>
       <div class="space-line"></div>
@@ -79,7 +79,7 @@
           <div class="grid-item" @click="goOrder">
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
-              订单管理<span v-if="orderNum.waitsend" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>
+              订单管理<span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>
 <!--              <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)">-->
 <!--                 -->
 <!--              </div>-->
@@ -104,7 +104,7 @@
           <div class="grid-item" @click="goOrderRefund">
             <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
-              退款售后<span v-if="orderBackNum.orderSum" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+              退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
             </div>
           </div>
         </div>
