@@ -1,5 +1,6 @@
 <template>
   <div class="store-vip page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
     <div class="store-item flex flex-vertical-center "  style="padding-top: 20rpx;height: 108rpx">
       <div class="store-title">
@@ -276,6 +277,7 @@
   {
   "navigationBarTitleText": "店铺会员",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
     "icon": "~@/components/icon",
     "popup-layer": "~@/components/popup-layer",
     "err-msg": "~@/components/err-msg"

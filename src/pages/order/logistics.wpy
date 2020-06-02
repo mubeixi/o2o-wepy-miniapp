@@ -1,6 +1,6 @@
 <template>
   <view  class="all"  @click="commonClick">
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <view class="wuliu box-sizing" v-if="pro.list">
       <image :src="pro.imgpath" class="image"></image>
       <view>
@@ -250,6 +250,7 @@
   "navigationBarTitleText": "物流追踪",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   }
   }

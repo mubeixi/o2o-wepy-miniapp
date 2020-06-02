@@ -1,5 +1,6 @@
 <template>
   <div class="AddAlbum page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
         <div class="cell-item">
             <div class="label">相册名称</div>
             <input type="text" class="content" v-model="cate_name" placeholder="请输入相册名称" />
@@ -226,7 +227,7 @@
     left: 0px;
     bottom: 0px
   }
-   
+
 
 
 </style>
@@ -234,6 +235,7 @@
   {
   "navigationBarTitleText": "新增相册",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "time": "~@/components/time",
   "err-msg": "~@/components/err-msg",

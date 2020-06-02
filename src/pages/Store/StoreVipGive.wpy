@@ -1,6 +1,6 @@
 <template>
   <div class="store-all">
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="store-item flex flex-vertical-center flex-justify-between" @click="openPop('couponPop')">
       <div class="store-title">
         赠送优惠券
@@ -401,6 +401,7 @@
   {
   "navigationBarTitleText": "赠送礼包",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "popup-layer": "~@/components/popup-layer",
   "icon": "~@/components/icon"
   }

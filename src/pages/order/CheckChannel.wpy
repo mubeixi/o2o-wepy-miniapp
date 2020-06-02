@@ -1,5 +1,6 @@
 <template>
     <div>
+      <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
       <div class="items p-t-10">
         <image @click="scanFn"  class="scan" src="/static/order/saoma.png" />
         <div>
@@ -103,6 +104,7 @@
   "navigationBarTitleText": "核销",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   }
   }

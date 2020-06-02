@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="form">
       <err-msg :errs="formCheckResult"></err-msg>
       <form>
@@ -178,6 +179,7 @@
     "navigationBarTitleText": "下单模板管理",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
       "err-msg": "~@/components/err-msg",
       "icon": "~@/components/icon",
       "form-wrap": "~@/components/diy-form-wrap"

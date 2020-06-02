@@ -1,6 +1,6 @@
 <template>
   <div class="p-b-50 page-wrap">
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="marginAuto">
       <div class="blockDiv" v-for="(item,index) in listData.prod_list" :key="index">
         <div class="imgDiv">
@@ -79,7 +79,7 @@
         <div class="divHeight">
           收货信息： {{listData.Address_Name}} {{listData.Address_Province_name}} {{listData.Address_City_name}} {{listData.Address_Area_name}} {{listData.Address_Town_name}} {{listData.Address_Detailed_name}}
         </div>
-        
+
 
       </div>
 
@@ -484,6 +484,7 @@
   {
   "navigationBarTitleText": "订单详情",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "diy-form": "~@/components/diy-form-format",
   "fun-img": "~@/components/fun-img"

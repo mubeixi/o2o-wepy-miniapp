@@ -26,7 +26,7 @@
               <div class="arrow-icon"></div>
             </block>
           </div>
-          <div class="headimg" :style="{backgroundImage:'url('+headimg+')'}"></div>
+          <div class="headimg" :style="{backgroundImage:'url('+((message.avatar||message.from_avatar))+')'}"></div>
           <div v-if="message.direction!=='to'" class="content-arrow">
             <block v-if="message.type==='text'">
               <image mode="widthFix" class="arrow-icon" src="/static/im/chat-arrow-left.png"></image>
@@ -156,6 +156,7 @@
           width: 84rpx;
           height: 84rpx;
           border-radius: 4rpx;
+          @include cover-img();
         }
         .content-arrow{
           position: relative;

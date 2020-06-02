@@ -1,6 +1,6 @@
 <template>
   <div @click="commonClick" class="myall" v-show="orderInfo.Order_ID">
-
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="container" >
       <div class="lists">
         <div class="item" >
@@ -326,6 +326,7 @@
   "navigationBarTitleText": "核销",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   }
   }
