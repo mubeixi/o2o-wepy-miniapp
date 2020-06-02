@@ -268,10 +268,11 @@
         this.Coupon_ID = options.Coupon_ID
       } else {
         let obj1 = dateTimePicker('', '')
+        let obj2 = dateTimePicker('', '')
         this.dateTimeArray1 = obj1.dateTimeArray
         this.dateTime1 = obj1.dateTime
-        this.dateTimeArray2 = obj1.dateTimeArray
-        this.dateTime2 = obj1.dateTime
+        this.dateTimeArray2 = obj2.dateTimeArray
+        this.dateTime2 = obj2.dateTime
       }
 
       this.init()
@@ -318,11 +319,11 @@
         const {column, value} = e.$wx.detail
         this.$set(this.dateTime2, column, value)
         let dateArr = this.dateTimeArray2
-        if ([1, 2].includes(column)) {
+        if ([1, 0].includes(column)) {
           const newDayList = getMonthDay(dateArr[0][this.dateTime2[0]], dateArr[1][this.dateTime2[1]])
           console.log(newDayList)
-          if (!newDayList.hasOwnProperty(this.dateTime2[3])) this.$set(this.dateTime2, 3, 0)
           this.$set(this.dateTimeArray2, 2, newDayList)
+          if (!newDayList.hasOwnProperty(this.dateTime2[2])) this.$set(this.dateTime2, 2, 0)
         }
       },
       changeDateTime1(e) {
