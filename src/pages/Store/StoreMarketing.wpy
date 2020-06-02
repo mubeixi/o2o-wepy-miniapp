@@ -2,29 +2,29 @@
   <div class="page-wrap">
     <div class="feature-list">
       <div class="feature-row">
-        <div class="feature-item" @click="$linkTo('/pages/marketing/FlashSale')">
+        <div class="feature-item" @click="goFlashSale">
           <image src="/static/marketing/discount.png" class="img"></image>
           <div class="title">限时折扣</div>
         </div>
-        <div class="feature-item" @click="$linkTo('/pages/marketing/Seckill')">
+        <div class="feature-item" @click="goSeckill">
           <image src="/static/marketing/kill.png" class="img"></image>
           <div class="title">秒杀</div>
         </div>
-        <div class="feature-item" @click="$linkTo('/pages/store/StoreCoupon')">
+        <div class="feature-item" @click="goStoreCoupon">
           <image src="/static/marketing/coupon.png" class="img"></image>
           <div class="title">优惠券</div>
         </div>
       </div>
       <div class="feature-row">
-          <div class="feature-item"  @click="$linkTo('/pages/marketing/FullReduce')">
+          <div class="feature-item"  @click="goFullReduce">
             <image src="/static/marketing/deduct.png" class="img"></image>
             <div class="title">满减</div>
           </div>
-          <div class="feature-item" @click="$linkTo('/pages/store/StoreVipList')">
+          <div class="feature-item" @click="goStoreVipList">
             <image src="/static/marketing/vip.png" class="img"></image>
             <div class="title">店铺会员</div>
           </div>
-          <div class="feature-item"  @click="$linkTo('/pages/marketing/Give')">
+          <div class="feature-item"  @click="goGive">
           <image src="/static/marketing/give.png" class="img"></image>
           <div class="title">赠品</div>
         </div>
@@ -43,7 +43,8 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-
+  import {checkIsLogin} from '../../common/helper'
+  import { linkTo } from '../../common/fun'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -53,7 +54,30 @@
       }
     },
     methods: {
-
+      goFlashSale() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/marketing/FlashSale')
+      },
+      goSeckill() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/marketing/Seckill')
+      },
+      goStoreCoupon() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreCoupon')
+      },
+      goFullReduce() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/marketing/FullReduce')
+      },
+      goStoreVipList() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreVipList')
+      },
+      goGive() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/marketing/Give')
+      }
     },
     created() {
       // getSystemInfo({
