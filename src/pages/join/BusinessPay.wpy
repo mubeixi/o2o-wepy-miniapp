@@ -67,7 +67,7 @@
 <!--      <button class="pay-button"  open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="payLast">{{submitName}}</button>-->
     </div>
 
-    <popup-layer ref="systemCate" title="选择分类" :autoClose="false" >
+    <popup-layer ref="systemCate" title="选择分类"  >
       <div v-if="bizList.length>0" :style="{maxHeight:(systemInfo.windowHeight)*0.5+'px'}"  style="overflow: scroll;">
         <fun-tree
           ele-id="prodSystem"
@@ -102,6 +102,7 @@
     data: {
       submitName: '立即支付',
       systemCateConf: {
+        pidKey: 'Category_ParentID',
         children: 'child', // 指定子树为节点对象的某个属性值
         label: 'Category_Name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
