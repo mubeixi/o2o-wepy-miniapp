@@ -11,14 +11,16 @@
             登录/注册
           </div>
       </div>
-      <div class="action"  v-if="status==2" @click.stop="goBusiness">
-        <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
-        <icon type="iconarrowleft"  class="iconarrowleft"></icon>
-      </div>
-      <div class="action"  v-else  @click.stop="goBusinessMy">
-        <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
-        <icon type="iconarrowleft"  class="iconarrowleft"></icon>
-      </div>
+      <block v-if="AccessToken">
+        <div class="action"  v-if="status==2" @click.stop="goBusiness">
+          <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
+          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        </div>
+        <div class="action"  v-else  @click.stop="goBusinessMy">
+          <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        </div>
+      </block>
     </div>
 
     <div class="finance-box" >
@@ -490,9 +492,9 @@
   }
   /*九宫格 end*/
   .login-main{
-    width: 100%;
-    padding-left: 20px;
+    margin: 0 auto;
     font-size: 18px;
+    padding: 10rpx;
     font-weight: bold;
   }
 
@@ -500,7 +502,7 @@
 </style>
 <config>
   {
-    "navigationBarTitleText": "店铺概览",
+    "navigationBarTitleText": "店铺管理",
     "navigationBarTextStyle": "black",
     "navigationBarBackgroundColor": "#f8f8f8",
     "usingComponents": {
