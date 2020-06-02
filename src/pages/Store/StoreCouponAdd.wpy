@@ -218,7 +218,14 @@
   import pageMixin from '../../mixins'
   import { getCouponList, getUserLevel, opCoupon } from '../../api/store'
   import { bizProdList } from '../../api/product'
-  import { chooseImageByPromise, findArrayIdx, getArrColumn, getDomain, uploadImages } from '../../common/helper'
+  import {
+    chooseImageByPromise,
+    findArrayIdx,
+    getArrColumn,
+    getDomain,
+    objTranslate,
+    uploadImages
+  } from '../../common/helper'
   import { error, hideLoading, modal, showLoading } from '../../common/fun'
   import { dateTimePicker, getMonthDay, getNewDateArry } from '../../common/time'
   import { Exception } from '../../common/Exception'
@@ -259,12 +266,14 @@
     onLoad(options) {
       if (options.Coupon_ID) {
         this.Coupon_ID = options.Coupon_ID
+      } else {
+        let obj1 = dateTimePicker('', '')
+        this.dateTimeArray1 = obj1.dateTimeArray
+        this.dateTime1 = obj1.dateTime
+        this.dateTimeArray2 = obj1.dateTimeArray
+        this.dateTime2 = obj1.dateTime
       }
-      let obj1 = dateTimePicker('', '')
-      this.dateTimeArray1 = obj1.dateTimeArray
-      this.dateTime1 = obj1.dateTime
-      this.dateTimeArray2 = obj1.dateTimeArray
-      this.dateTime2 = obj1.dateTime
+
       this.init()
     },
     methods: {
@@ -305,12 +314,16 @@
         this.dateTime2 = e.$wx.detail.value
       },
       changeDateTimeColumn2(e) {
-        let arr = this.dateTime2
+        console.log(e)
+        const {column, value} = e.$wx.detail
+        this.$set(this.dateTime2, column, value)
         let dateArr = this.dateTimeArray2
-        arr[e.$wx.detail.column] = e.$wx.detail.value
-        dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
-        this.dateTimeArray2 = dateArr
-        this.dateTime2 = arr
+        if ([1, 2].includes(column)) {
+          const newDayList = getMonthDay(dateArr[0][this.dateTime2[0]], dateArr[1][this.dateTime2[1]])
+          console.log(newDayList)
+          if (!newDayList.hasOwnProperty(this.dateTime2[3])) this.$set(this.dateTime2, 3, 0)
+          this.$set(this.dateTimeArray2, 2, newDayList)
+        }
       },
       changeDateTime1(e) {
         console.log(e.$wx.detail.value)
@@ -479,24 +492,43 @@
 
                 this.imgTempList.push(item.Coupon_PhotoPath)
                 console.log(item.Coupon_PhotoPath, this.imgTempList, 'sss')
+
+                let obj1 = dateTimePicker('', '', item.Coupon_StartTime) // 传入已有时间，防止出现31号的情况
+                let obj2 = dateTimePicker('', '', item.Coupon_EndTime)// 传入已有时间，防止出现31号的情况
+
+                this.dateTimeArray1 = obj1.dateTimeArray
+                this.dateTime1 = obj1.dateTime
+
+                this.dateTimeArray2 = obj2.dateTimeArray
+                this.dateTime2 = obj2.dateTime
+
                 // 初始化开始时间
                 let date = item.Coupon_StartTime
                 let defaultDate = date ? [...date.split(' ')[0].split('-'), ...date.split(' ')[1].split(':')] : getNewDateArry()
                 let arr = []
                 for (let j = 0; j < this.dateTimeArray1.length; j++) {
                   for (let i = 0; i < this.dateTimeArray1[j].length; i++) {
-                    if (parseInt(this.dateTimeArray1[j][i]) == defaultDate[j]) {
+                    if (parseInt(this.dateTimeArray1[j][i]) == parseInt(defaultDate[j])) {
                       arr.push(i)
                     }
                   }
                 }
                 // 初始化结束时间
                 let dates = item.Coupon_EndTime
+
+                // // 更新日期列表，不然有可能出现31天的情况
+                // console.log(objTranslate(this.dateTimeArray2[2]))
+                // const tempTime = getNewDateArry(item.Coupon_EndTime)
+                // const dateTimeArray2 = getMonthDay(tempTime[0], tempTime[1])
+                // this.$set(this.dateTimeArray2, 2, dateTimeArray2)
+
+                console.log(objTranslate(this.dateTimeArray2[2]))
                 let defaultDates = dates ? [...dates.split(' ')[0].split('-'), ...dates.split(' ')[1].split(':')] : getNewDateArry()
                 let arrs = []
                 for (let j = 0; j < this.dateTimeArray2.length; j++) {
                   for (let i = 0; i < this.dateTimeArray2[j].length; i++) {
-                    if (parseInt(this.dateTimeArray2[j][i]) == defaultDates[j]) {
+                    if (parseInt(this.dateTimeArray2[j][i]) == parseInt(defaultDates[j])) {
+                      console.log(j, i)
                       arrs.push(i)
                     }
                   }

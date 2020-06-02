@@ -356,6 +356,10 @@ class IM {
         break
     }
 
+    //不然本地发送的会没有头像
+    Object.assign(message,{nickname:this.sendName,headimg:this.sendAvatar})
+
+
     if (type === 'image') {
       await message.getImgInfo()
     }

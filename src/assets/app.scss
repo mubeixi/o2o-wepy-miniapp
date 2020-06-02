@@ -15,9 +15,6 @@
 }
 
 
-
-
-
 /* rest style end */
 
 /* common style start */
@@ -318,4 +315,11 @@ page{
   &-underline{
     text-decoration: underline;
   }
+}
+
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
 }
