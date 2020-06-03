@@ -1,5 +1,5 @@
 import { staticUrl } from './env'
-import { error } from './fun'
+import { back, error } from './fun'
 import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
@@ -327,7 +327,7 @@ export const confirm = (options) => {
  * @param redirect
  * @return {boolean}
  */
-export const checkIsLogin = (redirect = 1, tip = 0) => {
+export const checkIsLogin = (redirect = 1, tip = 0,errCall) => {
   let access_token = getAccessToken()
 
   if (!access_token) {
@@ -343,7 +343,9 @@ export const checkIsLogin = (redirect = 1, tip = 0) => {
         wx.navigateTo({
           url: '/pages/user/login'
         })
-      }).catch(() => {})
+      }).catch(() => {
+        errCall && errCall()
+      })
     }
     return false
   }

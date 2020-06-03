@@ -462,18 +462,20 @@
     </popup-layer>
 
     <popup-layer title="商品承诺" ref="promise" >
-      <div class="wrap flex promise-wrap" >
-        <div class="left" >
-          <div v-for="(text,idx) in promiseList" :key="idx" class="p-l-10 m-t-10 flex flex-vertical-center row">
+      <scroll-view scroll-y :scroll-into-view="promiseIntoViewId" class="wrap flex promise-wrap" :style="{maxHeight:systemInfo.windowHeight*0.6+'px'}" >
+        <div class="left"  >
+          <div v-for="(text,idx) in promiseList" :id="'promise'+idx" :key="idx" class="p-l-10 m-t-10 flex flex-vertical-center row">
             <input type="text" @focus="focusPromise(idx)" @input="inputPromise" :value="text" class="bor fz-14 flex1 row-input" />
             <icon @click="delPromise(idx)" style="padding-left:20rpx" type="iconminus" color="#F53636"></icon>
           </div>
         </div>
         <div class="right">
-          <div class="specs-action-box" style="margin:0;">
-            <div class="add-btn" @click="addPromise"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4" >添加</span></div>
-          </div>
+
         </div>
+
+      </scroll-view>
+      <div class="specs-action-box" style="margin: 30rpx;">
+        <div class="add-btn" @click="addPromise"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4" >添加</span></div>
       </div>
       <button  class="btn btn-primary m-t-35" @click="closePop('promise')">确定</button>
     </popup-layer>
@@ -629,6 +631,7 @@
   import pageMixin from '../../mixins'
   import Index from '../../mixins'
   import {
+    checkIsLogin,
     chooseImageByPromise,
     confirm,
     getArrColumn,
@@ -639,7 +642,7 @@
   import { getProductCategory, getProductDetail, getSystemProdConfig, systemOperateProd } from '../../api/product'
   import { addBizProdCate, getBizProdCateList, getCouponList, getShippingTemplate } from '../../api/store'
 
-  import { error, hideLoading, modal, showLoading, toast } from '../../common/fun'
+  import { back, error, hideLoading, modal, showLoading, toast } from '../../common/fun'
   import { floatNumber, intNumber } from '../../common/regs'
 
   import eventHub from '../../common/eventHub'
@@ -652,6 +655,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      toLogin: false, // 标记为是否去登陆了，为了onShow可以不要瞎响应
       moreSetting: false,
       bizProdCateFormShow: false,
       newBizProdCateText: '',
@@ -670,6 +674,7 @@
       bizCateHas: [], // 商家商品分类
       bizProdCateList: [],
       bizCateConf: {
+        pidKey: 'pid',
         children: 'child', // 指定子树为节点对象的某个属性值
         label: 'cate_name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
@@ -680,6 +685,7 @@
       shippingTmplList: [],
       focusPromiseIdx: 0,
       promiseList: [],
+      promiseIntoViewId:'',
       limitBuyIndex: 0,
       PROD_LIMIT_TYPE: [],
       _default: null,
@@ -1064,6 +1070,10 @@
         })
       },
       setBizCate(action) {
+        if (this.bizProdCateList.length < 1) {
+          this.$closePop('bizCatePop')
+          return
+        }
         const checkNodeList = this.$refs.bizCateTree.getCheckedNodes()
         // 手动点击的才关闭，不然每次新增自定义菜单，都会关闭
         action === 'handle' && this.closePop('bizCatePop')
@@ -1112,6 +1122,7 @@
       },
       addPromise() {
         this.promiseList.push('')
+        this.promiseIntoViewId = 'promise'+(this.promiseList.length-1)
       },
       productLimitTaggle(e) {
         console.log(e.$wx)
@@ -1211,7 +1222,6 @@
           this._click = false
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
-
         }
       },
       _initBizProdCate() {
@@ -1333,7 +1343,7 @@
     },
     onLoad(options) {
       this.Products_ID = options.id
-      this._init_func()
+
       eventHub.$on('goods-order-tmpl', ({tmpl}) => {
         console.log('flash-order-tmpl event emitted, the params are:')
         console.log(tmpl)
@@ -1341,9 +1351,23 @@
         this.formData.order_temp_id = tmpl.id
         this.order_temp_text = tmpl.title
       })
+
+      if (checkIsLogin(0, 0)) {
+        this.toLogin = false
+        this._init_func()
+      }
+
     },
     onShow() {
+      if (!checkIsLogin(1, 1, back)) {
+        this.toLogin = true
+        return
+      }
       console.log('page on show')
+      if (this.toLogin) {
+        this.toLogin = false
+        this._init_func()
+      }
     }
   })
 </script>
@@ -1593,7 +1617,12 @@
 
 
   .promise-wrap{
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: relative;
     .left{
+
+
       .row{
         width: 500rpx
       }
@@ -1609,6 +1638,9 @@
       flex-direction: column;
       justify-content: flex-end;
       padding-left: 30rpx;
+    }
+    .specs-action-box{
+
     }
   }
 

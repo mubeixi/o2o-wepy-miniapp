@@ -45,9 +45,20 @@
     data: {
 
     },
+    watch: {
+      postData: {
+        deep: true,
+        handler(newval) {
+          console.log('postData is change', newval)
+        }
+      }
+    },
     methods: {
       refresh() {
-        this.init()
+        // 清空
+
+        console.log('refresh action')
+        this.init(null, true)
       }
     }
   })
