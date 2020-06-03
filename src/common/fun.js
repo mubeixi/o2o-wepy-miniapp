@@ -31,7 +31,15 @@ export const modal = (content = '', title = '提示') => {
   })
 }
 
-export const back = () => wx.navigateBack()
+export const back = () => {
+  wx.navigateBack({
+    fail() {
+      wx.switchTab({
+        url: '/pages/index'
+      })
+    }
+  })
+}
 
 export const linkTo = (url, type = 'default') => {
   if (type === 'default') {

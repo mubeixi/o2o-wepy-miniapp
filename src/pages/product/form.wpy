@@ -629,6 +629,7 @@
   import pageMixin from '../../mixins'
   import Index from '../../mixins'
   import {
+    checkIsLogin,
     chooseImageByPromise,
     confirm,
     getArrColumn,
@@ -639,7 +640,7 @@
   import { getProductCategory, getProductDetail, getSystemProdConfig, systemOperateProd } from '../../api/product'
   import { addBizProdCate, getBizProdCateList, getCouponList, getShippingTemplate } from '../../api/store'
 
-  import { error, hideLoading, modal, showLoading, toast } from '../../common/fun'
+  import { back, error, hideLoading, modal, showLoading, toast } from '../../common/fun'
   import { floatNumber, intNumber } from '../../common/regs'
 
   import eventHub from '../../common/eventHub'
@@ -652,6 +653,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      toLogin: false, // 标记为是否去登陆了，为了onShow可以不要瞎响应
       moreSetting: false,
       bizProdCateFormShow: false,
       newBizProdCateText: '',
@@ -1211,7 +1213,6 @@
           this._click = false
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
-
         }
       },
       _initBizProdCate() {
@@ -1333,7 +1334,7 @@
     },
     onLoad(options) {
       this.Products_ID = options.id
-      this._init_func()
+
       eventHub.$on('goods-order-tmpl', ({tmpl}) => {
         console.log('flash-order-tmpl event emitted, the params are:')
         console.log(tmpl)
@@ -1343,7 +1344,15 @@
       })
     },
     onShow() {
+      if (!checkIsLogin(1, 1, back)) {
+        this.toLogin = true
+        return
+      }
       console.log('page on show')
+      if (this.toLogin) {
+        this.toLogin = false
+        this._init_func()
+      }
     }
   })
 </script>
