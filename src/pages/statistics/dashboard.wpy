@@ -1,8 +1,6 @@
 <style lang="scss">
-
   @import "../../assets/variables.scss";
   .page-wrap{
-
   }
   .customer{
     .main{
@@ -54,14 +52,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-
       color: #666;
       padding: 20rpx 20rpx 0;
     }
   }
-
   .tab{
-
     &-list{
       margin: 30rpx 0;
       display: flex;
@@ -90,13 +85,11 @@
       }
     }
   }
-
   .swiper-echarts{
     display: block;
     width: 670rpx;
     height: 400rpx;
   }
-
   .product-list{
     margin-top: 20px;
     .th,.td{
@@ -110,7 +103,6 @@
       text-overflow: ellipsis;
     }
   }
-
   .time-box{
     width: 710rpx;
     margin: 0 25rpx 30rpx;
@@ -127,7 +119,6 @@
           color: $fun-blue-color;
         }
       }
-
     }
     .time-line{
       background: #fff;
@@ -156,14 +147,12 @@
           margin: 0 10rpx;
         }
         .end{
-
           width: 230rpx;
           height:  55rpx;
           line-height: 55rpx;
           box-sizing: border-box;
           padding: 0 16rpx;
           border:1px solid #eee;
-
         }
       }
       .search-btn{
@@ -174,16 +163,13 @@
         background:$fun-blue-color;
         border-radius:5rpx;
         color: #fff;
-
       }
     }
   }
-
 </style>
 <template>
   <div class="page-wrap p-b-30">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-
     <div class="time-box">
       <div class="time-tab fz-14 c3">
         <div class="time-tab-item" @click="setTimeTabIdx(0)" :class="{active:timeTabIdx===0}">今日</div>
@@ -200,7 +186,6 @@
                 <icon color="#999" type="iconrili"></icon>
               </div>
             </picker>
-
           </div>
           <div class="hr"></div>
           <div class="end">
@@ -215,7 +200,6 @@
         <div class="search-btn fz-12" @click="restData">搜索</div>
       </div>
     </div>
-
     <div class="section">
       <div class="title"><span class="before"></span><span class="text">实时数据</span></div>
       <div class="main">
@@ -241,8 +225,6 @@
             <div class="label">{{tabData.order_pay_person_count.name}}</div><div class="val">{{tabData.order_pay_person_count.value}}</div>
           </div>
         </div>
-
-
         <echarts
           ref="catTime"
           :propData="charts[tabActiveIdx].data"
@@ -255,11 +237,8 @@
 <!--          <span>查看详情</span>-->
 <!--          <icon type="iconarrowleft" size="14" color="#999"></icon>-->
 <!--        </div>-->
-
-
       </div>
     </div>
-
     <div class="section customer">
       <div class="title"><span class="before"></span><span class="text">客户分析</span></div>
       <div class="main">
@@ -276,7 +255,6 @@
 <!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
 <!--      </div>-->
     </div>
-
     <div class="section">
       <div class="title"><span class="before"></span><span class="text">商品分析</span></div>
       <div class="main" style="padding: 40rpx 0;">
@@ -319,7 +297,6 @@
 <!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
 <!--      </div>-->
     </div>
-
     <div class="section">
       <div class="title"><span class="before"></span><span class="text">交易分析</span></div>
       <div class="main" style="padding: 20px 0;">
@@ -343,7 +320,6 @@
 <!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
 <!--      </div>-->
     </div>
-
   </div>
 </template>
 <script>
@@ -353,10 +329,8 @@
   import { error, hideLoading, modal, showLoading } from '../../common/fun'
   import { getNewOldTradeStatistic, getTradeStatistic, systemProdSales } from '../../api/store'
   import { createF2Chart } from '../../mixins/f2'
-  import {ls} from '../../common/helper'
-
+  import { ls, objTranslate } from '../../common/helper'
   const moment = require('moment')
-
   /**
    * 求某个对象组成数组中，某个对象的值占百分比。方便配合f2-chart做饼图
    * @param item
@@ -372,11 +346,9 @@
     // 如果都是0的话，大家就一起穷。
     return arrSum === 0 ? (parseInt(1 / arr.length * 100) / 100) : (parseInt(item[key] / arrSum * 100) / 100)
   }
-
-  function getChartMask(){
+  function getChartMask() {
     return ls.get('today') ? 'HH' : 'MM-DD'
   }
-
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -398,18 +370,15 @@
       tabActiveIdx: 7, // 浏览人数
       onInitChartPie(el, config, data) {
         if (!el) return
-
         const {width, height} = config
         let chart = createF2Chart({
           el,
           width,
           height
         })
-
         console.log(config)
         const map = config.map
         const _data = data
-
         chart.source(_data, {
           percent: {
             formatter: function formatter(val) {
@@ -446,24 +415,26 @@
               easing: 'bounceOut'
             }
           })
-
         chart.render()
-
         // 注意：需要把chart return 出来
         return chart
       },
-      onInitChart1(el, config, data) {
-        if (!el) return
-
-        const {width, height} = config
-        let chart = createF2Chart({
-          el,
-          width,
-          height
-        })
+      onInitChart1(el, config, data, isRefresh, hasChart) {
+        var chart = null
+        if (!hasChart) {
+          if (!el) return
+          const {width, height} = config
+          chart = createF2Chart({
+            el,
+            width,
+            height
+          })
+        } else {
+          chart = hasChart
+          //chart.clear()
+        }
 
         const _data = data
-
         chart.source(_data, {
           date: {
             range: [0, 1],
@@ -476,17 +447,14 @@
             // tickCount: 4
           }
         })
-
         chart.area().position('date*value').color('label').adjust('stack')
         chart.line().position('date*value').color('label').adjust('stack')
         chart.render()
-
         // 注意：需要把chart return 出来
         return chart
       }
     },
     computed() {
-
     },
     methods: {
       restData() {
@@ -501,28 +469,27 @@
       setTimeTabIdx(idx) {
         this.timeTabIdx = idx
         var start = '', end = ''
-
         switch (idx) {
           case 0:
             // 今天
             start = moment().format('YYYY-MM-DD')
             ls.set('today', 1)
-            break;
+            break
           case 1:
             // 昨天
             start = moment().subtract(1, 'days').format('YYYY-MM-DD')
             ls.set('today', 1)
-            break;
+            break
           case 2:
             // 7天
             start = moment().subtract(7, 'days').format('YYYY-MM-DD')
-            ls.set('today', 0,1)
-            break;
+            ls.set('today', 0, 1)
+            break
           case 3:
             // 30天
             start = moment().subtract(30, 'days').format('YYYY-MM-DD')
-            ls.set('today', 0,1)
-            break;
+            ls.set('today', 0, 1)
+            break
         }
         this.startTime = start
         this.endTime = end
@@ -544,16 +511,24 @@
       async _init_func(action) {
         try {
           showLoading('初始化信息')
-
           // 线图
           const {data: tradeStatistic} = await getTradeStatistic({start_time: this.startTime, end_time: this.endTime}).catch(() => { throw new Error('获取统计失败') })
           const {data: tabData = {}, titles = [], time_list = [], charts = [], max_num = 0, max_rate = 0} = tradeStatistic
           this.tabData = tabData
           this.titles = titles
-          this.time_list = time_list.map(item => {
-            return moment(`${item}:00:00`).format('YYYY-MM-DD HH:mm:ss')
-            // return item.split(' ')[1]
-          })
+          if (ls.get('today')) {
+            this.time_list = time_list.map(item => {
+              // console.log(item)
+              return moment(`${item}:00:00`).format('YYYY-MM-DD HH:mm:ss')
+            })
+          } else {
+            this.time_list = time_list.map(item => {
+              console.log(item)
+              return moment(`${item} 00:00:00`).format('YYYY-MM-DD HH:mm:ss')
+            })
+          }
+
+          console.log(objTranslate(this.time_list))
 
           for (let item of charts) {
             item.conf = {
@@ -567,15 +542,15 @@
                 date: this.time_list[i]}
             }
           }
-          this.charts = charts
+
+          this.$set(this, 'charts', charts)
           this.max_num = max_num
           this.max_rate = max_rate
           if (action === 'refresh') {
-            this.$refs.catTime.refresh()
+            this.$refs.catTime.init()
           } else {
             this.$refs.catTime.init()
           }
-
           // 饼图
           let {data: newOldTradeStatistic} = await getNewOldTradeStatistic({search_time: this.startTime}).catch(() => { throw new Error('获取统计失败') })
           // for (let item of newOldTradeStatistic.circles) {
@@ -593,12 +568,10 @@
           newOldTradeStatistic.circlesConf = {map: map} // 配置
           this.newOldTradeStatistic = newOldTradeStatistic
           this.$refs.pie.init()
-
           // 底部
           const proPostData = {time: 'desc', start_time: this.startTime, end_time: this.endTime}
           const {data: systemProdSalesData} = await systemProdSales(proPostData).catch(() => { throw new Error('获取商品销售数据失败') })
           this.systemProdSalesData = systemProdSalesData
-
           hideLoading()
         } catch (e) {
           modal(e.message)
@@ -606,29 +579,25 @@
       }
     },
     onShow() {
-
     },
     onReady() {
-
     },
     onLoad(options) {
       if (options.tabActiveIdx >= 0) {
         this.tabActiveIdx = Number(options.tabActiveIdx)
       }
-
-      if (options.today) {
-        ls.set('today', 1)
-        this.timeTabIdx = 0
-      } else {
-        ls.set('today', 0,1)
-      }
-
+      ls.set('today', 1, 1)
+      this.timeTabIdx = 0
+      // if (options.today) {
+      //   ls.set('today', 1)
+      //   this.timeTabIdx = 0
+      // } else {
+      //
+      // }
       this.timeLimitEnd = moment().format('YYYY-MM-DD')
       this.timeLimitStart = '' // 服务器强大，不限制开始时间
-
       this.startTime = moment().format('YYYY-MM-DD')
       // this.endTime = moment().format('YYYY-MM-DD')
-
       this._init_func()
     }
   })

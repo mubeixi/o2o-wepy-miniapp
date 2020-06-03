@@ -36,7 +36,12 @@ export const F2Mixin = {
 
   },
   methods: {
-    init(callback) {
+
+    init(callback, isRefresh = false) {
+      if (isRefresh) {
+        this.onInit(null, this.conf, this.propData, isRefresh, this.chart)
+        return
+      }
       const version = wx.version.version.split('.').map(n => parseInt(n, 10))
       const isValid = version[0] > 1 || (version[0] === 1 && version[1] > 9) ||
         (version[0] === 1 && version[1] === 9 && version[2] >= 91)
