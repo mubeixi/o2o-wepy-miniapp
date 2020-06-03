@@ -206,7 +206,7 @@
       goOrder() {
         if (!checkIsLogin(1, 1)) return
        // if (!checkIsSettle(1, 1)) return
-        linkTo('/pages/order/OrderRetail')
+        linkTo('/pages/order/OrderList')
       },
       goMarketing() {
         // if (!checkIsSettle(1, 1)) return

@@ -120,7 +120,48 @@
       status: -1,
       list: [],
       reason: '',
-      orderId: ''// 拒单id
+      orderId: '', // 拒单id
+      Order_Type: 'shop'
+    },
+    onLoad(options) {
+      if (options.Order_Type) {
+        this.Order_Type = options.Order_Type
+      }
+      if (this.Order_Type === 'shop') {
+        wx.setNavigationBarTitle({
+          title: '普通订单'
+        })
+      }
+      if (this.Order_Type === 'pintuan') {
+        wx.setNavigationBarTitle({
+          title: '拼团订单'
+        })
+      }
+      if (this.Order_Type === 'offline') {
+        wx.setNavigationBarTitle({
+          title: '线下订单'
+        })
+      }
+      if (this.Order_Type === 'offline_qrcode') {
+        wx.setNavigationBarTitle({
+          title: '线下支付订单'
+        })
+      }
+      if (this.Order_Type === 'flashsale') {
+        wx.setNavigationBarTitle({
+          title: '秒杀订单'
+        })
+      }
+      if (this.Order_Type === 'spike') {
+        wx.setNavigationBarTitle({
+          title: '限时抢购订单'
+        })
+      }
+      if (this.Order_Type === 'waimai') {
+        wx.setNavigationBarTitle({
+          title: '外卖订单'
+        })
+      }
     },
     onShow() {
       this.page = 1
@@ -169,7 +210,8 @@
           page: this.page,
           pageSize: this.pageSize,
           source: 'biz',
-          prod_name: this.prod_name
+          prod_name: this.prod_name,
+          Order_Type: this.Order_Type
         }
         if (this.status >= 0) {
           data.Order_Status = this.status
@@ -350,7 +392,6 @@
 </style>
 <config>
   {
-  "navigationBarTitleText": "零售订单",
   "usingComponents": {
   "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
