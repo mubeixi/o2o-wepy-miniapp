@@ -55,72 +55,79 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getAlbumList,delAlbum,opPhotoAlbum} from '../../api/store'
+  import {getAlbumList, delAlbum, opPhotoAlbum} from '../../api/store'
   import { error, toast } from '../../common/fun'
-  import {confirm} from '../../common/helper'
+  import { confirm, MergeArray } from '../../common/helper'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      showEdit:false,
+      showEdit: false,
       albumList: [],
       totalCount: 0,
       page: 1,
       pageSize: 10,
-      showRename:false,
-      cate_name:'',
-      nameId:'',
+      showRename: false,
+      cate_name: '',
+      nameId: ''
     },
     methods: {
-      confirmInput(){
-        if(!this.cate_name){
+      confirmInput() {
+        if (!this.cate_name) {
           error('相册名称必填')
           return
         }
-        if(this.cate_name.length>15){
+        if (this.cate_name.length > 15) {
           error('相册名称过长')
           return
         }
-        opPhotoAlbum({id:this.nameId,cate_name:this.cate_name}).then(res=>{
+        opPhotoAlbum({id: this.nameId, cate_name: this.cate_name}).then(res => {
           toast('修改成功')
-          this.showRename=false
-          this.cate_name=''
+          this.showRename = false
+          this.cate_name = ''
           this.init()
-        }).catch(e=>{
-          this.showRename=false
-          error(e.msg||'修改相册名失败')
+        }).catch(e => {
+          this.showRename = false
+          error(e.msg || '修改相册名失败')
         })
       },
-      renameMethod(id){
-        this.showRename=true
-        this.nameId=id
+      renameMethod(id) {
+        this.showRename = true
+        this.nameId = id
       },
-      delImg(id){
-       confirm({title: '提示', content: '确定要删除该相册吗?', confirmText: '删除', cancelText: '取消'}).then(() => {
-            delAlbum({id:id}).then(res=>{
-                  toast('删除成功')
-                  this.init()
-            }).catch(e=>{
-              error(e.msg||'删除失败')
-            })
-
+      delImg(id) {
+        confirm({title: '提示', content: '确定要删除该相册吗?', confirmText: '删除', cancelText: '取消'}).then(() => {
+          delAlbum({id: id}).then(res => {
+            toast('删除成功')
+            this.init()
+          }).catch(e => {
+            error(e.msg || '删除失败')
+          })
         }).catch(() => {})
-
       },
       async init() {
         let arr = await getAlbumList({page: this.page, pageSize: this.pageSize}).catch(e => { error(e.msg || '获取相册列表失败') })
-        arr.data.map(item=>{
-            this.albumList.push(item)
+        arr.data.map(item => {
+          this.albumList.push(item)
         })
 
         this.totalCount = arr.totalCount
-      }
+      },
+      // async changeList() {
+      //   let arr = await getAlbumList({page: this.page, pageSize: this.pageSize}).catch(e => { error(e.msg || '获取相册列表失败') })
+      //   this.totalCount = arr.totalCount
+      //   this.albumList = MergeArray(this.albumList, arr.data, 'id')
+      // }
     },
     onShow() {
       this.albumList=[]
       this.page=1
       this.init()
+      //this.changeList()
+    },
+    onLoad(){
+      // this.init()
     },
     onReachBottom() {
       if (this.albumList.length < this.totalCount) {
