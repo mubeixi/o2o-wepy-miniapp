@@ -137,12 +137,12 @@
         }
         const type = str.substr(0, breakStrIdx)
         const id = str.substr(breakStrIdx + 1)
-        console.log(type, id, `/pages/support/Im?type=${type}tid=${id}`)
+        console.log(type, id, `/pages/support/Im?type=${type}tid=${id}&room_title=${chatItem.name}`)
         if (!type || !id) {
           modal('聊天室参数错误')
           return
         }
-        this.$linkTo(`/pages/support/Im?type=${type}&tid=${id}`)
+        this.$linkTo(`/pages/support/Im?type=${type}&tid=${id}&room_title=${chatItem.name}`)
       },
       async _init_func () {
         await imInstance._getAccessToken() // 等拿token
