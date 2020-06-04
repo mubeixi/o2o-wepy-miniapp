@@ -385,42 +385,48 @@
 
     <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false" >
 
-      <div style="overflow-y: scroll;" :style="{maxHeight:systemInfo.windowHeight*0.6+'px'}" v-if="bizCateReady && bizProdCateList.length>0">
-        <fun-tree
-          ele-id="prodBizCate"
-          @done="setBizCate"
-          ref="bizCateTree"
-          :has="bizCateHas"
-          :conf="bizCateConf"
-          :show-checkbox="true"
-          :check-only-leaf="false"
-          :tree-data="bizProdCateList"
-          nodeKey="id"
-        >
-        </fun-tree>
-      </div>
-      <div class="p-t-10" style="display: flex;justify-content: center;">
-        <div class="specs-action-box" style="margin:0;">
-          <div class="add-btn" @click="bizProdCateFormShow=true"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4">添加</span></div>
+      <div @touchmove.stop.prevent>
+        <scroll-view scroll-y :style="{maxHeight:systemInfo.windowHeight*0.6+'px'}" v-if="bizCateReady && bizProdCateList.length>0">
+          <fun-tree
+            ele-id="prodBizCate"
+            @done="setBizCate"
+            ref="bizCateTree"
+            :has="bizCateHas"
+            :conf="bizCateConf"
+            :show-checkbox="true"
+            :check-only-leaf="false"
+            :tree-data="bizProdCateList"
+            nodeKey="id"
+          >
+          </fun-tree>
+        </scroll-view>
+        <div class="p-t-10" style="display: flex;justify-content: center;">
+          <div class="specs-action-box" style="margin:0;">
+            <div class="add-btn" @click="bizProdCateFormShow=true"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4">添加</span></div>
+          </div>
         </div>
       </div>
+
+
       <button class="btn btn-primary m-t-35" @click="setBizCate('handle')">确认</button>
     </popup-layer>
 
     <popup-layer ref="systemCatePop" title="平台分类" >
-      <div v-if="systemCateReady && ProductCateList.length>0" style="height: 50vh;overflow-y: scroll;">
-        <fun-tree
-          ele-id="prodSystemCate"
-          @done="setSystemCate"
-          :has="systemCateHas"
-          ref="systemCateTree"
-          :conf="systemCateConf"
-          :show-checkbox="true"
-          :check-only-leaf="false"
-          :tree-data="ProductCateList"
-          nodeKey="Category_ID"
-        >
-        </fun-tree>
+      <div @touchmove.stop.prevent>
+        <scroll-view scroll-y v-if="systemCateReady && ProductCateList.length>0" style="height: 50vh;">
+          <fun-tree
+            ele-id="prodSystemCate"
+            @done="setSystemCate"
+            :has="systemCateHas"
+            ref="systemCateTree"
+            :conf="systemCateConf"
+            :show-checkbox="true"
+            :check-only-leaf="false"
+            :tree-data="ProductCateList"
+            nodeKey="Category_ID"
+          >
+          </fun-tree>
+        </scroll-view>
       </div>
       <button class="btn btn-primary m-t-35" @click="setSystemCate">确认</button>
     </popup-layer>
@@ -462,21 +468,24 @@
     </popup-layer>
 
     <popup-layer title="商品承诺" ref="promise" >
-      <scroll-view scroll-y :scroll-into-view="promiseIntoViewId" class="wrap flex promise-wrap" :style="{maxHeight:systemInfo.windowHeight*0.6+'px'}" >
-        <div class="left"  >
-          <div v-for="(text,idx) in promiseList" :id="'promise'+idx" :key="idx" class="p-l-10 m-t-10 flex flex-vertical-center row">
-            <input type="text" @focus="focusPromise(idx)" @input="inputPromise" :value="text" class="bor fz-14 flex1 row-input" />
-            <icon @click="delPromise(idx)" style="padding-left:20rpx" type="iconminus" color="#F53636"></icon>
+      <div @touchmove.stop.prevent>
+        <scroll-view scroll-y :scroll-into-view="promiseIntoViewId" class="wrap flex promise-wrap" :style="{maxHeight:systemInfo.windowHeight*0.6+'px'}" >
+          <div class="left" >
+            <div v-for="(text,idx) in promiseList" :id="'promise'+idx" :key="idx" class="p-l-10 m-t-10 flex flex-vertical-center row">
+              <input type="text" @focus="focusPromise(idx)" @input="inputPromise" :value="text" class="bor fz-14 flex1 row-input" />
+              <icon @click="delPromise(idx)" style="padding-left:20rpx" type="iconminus" color="#F53636"></icon>
+            </div>
           </div>
-        </div>
-        <div class="right">
+          <div class="right">
 
-        </div>
+          </div>
 
-      </scroll-view>
-      <div class="specs-action-box" style="margin: 30rpx;">
-        <div class="add-btn" @click="addPromise"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4" >添加</span></div>
+        </scroll-view>
+        <div class="specs-action-box" style="margin: 30rpx;">
+          <div class="add-btn" @click="addPromise"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4" >添加</span></div>
+        </div>
       </div>
+
       <button  class="btn btn-primary m-t-35" @click="closePop('promise')">确定</button>
     </popup-layer>
 
