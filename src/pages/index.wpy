@@ -11,7 +11,7 @@
             登录/注册
           </div>
       </div>
-      <block v-if="AccessToken">
+      <template v-if="AccessToken && info.apply_switch">
         <div class="action"  v-if="status==2" @click.stop="goBusiness">
           <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
@@ -20,7 +20,7 @@
           <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
         </div>
-      </block>
+      </template>
     </div>
 
     <div class="finance-box" >
@@ -262,7 +262,8 @@
         // 初始化商户信息
           await initInfo().then(res => {
             this.info = res.data
-            if (!this.info.entry_process) {
+            // 利用开关控制是否提示入驻
+            if (this.info.apply_switch && !this.info.entry_process) {
               confirm({ title: '提示', content: '你还未入驻成功，即将前往入驻页面' }).then(() => {
                 linkTo('/pages/join/BusinessStation')
               }).catch(() => { throw Error('nocare') })

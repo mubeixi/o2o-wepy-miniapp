@@ -84,8 +84,8 @@
           </div>
 
         </div>
+      </div>
     </div>
-
 
     <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
@@ -118,7 +118,7 @@
     <div class="zhezhao" catchtouchmove="true" v-if="showSure">
       <div class="input-wrap">
         <div>确认收货</div>
-        <input   type="digit" class="input"  placeholder="请输入退款金额" v-model="Amount" style="width: 100%;"></input>
+        <input   type="digit" class="input"  placeholder="请输入退款金额" v-model="Amount" style="width: 100%;" />
         <textarea auto-height   class="input" placeholder="请输入原因" v-model="reasonSure" style="width: 100%;"></textarea>
         <div class="btns">
           <div @click="showSure=false" class="btn">取消</div>
@@ -126,6 +126,7 @@
         </div>
       </div>
     </div>
+
 
   </div>
 </template>
