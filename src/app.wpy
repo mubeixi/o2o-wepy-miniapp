@@ -116,6 +116,7 @@ wepy.app({
       "pages/order/OrderRefund",
       "pages/order/OrderRefundDetail",
       "pages/order/logistics",
+      "pages/order/OrderList",
       "pages/order/OrderTmpl",
       "pages/order/OrderTmplList",
       "pages/order/OrderRetailSend",
