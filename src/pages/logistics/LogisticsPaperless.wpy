@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="group-cell">
       <div class="cell-item">
         <div class="label">基础配置</div>
@@ -59,6 +60,7 @@
     "navigationBarTitleText": "电子面单",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "ad": "~@/components/ad"

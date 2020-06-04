@@ -1,0 +1,147 @@
+<style lang="scss">
+  @import "../../assets/mixins.scss";
+  @import "../../assets/variables.scss";
+  .container{
+    padding-bottom: 100rpx;
+  }
+  .list{
+    .item{
+      width: 690rpx;
+      padding: 0 20rpx 20rpx;
+      margin: 30rpx auto 0;
+      background: white;
+      border-radius: 10rpx;
+      .title{
+
+      }
+      .placeholder,.title{
+        border-bottom: 1px solid #eee;
+      }
+      .actions{
+        display: flex;
+        .action{
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          &:first-child{
+            border-right: 1px solid #EFEFEF;
+          }
+        }
+      }
+    }
+  }
+
+</style>
+<template>
+  <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="container">
+      <div class="list">
+        <div class="item" v-for="(row,idx) in list" :key="idx" @click="selectFn(row)">
+          <div class="title flex flex-justify-between flex-vertical-center">
+            <span class="fz-bold fz-16 p-b-15 p-t-15 c3 ">{{row.title}}</span>
+            <span class="color-primary fz-12" v-if="select==row.id">已选中</span>
+          </div>
+          <div class="placeholder c8  fz-14 p-t-10 p-b-10">买家下单时需要填写：{{row.placeholder}}等信息</div>
+          <div class="actions p-t-10" @click.stop>
+            <div @click.stop="$linkTo('/pages/order/OrderTmpl?id='+row.id)" class="action"><icon size="18"  color="#444" type="iconbianji1"></icon><span class="fz-14 c8 p-l-8">编辑</span></div>
+            <div @click.stop="delFn(row,idx)" class="action"><icon size="18"  color="#444" type="iconshanchu"></icon><span class="fz-14 c8 p-l-8">删除</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="safearea-box"></div>
+      <div class="btn action-btn btn-primary" @click="$linkTo('/pages/order/OrderTmpl')">
+        <icon color="#fff" type="iconadd"></icon>
+        <span class="p-l-4">新建下单模板</span>
+      </div>
+    </div>
+
+
+    <div class="safearea-box fixed"></div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { confirm, getArrColumn } from '../../common/helper'
+  import { delBizOrderTemplate, getBizOrderTemplateList } from '../../api/order'
+
+  import { error } from '../../common/fun'
+
+  import eventHub from '../../common/eventHub'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      select: '',
+      list: []
+
+    },
+
+    methods: {
+      selectFn(row) {
+        if (this.mode === 'none') return
+        this.select = row.id
+        eventHub.$emit('goods-order-tmpl', {tmpl: row})
+        this.$back()
+      },
+      async delFn(row, idx) {
+        try {
+          await confirm({content: '删除后无法恢复，是否确认删除?'}).catch(() => { throw Error('notip') })
+          await delBizOrderTemplate({id: row.id}, {errtip: false}).catch(({msg}) => { throw Error(msg) })
+          this.list.splice(idx, 1)
+        } catch (e) {
+          e.message !== 'notip' && wx.$errorHandle(e)
+        }
+      },
+      async _init_func() {
+        try {
+          // showLoading('loading')
+          const list = await getBizOrderTemplateList({pageSize: 999}, {onlyData: true}).catch((e) => { throw Error(e.msg) })
+
+          const temp = []
+          for (let row of list) {
+            row.temp_info = JSON.parse(row.temp_info)
+            const {title = '', formData = []} = row.temp_info
+            row.title = title
+            row.placeholder = getArrColumn(formData, 'label').join(',')
+            if (row.title) {
+              temp.push(row)
+            }
+          }
+          this.list = temp
+        } catch (e) {
+          console.log(e)
+          error('初始化失败:' + e.message)
+        }
+      }
+    },
+    onReady() {
+
+    },
+    onLoad(options) {
+      const {select = '', mode = 'none'} = options
+      this.select = select
+      this.mode = mode
+    },
+    onShow() {
+      this._init_func()
+    }
+  })
+</script>
+<config>
+  {
+    "navigationBarTitleText": "下单模板",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+      "err-msg": "~@/components/err-msg",
+      "icon": "~@/components/icon",
+      "form-wrap": "~@/components/diy-form-wrap"
+    }
+  }
+</config>

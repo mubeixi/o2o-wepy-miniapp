@@ -1,0 +1,238 @@
+<template>
+  <div class="store-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('store-setting')">
+      <div class="store-title">
+        付款方式
+      </div>
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{ind}}" range="{{withDrawData}}"    range-key="name">
+        {{withDrawData[ind].name}}
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </picker>
+    </div>
+
+    <block v-if="type=='bank_card'">
+      <div class="store-item flex flex-vertical-center flex-justify-between" >
+        <div class="store-title">
+          银行类型
+        </div>
+        <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{cardDate}}"   range-key="bank_name" >
+          {{cardDate[index].bank_name}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </picker>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          银行卡号
+        </div>
+        <div class="store-titles flex1">
+          <input type="text" v-model="account"  placeholder="请输入银行卡号" placeholder-class="__placeholder"  class="input-logistics" >
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          姓名
+        </div>
+        <div class="store-titles flex1">
+          <input type="text" v-model="account_name"  placeholder="请输入姓名" placeholder-class="__placeholder"  class="input-logistics" >
+        </div>
+      </div>
+    </block>
+
+
+    <block v-if="type=='alipay'">
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          支付宝账号
+        </div>
+        <div class="store-titles flex1">
+          <input type="text" v-model="account"  placeholder="请输入支付宝账号" placeholder-class="__placeholder"  class="input-logistics" >
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          姓名
+        </div>
+        <div class="store-titles flex1">
+          <input type="text" v-model="account_name"  placeholder="请输入姓名" placeholder-class="__placeholder"  class="input-logistics" >
+        </div>
+      </div>
+    </block>
+
+    <div class="submit-main" @click="save">
+      保存
+    </div>
+
+
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { getBizInfo, getWithdrawMethods, opBizInfo } from '../../api/store'
+  import { back, error, hideLoading, showLoading, toast } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      withDrawData: [],
+      ind: 0,
+      type: '',
+      cardDate: [],
+      index: 0,
+      account_name: '',
+      account: ''
+    },
+    onShow() {
+      this.init()
+    },
+    methods: {
+      init() {
+        showLoading('加载中')
+        getWithdrawMethods().then(res => {
+          this.withDrawData = res.data
+          this.withDrawData.map(item => {
+            item.type == 'bank_card' && (this.cardDate = item['card'])
+          })
+          this.type = this.withDrawData[this.ind].type
+          hideLoading()
+          this.getDetail()
+        }).catch(e => {
+          hideLoading()
+          this.getDetail()
+        })
+      },
+      getDetail() {
+        showLoading('加载中')
+        getBizInfo().then(res => {
+          if (res.data[0].settle_config) {
+            this.account = res.data[0].settle_config.account
+            this.type = res.data[0].settle_config.type
+            this.account_name = res.data[0].settle_config.account_name
+            let bankcode = res.data[0].settle_config.bankcode
+
+            for (let i = 0; i < this.withDrawData.length; i++) {
+              if (this.withDrawData[i]['type'] == this.type) { this.ind = i }
+            }
+            if (bankcode) {
+              for (let i = 0; i < this.cardDate.length; i++) {
+                if (this.cardDate[i]['bank_code'] == bankcode) { this.index = i }
+              }
+            }
+          }
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      },
+      save() {
+        let data = {
+          settle_config: {
+            type: this.type,
+            account_name: this.account_name,
+            account: this.account
+          }
+        }
+        if (this.type == 'bank_card') {
+          data.settle_config.bankcode = this.cardDate[this.index].bank_code
+        }
+        if (this.type == 'bank_card' || this.type == 'alipay') {
+          if (!this.account_name || !this.account) {
+            error('请填写必要信息')
+            return
+          }
+        }
+
+        data.settle_config = JSON.stringify(data.settle_config)
+        showLoading('保存中')
+        opBizInfo(data).then(res => {
+          toast('保存成功')
+          setTimeout(function() {
+            back()
+          }, 1000)
+
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      },
+      bindPickerChanges(e) {
+        this.index = e.$wx.detail.value
+      },
+      bindPickerChange(e) {
+        this.ind = e.$wx.detail.value
+        this.type = this.withDrawData[this.ind].type
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .store-all{
+    background-color: #FFFFFF;
+    height: 100vh;
+    .store-item{
+      height: 108rpx;
+      border-bottom: 1px solid #EBEBEB;
+      box-sizing: border-box;
+      width: 710rpx;
+      margin: 0 auto;
+    }
+    .store-title{
+      color: #333333;
+      font-size: 32rpx;
+    }
+    .store-titles{
+      color: #999999;
+      font-size: 26rpx;
+    }
+  }
+  .input-logistics{
+    margin-left: 48rpx;
+    height: 108rpx;
+    font-size: 26rpx;
+    color: #333333;
+  }
+  .__placeholder{
+    color: #CAC8C8;
+  }
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
+  }
+  .picker-mbx{
+    flex: 1;
+    text-align: right;
+    height: 108rpx;
+    line-height: 108rpx;
+    color: #999999;
+    font-size: 26rpx;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "提现配置",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon",
+  }
+  }
+</config>

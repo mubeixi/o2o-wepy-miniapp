@@ -8,10 +8,14 @@
 import wepy from '@wepy/core'
 // import eventHub from './common/eventHub'
 import vuex from '@wepy/x'
+import { FunError } from './mixins'
+import { ls } from './common/helper'
+
 wepy.use(vuex)
 
-require('./common/index')
+wx.$errorHandle = FunError // 全局的错误处理
 
+require('./common/index')
 // import promisify.js  from '@wepy/use-promisify.js'
 // wepy.use(promisify.js)
 
@@ -34,6 +38,7 @@ wepy.app({
     //   console.log('app-launch event emitted, the params are:')
     //   console.log(args)
     // })
+    ls.remove('listenStatus')
   },
 
   methods: {
@@ -57,16 +62,32 @@ wepy.app({
 {
     pages: [
       "pages/index",
-      "pages/BusinessStation/BusinessStation",
-      "pages/BusinessStation/SettlementAgreement",
-      "pages/BusinessStation/PersonalCertification",
-      "pages/BusinessStation/CompanyCertification",
-      "pages/BusinessStation/BusinessPay",
-      "pages/Store/StoreSetting",
-      "pages/Store/StoreInfo",
-      "pages/Store/SameCityDelivery",
-      "pages/ProductManager",
-      "pages/StoreMarketing",
+      "pages/join/BusinessStation",
+      "pages/join/SettlementAgreement",
+      "pages/join/PersonalCertification",
+      "pages/join/CompanyCertification",
+      "pages/join/BusinessPay",
+      "pages/store/StoreSetting",
+      "pages/store/StoreSettingConfig",
+      "pages/store/StoreSettingAdd",
+      "pages/store/StoreSettingList",
+      "pages/store/StoreInfo",
+      "pages/store/StoreInfoUpda",
+      "pages/store/SameCityDelivery",
+      "pages/store/StoreVip",
+      "pages/store/StoreVipList",
+      "pages/store/StoreVipGive",
+      "pages/store/SameCityUpda",
+      "pages/store/StoreCoupon",
+      "pages/store/StoreCouponAdd",
+      "pages/store/StoreMarketing",
+      "pages/store/StoreBalance",
+      "pages/store/StoreWithdrawal",
+      "pages/store/Record",
+      "pages/store/Recharge",
+      "pages/store/AlbumList",
+      "pages/store/AddAlbum",
+      "pages/store/PhotoList",
       "pages/logistics/LogisticsMain",
       "pages/logistics/LogisticsAdds",
       "pages/logistics/LogisticsAddsMail",
@@ -74,7 +95,40 @@ wepy.app({
       "pages/logistics/LogisticsUsual",
       "pages/logistics/LogisticsTmpl",
       "pages/logistics/LogisticsPaperless",
-      "pages/logistics/ExpressCompany"
+      "pages/logistics/ExpressCompany",
+      "pages/logistics/AoAuth",
+      "pages/product/ProductManager",
+      "pages/product/DiyCate",
+      "pages/product/form",
+      "pages/user/login",
+      "pages/statistics/dashboard",
+      "pages/statistics/SeckillData",
+      "pages/marketing/Seckill",
+      "pages/marketing/SeckillAdd",
+      "pages/marketing/SeckillAddSelect",
+      "pages/marketing/FlashSale",
+      "pages/marketing/FlashSaleForm",
+      "pages/marketing/Give",
+      "pages/marketing/GiveAdd",
+      "pages/marketing/GiveAddSelect",
+      "pages/marketing/FullReduce",
+      "pages/order/OrderRetail",
+      "pages/order/OrderRefund",
+      "pages/order/OrderRefundDetail",
+      "pages/order/logistics",
+      "pages/order/OrderTmpl",
+      "pages/order/OrderTmplList",
+      "pages/order/OrderRetailSend",
+      "pages/order/CheckChannel",
+      "pages/order/CheckByCode",
+      "pages/order/CheckOrderInfo",
+      "pages/order/SettlementList",
+      "pages/order/Settlement",
+      "pages/marketing/shareQrcode",
+      "pages/support/ImList",
+      "pages/support/Im",
+      "pages/demo"
+
     ],
     window: {
         backgroundTextStyle: "light",
@@ -83,41 +137,23 @@ wepy.app({
         navigationBarTextStyle: "black"
     },
     tabBar: {
-        borderStyle: "white",
-        color: "#999999",
-        selectedColor: "#26C78D",
-        list: [
-            {
-                "pagePath": "pages/index",
-                "iconPath": "/static/tabbar/find.png",
-                "selectedIconPath": "/static/tabbar/find.png",
-                "text": "发现"
-            },
-            {
-                "pagePath": "pages/BusinessStation/PersonalCertification",
-                "iconPath": "/static/tabbar/live.png",
-                "selectedIconPath": "/static/tabbar/live.png",
-                "text": "直播"
-            },
-            {
-                "pagePath": "pages/Store/StoreSetting",
-                "iconPath": "/static/tabbar/praise.png",
-                "selectedIconPath": "/static/tabbar/praise.png",
-                "text": "好评"
-            },
-            {
-                "pagePath": "pages/index",
-                "iconPath": "/static/tabbar/notify.png",
-                "selectedIconPath": "/static/tabbar/notify.png",
-                "text": "消息"
-            },
-            {
-                "pagePath": "pages/index",
-                "iconPath": "/static/tabbar/user.png",
-                "selectedIconPath": "/static/tabbar/user.png",
-                "text": "我的"
-            }
-        ]
-    },
+      borderStyle: "black",
+      color: "#999999",
+      selectedColor: "#26C78D",
+      list: [
+        {
+          pagePath: "pages/index",
+          iconPath: "/static/tabbar/find.png",
+          selectedIconPath: "/static/tabbar/find-a.png",
+          text: "首页"
+        },
+        {
+          pagePath: "pages/support/ImList",
+          iconPath: "/static/tabbar/notify.png",
+          selectedIconPath: "/static/tabbar/notify-a.png",
+          text: "消息"
+        }
+      ]
+    }
 }
 </config>

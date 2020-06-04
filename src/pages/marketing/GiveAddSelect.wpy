@@ -1,0 +1,186 @@
+<template>
+  <div class="seckill-all-add">
+<wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+
+    <div class="item " >
+      <block v-for="(it,ind) in skuvaljosn" :key="ind">
+        <div class="check fz-16 c3 flex flex-vertical-center m-b-16"  @click="change(ind)">
+          <icon
+            class="check-icon m-r-10"
+            :color="it.check?'#00A8FF':'#999'"
+            size="20"
+            :type="it.check?'iconcheck-box-o':'iconcheckbox'"
+          ></icon>
+          {{it.Attr_Value.mobile_prod_attr_name}}
+        </div>
+      </block>
+
+    </div>
+
+    <div style="height: 90rpx;width: 750rpx"></div>
+
+    <div class="buttons" @click="goBack">确定</div>
+
+
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { ls } from '../../common/helper'
+  import { back } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      inputs: '',
+      text: '价格',
+      ind: 1,
+      skuvaljosn: {},
+      allCheck: false
+    },
+    methods: {
+      goBack() {
+        ls.set('skuvaljosn', this.skuvaljosn)
+        back()
+      },
+      change(ind) {
+        for (let it in this.skuvaljosn) {
+          this.skuvaljosn[it].check = false
+        }
+        this.skuvaljosn[ind].check = true
+      },
+      getDetail() {
+        let arr = ls.get('skuvaljosn')
+        let boo = true
+        for (let it in arr) {
+          if (!arr[it].check) {
+            arr[it].check = false
+          }
+          if (!arr[it].check) {
+            boo = false
+          }
+        }
+        this.allCheck = boo
+        this.skuvaljosn = arr
+      }
+    },
+    onLoad() {
+      this.getDetail()
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .seckill-all-add{
+    height: 100vh;
+    background-color: #f6f6f6;
+  }
+  .seckill-top{
+    width: 750rpx;
+    padding: 0rpx 144rpx;
+    box-sizing: border-box;
+  }
+  .seckill-top-div{
+    width: 150rpx;
+    padding-top: 30rpx;
+    padding-bottom: 40rpx;
+    text-align: center;
+  }
+  .img-icon{
+    width: 64rpx;
+    height: 64rpx;
+  }
+  .seckill-price{
+    height: 60rpx;
+  }
+  .placeholder{
+    font-size: 12px;
+    color:#C2C2C2;
+  }
+  .input-sec{
+    width: 310rpx;
+    height: 60rpx;
+    border: 1px solid  #DDDDDD;
+    box-sizing: border-box;
+    padding-left: 14rpx;
+  }
+  .buttons{
+    width: 750rpx;
+    height: 86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #00A8FF;
+    color: #FFFFFF;
+  }
+
+  .item{
+
+    width:690rpx;
+    background:rgba(255,255,255,1);
+    border-radius:10rpx;
+    margin: 30rpx auto 30rpx;
+    padding: 30rpx;
+    box-sizing: border-box;
+  }
+  .last-button{
+    box-sizing: border-box;
+    width: 750rpx;
+    height: 90rpx;
+    background-color: #FFFFFF;
+    box-shadow:0px 0px 9px 0px rgba(0, 0, 0, 0.16);
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+  }
+  .model-seckill{
+    width: 500rpx;
+    box-sizing: border-box;
+    padding: 30rpx 44rpx;
+    border-radius: 10rpx;
+  }
+  .input-all{
+    width: 410rpx;
+    height: 66rpx;
+    line-height: 66rpx;
+    border: 1px solid #D6D6D6;
+    box-sizing: border-box;
+  }
+  .btn{
+    width: 130rpx;
+    height: 50rpx;
+    line-height: 50rpx;
+    text-align: center;
+    font-size: 26rpx;
+    color: #FFFFFF;
+    background-color: #BEBEBE;
+    border-radius: 6rpx;
+  }
+  .btn-submit{
+    background-color: #00A8FF;
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "选择规格",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon",
+  "model": "~@/components/ModelComponents",
+  }
+  }
+</config>

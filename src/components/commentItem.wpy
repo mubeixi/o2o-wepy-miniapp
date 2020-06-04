@@ -58,7 +58,7 @@
   </div>
 </template>
 <script>
-  import wepy from '@wepy/core';
+  import wepy from '@wepy/core'
 
   wepy.component({
     props: {

@@ -1,0 +1,415 @@
+<template>
+  <div class="business-pay">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')">
+      <div class="form-cell-item__label">选择分类</div>
+      <div class="flex flex-vertical-center ">
+        <text class="font12 form-cell-color mbx-item">{{bondName}}</text>
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </div>
+    </div>
+
+    <div class="form-cell-item flex  flex-vertical-center" >
+      <div class="form-cell-item__label">保证金</div>
+      <div class="form-cell-item__right">
+        <input placeholder-class="__placeholder" :value="bondMoneyLast" disabled class="input" />
+      </div>
+    </div>
+
+    <div class="form-cell-items"  v-if="type!=3">
+      <div class="form-cell-item__labels">
+        选择年限
+      </div>
+      <div class="flex">
+        <block v-for="(item,index) of year_fee" :key="index">
+          <div class="form-cell-div flex flex-vertical-center" @click="changeIndex(index)">
+            <image v-if="item.check" src="/static/icon/checkedIcon.png" class="form-img"></image>
+            <div v-else class="unchecked"></div>
+            <text class="form-text">{{item.name}}年</text>
+          </div>
+        </block>
+
+      </div>
+    </div>
+
+<!--    <div class="form-cell-items">-->
+<!--      <div class="form-cell-item__labels">-->
+<!--        选择支付方式-->
+<!--      </div>-->
+<!--      <div class="flex">-->
+<!--        <div class="form-cell-div flex flex-vertical-center">-->
+<!--          <image src="/static/icon/checkedIcon.png" class="form-img"></image>-->
+<!--          <text class="form-text">支付宝</text>-->
+<!--        </div>-->
+<!--        <div class="form-cell-div flex flex-vertical-center">-->
+<!--          <div class="unchecked"></div>-->
+<!--          <text class="form-text">微信</text>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+
+    <div class="pay-detail">
+      <div class="pay-detail-div">
+        小计： 保证金 <text class="color-font">¥{{bondMoneyLast}}、</text> 年费 <text class="color-font">¥{{year_money}}</text>
+      </div>
+    </div>
+
+
+    <div class="pay-bottom flex flex-vertical-center flex-between">
+      <div class="pay-bottom-monery ">
+        总计： <text class="color-font font13 pay-bottom-text">¥</text><text class="color-font font15 pay-bottom-text">{{pay_money}}</text>
+      </div>
+
+      <div class="pay-button"  @click="payLast">
+        {{submitName}}
+      </div>
+<!--      <button class="pay-button"  open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="payLast">{{submitName}}</button>-->
+    </div>
+
+    <popup-layer ref="systemCate" title="选择分类"  >
+      <div v-if="bizList.length>0" :style="{maxHeight:(systemInfo.windowHeight)*0.5+'px'}"  style="overflow: scroll;">
+        <fun-tree
+          ele-id="prodSystem"
+          ref="systemCateTree"
+          :conf="systemCateConf"
+          :show-checkbox="true"
+          :check-only-leaf="true"
+          :tree-data="bizList"
+          nodeKey="Category_ID"
+        >
+        </fun-tree>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="setSystemCate">确认</button>
+    </popup-layer>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import { addBizOrder, bizOrderPay, code2Session, getBizConfig, getBizPayAmount, proCate } from '../../api/store'
+
+  import { getArrColumn, ls } from '../../common/helper'
+  import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      submitName: '立即支付',
+      systemCateConf: {
+        pidKey: 'Category_ParentID',
+        children: 'child', // 指定子树为节点对象的某个属性值
+        label: 'Category_Name', // 指定节点标签为节点对象的某个属性值
+        disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
+      },
+      mbxData: [],
+      bondMoney: '',
+      bondName: '',
+      bizList: [],
+      bondMoneyLast: 0, // 保证金
+      year_money: 0, // 年费
+      pay_money: 0, // 支付金额
+      year_fee: [], // 年费选项
+      ind: 0,
+      order_id: '',
+      type: 1
+    },
+    async onLoad(options) {
+      if (options.type) {
+        this.type = options.type
+      }
+
+      await this.getBizConfig()
+      await this.proCate()
+    },
+    methods: {
+      async payLast(e) {
+        if (!this.bondMoney) {
+          error('请先选择分类')
+          return
+        }
+        let that = this
+        showLoading('提交中')
+        wx.login({
+          success (res) {
+            if (res.code) {
+              let code = res.code
+              code2Session({code: code}).then(res => {
+                hideLoading()
+                if (!res.data.openid) {
+                  error('获取支付信息失败')
+                  return
+                }
+                let open = res.data.openid
+                that.pay(open)
+              })
+            } else {
+              hideLoading()
+            }
+          },
+          fail() {
+            hideLoading()
+          }
+        })
+      },
+      async pay(open) {
+        let data = {
+          bond_money: this.bondMoney,
+          pay_type: this.type
+        }
+        if (this.type != 3) {
+          data.year = this.year_fee[this.ind].name
+        }
+        showLoading('提交中')
+        await addBizOrder(data).then(res => {
+          this.order_id = res.data.order_id
+          let datas = {
+            pay_method: 'wx_lp',
+            order_id: this.order_id,
+            open_id: open
+          }
+          bizOrderPay(datas).then(res => {
+            hideLoading()
+            let obj = res.data
+            if (obj) {
+              let {timeStamp, nonceStr, paySign} = obj || {}
+              let packages = obj.package
+              wx.requestPayment({
+                timeStamp: timeStamp,
+                nonceStr: nonceStr,
+                package: packages,
+                signType: 'MD5',
+                paySign: paySign,
+                success (res) {
+                  ls.set('status', 2)
+                  linkTo('/pages/index')
+                },
+                fail (res) {
+                  console.log(res, 'ss')
+                }
+              })
+            } else {
+              toast(res.msg)
+              //ls.set('status', 2)
+              linkTo('/pages/index')
+            }
+          }).catch(e => { hideLoading() })
+        }).catch(e => {
+          hideLoading()
+        })
+      },
+      changeIndex(ind) {
+        this.year_fee = this.year_fee.map(item => {
+          return {...item, check: false}
+        })
+        this.ind = ind
+        this.year_fee[ind].check = true
+        if (!this.bondMoney) {
+          return
+        }
+        let data = {
+          bond_money: this.bondMoney,
+          pay_type: this.type
+        }
+        if (this.type != 3) {
+          data.year = this.year_fee[this.ind].name
+        }
+        getBizPayAmount(data).then(res => {
+          this.pay_money = res.data.pay_money
+          this.year_money = res.data.year_money
+          this.bondMoneyLast = res.data.bond_money
+        }).catch(e => {})
+      },
+      getBizConfig() {
+        getBizConfig().then(res => {
+          let arr = JSON.parse(res.data.year_fee)
+          this.year_fee = arr.map(item => {
+            return {...item, check: false}
+          })
+          this.year_fee[0].check = true
+        }).catch(e=>{
+          error(e.msg||'初始化失败')
+        })
+      },
+      setSystemCate() {
+        const checkNodeList = this.$refs.systemCateTree.getCheckedNodes()
+        if (checkNodeList.length <= 0) {
+          this.closePop('systemCate')
+          return
+        }
+        this.mbxData = checkNodeList
+        let arr = getArrColumn(checkNodeList, 'Category_Bond')
+        this.bondMoney = arr.join(',')
+        let arrs = getArrColumn(checkNodeList, 'Category_Name')
+        this.bondName = arrs.join(',')
+        let data = {
+          bond_money: this.bondMoney,
+          pay_type: this.type
+        }
+        if (this.type != 3) {
+          data.year = this.year_fee[this.ind].name
+        }
+        getBizPayAmount(data).then(res => {
+          this.pay_money = res.data.pay_money
+          this.year_money = res.data.year_money
+          this.bondMoneyLast = res.data.bond_money
+          this.closePop('systemCate')
+        }).catch(e => {
+          console.log(e)
+          this.closePop('systemCate')
+        })
+      },
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      },
+      proCate() {
+        proCate().then(res => {
+          this.bizList = res.data
+        })
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .business-pay{
+    padding-top: 15px;
+    padding-bottom: 98rpx;
+    background-color: #ffffff;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+  .form-cell-item{
+    height: 49px;
+    width: 710rpx;
+    margin: 0 auto;
+    font-size: 14px;
+    color: #333333;
+    box-sizing: border-box;
+    border-bottom: 1px solid #EBEBEB;
+  }
+  .form-cell-items{
+    width: 710rpx;
+    margin: 0 auto;
+    font-size: 14px;
+    color: #333333;
+    box-sizing: border-box;
+    border-bottom: 1px solid #EBEBEB;
+  }
+  .form-cell-color{color: #666666}
+  .form-cell-item__labels{
+    height: 49px;
+    line-height: 49px;
+  }
+  .__placeholder{
+    color: #CAC8C8;
+  }
+  .form-img{
+    width: 20px;
+    height: 20px;
+  }
+  .form-cell-div{
+    margin-bottom: 18px;height: 20px;font-size: 12px;color: #666666;margin-right: 20px;
+  }
+  .form-text{
+    margin-left: 10px;
+  }
+  .form-cell-item__right{
+    flex: 1;
+    padding-left: 19px;
+    height: 49px;
+    line-height: 49px;
+    font-size: 13px;
+    .input{
+      height: 49px;
+      line-height: 49px;
+      font-size: 13px;
+    }
+  }
+  .unchecked{
+    width: 20px;
+    height: 20px;
+    border: 1px solid #eeeeee;
+    box-sizing: border-box;
+  }
+  .pay-detail{
+    margin-top: 20px;
+    height: 12px;
+    font-size: 12px;
+    color: #333333;
+  }
+  .color-font{color: #E41515}
+  .pay-detail-div{
+    height: 12px;
+    line-height: 12px;
+    float: right;
+    margin-right: 10px;
+  }
+  .pay-bottom{
+    width: 750rpx;
+    height: 98rpx;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    box-shadow:0px 0px 9px 0px rgba(182,182,182,0.43);
+  }
+  .pay-button{
+    height: 80rpx;
+    width: 276rpx;
+    line-height: 80rpx;
+    text-align: center;
+    margin-right: 5px;
+    font-size: 17px;
+    color: #ffffff;
+    background-color: #00A8FF;
+    border-radius: 20px;
+  }
+  .pay-bottom-monery{
+    height: 13px;
+    line-height: 13px;
+    flex: 1;
+    margin-right: 12px;
+    text-align: right;
+    font-size: 12px;
+    color: #333333;
+  }
+  .pay-bottom-text{
+    height: 13px;
+    line-height: 13px;
+  }
+.mbx-item{
+  width: 400rpx;
+  height: 49px;
+  line-height: 49px;
+  overflow: hidden;
+  display: inline-block;
+  text-align: right;
+  text-overflow:ellipsis; //溢出用省略号显示
+  white-space:nowrap; //溢出不换行
+}
+
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "付款",
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "fun-tree": "~@/components/fun-tree",
+  "popup-layer": "~@/components/popup-layer",
+  "wzw-im-tip": "~@/components/wzw-im-tip"
+  }
+  }
+</config>

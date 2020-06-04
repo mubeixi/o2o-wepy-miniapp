@@ -1,0 +1,315 @@
+<template>
+  <div class="settlement p-t-20 page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="settlement-time fz-15 c3">
+        <div class="flex flex-vertical-center flex-justify-between p-l-6  settlement-time-item" style="border-bottom: 1px solid #EBEBEB">
+          <div>
+            起始时间
+          </div>
+          <picker class="picker c9" mode="date" value="{{startTime}}" :start="start" end="2050-09-01" bindchange="bindTimeChange">
+              {{startTime?startTime:'请选择开始时间'}}
+              <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          </picker>
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between p-l-6 settlement-time-item">
+          <div>
+            终止时间
+          </div>
+          <picker class="picker c9" mode="date" value="{{endTime}}" :start="start" end="2050-09-01" bindchange="bindTimeChanges">
+            {{endTime?endTime:'请选择结束时间'}}
+            <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          </picker>
+        </div>
+    </div>
+
+    <div class="settlement-search fz-15" @click="serach">
+      查询统计
+    </div>
+    <block v-if="listData.orders">
+      <div class="settlement-data">
+        <div class="settlement-data-title fz-16 c3">
+          结算数据
+        </div>
+        <div class="settlement-data-content c6 fz-13" >
+          <div>
+            <span class="fz-14">订单总金额：</span>¥{{listData.total_price}}
+          </div>
+          <div>
+            <span class="fz-14">退款金额：</span>¥{{listData.back_amount}}
+          </div>
+          <div>
+            <span class="fz-14">分享赚发放：</span>¥{{listData.share_commission}}
+          </div>
+          <div>
+            <span class="fz-14">商家优惠：</span>¥{{listData.biz_discount}}
+          </div>
+          <div>
+            <span class="fz-14">平台佣金：</span>¥{{listData.platform_commi}}
+          </div>
+          <div>
+            <span class="fz-14">实际结算：</span>¥{{listData.settle_money}}
+          </div>
+        </div>
+      </div>
+
+      <div class="settlement-title fz-16 c3">
+        订单数据
+      </div>
+
+      <div class="settlement-table">
+        <div class="settlement-th flex flex-vertical-center fz-11 c3">
+          <div class="settlement-tr flex1 ">
+            订单号
+          </div>
+          <div class="settlement-tr flex1">
+            实付
+          </div>
+          <div class="settlement-tr flex1">
+            退款
+          </div>
+          <div class="settlement-tr flex1">
+            分享赚
+          </div>
+          <div class="settlement-tr flex1">
+            平台分佣
+          </div>
+          <div class="settlement-tr flex1">
+            商家优惠
+          </div>
+        </div>
+        <div class="settlement-td flex flex-vertical-center fz-12 c9" v-for="(order,ind) of listData.orders" :key="ind">
+          <div class="settlement-tr flex1 ">
+            {{order.order_id}}
+          </div>
+          <div class="settlement-tr flex1">
+            ¥{{order.order_totalprice}}
+          </div>
+          <div class="settlement-tr flex1">
+            ¥{{order.back_amount}}
+          </div>
+          <div class="settlement-tr flex1">
+            ¥{{order.share_commission}}
+          </div>
+          <div class="settlement-tr flex1">
+            ¥{{order.platform_money}}
+          </div>
+          <div class="settlement-tr flex1">
+            ¥{{order.biz_discount}}
+          </div>
+        </div>
+      </div>
+    </block>
+
+
+
+    <div style="height: 86rpx;width: 750rpx"></div>
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <div class="submit" @click="settlement">
+      发起结算
+    </div>
+
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { opBizSettle } from '../../api/order'
+  import { back, error, toast } from '../../common/fun'
+
+  let myDate = new Date()
+const start = myDate.toLocaleDateString()
+
+const moment = require('moment')
+// let boo = moment(end).isAfter(start)
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      startTime: '',
+      endTime: '',
+      action: '',
+      listData: []
+    },
+    methods: {
+      settlement() {
+        this.action = 'create'
+        if (!this.startTime || !this.endTime) {
+          error('开始和结束时间必填')
+          return
+        }
+        let boo = moment(this.endTime).isAfter(this.startTime)
+        if (!boo) {
+          error('结束时间必须大于开始时间')
+          return
+        }
+        this.opBizSettle(1)
+      },
+      serach() {
+        this.action = 'search'
+        if (!this.startTime || !this.endTime) {
+          error('开始和结束时间必填')
+          return
+        }
+        let boo = moment(this.endTime).isAfter(this.startTime)
+        if (!boo) {
+          error('结束时间必须大于开始时间')
+          return
+        }
+        this.opBizSettle()
+      },
+      async opBizSettle(item) {
+        let data = {
+          action: this.action,
+          start_time: this.startTime,
+          end_time: this.endTime
+        }
+        let arr = await opBizSettle(data, {onlyData: true, tip: '加载中'}).catch(e => {})
+        if (arr && item == 1) {
+          toast('操作成功')
+          setTimeout(function() {
+            back()
+          }, 1000)
+        }
+        this.listData = arr
+      },
+      bindTimeChanges(e) {
+        this.endTime = e.$wx.detail.value
+      },
+      bindTimeChange(e) {
+        this.startTime = e.$wx.detail.value
+      }
+    },
+    onShow() {
+
+    }
+  })
+</script>
+<style lang="scss">
+  @import "../../assets/mixins.scss";
+  @import "../../assets/variables.scss";
+
+  .settlement-time{
+    width: 710rpx;
+    height: 220rpx;
+    margin: 0 auto 70rpx;
+    background-color: #FFFFff;
+    border-radius: 10rpx;
+    &-item{
+      width: 690rpx;
+      margin: 0 auto;
+      height:110rpx;
+      line-height: 110rpx;
+      box-sizing: border-box;
+    }
+    .picker{
+      height: 110rpx;
+      line-height: 110rpx;
+      flex: 1;
+      text-align: right;
+    }
+  }
+
+  .settlement-search{
+    width: 690rpx;
+    height: 70rpx;
+    line-height: 70rpx;
+    text-align: center;
+    background:rgba(0,168,255,1);
+    border-radius:8rpx;
+    color: #FFFFff;
+    margin: 0 auto 80rpx;
+  }
+  .settlement-data{
+    width: 710rpx;
+    height: 390rpx;
+    line-height: 390rpx;
+    margin: 0 auto 20rpx;
+    border-radius: 10rpx;
+    background-color: #FFFFff;
+    &-title{
+      height:76rpx;
+      line-height: 76rpx;
+      text-align: center;
+      background-color: #DFF4FF;
+    }
+    &-content{
+      padding: 30rpx 30rpx 40rpx 60rpx;
+      line-height: 54rpx;
+    }
+  }
+  .settlement-title{
+    width: 750rpx;
+    text-align: center;
+    height: 30rpx;
+    line-height: 30rpx;
+    margin: 30rpx 0rpx;
+  }
+
+  .settlement-table{
+    width: 710rpx;
+    margin: 0 auto 20px;
+    border-radius: 10rpx;
+    border: 1px solid #e7e7e7;
+    .settlement-th{
+      background-color:#F0F0F0;
+      .settlement-tr{
+        height: 80rpx;
+        line-height: 80rpx;
+        border-right: 1px solid #E7E7E7;
+        border-bottom: 1px solid #E7E7E7;
+        text-align: center;
+        &:last-child{
+          border-right: 0px;
+        }
+      }
+    }
+    .settlement-td{
+      border-bottom: 1px solid #E7E7E7;
+      &:last-child{
+        border-bottom: 0px;
+      }
+      .settlement-tr{
+        height: 80rpx;
+        line-height: 80rpx;
+        border-right: 1px solid #E7E7E7;
+        text-align: center;
+        &:last-child{
+          border-right: 0px;
+        }
+      }
+    }
+
+  }
+
+  .submit{
+    width: 750rpx;
+    height: 86rpx;
+    line-height: 86rpx;
+    background-color: #00A8FF;
+    font-size: 16px;
+    color: #FFFFff;
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    text-align: center;
+  }
+
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "发起结算",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "err-msg": "~@/components/err-msg",
+  "icon": "~@/components/icon",
+  "form-wrap": "~@/components/diy-form-wrap"
+  }
+  }
+</config>

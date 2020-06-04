@@ -1,0 +1,53 @@
+<style lang="scss">
+.svg-icon{
+  vertical-align: top;
+  color: #999;
+
+}
+</style>
+<template>
+  <image
+    class="svg-icon"
+    :src="'/static/svg/'+name+'.svg'"
+    mode="widhtFix"
+    :style="{color: color,height:getSize,width:getSize}" @click="_onClick"></image>
+</template>
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.component({
+    props: {
+      name: {
+        require: true,
+        type: String,
+        default: ''
+      },
+      weight: {
+        type: String,
+        default: 'normal'
+      },
+      color: {
+        type: String,
+        default: '#666'
+      },
+      size: {
+        type: String,
+        default: '16px'
+      }
+    },
+    computed: {
+      getSize() {
+        let _size = this.size
+        if (!_size)_size = 16
+        if (this.size.indexOf('px') === -1)_size += 'px'
+        return _size
+      }
+    },
+    methods: {
+
+      _onClick () {
+        this.$emit('click')
+      }
+    }
+  })
+</script>

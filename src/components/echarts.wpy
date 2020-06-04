@@ -1,0 +1,65 @@
+<style lang="scss">
+  .f2-canvas {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+<template>
+  <canvas
+    class="f2-canvas"
+    :canvas-id="canvasId"
+    @init="init"
+    @touchstart="touchStart"
+    @touchmove="touchMove"
+    @touchend="touchEnd"
+    @longtap="press">
+  </canvas>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import { F2Mixin } from '../mixins/f2'
+
+  wepy.component({
+    mixins: [F2Mixin],
+    props: {
+      onInit: {
+        type: Function,
+        default: () => {}
+      },
+      canvasId: {
+        type: String,
+        default: 'canvasId'
+      },
+      lazyLoad: {
+        type: Boolean,
+        default: true
+      },
+      propData: {
+        required: true
+      },
+      conf: {
+        type: Object,
+        default: {}
+      }
+    },
+    data: {
+
+    },
+    watch: {
+      postData: {
+        deep: true,
+        handler(newval) {
+          console.log('postData is change', newval)
+        }
+      }
+    },
+    methods: {
+      refresh() {
+        // 清空
+
+        console.log('refresh action')
+        this.init(null, true)
+      }
+    }
+  })
+</script>

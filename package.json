@@ -1,13 +1,16 @@
 {
   "name": "o2o-client",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "o2o project by WePY",
   "main": "weapp/app.js",
   "scripts": {
-    "dev": "./node_modules/.bin/wepy build --watch",
+    "dev": "./node_modules/.bin/wepy build --watch --log trace",
+    "devnolog": "./node_modules/.bin/wepy build --watch trace",
     "build": "cross-env NODE_ENV=production ./node_modules/.bin/wepy build --no-cache",
     "clean": "rimraf weapp",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "restart": "node restart",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "wepy": {
     "module-a": false,
@@ -18,7 +21,9 @@
   "dependencies": {
     "@wepy/core": "^2.0.0-alpha.9",
     "@wepy/x": "^2.0.2",
-    "miniprogram-slide-view": "0.0.3"
+    "miniprogram-slide-view": "0.0.3",
+    "moment": "^2.24.0",
+    "validate": "^5.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",
@@ -33,7 +38,10 @@
     "@wepy/plugin-define": "^2.0.3",
     "@wepy/plugin-uglifyjs": "0.0.2",
     "babel-eslint": "^7.2.1",
+    "commitizen": "^4.0.4",
+    "conventional-changelog-cli": "^2.0.31",
     "cross-env": "^5.1.3",
+    "cz-conventional-changelog": "^3.1.0",
     "eslint": "^3.18.0",
     "eslint-config-standard": "^7.1.0",
     "eslint-friendly-formatter": "^2.0.7",
@@ -42,8 +50,15 @@
     "eslint-plugin-standard": "^2.0.1",
     "less": "^3.8.1",
     "rimraf": "^3.0.2",
+    "shelljs": "^0.8.3",
     "typescript": "^3.8.3",
     "uglify-js": "^3.8.0",
+    "validate-commit-msg": "^2.14.0",
     "wepy-eslint": "^1.5.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

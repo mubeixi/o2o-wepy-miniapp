@@ -1,15 +1,15 @@
 <template>
-  <div class="mail-all">
-      <div class="mail-item">
+  <div class="mail-all page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+      <div class="mail-item"  v-for="(item,index) of editData" :key="index">
+         <icon v-if="editData.length>1" type="icondel" @click="del(index)" color="#ccc"  size="24" class="del-icon"></icon>
          <div class="mail-item-top flex">
             <div class="select-area">
               选择地区
             </div>
             <div class="flex1 area-all">
-
-              北京市,天津市,上海市,河南省,郑州市,开封市,
-              苏州市,杭州市,上海市,云南省,昆明市
-              <span style="color: #00A8FF">编辑</span>
+              {{item.areas_desc}}
+              <span style="color: #00A8FF" @click="edit(index)">编辑</span>
             </div>
          </div>
          <div class="mail-item-bottom flex">
@@ -18,33 +18,47 @@
            </div>
            <div>
              <div>
-               <radio-group class="radio-group" bindchange="radioChange">
-                 <radio class="radio" >
+               <radio-group class="radio-group" bindchange="radioChange($event,index)" >
+                 <radio class="radio" value="0"  :checked="item.designated==0?true:false">
                     件数
                  </radio>
-                 <radio class="radio" >
+                 <radio class="radio"  value="1"  :checked="item.designated==1?true:false">
                    金额
                  </radio>
-                 <radio class="radio" >
+                 <radio class="radio"  value="2"  :checked="item.designated==2?true:false">
                    件数+金额
                  </radio>
                </radio-group>
              </div>
              <div class="input-all">
-                  <block>
-                    满 <input type="text" class="inputs"/>元以上包邮
+                  <block v-if="item.designated==0">
+                    满 <input type="number" v-model="item.prefrrendial_qty" class="inputs"/>件以上包邮
                   </block>
-<!--                  <block>-->
-<!--                    满 <input type="text" class="inputs"/>件，<input type="text" class="inputs"/>元以上包邮-->
-<!--                  </block>-->
+                 <block v-else-if="item.designated==1">
+                   满 <input type="digit" v-model="item.prefrrendial_money" class="inputs"/>元以上包邮
+                 </block>
+                  <block v-else>
+                    满 <input type="number" v-model="item.prefrrendial_qty" class="inputs"/>件，<input v-model="item.prefrrendial_money" type="digit" class="inputs"/>元以上包邮
+                  </block>
              </div>
            </div>
          </div>
       </div>
 
-      <div class="submit-last">
+      <div class="submit-last" @click="addList">
         为指定区域设置运费
       </div>
+
+    <city @onConfirm="selectValue" :has.sync="hasValue"  deep="2"   ref="cityPopup"></city>
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary" @click="saveNext">
+      提交
+    </div>
   </div>
 </template>
 
@@ -52,17 +66,65 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-
-
+  import { getString, ls } from '../../common/helper'
+  import eventHub from '../../common/eventHub'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      ind: 0, // 当前修改的是哪个
+      temp_id: '',
+      editData: [{areas: '', areas_desc: '', designated: '0', prefrrendial_qty: '', prefrrendial_money: ''}],
+      // showSelect: false,
+      hasValue: [],
+      designated: '0',
+      preferentialMoney: '',
+      preferentialQty: ''
 
     },
-    created() {
-
+    onLoad(options) {
+      if (options.temp_id) {
+        this.temp_id = options.temp_id
+      }
+      let arr = ls.get('Free_Content')
+      if (!arr) return
+      this.editData = arr
+    },
+    methods: {
+      del(index) {
+        if (this.editData.length > 1) {
+          this.editData.splice(index, 1)
+        }
+      },
+      // 保存返回
+      saveNext() {
+        eventHub.$emit('bind_free_method', {...this.editData})
+        ls.set('Free_Content', this.editData)
+        wx.navigateBack({delta: -1})
+      },
+      addList() {
+        this.editData.push({areas: '', areas_desc: '', designated: '0', prefrrendial_qty: '', prefrrendial_money: ''})
+      },
+      radioChange(e, index) {
+        this.editData[index].designated = e.$wx.detail.value
+      },
+      edit(ind) {
+        this.hasValue = this.editData[this.ind].areas_desc.split(',')
+        this.ind = ind
+        // this.showSelect = true
+        this.$refs.cityPopup.open()
+      },
+      close() {
+        // this.showSelect = false
+        this.$refs.cityPopup.close()
+      },
+      selectValue(value) {
+        this.close()
+        this.editData[this.ind].areas_desc = getString(value, 'area_name', ',')
+        this.editData[this.ind].areas = getString(value, 'area_code', ',')
+        console.log(value)
+      }
     }
 
   })
@@ -71,15 +133,21 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+
+  .page-wrap{
+    padding-bottom: 44px;
+  }
+
   .mail-all{
     background-color: #FFFFFF;
-    height: 100vh;
+    min-height: 100vh;
     padding-top: 40rpx;
   }
   .mail-item{
     width: 710rpx;
     margin: 0 auto 30rpx;
     border: 1px solid #E1E1E1;
+    position: relative;
   }
   .mail-item-top{
     min-height: 142rpx;
@@ -124,6 +192,7 @@
     border: 1px solid #C8C8C8;
     margin-left: 14rpx;
     margin-right: 10rpx;
+    text-align: center;
   }
   .input-all{
     height: 50rpx;
@@ -145,14 +214,34 @@
     color: #00A8FF;
     font-size: 22rpx;
   }
-
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 9;
+  }
+  .del-icon{
+    position: absolute;
+    z-index: 9;
+    right: -22rpx;
+    top: -22rpx;
+  }
 
 </style>
 <config>
   {
   "navigationBarTitleText": "指定包邮条件",
   "usingComponents": {
-  "icon": "~@/components/icon"
+    "icon": "~@/components/icon",
+    "city": "~@/components/SelectCity",
+    "wzw-im-tip": "~@/components/wzw-im-tip"
   }
   }
 </config>

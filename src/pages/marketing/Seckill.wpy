@@ -1,0 +1,348 @@
+<template>
+  <div class="page-wrap" >
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
+    <div class="product-list">
+      <div class="product-item" v-for="(product,idx) in seckillData" :key="idx">
+        <div class="info-box">
+<!--          <div class="check" v-if="showHandle" @click="taggleProductCheck(idx)" >-->
+<!--            <icon-->
+<!--              class="check-icon"-->
+<!--              :color="product.check?'#F53636':'#999'"-->
+<!--              size="20"-->
+<!--              :type="product.check?'iconblchecked':'iconCircle'"-->
+<!--            ></icon>-->
+<!--          </div>-->
+          <image class="thumb" :src="product.Products_JSON.ImgPath[0]"></image>
+          <div class="info">
+            <div class="title">{{product.Products_Name}}</div>
+            <div class="price-box">
+              <span class="sign" style="margin-right: 4rpx">秒杀价: ¥</span>
+              <span class="font-15">{{product.price}}</span>
+              <span class="p-l-20 p-r-4 fz-12 color-gray">原价:</span>
+              <span class="sign color-gray text-through">￥</span>
+              <span class="color-gray font-13 text-through">{{product.Products_PriceX}}</span>
+            </div>
+            <div class="stock-box">
+              <span class="stock">限购:{{product.limits}}件</span>
+              <span class="sale p-l-40">活动库存:{{product.stock}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="time-my">
+          {{product.start_time}} 至 {{product.end_time}}
+        </div>
+        <div class="actions">
+          <div class="action" @click="edit(product.id)">
+            <icon type="iconyanjing"></icon>
+            <span class="title">编辑</span>
+          </div>
+          <div class="action"   @click="del(product.id,product.status,idx)">
+            <icon size="18" :type="product.status==1?'iconIcon-jinyong':'iconqiyongzhanghao'"></icon>
+            <span class="title" v-if="product.status==1">禁用</span>
+            <span class="title" v-else>启用</span>
+          </div>
+
+          <div class="action" @click="toData(product)">
+              <icon type="iconshuju"></icon>
+              <span class="title">数据</span>
+          </div>
+          <div class="action" @click="bindShare(product.id)">
+            <icon size="14" type="iconfenxiang1"></icon>
+            <span class="title">分享</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/SeckillAdd')">
+      <icon type="iconadd" color="#fff"  size="20"  class="m-r-9"></icon>
+      添加秒杀
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import { bizFlashsaleList, bizFlashsaleStatus, flashsaleShare } from '../../api/product'
+  import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { Exception } from '../../common/Exception'
+  import { getDomain } from '../../common/helper'
+  import wxPromisify from '../../common/promisify'
+  let canvasInstance = null
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      seckillData: [],
+      page: 1,
+      pageSize: 4,
+      totalCount: 0
+    },
+    onReachBottom() {
+      if (this.seckillData.length < this.totalCount) {
+        this.page++
+        this.init()
+      }
+    },
+    methods: {
+      toData(product) {
+        this.$linkTo('/pages/statistics/SeckillData?flashsale_id=' + product.id)
+      },
+      async bindShare(id) {
+        try {
+          showLoading('生成中')
+          const posterInfo = await flashsaleShare({flashsale_id: id}).then(res => res.data).catch((err) => { throw Error(err.msg || '获取分享海报错误') })
+          console.log(posterInfo)
+
+          if (!posterInfo) throw Error('模板信息有误')
+
+          // bg_img: "https://newo2o.bafangka.com/static/images/spike.jpg?t=1590569988"
+          // biz_info:
+          //   biz_logo: "https://newo2o.bafangka.com/static/images/moren.png"
+          //   biz_shop_name: "不要总是开天窗"
+          // __proto__: Object
+          // qrcode_img: "https://newo2o.bafangka.com/uploadfiles/wkbq6nc2kc/qrcode/lpflashsale_wkbq6nc2kc_0_4.png?t=1590569988"
+
+          const wrapHeight = 1335
+          const wrapWidth = 750
+          const ctx = canvasInstance
+
+          const userInfo = {
+            avatar: getDomain(posterInfo.biz_info.biz_logo),
+            nickname: posterInfo.biz_info.biz_shop_name,
+            qrcode: getDomain(posterInfo.qrcode_img)
+          }
+          console.log(userInfo)
+
+          ctx.fillRect(wrapWidth, wrapHeight, 0, 0)
+
+          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(posterInfo.bg_img) }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
+          ctx.drawImage(wrapTempFile.path, 0, 0, wrapWidth, wrapHeight)
+
+          const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          ctx.drawImage(qrcodeTempFile.path, 468, 1020, 164, 164)
+
+          const avatarTempFile = await wxPromisify('getImageInfo', { src: userInfo.avatar }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          ctx.drawImage(avatarTempFile.path, 120, 1056, 100, 100)
+
+          ctx.setFontSize(26)
+          ctx.setFillStyle('#333333')
+          ctx.fillText(userInfo.nickname, 235, 1115) // 1086
+
+          await new Promise(resolve => {
+            ctx.draw(false, function () {
+              console.log('draw done')
+              resolve()
+            })
+          })
+
+          const { tempFilePath } = await wxPromisify('canvasToTempFilePath', { canvasId: 'myCanvas' })
+          console.log(tempFilePath)
+          console.log(tempFilePath)
+          wx.previewImage({
+            urls: [tempFilePath]
+          })
+
+          hideLoading()
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
+      },
+      del(id, status, idx) {
+        showLoading()
+        let data = {
+          flashsale_id: id,
+          status: status == 1 ? 2 : 1
+        }
+        bizFlashsaleStatus(data).then(res => {
+          toast('操作成功')
+          this.seckillData[idx].status = status == 1 ? 2 : 1
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      },
+      edit(id) {
+        let data = '/pages/marketing/SeckillAdd?id=' + id
+        linkTo(data)
+      },
+      init() {
+        let data = {
+          page: this.page,
+          pageSize: this.pageSize
+        }
+        bizFlashsaleList(data).then(res => {
+          for (let item of res.data) {
+            this.seckillData.push(item)
+          }
+          this.totalCount = res.totalCount
+        })
+      }
+    },
+    onShow() {
+      this.seckillData = []
+      this.page = 1
+      this.init()
+    },
+    onReady () {
+      canvasInstance = wx.createCanvasContext('myCanvas')
+    },
+    onLoad() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .myCanvas {
+    position: fixed;
+    left: 100%;
+    top: 0;
+    background: white;
+    width: 750px;
+    height: 1334px;
+  }
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
+
+  /** 顶部start **/
+  .action{
+    display: flex;
+    align-items: center;
+    padding: 30rpx;
+    .item{
+      flex:1;
+      text-align: center;
+      .icon{
+        width: 70rpx;
+        height: 70rpx;
+        border-radius: 50%;
+      }
+      .title{
+        color: #333;
+        font-size: 14px;
+      }
+    }
+  }
+  /** 顶部end **/
+
+  /*商品列表 start*/
+  .product-list{
+
+  }
+  .product-item{
+    padding: 30rpx 0;
+    background: white;
+    margin-bottom: 20rpx;
+    .info-box{
+      padding: 0 20rpx;
+      display: flex;
+      font-size: 14px;
+      height: 200rpx;
+      .check{
+        padding-right: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .check-icon{
+
+        }
+      }
+      .thumb{
+        width: 200rpx;
+        height: 200rpx;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          color: #333;
+          font-size: 14px;
+          /*font-weight: bold;*/
+          line-height: 20px;
+          height: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+        .price-box{
+          color: $fun-red-color;
+          margin-bottom: 20px;
+          font-size: 12px;
+        }
+        .stock-box{
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .actions{
+      margin-top: 30rpx;
+      font-size: 12px;
+      display: flex;
+      .action{
+        justify-content: center;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: #888;
+        border-right: 1rpx solid #e7e7e7;
+        &:last-child{
+          border-right: none;
+        }
+        .title{
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  /*商品列表 end*/
+
+  .font-13{
+    font-size: 13px;
+  }
+  .font-15{
+    font-size: 15px;
+  }
+  .time-my{
+    margin: 40rpx 0rpx;
+    font-size: 12px;
+    color: #888;
+    height: 11px;
+    padding-left: 20rpx;
+    line-height: 11px;
+  }
+
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "秒杀",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
+  }
+</config>

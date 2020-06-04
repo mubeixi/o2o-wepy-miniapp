@@ -1,0 +1,161 @@
+<style>
+  .fun-tree{
+    padding-left: 10px;
+  }
+</style>
+<template>
+  <div>
+    <div v-if="isEmpty" class="fun-empty">{{emptyText}}</div>
+    <div v-else class="fun-tree">
+      <template v-for="item in tree">
+        <fun-tree-node
+          :val="item"
+          @clear="clearFn"
+          :ref="'item'+item[nodeKey]"
+          :has="has"
+          :single="single"
+          :eid="'tree_'+eleId"
+          :show-checkbox="showCheckbox"
+          :show-radio="showRadio"
+          :check-only-leaf="checkOnlyLeaf"
+          :key="item[nodeKey]"
+          :conf="conf"
+          :nodeKey="nodeKey"
+          :indent="indent"
+        >
+        </fun-tree-node>
+      </template>
+
+    </div>
+  </div>
+</template>
+
+<script>
+
+  import wepy from '@wepy/core'
+  import { TreeHub } from './TreeHub'
+  import { objTranslate } from '../common/helper'
+  import store from '../store'
+
+  wepy.component({
+    data: {
+      treeData: [],
+      hub: null,
+      tree: []
+    },
+    props: {
+      plainArrayList: {
+        default: false
+      },
+      // 数据存在哪里 vuex表示放在vuex里面 runtime放在global， ls表示放在LocalStorage里面 默认runtime
+      storage: {
+        type: String,
+        default: 'global'
+      },
+      // 展示数据
+      treeData: Array,
+      // 单选
+      single: {
+        type: Boolean,
+        default: false
+      },
+      // 自主控制loading加载，避免数据还没获取到的空档出现“暂无数据”字样
+      ready: {
+        type: Boolean,
+        default: true
+      },
+      nodeKey: {
+        type: String,
+        default: 'id'
+      },
+      has: {
+        type: Array,
+        default: []
+      },
+      // 是否最后一层叶子节点才显示单选/多选框
+      checkOnlyLeaf: {
+        type: Boolean,
+        default: true
+      },
+
+      // 内容为空的时候展示的文本
+      emptyText: {
+        type: String,
+        default: '暂无数据'
+      },
+      // 相邻级节点间的水平缩进，单位为像素
+      indent: {
+        type: Number,
+        default: 18
+      },
+      eleId: {
+        type: String,
+        required: true
+      },
+      conf: {
+        type: Object,
+        default () {
+          return {
+            pidKey: 'Category_ParentID',
+            children: 'children', // 指定子树为节点对象的某个属性值
+            label: 'label', // 指定节点标签为节点对象的某个属性值
+            disabled: 'disabled' // 指定节点选择框是否禁用为节点对象的某个属性值
+          }
+        }
+      }
+    },
+    computed: {
+      isEmpty() {
+        return this.tree.length < 1
+      }
+    },
+    watch: {
+      eleId: {
+        handler(val) {
+          // console.log('eleId变动' + val)
+        }
+      },
+      treeData: {
+        deep: true,
+        handler(newVal) {
+          // console.log(newVal)
+          if (Array.isArray(newVal) && newVal.length > 0) {
+            this.tree = newVal
+            this._init_func && this._init_func()
+          }
+          // this.store.setData(newVal)
+        }
+      }
+    },
+    methods: {
+      // 重新生成
+      clearFn({item, nodeKey}) {
+        console.log('clearFn', item, nodeKey, this.$refs)
+        // this.tree = objTranslate(this.treeData)
+        for (let i in this.$refs) {
+          this.$refs[i].restCheck({item, nodeKey})
+        }
+      },
+      getCheckedNodes() {
+        return TreeHub.getCHeckList('tree_' + this.eleId)
+      },
+      _init_func() {
+        console.log('this.eleId is ', this.eleId)
+        this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has, plainArrayList: this.plainArrayList})
+        // 用来告诉父组件我好了，可以搞事
+        console.log('fun-tree component done')
+        this.$emit('done')
+      }
+    },
+    ready() {
+
+    }
+  })
+</script>
+<config>
+  {
+    "usingComponents": {
+      "fun-tree-node": "~@/components/fun-tree-node"
+    }
+  }
+</config>

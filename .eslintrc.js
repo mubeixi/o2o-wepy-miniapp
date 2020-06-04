@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  globals: { wx: true },
+  globals: { wx: true,getApp:true,getCurrentPages:"readonly" },
   parser: 'babel-eslint',
   parserOptions: {
     sourceType: 'module'
@@ -19,8 +19,11 @@ module.exports = {
   },
   // add your custom rules here
   'rules': {
+    "no-throw-literal": 0,//允许自定义throw
     // allow paren-less arrow functions
     'arrow-parens': 0,
+    //allow camelcase
+    'camelcase': 0,
     // allow async-await
     'generator-star-spacing': 0,
     // allow debugger during development

@@ -1,0 +1,324 @@
+<template>
+  <div class="station-all flex ">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="station-left">
+      <div class="circle" style="margin-top: 11px">
+        1
+      </div>
+      <div class="line"></div>
+      <div class="circle">
+        2
+      </div>
+      <div class="line" v-if="applyProgressCount>0"></div>
+      <div class="circle" v-if="applyProgressCount>0">
+        3
+      </div>
+      <div class="line" v-if="applyProgressCount>1"></div>
+      <div class="circle" v-if="applyProgressCount>1">
+        4
+      </div>
+      <div class="line" v-if="applyProgressCount>2"></div>
+      <div class="circle" v-if="applyProgressCount>2">
+        5
+      </div>
+    </div>
+    <div class="station-right">
+      <div class="rectangle flex flex-justify-between flex-vertical-center">
+        <div>
+          <div class="station-title">注册供货商</div>
+          <div class="station-title-sub">快速一键注册</div>
+        </div>
+
+        <div class="station-button" >
+          已完成
+        </div>
+      </div>
+
+      <div class="rectangle flex flex-justify-between flex-vertical-center" v-if="joinConf.apply_flow.agree" >
+        <div>
+          <div class="station-title">签署入驻协议</div>
+          <div class="station-title-sub">在线签署商家入住协议</div>
+        </div>
+
+        <div class="station-button " v-if="info.entry_process.is_agree==1">
+          已完成
+        </div>
+        <div class="station-button active" v-else  @click="$linkTo('/pages/join/SettlementAgreement')">
+          去提交
+        </div>
+
+      </div>
+
+      <div class="rectangle flex flex-justify-between flex-vertical-center"   v-if="joinConf.apply_flow.material" >
+        <div>
+          <div class="station-title">提交资质</div>
+          <div class="station-title-sub">提交企业资料和银行账户信息</div>
+        </div>
+
+
+        <div class="right-div"  v-if="info.entry_process.is_auth==1" >
+          <div class="station-button"  >
+            已完成
+          </div>
+          <div class="look-info" @click="goShow('show')">
+            查看资料
+          </div>
+        </div>
+        <block v-else>
+          <block v-if="info.apply_info.apply_status==1">
+            <div class="right-div"  @click="goShow('show')">
+              <div class="station-button active"  >
+                审核中
+              </div>
+            </div>
+          </block>
+          <block v-else-if="info.apply_info.apply_status==-1">
+            <div class="right-div"  @click="goShow('showReason')">
+              <div class="station-button danger"  >
+                已驳回
+              </div>
+              <div class="fz-12 color-red">查看原因</div>
+            </div>
+          </block>
+          <div class="right-div"  v-else  @click="goShow('add')">
+            <div class="station-button active"  >
+              去提交
+            </div>
+
+          </div>
+        </block>
+
+
+
+      </div>
+
+      <div class="rectangle flex flex-justify-between flex-vertical-center"    v-if="joinConf.apply_flow.pay" >
+        <div>
+          <div class="station-title">付款</div>
+          <div class="station-title-sub">根据不同的入驻类目及入驻年限打款</div>
+        </div>
+
+        <div class="station-button active" v-if="info.entry_process.is_pay!=1" @click="$linkTo('/pages/join/BusinessPay')">
+          去提交
+        </div>
+        <div class="station-button" v-else>
+          已完成
+        </div>
+
+
+      </div>
+
+      <div class="rectangle flex flex-justify-between flex-vertical-center">
+        <div>
+          <div class="station-title">入驻成功</div>
+          <div class="station-title-sub">恭喜您入驻成功</div>
+        </div>
+
+        <div class="station-button active" v-if="info.entry_process.is_pay==1&&info.entry_process.is_agree==1&&info.entry_process.is_auth==1"  @click="$linkTo('/pages/index')">
+          已完成
+        </div>
+        <div class="station-button" v-else>
+          未完成
+        </div>
+
+      </div>
+
+
+
+
+
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import { getBizInfo } from '../../api/store'
+  import { linkTo } from '../../common/fun'
+  import { ls } from '../../common/helper'
+  import {confirm} from '../../common/helper'
+  import { initInfo } from '../../api/system'
+  import { Exception } from '../../common/Exception'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      info: {entry_process: {}},
+      applyProgressCount: 3, // 入驻可选的步骤有几个，默认全部需要3个
+      joinConf: {
+        apply_flow: {}
+      }
+    },
+    onShow() {
+      this._init_func()
+    },
+    methods: {
+      async _init_func() {
+        try {
+          // 初始化商户信息
+          this.joinConf = await initInfo().then(res => res.data).catch(err => { throw Error(err.msg) })
+          this.applyProgressCount = Object.values(this.joinConf.apply_flow).filter(item => parseInt(item) === 1).length
+          this.getBizInfo()
+        } catch (e) {
+          Exception.handle(e)
+        }
+      },
+      // 利用isHasInfo标记为已经有信息了
+      goShow(action) {
+        if (action === 'showReason') {
+          confirm({
+            title: '审核原因',
+            content: this.info.apply_info.reject_reason || '为通过审核，请完善资料后再次提交',
+            confirmText: '完善资料',
+            cancelText: '下次再说'
+          }).then(() => {
+            this.goShow('edit')
+          }).catch(() => {})
+
+          return
+        }
+
+        if (action === 'add') {
+          wx.showActionSheet({
+            itemList: ['个人认证', '企业认证'],
+            success: (res) => {
+              const {tapIndex} = res
+              console.log(tapIndex)
+              if (tapIndex === 0) {
+                linkTo('/pages/join/PersonalCertification?action=add')
+              }
+              if (tapIndex === 1) {
+                linkTo('/pages/join/CompanyCertification?action=add')
+              }
+            },
+            fail (res) {
+
+            }
+          })
+          return
+        }
+
+        const principal_type = this.info.apply_info.principal_type
+
+        if (action === 'show') {
+          if (principal_type === 1) {
+            linkTo('/pages/join/CompanyCertification?action=show')
+          } else {
+            linkTo('/pages/join/PersonalCertification?action=show')
+          }
+          return
+        }
+
+        if (action === 'edit') {
+          if (principal_type === 1) {
+            linkTo('/pages/join/CompanyCertification?action=edit')
+          } else {
+            linkTo('/pages/join/PersonalCertification?action=edit')
+          }
+        }
+      },
+      async getBizInfo() {
+        let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+        this.info = arr[0]
+        if (!this.info.entry_process) {
+          this.info.entry_process = {}
+        }
+        ls.set('status', this.info.status)
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .station-all{
+    min-height: 100vh;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 28px;
+    box-sizing: border-box;
+    .station-left{
+      width: 34rpx;
+      margin-right: 10px;
+    }
+    .station-right{
+      width: 654rpx;
+    }
+  }
+  .circle{
+    width: 34rpx;
+    height: 34rpx;
+    background-color: #00A8FF;
+    border-radius: 50%;
+    overflow: hidden;
+    line-height: 34rpx;
+    text-align: center;
+    font-size: 11px;
+    color: #ffffff;
+  }
+  .rectangle{
+    width: 100%;
+    height: 70px;
+    background-color: #ffffff;
+    padding-left: 16px;
+    padding-right: 12px;
+    box-sizing: border-box;
+    margin-bottom: 35px;
+    position: relative;
+  }
+  .line{
+    width: 9px;
+    box-sizing: border-box;
+    height: 90px;
+    border-right: 1px dotted #FFADAD;
+  }
+
+  .station-button{
+    width: 55px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    font-size: 12px;
+    background-color: #CACACA;
+    color: #FFFFFF;
+    &.danger{
+      background: $fun-red-color;
+    }
+  }
+  .active{
+    background-color: #00A8FF !important;
+  }
+
+  .station-title{
+    font-size: 14px;
+    color: #333333;
+    font-weight: bold;
+    line-height: 21px;
+  }
+  .station-title-sub{
+    font-size: 11px;
+    color: #777777;
+    line-height: 21px;
+  }
+  .look-info{font-size: 10px;color: #00A8FF;margin-top: 5px}
+  .right-div{
+    text-align: center;
+  }
+
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "商家入驻",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip"
+  }
+  }
+</config>

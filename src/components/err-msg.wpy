@@ -1,0 +1,87 @@
+<style lang="scss">
+
+  @import "../assets/app.scss";
+  .err-msg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 199;
+    width: 100%;
+    background: $fun-red-color;
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    text-align: left;
+  }
+  .item{
+    margin-bottom: 10px;
+    &:last-child{
+      margin-bottom: 0;
+    }
+    .label{
+
+    }
+    .content{
+      .row{
+        margin-top: 6px;
+        &:last-child{
+          margin-top: 0;
+        }
+      }
+    }
+  }
+</style>
+<template>
+    <div class="err-msg" :style="{top:topStr}" v-if="show && errs && errs.length>0" @click="hide">
+<!--    <div v-for="(row,idx) in errs" class="item" :key="idx">-->
+<!--      <div class="label">{{idx}}:</div>-->
+<!--      <div class="content">-->
+<!--        <div class="row" v-for="(msg,idx2) in row" :key="idx2"><span class="p-r-4">*</span><span>{{msg}}</span></div>-->
+<!--      </div>-->
+<!--    </div>-->
+    <div v-for="(row,idx) in errs" class="item" :key="idx">
+
+        <div class="row" ><span class="p-r-4">*</span><span>{{row.message || row}}</span></div>
+
+    </div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.component({
+    props: {
+      topStr: {
+        type: String,
+        default: '0px'
+      },
+      errs: {
+        default: false,
+        require: true
+      }
+    },
+    data: {
+      show: false
+    },
+    watch: {
+      errs(newVal) {
+        // console.log(JSON.stringify(newVal))
+        if (this.errs && Array.isArray(newVal) && newVal.length > 0) {
+          this.show = true
+          setTimeout(() => {
+            this.show = false
+          }, 4000)
+        }
+      }
+    },
+    methods: {
+      hide() {
+        this.show = false
+      }
+    },
+    ready() {
+
+    }
+  })
+</script>

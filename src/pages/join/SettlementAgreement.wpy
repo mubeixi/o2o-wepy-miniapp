@@ -1,0 +1,125 @@
+<template>
+  <div class="all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+        <textarea
+          class="edit"
+          :value="info" disabled
+          auto-height="true"
+          contenteditable="true"
+          maxlength="-1" placeholder="入驻协议" placeholder-style="place" >
+        </textarea>
+
+    <div class="checks flex flex-vertical-center" >
+      <checkbox-group  bindchange="checkboxChange">
+        <label class="flex flex-vertical-center">
+          <checkbox style="transform: scale(0.8)" value="1"  :disabled="agree==1" :checked="agree==1"></checkbox>
+          <span class="fz-12">我已阅读、同意并接受《admin的微商城网络交易平台服务协议》</span>
+        </label>
+
+      </checkbox-group>
+
+
+    </div>
+
+
+    <div class="submit" @click="agreeMethod">
+      {{agree==1?'已签署':'签署'}}
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import { getBizConfig, opBizInfo } from '../../api/store'
+  import { back, error, hideLoading, showLoading } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      show: [],
+      agree: 0,
+      info: ''
+    },
+    onLoad(option) {
+      this.agree = option.agree
+      this.getBizConfig()
+    },
+    methods: {
+      agreeMethod() {
+        if (this.agree == 1) return
+        if (this.show.length <= 0) {
+          error('请勾选同意协议')
+          return
+        }
+        showLoading()
+        opBizInfo({'is_agree': 1}).then(res => {
+          back()
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      },
+      checkboxChange(e) {
+        this.show = e.$wx.detail.value
+      },
+      getBizConfig() {
+        getBizConfig().then(res => {
+          this.info = res.data.entry_agreement
+        })
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .all{height: 100vh;overflow: hidden}
+  .edit{
+    box-sizing: border-box;
+    width: 710rpx;
+    min-height: 430rpx;
+    border:1px solid rgba(233,233,233,1);
+    border-radius:10px;
+    margin: 0 auto;
+    margin-top: 20rpx;
+    padding-top: 23rpx;
+    padding-left: 27rpx;
+    padding-right: 40rpx;
+    font-size: 28rpx;
+    border: 0px;
+    color: #333333;
+    background-color: #FFFFFF;
+  }
+  .checks{
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 9px;
+    color: #606266;
+  }
+  .submit{
+    width:620rpx;
+    height:80rpx;
+    line-height: 80rpx;
+    background-color: #00A8FF;
+    border-radius:5px;
+    color: #FFFFFF;
+    font-size: 17px;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 65px;
+  }
+</style>
+<config>
+  {
+  "navigationBarTitleText": "签署协议",
+  "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip"
+    }
+  }
+</config>

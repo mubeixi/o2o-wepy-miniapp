@@ -1,0 +1,188 @@
+<template>
+  <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="form">
+      <err-msg :errs="formCheckResult"></err-msg>
+      <form>
+        <div class="group-cell">
+          <div class="cell-item">
+            <div class="label">模板名称</div>
+            <div class="content">
+              <input type="text" v-model="title" placeholder="请输入模板名称" />
+            </div>
+          </div>
+        </div>
+
+        <form-wrap v-if="ready" :_conf="formData" @change="upData" ref="diyfrom"></form-wrap>
+
+        <div class="safearea-box"></div>
+        <button @click="subFn" class="btn action-btn btn-primary">保存</button>
+      </form>
+    </div>
+
+<!--    <popup-layer ref="edit" title="添加模板信息">-->
+<!--      <button @click="closePop('edit')" class="btn btn-primary">确定</button>-->
+<!--    </popup-layer>-->
+
+
+    <div class="safearea-box fixed"></div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { getBizOrderTemplateList, opBizOrderTemplate } from '../../api/order'
+
+  import { error, hideLoading, modal, showLoading } from '../../common/fun'
+  import { eleTypeList } from '../../lib/form/form'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      formCheckResult: [],
+      id: '',
+      title: '',
+      ready: false,
+      addTypeIdx: 0,
+      formData: []
+    },
+
+    methods: {
+      upData(arr) {
+        this.formData = arr.concat([])
+      },
+      dddRow() {
+        this.addTypeIdx = 0
+        if (!eleTypeList[this.addTypeIdx]) {
+          error('请选择新增的表单组件类型')
+          return
+        }
+        this.$refs.diyfrom.rowAdd(eleTypeList[this.addTypeIdx])
+      },
+      subFn() {
+        if (!this.title) {
+          this.formCheckResult.push('标题必填')
+          return
+        }
+        if (this.formData.length < 1) {
+          this.formCheckResult.push('至少填写一行数据')
+          return
+        }
+        let postData = {
+          temp_info: JSON.stringify({formData: this.formData, title: this.title})
+        }
+
+        if (this.id)postData.id = this.id
+
+        opBizOrderTemplate(postData, {tip: 'loading'}).then(res => {
+          wx.navigateBack()
+        }).catch((e) => {
+          modal(e.msg, '发布失败')
+        })
+      },
+      async _init_func() {
+        try {
+          showLoading('loading')
+          const tmplData = await getBizOrderTemplateList({id: this.id}, {onlyData: true}).catch((e) => { throw Error(e.msg) })
+          const tempInfo = JSON.parse(tmplData.temp_info)
+          this.formData = tempInfo.formData
+          this.title = tempInfo.title
+          this.ready = true
+        } catch (e) {
+          console.log(e)
+          wx.$errorHandle(e)
+        } finally {
+          hideLoading()
+        }
+      }
+    },
+    onReady() {
+
+    },
+    onLoad(options) {
+      this.id = options.id
+      if (options.id) {
+        this._init_func()
+      } else {
+        this.ready = true
+      }
+    },
+    onShow() {
+
+    }
+  })
+</script>
+<style lang="scss">
+  @import "../../assets/mixins.scss";
+  @import "../../assets/variables.scss";
+
+  .page-wrap{
+    background: #fff;
+    min-height: 100vh;
+  }
+
+  .add{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+    box-sizing: border-box;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+
+  .form{
+    background: #f8f8f8;
+    margin-bottom: 80rpx;
+    /*font-size: 16px;*/
+    .group-cell{
+      background: white;
+      .cell-item{
+        .label{
+          /*font-size: 16px;*/
+        }
+        .content{
+          padding-right : 20rpx;
+          text-align: left;
+          .line-input{
+            border:1px solid #eee;
+            height: 56rpx;
+            line-height: 56rpx;
+            text-align: center;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+    .safearea-space{
+      height: constant(safe-area-inset-bottom);
+      height: env(safe-area-inset-bottom);
+    }
+  }
+
+  .action-btn{
+    position: fixed;
+    left: 0;
+    z-index: 3;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
+  }
+
+
+
+</style>
+<config>
+  {
+    "navigationBarTitleText": "下单模板管理",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+      "err-msg": "~@/components/err-msg",
+      "icon": "~@/components/icon",
+      "form-wrap": "~@/components/diy-form-wrap"
+    }
+  }
+</config>

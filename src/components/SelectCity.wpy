@@ -1,0 +1,244 @@
+<template>
+  <div class="plugin-wrap" :animation="animationData">
+    <div class="mask" @touchmove.prevent.stop="noop" @click="close" ></div>
+    <div class="wrap">
+      <div class="title">
+        <div class="text">选择城市</div>
+        <div @click="subFn" class="btn">确认</div>
+      </div>
+      <scroll-view v-if="isReady" scroll-y class="mbx" :style="{height:systemInfo.windowHeight*0.6+'px'}">
+        <fun-tree
+          :ele-id="'select_city'+idx"
+          ref="tree"
+          :has="has"
+          @done="doneFn"
+          :conf="propsConf"
+          :tree-data="treeData"
+          :plain-array-list="plainArrayList"
+          :show-checkbox="true"
+          :check-only-leaf="true"
+          nodeKey="area_name"
+        >
+        </fun-tree>
+      </scroll-view>
+
+    </div>
+  </div>
+</template>
+<script>
+
+  import wepy from '@wepy/core'
+  import { getCityList } from '../api/store'
+  import { error, hideLoading, modal, showLoading } from '../common/fun'
+  import store from '../store'
+
+  wepy.component({
+    props: {
+      idx: {
+        default: 0,
+        type: Number
+      },
+      has: {
+        type: Array,
+        default: []
+      },
+      show: {
+        type: Boolean,
+        default: false
+      },
+      bottomHeight: {
+        type: Number || String,
+        default: 0
+      },
+      deep: {
+        type: Number,
+        default: -1
+      },
+      direction: {
+        type: String,
+        default: 'top' // 方向  top，bottom，left，right
+      }
+    },
+    data: {
+      animationData: [],
+      isshow: false,
+      isReady: false,
+      systemInfo: {},
+      // showTree: false,
+      timer: null,
+      iftoggle: false,
+      translateValue: -100, // 位移距离
+      treeData: [],
+      plainArrayList: [],
+      maskOpacity: 0,
+      propsConf: {
+        // icon:'iconname',
+        pidKey:'Province_parentid',
+        children: '_child', // 指定子树为节点对象的某个属性值
+        label: 'area_name', // 指定节点标签为节点对象的某个属性值
+        disabled: 'disabled' // 指定节点选择框是否禁用为节点对象的某个属性值
+      }
+    },
+    watch: {
+      show: {
+        handler(val) {
+          val && this.open()
+          !val && this.close()
+        }
+      },
+      idx(nweVal) {
+        // this.isReady = false
+        // setTimeout(() => {
+        //   this.isReady = true
+        // })
+      },
+      has: {
+        handler(newVal) {
+          console.log('has改变', newVal)
+        }
+      }
+      // deep: {
+      //   immediate: true,
+      //   handler(val) {
+      //     if (val < 1) return
+      //
+      //   }
+      // }
+    },
+    ready() {
+      this.systemInfo = wx.getSystemInfoSync()
+      showLoading()
+      this._init_func()
+    },
+    methods: {
+      openPluginDrawer () {
+        // this.commentDrawerOpen = true
+        var animation = wx.createAnimation({
+          duration: 400,
+          timingFunction: 'ease'
+        })
+        animation.translateX(0).step()
+        this.animationData = animation.export()
+      },
+      closePluginDrawer () {
+        // this.commentDrawerOpen = false
+        var animation = wx.createAnimation({
+          duration: 400,
+          timingFunction: 'ease'
+        })
+        animation.translateX(this.systemInfo.windowWidth).step()
+        this.animationData = animation.export()
+      },
+      doneFn() {
+        console.log('城市选择组件ok')
+        hideLoading()
+        // console.log(new Date().getTime())
+      },
+      async _init_func() {
+        if (this.deep > 1) {
+          this.treeData = await getCityList({'deep': this.deep}).then(res => {
+            return res.data
+          }).catch(err => {
+            modal(err.msg || '初始化地区数据失败')
+          })
+          this.isReady = true
+        }
+      },
+      subFn() {
+        let checkNodeList = this.$refs.tree.getCheckedNodes()
+        if (checkNodeList.length < 1) {
+          error('请至少选择一个选项')
+          return
+        }
+        console.log(checkNodeList)
+        this.$emit('onConfirm', checkNodeList)
+      },
+      loadNode() {
+      },
+      noop() {
+
+      },
+
+      close() {
+        this.closePluginDrawer()
+        // this.isshow = false
+        this.$emit('close')
+      },
+      open() {
+        this.openPluginDrawer()
+
+        // this.isshow = true
+      },
+      handleNodeClick(obj) {
+        console.log('handleNodeClick', obj)
+      },
+      handleNodeExpand(obj) {
+        console.log('handleNodeExpand', JSON.stringify(obj))
+      }
+    }
+  })
+</script>
+<style lang="scss">
+
+  .plugin-wrap{
+    z-index: 9;
+    position: fixed;
+    width: 750rpx;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(100%);
+  }
+
+  @import "../assets/variables.scss";
+  .title{
+    display: flex;
+    align-items: center;
+    padding: 0px 10px 15px ;
+    .text{
+      flex: 1;
+      text-align: center;
+    }
+    .btn{
+      background: $fun-primary-color;
+      color: #333;
+      font-size: 14px;
+      padding:6px 12px;
+      border-radius: 2px;
+      color: #fff;
+      text-align: center;
+    }
+  }
+
+  .mask{
+    position: absolute;
+    z-index: 9;
+    background: rgba(0, 0, 0 , .6);
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .wrap{
+    padding: 15px 0 30px;
+    position: absolute;
+    left: 0;
+    width: 750rpx;
+    z-index: 10;
+    background: #FFFFFF;
+    overflow: hidden;
+    bottom: 0;
+  }
+  .mbx{
+    overflow-y: scroll;
+  }
+
+</style>
+<config>
+  {
+  "usingComponents": {
+  "fun-tree": "~@/components/fun-tree"
+  }
+  }
+</config>

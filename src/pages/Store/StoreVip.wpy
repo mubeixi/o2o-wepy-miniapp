@@ -1,0 +1,286 @@
+<template>
+  <div class="store-vip page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <err-msg :errs="formCheckResult"></err-msg>
+    <div class="store-item flex flex-vertical-center "  style="padding-top: 20rpx;height: 108rpx">
+      <div class="store-title">
+        会员名称
+      </div>
+
+      <input type="text" placeholder="请输入会员名称" v-model="level_name"  style="margin-left: 34rpx"/>
+
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between"  style="height: 116rpx;">
+      <div class="store-title">
+        价格
+      </div>
+      <div class="store-titles">
+        <input type="number" class="price-input" placeholder="请输入价格" v-model="price"/>
+        元
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="openPop('quanyi')">
+      <div class="store-title">
+        权益
+      </div>
+      <div class="store-titles">
+                <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="$linkTo('/pages/store/StoreVipGive')">
+      <div class="store-title">
+        赠送礼包
+      </div>
+      <div class="store-titles">
+        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      </div>
+    </div>
+    <div class="line"></div>
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class=" btn action-btn btn-primary"  @click="saveVip">
+      保存
+    </div>
+
+
+    <popup-layer title="权益" ref="quanyi" :autoClose="false">
+      <checkbox-group class="type-list p-l-10 p-r-10"   bindchange="checkboxChange" >
+        <label class="type-item flex flex-vertical-center">
+          <checkbox color="#00A8FF" value="0"  :checked="basic_rights.shipping.value>0"></checkbox>
+          <div class="label p-10 flex flex-vertical-center">
+            <div class="title ">包邮</div>
+          </div>
+        </label>
+        <div class="type-item flex flex-vertical-center">
+          <checkbox color="#00A8FF" value="1" :checked="basic_rights.discount.value>0">
+            <div class="label p-10 flex flex-vertical-center">
+              <div class="title flex flex-vertical-center">
+                消费折扣
+              </div>
+            </div>
+          </checkbox>
+
+          <input type="text" placeholder="0.1-9.9"  class="zhe" v-model="basic_rights.discount.value"/>
+          折
+        </div>
+      </checkbox-group>
+      <button class="btn btn-primary m-t-35" @click="sure">确认</button>
+    </popup-layer>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { getUserLevel, opBizUserLevel } from '../../api/store'
+  import { back, error, toast } from '../../common/fun'
+  import { ls, validateFun } from '../../common/helper'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      vipData: [],
+      id: '',
+      formCheckResult: '',
+      upgrade_rights: {
+        coupon: {
+          name: '赠送优惠券',
+          value: ''
+        },
+        product: {
+          name: '赠送商品',
+          value: ''
+        }
+      },
+      level_name: '', // 名称
+      price: '', // 价格
+      selectValue: [],
+      basic_rights: {
+        shipping: {
+          name: '包邮',
+          value: 0
+        },
+        discount: {
+          name: '消费折扣',
+          value: ''
+        }
+      }
+
+    },
+    onLoad(options) {
+      if (options.id) {
+        this.id = options.id
+        this.getDetail()
+      }
+    },
+    onUnload() {
+      ls.remove('coupon_prod')
+      ls.remove('pro_prod')
+    },
+    onShow() {
+      this.upgrade_rights.product.value = ls.get('pro_prod')
+      this.upgrade_rights.coupon.value = ls.get('coupon_prod')
+    },
+    methods: {
+      getDetail() {
+        getUserLevel({id: this.id}, {tip: '加载中', mask: true}).then(res => {
+          this.vipData = res.data[0]
+          this.level_name = this.vipData.level_name
+          this.price = this.vipData.price
+          this.basic_rights = this.vipData.basic_rights
+          this.upgrade_rights = this.vipData.upgrade_rights
+          ls.set('coupon_prod', this.upgrade_rights.coupon.value)
+          ls.set('pro_prod', this.upgrade_rights.product.value)
+        })
+      },
+      saveVip() {
+        let postData = {level_name: this.level_name, price: this.price, basic_rights: JSON.stringify(this.basic_rights), upgrade_rights: JSON.stringify(this.upgrade_rights)}
+        const rule = {
+          level_name: {
+            required: true,
+            type: String,
+            message: {
+              required: '请输入会员名'
+            }
+          },
+          basic_rights: {
+
+          },
+          upgrade_rights: {
+
+          },
+          price: {
+            type: String,
+            required: true,
+            message: {
+              required: '请输入会员价格'
+            }
+          }
+        }
+
+        const checkRt = validateFun(postData, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
+        if (this.id) {
+          postData.id = this.id
+        }
+        opBizUserLevel(postData).then(res => {
+          toast('保存成功')
+          ls.remove('coupon_prod')
+          ls.remove('pro_prod')
+          setTimeout(function() {
+            back()
+          }, 1000)
+        })
+      },
+      sure() {
+        if (this.selectValue.length === 2 || this.selectValue[0] == 1) {
+          let num = parseFloat(this.basic_rights.discount.value)
+          if (num <= 0 || num >= 10 || isNaN(num)) {
+            error('输入的折扣错误，请重新输入')
+            return
+          }
+        }
+        if (this.selectValue.length === 2 || this.selectValue[0] == 0) {
+          this.basic_rights.shipping.value = 1
+        }
+
+        this.closePop('quanyi')
+      },
+      checkboxChange(e) {
+        this.selectValue = e.$wx.detail.value
+      },
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .page-wrap{
+    padding-bottom: 44px;
+  }
+  .store-vip{
+    min-height: 100vh;
+    width: 750rpx;
+    background-color: #FFFFFF;
+  }
+  .store-item{
+    height: 88rpx;
+    box-sizing: border-box;
+    width: 750rpx;
+    padding: 0rpx 20rpx;
+    box-sizing: border-box;
+  }
+  .item-last{
+    height: 150rpx;
+  }
+  .store-title{
+    color: #333333;
+    font-size: 32rpx;
+  }
+  .store-titles{
+    display: flex;
+    align-items: center;
+    color: #999999;
+    font-size: 28rpx;
+  }
+  .line{
+    width: 750rpx;
+    height: 20rpx;
+    background-color: #F7F7F7;
+  }
+  .price-input{
+    width: 484rpx;
+    height: 56rpx;
+    line-height: 56rpx;
+    border: 1px solid #DDDDDD;
+    margin-right: 22rpx;
+    box-sizing: border-box;
+    padding-left: 20rpx;
+  }
+  .type-item{
+    border-bottom: 1px solid  #E6E6E6;
+    padding: 30rpx 0rpx;
+    font-style: 28rpx;
+  }
+  .zhe{
+    width: 440rpx;
+    height: 56rpx;
+    margin-left: 30rpx;
+    padding-left: 20rpx;
+    margin-right: 10rpx;
+    box-sizing: border-box;
+    border: 1px solid #DDDDDD;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "店铺会员",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+    "icon": "~@/components/icon",
+    "popup-layer": "~@/components/popup-layer",
+    "err-msg": "~@/components/err-msg"
+  }
+  }
+</config>

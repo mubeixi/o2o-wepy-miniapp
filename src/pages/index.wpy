@@ -1,29 +1,41 @@
 <template>
   <div class="page-wrap">
-    <div class="head">
-      <div class="base">
-        <image src="https://retailer.bafangka.com/uploadfiles/wkbq6nc2kc/userfile/48/image/202003111341101495.jpg" class="store-logo"></image>
-        <span class="store-title">老船长咖啡</span>
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="head" >
+      <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')"  v-if="AccessToken">
+        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
+        <span class="store-title">{{info.biz_shop_name}}</span>
       </div>
-      <div class="action">
-        <div v-if="storeInfo.volidate" class="validate"><span class="tip">已认证</span><icon class="iconfont" type="iconrenzheng"></icon></div>
-        <div v-else class="no-validate"><span class="tip">未认证</span><icon class="iconrenzheng" type="iconrenzheng"></icon></div>
-        <icon type="iconarrowleft" class="iconarrowleft"></icon>
+      <div class="base" @click.stop="$linkTo('/pages/user/login')"  v-else>
+          <div class="login-main">
+            登录/注册
+          </div>
       </div>
+      <template v-if="info.apply_switch">
+        <div class="action"  v-if="status==2" @click.stop="goBusiness">
+          <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
+          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        </div>
+        <div class="action"  v-else  @click.stop="goBusinessMy">
+          <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        </div>
+      </template>
+
     </div>
 
-    <div class="finance-box">
-      <div class="finance-item">
-        <div><span class="fz-12">￥</span><span class="fz-18">399.00</span></div>
+    <div class="finance-box" >
+      <div class="finance-item"  @click="goBanlance">
+        <div><span class="fz-12" v-if="AccessToken">￥</span><span class="fz-18">{{AccessToken?info.biz_money:'-'}}</span></div>
         <span class="title">店铺余额</span>
       </div>
       <div class="space-line"></div>
-      <div class="finance-item">
-        <div class="fz-18">215</div>
+      <div class="finance-item" @click="goTodayPerson">
+        <div class="fz-18">{{AccessToken?info.view_person_count:'-'}}</div>
         <span class="title">今日来访</span>
       </div>
       <div class="space-line"></div>
-      <div class="finance-item">
+      <div class="finance-item" @click="toShare">
         <icon  type="iconfenxiang" size="22" weight="bold" color="#333"></icon>
         <span class="title">分享</span>
       </div>
@@ -31,57 +43,72 @@
 
     <div class="container">
       <div class="count-box">
-        <div class="count-item">
-          <div class="val"><icon class="icon" type="iconyuanhuan" color="#FA9981"></icon><div class="fz-16 c333 text-center">15</div></div>
+        <div class="count-item" @click="goTodayOrder">
+          <div class="val"><icon class="icon" type="iconyuanhuan" color="#FA9981"></icon><div class="fz-16 c333 text-center">{{AccessToken?info.today_order_count:'-'}}</div></div>
           <span class="title">今日订单</span>
         </div>
         <div style="width: 50rpx;"></div>
-        <div class="count-item">
-          <div class="val"><icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon><div class="fz-12 c333 text-center">￥<span class="fz-16">399.00</span></div></div>
+        <div class="count-item"  @click="goTodayOrderMoney">
+          <div class="val"><icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon><div class="fz-12 c333 text-center"><block v-if="AccessToken">￥</block><span class="fz-16">{{AccessToken?info.today_order_money:'-'}}</span></div></div>
           <span class="title">今日订单金额</span>
         </div>
       </div>
 
       <div class="grid">
         <div class="grid-row">
-          <div class="grid-item">
-            <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
-            <div class="grid-item-title">店铺模板</div>
-          </div>
-          <div class="grid-item" @click="$linkTo('/pages/ProductManager')">
+<!--          <div class="grid-item">-->
+<!--            <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>-->
+<!--            <div class="grid-item-title">店铺模板</div>-->
+<!--          </div>-->
+          <div class="grid-item" @click="goPro">
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
           </div>
-          <div class="grid-item" @click="$linkTo('/pages/Store/StoreInfo')">
+          <div class="grid-item" @click="goStoreInfo">
             <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
             <div class="grid-item-title">修改资料</div>
           </div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-item">
+          <div class="grid-item" @click="goStatistics">
             <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
             <div class="grid-item-title">数据统计</div>
           </div>
-          <div class="grid-item" @click="toMarketing">
+        </div>
+        <div class="grid-row">
+
+          <div class="grid-item" @click="goMarketing">
             <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title">推广营销</div>
           </div>
-          <div class="grid-item">
+          <div class="grid-item" @click="goOrder">
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
-            <div class="grid-item-title">订单管理</div>
+            <div class="grid-item-title" style="display: flex;justify-content: center;">
+              订单管理<span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>
+<!--              <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)">-->
+<!--                 -->
+<!--              </div>-->
+            </div>
           </div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-item">
+          <div class="grid-item"  @click="goStoreSetting">
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
-          <div class="grid-item" @click="toLogistics">
+        </div>
+        <div class="grid-row">
+
+          <div class="grid-item" @click="goLogistics">
             <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
             <div class="grid-item-title">物流管理</div>
           </div>
-          <div class="grid-item">
+          <div class="grid-item" @click="goSettlementList">
+            <icon type="iconjiesuan" class="grid-item-icon" size="24" color="#6058fd"></icon>
+            <div class="grid-item-title">结算</div>
+          </div>
 
+          <div class="grid-item" @click="goOrderRefund">
+            <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
+            <div class="grid-item-title" style="display: flex;justify-content: center;">
+              退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -100,44 +127,193 @@
   import wepy from '@wepy/core'
   import store from '../store'
   import pageMixin from '../mixins'
+  import { spaceImg } from '../common/env'
 
-  import {
-    initInfo, bizLogin
-  } from '../api/system'
-  import {
-    linkTo
-  } from '../common/fun'
-
+  import { bizLogin, initInfo } from '../api/system'
+  import { getBizInfo } from '../api/store'
+  import { linkTo } from '../common/fun'
+  import { get_order_num, getBackOrderNum } from '../api/order'
+  import { checkIsLogin, checkIsSettle, confirm, ls } from '../common/helper'
+  import IM from '../common/Im/Im'
+  import { Exception } from '../common/Exception'
+  import eventHub from '../common/eventHub'
+  import { getAccessToken } from '../common/request'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
       storeInfo: {
         volidate: false
+      },
+      orderBackNum: {
+        orderSum: 0,
+        waitprocess: 0,
+        waitconfirm: 0
+      },
+      orderNum: {waitsend: 0},
+      info: {},
+      status: 1,
+      infoData: {},
+      AccessToken: {}
+    },
+    computed: {
+      userInfo() {
+        return this.$store.state.userInfo
       }
     },
     methods: {
-      getInit() {
-        let data = {
-          account: '18530863000',
-          password: '123456'
-        }
-        bizLogin(data).then(res => {
-          console.log(res, 'sss')
-        }).catch(err => {})
+      goStoreSetting() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreSetting')
       },
-      toLogistics() {
+      goStoreInfo() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreInfo')
+      },
+      goBanlance() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreBalance')
+      },
+      goTodayPerson() {
+        if (!checkIsLogin(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=7&today=1')
+      },
+      goTodayOrderMoney() {
+        if (!checkIsLogin(1, 1)) return
+       // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=2&today=1')
+      },
+      goTodayOrder() {
+        if (!checkIsLogin(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/statistics/dashboard?tabActiveIdx=0&today=1')
+      },
+      goOrderRefund() {
+        if (!checkIsLogin(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/order/OrderRefund')
+      },
+      goSettlementList() {
+        if (!checkIsLogin(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/order/SettlementList')
+      },
+      goLogistics() {
+        if (!checkIsLogin(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/logistics/LogisticsMain')
       },
-      toMarketing() {
-        console.log('toMarketing')
-        wx.navigateTo({
-          url: '/pages/StoreMarketing'
+      goOrder() {
+        if (!checkIsLogin(1, 1)) return
+       // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/order/OrderRetail')
+      },
+      goMarketing() {
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/store/StoreMarketing')
+      },
+      goStatistics() {
+        if (!checkIsLogin(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/statistics/dashboard')
+      },
+      goPro() {
+        if (!checkIsLogin(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
+        linkTo('/pages/product/ProductManager')
+      },
+      goBusinessMy() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/join/BusinessStation')
+      },
+      goBusiness() {
+        if (!checkIsLogin(1, 1)) return
+        const principal_type = this.infoData.apply_info.principal_type
+
+        if (principal_type === 1) {
+          linkTo('/pages/join/CompanyCertification?action=show&show=1')
+        } else {
+          linkTo('/pages/join/PersonalCertification?action=show&show=1')
+        }
+      },
+      toShare() {
+        if (!checkIsLogin(1, 1)) return
+        if (!checkIsSettle(1, 1)) return
+        if (checkIsLogin(false, false)) this.$linkTo('/pages/marketing/shareQrcode')
+      },
+      toProfile() {
+        if (checkIsLogin(false, false)) this.$linkTo('/pages/store/StoreInfo')
+      },
+      repalceImg() {
+        this.info.biz_logo = spaceImg
+      },
+      login() {
+        let data = {
+          account: 18530863000,
+          password: 123456
+        }
+        bizLogin(data).then(res => {
+
         })
+      },
+      async getInit() {
+        try {
+        // 初始化商户信息
+          await initInfo().then(res => {
+            this.info = res.data
+            // 利用开关控制是否提示入驻
+            if (this.info.apply_switch && !this.info.entry_process) {
+              confirm({ title: '提示', content: '你还未入驻成功，即将前往入驻页面' }).then(() => {
+                linkTo('/pages/join/BusinessStation')
+              }).catch(() => { throw Error('nocare') })
+            }
+          }).catch(err => { throw Error(err.msg) })
+
+          let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+          this.infoData = arr[0]
+          // 每次刷新请求接口 是否入驻
+          if (this.infoData.status) {
+            this.status = this.infoData.status
+            ls.set('status', this.infoData.status)
+          }
+
+          this.$store.commit('SET_BIZ_INFO', this.infoData)
+
+          // 订单角标
+          this.orderNum = await get_order_num({}).then(res => res.data).catch(err => {})
+          this.orderBackNum = await getBackOrderNum({}).then(res => res.data).catch(err => {})
+
+          this.orderBackNum.orderSum = this.orderBackNum.waitprocess * 1 + this.orderBackNum.waitconfirm * 1
+
+          if (!ls.get('listenStatus')) {
+            // IM全局
+            const imInstance = new IM()
+            // 设置本地用户信息
+            imInstance.setSendInfo({ type: 'biz', id: this.infoData.id, name: this.infoData.biz_shop_name, avatar: this.infoData.biz_logo })
+            await imInstance.start() // 等拿token
+
+            imInstance.openListen()
+
+            eventHub.imInstance = imInstance // 全局用一个句柄
+          }
+        } catch (e) {
+          Exception.handle(e)
+        }
       }
     },
+    onload() {
+
+    },
+    onShow() {
+      this.AccessToken = getAccessToken()
+      if (this.AccessToken) {
+        this.getInit()
+      }
+      this.status = ls.get('status')
+    },
     created() {
-      this.getInit()
+
     }
 
   })
@@ -146,13 +322,29 @@
 <style lang="scss">
   @import "../assets/variables.scss";
   @import "../assets/mixins.scss";
+
+  .order-tag{
+    color:#fff;
+    display: block;
+    width: 10px;
+    height:10px;
+    font-size:10px;
+    text-align: center;
+    line-height: 10px;
+    border-radius: 50%;
+    padding: 2px;
+    background: red;
+    margin-left: 4px;
+  }
   /** 顶部start **/
   .head{
     display: flex;
-    align-items: center;
+    //align-items: center;
     justify-content: space-between;
-    padding: 10px 0;
+
     .base{
+      flex:1;
+      padding: 10px 0;
       display: flex;
       align-items: center;
       .store-logo{
@@ -168,6 +360,7 @@
       }
     }
     .action{
+      padding: 10px 0;
       display: flex;
       align-items: center;
       .validate{
@@ -300,6 +493,12 @@
     }
   }
   /*九宫格 end*/
+  .login-main{
+    width: 100%;
+    padding-left: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
 
 
 </style>
@@ -309,9 +508,9 @@
     "navigationBarTextStyle": "black",
     "navigationBarBackgroundColor": "#f8f8f8",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon",
-      "ad": "~@/components/ad"
+      "icon": "~@/components/icon"
     }
   }
 </config>

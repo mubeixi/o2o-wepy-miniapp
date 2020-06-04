@@ -1,3 +1,4 @@
+
 export const toast = (title, icon, image, duration) => {
   wx.showToast({
     title,
@@ -23,17 +24,44 @@ export const error = (title, icon, duration) => {
   }
 }
 
-export const linkTo = (url, type = 'default') => {
+export const modal = (content = '', title = '提示') => {
+  wx.showModal({
+    title: title,
+    content: content
+  })
+}
 
+export const back = () => {
+  wx.navigateBack({
+    fail() {
+      wx.switchTab({
+        url: '/pages/index'
+      })
+    }
+  })
+}
+
+export const linkTo = (url, type = 'default') => {
   if (type === 'default') {
     wx.navigateTo({
       url,
       fail(err) {
         console.log(err)
         wx.switchTab({
-          url
+          url,
+          fail(e) { modal(e.errMsg) }
         })
       }
     })
   }
+}
+
+export const showLoading = (title = 'loading', mask = true) => {
+  wx.showLoading({
+    title,
+    mask
+  })
+}
+export const hideLoading = () => {
+  wx.hideLoading()
 }

@@ -1,0 +1,108 @@
+<template>
+  <div class="wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="input-box">
+      <input confirm-type="done" v-model="Order_Code" class="input" type="digit" placeholder="请输入消费券码" />
+    </div>
+    <button type="warn" class="sub" @click="subFn">核销</button>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { error } from '../../common/fun'
+  import { getOrderDetail } from '../../api/order'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data() {
+      return {
+        Order_Code: ''
+      }
+    },
+    methods: {
+      subFn() {
+        let Order_Code = this.Order_Code
+        if (!Order_Code) {
+          error('核销码必填')
+          return
+        }
+
+        getOrderDetail({
+          Order_Code
+        }).then(res => {
+          if (res.data.Order_Status == 2) {
+            this.Order_Code = ''
+            let url = '/pages/order/CheckOrderInfo?Order_Code=' + Order_Code
+            this.$linkTo(url)
+            // uni.navigateTo({
+            //   url: '/pagesA/order/checkOrderInfo?Order_Code=' + Order_Code
+            // })
+          } else {
+            error('订单状态不符')
+          }
+        }).catch(e => {
+
+        })
+      }
+
+    }
+  })
+</script>
+<style lang="scss">
+  @import "../../assets/mixins.scss";
+  @import "../../assets/variables.scss";
+  .wrap{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    padding: 40rpx 20rpx;
+    .input-box{
+      height: 180rpx;
+      box-sizing: border-box;
+      border: 1px solid #00A8FF;
+      border-radius: 10rpx;
+      .input{
+        margin: 39rpx 0;
+        padding: 20rpx;
+        font-size: 50rpx;
+        line-height: 60rpx;
+        height: 60rpx;
+        font-weight: 300;
+        color: #555;
+        &::placeholder{
+          color: #CAC8C8;
+        }
+      }
+
+    }
+    .sub{
+      border-radius: 0;
+      position: fixed;
+      bottom:0;
+      left: 0;
+      width: 750rpx;
+      z-index: 3;
+      background-color: #00A8FF;
+    }
+  }
+
+
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "卷码核销",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon",
+  }
+  }
+</config>

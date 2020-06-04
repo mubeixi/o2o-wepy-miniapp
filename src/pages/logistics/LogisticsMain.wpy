@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="channel-list">
       <div class="channel-item" @click="$linkTo('/pages/logistics/LogisticsUsual')">
         <div class="content">
@@ -8,14 +9,14 @@
         </div>
         <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>
       </div>
-      <div class="channel-item" @click="$linkTo('/pages/Store/SameCityDelivery')">
+      <div class="channel-item" @click="$linkTo('/pages/store/SameCityDelivery')">
         <div class="content">
           <image src="/static/logistics/cheng.png" class="img"></image>
           <div class="title">同城配送</div>
         </div>
         <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>
       </div>
-      <div class="channel-item" @click="$linkTo('/pages/logistics/LogisticsPaperless')">
+      <div class="channel-item" @click="$linkTo('/pages/logistics/ExpressCompany')">
         <div class="content">
           <image src="/static/logistics/nopaper.png" class="img"></image>
           <div class="title">电子面单</div>
@@ -98,6 +99,7 @@
     "navigationBarTitleText": "物流管理",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "ad": "~@/components/ad"

@@ -1,0 +1,205 @@
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .page-wrap{
+    min-height: 100vh;
+    background: #fff;
+  }
+  .chat-item{
+    height: 140rpx;
+    .left{
+      width: 160rpx;
+      .cover{
+        margin: 22rpx 32rpx;
+        width: 96rpx;
+        height: 96rpx;
+        border-radius: 50%;
+        overflow: hidden;
+        //@include cover-img(cover,0);
+      }
+    }
+    .right{
+      width: 590rpx;
+      padding: 30rpx 30rpx 30rpx 0;
+      box-sizing: border-box;
+      border-bottom: 1px solid #ECECEC;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .nickname{
+        max-width: 400rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .msg{
+        max-width: 600rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .none {
+    text-align: center;
+    padding: 60rpx 0;
+    color: #B0B0B0;
+    font-size: 26rpx;
+  }
+
+  .none .img {
+    height: 220rpx;
+    width: 200rpx;
+  }
+</style>
+<template>
+  <div class="page-wrap">
+    <div class="chat-list" v-if="chatList.length>0">
+      <div class="chat-item flex" @click="toRoom(idx)" v-for="(chat,idx) in chatList" :key="idx">
+        <div class="left">
+<!--          <div class="cover" :style="{backgroundImage:'url(\''++'\')'}"></div>-->
+          <image class="cover" :src="chat.avatar"></image>
+        </div>
+        <div class="right">
+          <div class="info flex flex-vertical-c flex-justify-between">
+            <div class="nickname c3 fz-17">{{chat.name}}</div>
+            <div class="time c9 fz-13">{{chat.time}}</div>
+          </div>
+          <div class="msg c9 fz-13">
+            <block v-if="chat.type==='text'">
+              {{chat.content}}
+            </block>
+            <block v-if="chat.type==='prod'">
+              商品:[{{chat.content.prod_name}}]
+            </block>
+            <block v-if="chat.type==='img'">
+              发送了一张图片
+            </block>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="none" v-else>
+      <image :src="spaceImg" class="img" />
+      <div class="m-t-15"><span>信箱是空的</span></div>
+    </div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {
+    ls,
+    setNavigationBarTitle,
+    getArrColumn,
+    chooseImageByPromise,
+    checkIsLogin,
+    getDomain
+  } from '../../common/helper'
+  import IM from '../../common/Im/Im'
+
+  import { error, modal } from '../../common/fun'
+  import { Exception } from '../../common/Exception'
+  import { getChatList } from '../../common/Im/Fetch'
+  import eventHub from '../../common/eventHub'
+
+  let imInstance = null
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      imInstance: null,
+      out_uid: '',
+      chatList: [],
+      spaceImg: getDomain('/static/client/box.png'),
+      paginate: {
+        page: 1,
+        page_size: 20,
+        totalCount: 0
+      }
+    },
+    computed: {
+      bizInfo () {
+        return this.$store.getters.getBizInfo()
+      }
+    },
+    methods: {
+      toRoom (idx) {
+        const chatItem = this.chatList[idx]
+        // 商家得找客户聊
+        const str = chatItem.to_uid.indexOf('user') !== -1 ? chatItem.to_uid : chatItem.from_uid
+
+        const breakStrIdx = str.indexOf('_')
+        if (breakStrIdx === -1) {
+          modal('进入聊天室失败')
+          return
+        }
+        const type = str.substr(0, breakStrIdx)
+        const id = str.substr(breakStrIdx + 1)
+        console.log(type, id, `/pages/support/Im?type=${type}tid=${id}`)
+        if (!type || !id) {
+          modal('聊天室参数错误')
+          return
+        }
+        this.$linkTo(`/pages/support/Im?type=${type}&tid=${id}`)
+      },
+      async _init_func () {
+        await imInstance._getAccessToken() // 等拿token
+        const chatList = await getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
+          this.paginate.totalCount = res.totalCount
+          return res.data
+          // const _list = res.data.map(chat => {
+          //   chat.timeText = uni.$moment(chat.created_at * 1000).startOf('day').fromNow()
+          //   return chat
+          // })
+          // return _list
+        }).catch(err => {
+          modal(err.msg || '获取消息列表失败')
+        })
+        console.log(chatList)
+        this.paginate.page++
+        this.chatList = this.chatList.concat(chatList)
+      }
+    },
+    onReachBottom () {
+      if (this.chatList.length < this.totalCount) {
+        getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
+          this.paginate.page++
+          this.chatList = this.chatList.concat(res.data)
+          this.paginate.totalCount = res.totalCount
+        }).catch(err => {
+          modal(err.msg || '获取消息列表失败')
+        })
+      }
+    },
+    onReady() {
+
+    },
+    onLoad(options) {
+      if (!checkIsLogin(1, 0)) return
+      if (eventHub.imInstance) {
+        this.imInstance = imInstance = eventHub.imInstance
+      } else {
+        this.imInstance = imInstance = new IM()
+      }
+      // 设置本地用户信息
+      imInstance.setSendInfo({ type: 'biz', id: ls.get('biz_id') })
+      this.out_uid = imInstance.getOutUid()
+
+      this._init_func(options)
+    },
+    created() {
+
+    }
+  })
+</script>
+<config>
+  {
+  "navigationBarTitleText": "消息",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "wzw-im-card":"~@/components/wzw-im-card"
+  }
+  }
+</config>

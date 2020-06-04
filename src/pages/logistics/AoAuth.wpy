@@ -1,0 +1,350 @@
+<template>
+  <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+
+    <template v-if="forms.length>0">
+      <diy-form :action="action" @update="upFormData"  eid="authForm" ref="refForm" :forms="forms"></diy-form>
+    </template>
+
+
+    <div class="form-cell">
+
+        <div  class="form-cell-item cell-item  form-my" >
+          <div class="form-cell-item__label">快递单高度</div>
+          <div class="form-cell-item__content">
+            <input placeholder-class="__placeholder"  v-model="express_height" class="input" placeholder="单位为mm,不填则为默认180mm高" />
+          </div>
+        </div>
+        <div  class="form-cell-item cell-item  form-my"  v-if="postData[0].value==='HHTT'||postData[0].value=='STO'||postData[0].value==='XFEX'||postData[0].value==='ANE'">
+          <div class="form-cell-item__label">{{sendsiteName}}</div>
+          <div class="form-cell-item__content">
+            <input placeholder-class="__placeholder"  v-model="sendsite" class="input" :placeholder="sendsiteName" />
+          </div>
+        </div>
+
+    </div>
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <div class="btn action-btn btn-primary"  @click="subFn">保存</div>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { findArrayIdx, getArrColumn, objTranslate } from '../../common/helper'
+  import { getShippingCompany } from '../../api/store'
+  import { modal } from '../../common/fun'
+  import {
+    opCoopCompany, getCoopCompany
+  } from '../../api/store'
+
+  let infoTmpl = [
+    {
+      label: '快递公司',
+      name: 'shippingcode',
+      required: true,
+      type: 'picker',
+      value: '',
+      options: [],
+      desc: '请选择快递公司'
+    },
+    {
+      label: '帐号',
+      name: 'cusname',
+      required: true,
+      type: 'input',
+      value: '',
+      desc: '快递公司帐号'
+    },
+    {
+      label: '密码',
+      name: 'cuspasswd',
+      required: true,
+      type: 'input',
+      value: '',
+      desc: '快递公司密码'
+    }
+    // {
+    //   label: '额外参数',
+    //   name: 'sendsite',
+    //   required: false,
+    //   type: 'input',
+    //   value: '',
+    //   desc: '额外参数(选填)'
+    // }
+  ]
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      coop_id: '',
+      action: 'add',
+      forms: [],
+      expressCompanyList: [],
+      postData: [],
+      sendsite: '',
+      sendsiteName: '',
+      express_height: ''
+    },
+    onLoad(options) {
+      if (options.hasOwnProperty('coop_id')) {
+        this.coop_id = options.coop_id
+        this.action = 'edit'
+      }
+      this._init_func()
+    },
+    methods: {
+      async subFn() {
+        try {
+          let formatFormData = {}
+
+          for (let row of this.postData) {
+            if (row.required && !row.value) {
+              throw Error(`${row.label}必须设置`)
+            }
+            formatFormData[row.name] = row.value
+          }
+
+          console.log(formatFormData)
+          if (this.coop_id) {
+            formatFormData.coop_id = this.coop_id
+          }
+          formatFormData.express_height = this.express_height
+          formatFormData.sendsite = this.sendsite
+
+          await opCoopCompany({...formatFormData}).catch(e => { throw Error(e.msg || '保存失败') })
+
+          this.$back()
+        } catch (e) {
+          modal(e.message)
+        }
+      },
+      upFormData(data) {
+        let _data = objTranslate(data)
+
+        const shippingIdx = findArrayIdx(this.expressCompanyList, {Shipping_Name: _data[0].value})
+
+        if (shippingIdx !== false) {
+          _data[0].value = this.expressCompanyList[shippingIdx].Shipping_Code
+        }
+
+        if (_data[0].value === 'HHTT') {
+          this.sendsiteName = '网点名称'
+        }
+        if (_data[0].value === 'STO') {
+          this.sendsiteName = '所属网点'
+        }
+        if (_data[0].value === 'XFEX') {
+          this.sendsiteName = '客户商号ID或仓库ID'
+        }
+        if (_data[0].value === 'ANE') {
+          this.sendsiteName = '网点名称(仅数字部分)'
+        }
+
+        this.postData = _data
+      },
+      async _init_func() {
+        this.expressCompanyList = await getShippingCompany().then(res => res.data).catch(e => { throw Error(e.msg || '获取快递公司列表失败') })
+
+        if (this.action === 'add') {
+          // add模式下，options由value切割得到，然后diy-form会把value置空
+          infoTmpl[0].value = getArrColumn(this.expressCompanyList, 'Shipping_Name').join('|')
+        }
+
+        if (this.action === 'edit') {
+          const vo = await getCoopCompany({coop_id: this.coop_id}).then(res => res.data).catch(e => { throw Error(e.msg || '数据初始化失败') })
+          console.log(vo)
+
+          this.express_height = vo.express_height
+          this.sendsite = vo.sendsite
+          // add模式下，options由value切割得到，然后diy-form会把value置空
+          infoTmpl[0].options = getArrColumn(this.expressCompanyList, 'Shipping_Name')
+
+          // 用服务器上的值覆盖默认值
+          for (var row of infoTmpl) {
+            if (vo.hasOwnProperty(row.name))row.value = vo[row.name]
+          }
+
+          // 物流公司code还是要换成企业名称
+          const shippingIdx = findArrayIdx(this.expressCompanyList, {Shipping_Code: vo.shippingcode})
+
+          if (shippingIdx !== false) {
+            infoTmpl[0].value = this.expressCompanyList[shippingIdx].Shipping_Name
+          }
+
+          // Shipping_Name: "顺丰"
+          // biz_id: 9
+          // cusname: "2323"
+          // cuspasswd: "32323232"
+          // custype: 1
+          // express_height: 0
+          // id: 16
+          // sendsite: ""
+          // shippingcode: "SF"
+          // usersid: "wkbq6nc2kc"
+        }
+
+        this.$set(this, 'forms', objTranslate(infoTmpl))
+      }
+    },
+    onShow() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+
+  .page-wrap{
+    min-height: 100vh;
+    padding-bottom: 44px;
+    box-sizing: border-box;
+    background: white;
+  }
+  .group-cell{
+    padding-right: 30rpx;
+    padding-left: 30rpx;
+    .cell-item{
+      .label{
+        color: #333 !important;
+        padding: 20rpx 0;
+      }
+      .content{
+        color: #999;
+        font-size: 12px;
+      }
+      .right{
+        margin-right: 0;
+      }
+    }
+  }
+
+  .actions{
+    position: fixed;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
+    left: 0;
+    width: 750rpx;
+    height: 90rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    box-shadow:0rpx 0rpx 18rpx 0rpx rgba(0, 0, 0, 0.16);
+  }
+  .form{
+
+    &-panel{
+      margin: 10px;
+    }
+    &-title{
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      &__place{
+        background: #00A8FF;
+        width: 4px;
+        height: 16px;
+        margin: 0 10px;
+        border-radius: 2px;
+      }
+      &__text{
+        color: #333333;
+        font-weight: bold;
+      }
+    }
+    &-upload{
+
+
+      &-item{
+        display: block;
+        margin: 0 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+
+        &__label{
+          color: #555555;
+        }
+        &__content{
+          padding: 10px 0;
+        }
+
+      }
+
+    }
+    &-cell{
+      background: white;
+      border-radius: 4px;
+      overflow: hidden;
+      font-size: 14px;
+
+      &-item{
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        margin: 0 10px;
+
+        &__label{
+          width: 80px;
+          padding: 0 10px 0 0;
+          color: #555555;
+          line-height: 1.3;
+        }
+        &__content{
+          flex: 1;
+          height: 32px;
+          line-height: 32px;
+          display: flex;
+          align-items: center;
+          .input{
+            font-size: 14px;
+            flex: 1;
+            color: #555555;
+            &::placeholder{
+              color: #CAC8C8;
+            }
+          }
+
+          .__placeholder{
+            color: #CAC8C8;
+          }
+
+        }
+        &__right{
+          width: 32px;
+          text-align: center;
+        }
+
+      }
+    }
+
+  }
+
+  .form-my{
+    border-bottom: 0px;
+    border-top: 1px solid #eee;
+  }
+
+
+</style>
+<config>
+  {
+    "navigationBarTitleText": "电子面单公司管理",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+       "wzw-im-tip": "~@/components/wzw-im-tip",
+      "diy-form": "~@/components/diy-form-format",
+      "copyright": "~@/components/copyright",
+      "icon": "~@/components/icon",
+      "ad": "~@/components/ad"
+    }
+  }
+</config>

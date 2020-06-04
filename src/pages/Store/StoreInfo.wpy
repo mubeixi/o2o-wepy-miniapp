@@ -1,20 +1,21 @@
 <template>
   <div class="store-all">
-    <div class="store-item item-last flex flex-vertical-center flex-justify-between">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="store-item item-last flex flex-vertical-center flex-justify-between"  @click="updaImg">
       <div class="store-title">
         店铺logo
       </div>
       <div class="store-titles">
-        <image src="https://new401t.bafangka.com/uploadfiles/userfile/175/image/20191230092546196.jpg"  style="width: 102rpx;height: 102rpx;margin-left: 20rpx;"></image>
+        <image :src="info.biz_logo"  @error="repalceImg"  style="width: 102rpx;height: 102rpx;margin-left: 20rpx;border-radius: 50%;overflow: hidden;"></image>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="updateInfo(1)">
       <div class="store-title">
         店铺名称
       </div>
       <div class="store-titles">
-        肖战甜点屋
+        {{info.biz_shop_name}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -22,46 +23,49 @@
       <div class="store-title">
         主营类目
       </div>
-      <div class="store-titles">
-        美食
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{business_type}}"   range-key="name">
+          {{info.city_express_config.business_type}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-      </div>
+      </picker>
+
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between">
-      <div class="store-title">
-        店铺行业
-      </div>
-      <div class="store-titles">
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-      </div>
-    </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between">
+<!--    <div class="store-item flex flex-vertical-center flex-justify-between">-->
+<!--      <div class="store-title">-->
+<!--        店铺行业-->
+<!--      </div>-->
+<!--      <div class="store-titles">-->
+<!--        <icon  type="iconarrowleft" size="16"  color="#999"></icon>-->
+<!--      </div>-->
+<!--    </div>-->
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="updateInfo(3)">
       <div class="store-title">
         店铺地址
       </div>
       <div class="store-titles">
-        河南省硅谷广场
+        <span class="over-hidden">{{info.area_address}}{{info.biz_address}}</span>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="updateInfo(4)">
       <div class="store-title">
         联系人
       </div>
       <div class="store-titles">
-        肖战
+        {{info.biz_name}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between">
+    <div class="store-item flex flex-vertical-center flex-justify-between"  @click="updateInfo(5)">
       <div class="store-title">
         联系电话
       </div>
       <div class="store-titles">
-        15555555555
+        {{info.biz_mobile}}
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
+
+
   </div>
 </template>
 
@@ -70,16 +74,91 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
+  import { getBizInfo, getCityExpressConfig, opBizInfo, opCityExpressConfig } from '../../api/store'
 
+  import { hideLoading, linkTo, showLoading } from '../../common/fun'
+  import { chooseImageByPromise, uploadImages } from '../../common/helper'
+  import { spaceImg } from '../../common/env'
+  import { Exception } from '../../common/Exception'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      info: {},
+      business_type: {},
+      index: 0
     },
-    created() {
-
+    methods: {
+      repalceImg() {
+        this.info.biz_logo = spaceImg
+      },
+      async updaImg() {
+        let temp_file_list = []
+        try {
+          await chooseImageByPromise().then(tempFiles => {
+            temp_file_list.push(tempFiles[0].path)
+            showLoading('上传图片中')
+          }).catch(err => { throw Error(err.errMsg) })
+          await uploadImages({ 'imgs': temp_file_list }).then(urls => {
+            opBizInfo({ biz_logo: urls[0] }).then(res => {
+              this.getDetail()
+              hideLoading()
+            })
+          }).catch(err => { throw Error(err.msg) })
+        } catch (e) {
+          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+        }
+      },
+      bindPickerChange(e) {
+        let ind = e.$wx.detail.value
+        let data = this.business_type[ind].name
+        showLoading('修改中')
+        opCityExpressConfig({business_type: data}).then(res => {
+          this.info.city_express_config.business_type = data
+          hideLoading()
+        })
+      },
+      updateInfo(item) {
+        let data = '/pages/store/StoreInfoUpda?type=' + item
+        linkTo(data)
+      },
+      getDetail() {
+        getBizInfo().then(res => {
+          this.info = res.data[0]
+        })
+      },
+      async getBizInfo() {
+        showLoading('加载中')
+        await getBizInfo().then(res => {
+          this.info = res.data[0]
+          if (!this.info.city_express_config) {
+            console.log(this.info.city_express_config, 'ssss')
+            this.info.city_express_config = {
+              business_type: ''
+            }
+          }
+        }).catch(e => {
+          hideLoading()
+        })
+        hideLoading()
+        await getCityExpressConfig().then(res => {
+          let arr = res.data.business_type
+          let arrData = []
+          for (let it in arr) {
+            arrData.push({name: it, id: arr[it]})
+          }
+          this.business_type = arrData
+          for (let it = 0; it < arrData.length; it++) {
+            if (arrData[it].name === this.info.city_express_config.business_type) {
+              this.index = it
+            }
+          }
+        })
+      }
+    },
+    onShow() {
+      this.getBizInfo()
     }
 
   })
@@ -113,12 +192,27 @@
       font-size: 26rpx;
     }
   }
+  .picker-mbx{
+    flex: 1;
+    text-align: right;
+    height: 108rpx;
+    line-height: 108rpx;
+    color: #999999;
+    font-size: 26rpx;
+  }
+  .over-hidden{
+    width: 500rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 
 </style>
 <config>
   {
   "navigationBarTitleText": "修改资料",
   "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

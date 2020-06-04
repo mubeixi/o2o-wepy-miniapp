@@ -1,43 +1,18 @@
 <template>
   <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="group-cell">
-      <div class="cell-item">
-        <div class="label">顺丰</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">中通</div>
-        <div class="content">按件数</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">申通</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">百世</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">中通</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">韵达</div>
-        <div class="content">按重量</div>
-        <icon type="iconarrowleft" color="#999" class="right"></icon>
-      </div>
-      <div class="cell-item">
-        <div class="label">邮政</div>
-        <div class="content">按件数</div>
+      <div class="cell-item" v-for="(item,index) of list" :key="index"  @click="goNext(item.Template_ID)">
+        <div class="label">{{item.Template_Name}}</div>
+        <div class="content">{{item.By_Method}}</div>
         <icon type="iconarrowleft" color="#999" class="right"></icon>
       </div>
     </div>
 
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
     <div class="actions" @click="$linkTo('/pages/logistics/LogisticsAdds')">
       <icon type="iconadd" size="20" color="#00a8ff"></icon>
       <span class="p-l-6">新增物流模板</span>
@@ -52,17 +27,28 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
+  import { getShippingTemplate } from '../../api/store'
+  import { linkTo } from '../../common/fun'
+
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      list: []
     },
     methods: {
-
+      goNext(item) {
+        let data = '/pages/logistics/LogisticsAdds?temp_id=' + item
+        linkTo(data)
+      },
+      getList() {
+        getShippingTemplate().then(res => {
+          this.list = res.data
+        })
+      }
     },
-    created() {
-
+    onShow() {
+      this.getList()
     }
 
   })
@@ -72,6 +58,7 @@
 
 .page-wrap{
   min-height: 100vh;
+  padding-bottom: 90rpx;
   background: white;
 }
 .group-cell{
@@ -94,7 +81,8 @@
 
 .actions{
   position: fixed;
-  bottom: 0;
+  bottom: constant(safe-area-inset-bottom);
+  bottom: env(safe-area-inset-bottom);
   left: 0;
   width: 750rpx;
   height: 90rpx;
@@ -112,6 +100,7 @@
     "navigationBarTitleText": "物流模板",
     "navigationBarTextStyle": "black",
     "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
       "copyright": "~@/components/copyright",
       "icon": "~@/components/icon",
       "ad": "~@/components/ad"

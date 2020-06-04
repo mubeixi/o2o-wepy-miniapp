@@ -75,6 +75,7 @@
 </template>
 <script>
   import wepy from '@wepy/core'
+
   wepy.component({
     props: {
       imgs: {
@@ -111,11 +112,11 @@
       autoplay: {
         default: false
       },
-      dotsColor:{
-        default:'rgba(0,0,0,.3)'
+      dotsColor: {
+        default: 'rgba(0,0,0,.3)'
       },
-      dotsActiveColor:{
-        default:'#26C78D'
+      dotsActiveColor: {
+        default: '#26C78D'
       },
       interval: {
         default: 2000

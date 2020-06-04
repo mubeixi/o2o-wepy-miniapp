@@ -1,40 +1,193 @@
 <template>
-    <div class="store-all">
-      <div class="store-item flex flex-vertical-center flex-justify-between">
+    <div class="store-all page-wrap">
+      <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+      <err-msg :errs="formCheckResult"></err-msg>
+      <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/store/StoreSettingList')">
         <div class="store-title">
-          绑定会员
+          门店管理
         </div>
         <div class="store-titles">
-            肖战
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
-      <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('store-setting')">
         <div class="store-title">
           到店自提
         </div>
         <div class="store-titles">
+          {{arrive_get==1?'开启':'关闭'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('store-invoice')">
+        <div class="store-title">
+          开具发票
+        </div>
+        <div class="store-titles">
+          {{invoice_switch==1?'开启':'关闭'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$linkTo('/pages/store/StoreSettingConfig')">
+        <div class="store-title">
+          提现配置
+        </div>
+        <div class="store-titles">
+          {{infoData.settle_config?'已配置':'未配置'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('dayin')">
+        <div class="store-title">
+          打印机设置
+        </div>
+        <div class="store-titles">
+          <block v-if="print_config.sn&&print_config.secret&&print_config.count">
+            已配置
+          </block>
+          <block v-else>
+            未配置
+          </block>
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between">
+        <div class="store-title">
+          外卖营业时间
+        </div>
+        <div class="store-titles flex flex-vertical-center">
+          <time class="time-select" @uptime="upStartTime" mode="time" :val="start_time">
+            <span class="fz-14" v-if="start_time">{{start_time}}</span>
+            <span class="fz-14 c9" v-else>请选择开始时间</span>
+          </time>
+          <span class="m-l-10 m-r-10">-</span>
+          <time class="time-select" @uptime="upEndTime" mode="time" :val="end_time">
+            <span class="fz-14" v-if="end_time">{{end_time}}</span>
+            <span class="fz-14 c9" v-else>请选择结束时间</span>
+          </time>
+          <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('business_status_popup')">
+        <div class="store-title">
+          外卖营业状态
+        </div>
+        <div class="store-titles">
+          {{business_status==1?'开启':'关闭'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/store/AlbumList')">
+        <div class="store-title">
+          相册
+        </div>
+        <div class="store-titles">
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+
+
+      <model ref="dayin">
+        <div class="wzw-title">
+          打印机设置
+        </div>
+        <div class="flex flex-vertical-center  wzw-content">
+          <div class="mbx-div">
+            密钥
+          </div>
+          <input v-model="print_config.secret" type="text" class="input-dayin"/>
+
+        </div>
+        <div class="flex flex-vertical-center  wzw-content">
+          <div  class="mbx-div">
+            打印机SN码
+          </div>
+          <input v-model="print_config.sn" type="text" class="input-dayin"/>
+
+        </div>
+        <div class="flex flex-vertical-center  wzw-content">
+          <div  class="mbx-div">
+            打印联数
+          </div>
+          <input  v-model="print_config.count" type="text" class="input-dayin"/>
+
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+          <div >
+            是否开启自动打印
+          </div>
+          <div>
+            <switch :checked="print_config.auto==1" bindchange="switch1ChangeM" style="transform: scale(.8)"></switch>
+          </div>
+        </div>
+        <div class="wzw-info">
+          开启此开关后，消费者付款完成后会自动打印小票
+        </div>
+
+        <div class="submit-mbx" @click="saveMbx">
+          保存
+        </div>
+      </model>
+
+      <model ref="store-setting">
+      <div class="wzw-title">
+        到店自提
+      </div>
+      <div class="flex flex-vertical-center flex-justify-between wzw-content">
+        <div>
           开启
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+        <div>
+          <switch :checked="arrive_get==1" bindchange="switch1Change" style="transform: scale(.8)"></switch>
         </div>
       </div>
-      <div class="store-item flex flex-vertical-center flex-justify-between">
-        <div class="store-title">
-          线下消费利润
-        </div>
-        <div class="store-titles">
-          10%
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-        </div>
+      <div class="wzw-info">
+        开启此开关后，消费者在下订单时可以选择门店自提，商家无需发货
       </div>
-      <div class="store-item flex flex-vertical-center flex-justify-between">
-        <div class="store-title">
-          结算配置
+    </model>
+
+      <model ref="business_status_popup">
+        <div class="wzw-title">
+          外卖营业状态
         </div>
-        <div class="store-titles">
-          未配置
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content">
+          <div>
+            开启
+          </div>
+          <div>
+            <switch :checked="business_status==1" bindchange="switchStatusChanges" style="transform: scale(.8)"></switch>
+          </div>
         </div>
+        <div class="wzw-info">
+          外卖的营业状态，关闭后消费者在前台看到店铺外卖营业状态是已打样
+        </div>
+      </model>
+
+      <model ref="store-invoice">
+        <div class="wzw-title">
+          开具发票
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content">
+          <div>
+            开启
+          </div>
+          <div>
+            <switch :checked="invoice_switch==1" bindchange="switch1Changes" style="transform: scale(.8)"></switch>
+          </div>
+        </div>
+        <div class="wzw-info">
+          开启此开关后，消费者有效的订单均可申领发票
+        </div>
+      </model>
+
+
+      <!--占住底部的位置-->
+      <div class="safearea-box fixed bgwhite"></div>
+      <!--放置页面底部内容被挡住，额外给的高度-->
+      <div class="safearea-box"></div>
+      <!--action-btn全局有样式-->
+      <div class="submit-main btn action-btn" @click="bizOuts">
+        退出登录
       </div>
     </div>
 </template>
@@ -43,17 +196,192 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
+  import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { getBizInfo, opBizInfo } from '../../api/store'
+  import { bizLogout } from '../../api/system'
+  import { ls } from '../../common/helper'
+  import eventHub from '../../common/eventHub'
 
-
-
+  const moment = require('moment')
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-
+      formCheckResult: '',
+      infoData: {},
+      arrive_get: 0,
+      start_time: '',
+      end_time: '',
+      business_status: 0,
+      invoice_switch: 0, // 开具发票
+      print_config: {
+        sn: '',
+        secret: '',
+        count: '',
+        auto: ''
+      }
     },
-    created() {
+    onShow() {
+      this.init()
+    },
+    methods: {
+      saveMbx() {
+        if (!this.print_config.sn) {
+          this.formCheckResult = ['请输入打印机SN码']
+          return
+        }
+        if (!this.print_config.secret) {
+          this.formCheckResult = ['请输入密钥']
+          return
+        }
+        if (!this.print_config.count) {
+          this.formCheckResult = ['请输入打印联数']
+          return
+        }
+        let print_config = JSON.stringify(this.print_config)
+        showLoading('加载中')
+        opBizInfo({print_config}).then(res => {
+          toast('保存成功')
+          this.$closePop('dayin')
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      },
+      bizOuts() {
+        bizLogout().then(res => {
+          ls.remove('access_token')
+          ls.remove('users_id')
+          ls.remove('biz_account')
+          ls.remove('biz_id')
+          ls.remove('status')
 
+          // 取消监听
+          if (eventHub.imInstance) {
+            eventHub.imInstance.cancalListen()
+            eventHub.imInstance.close()
+            eventHub.imInstance = null
+          }
+
+          linkTo('/pages/index')
+        })
+      },
+      init() {
+        getBizInfo().then(res => {
+          this.infoData = res.data[0]
+          this.arrive_get = this.infoData.arrive_get
+          this.invoice_switch = this.infoData.invoice_switch
+          this.start_time = this.infoData.business_start
+          this.end_time = this.infoData.business_end
+          this.print_config.sn = this.infoData.print_config.sn
+          this.print_config.secret = this.infoData.print_config.secret
+          this.print_config.count = this.infoData.print_config.count
+          this.print_config.auto = this.infoData.print_config.auto
+          this.business_status = this.infoData.business_status
+        })
+      },
+      upStartTime(e) {
+        this.start_time = e
+        let data = {
+          business_start: this.start_time
+        }
+        showLoading('保存中')
+        opBizInfo(data).then(res => {
+          toast('保存成功')
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      },
+      upEndTime(e) {
+        this.end_time = e
+        let start = '2000-10-01 ' + this.start_time
+        let end = '2000-10-01 ' + this.end_time
+        let boo = moment(end).isAfter(start)
+        // if (!boo) {
+        //   error('结束时间必须大于开始时间')
+        //   return
+        // }
+
+        let data = {
+          business_end: this.end_time
+        }
+        showLoading('保存中')
+        opBizInfo(data).then(res => {
+          toast('保存成功')
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      },
+      async switchStatusChanges(e) {
+        showLoading()
+        let boo = e.$wx.detail.value
+        let data = {}
+        if (boo) {
+          data.business_status = 1
+        } else {
+          data.business_status = 0
+        }
+        await opBizInfo(data).then(res => {
+          if (boo) {
+            this.business_status = 1
+          } else {
+            this.business_status = 0
+          }
+        }).catch(e => {})
+        hideLoading()
+      },
+      switch1ChangeM(e) {
+        let boo = e.$wx.detail.value
+        if (boo) {
+          this.print_config.auto = 1
+        } else {
+          this.print_config.auto = 0
+        }
+      },
+      switch1Changes(e) {
+        let boo = e.$wx.detail.value
+        let data = {}
+        if (boo) {
+          showLoading('开启中')
+          data.invoice_switch = 1
+        } else {
+          showLoading('关闭中')
+          data.invoice_switch = 0
+        }
+        opBizInfo(data).then(res => {
+          if (boo) {
+            this.invoice_switch = 1
+          } else {
+            this.invoice_switch = 0
+          }
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      },
+      switch1Change(e) {
+        let boo = e.$wx.detail.value
+        let data = {}
+        if (boo) {
+          showLoading('开启中')
+          data.arrive_get = 1
+        } else {
+          showLoading('关闭中')
+          data.arrive_get = 0
+        }
+        opBizInfo(data).then(res => {
+          if (boo) {
+            this.arrive_get = 1
+          } else {
+            this.arrive_get = 0
+          }
+          hideLoading()
+        }).catch(e => {
+          hideLoading()
+        })
+      }
     }
 
   })
@@ -63,9 +391,12 @@
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
 
+  .page-wrap{
+    padding-bottom: 44px;
+  }
   .store-all{
     background-color: #FFFFFF;
-    height: 100vh;
+    min-height: 100vh;
     .store-item{
       height: 108rpx;
       border-bottom: 1px solid #EBEBEB;
@@ -83,12 +414,77 @@
     }
   }
 
+  /*到店自提*/
+  .wzw-title{
+    width: 750rpx;
+    text-align: center;
+    height: 30rpx;
+    line-height: 30rpx;
+    font-size: 32rpx;
+    color: #333333;
+    padding-top: 30rpx;
+    padding-bottom: 90rpx;
+  }
+  .wzw-content{
+    width: 690rpx;
+    margin: 0 auto;
+    height: 44rpx;
+    line-height: 44rpx;
+    margin-bottom: 60rpx;
+  }
+  .wzw-info{
+    font-size: 22rpx;
+    color: #999999;
+    width: 690rpx;
+    margin: 0 auto;
+    height: 20rpx;
+    line-height: 20rpx;
+    margin-bottom: 86rpx;
+  }
+/* 到店自提*/
+  .time-select{
+    height: 108rpx;
+    line-height: 108rpx;
+  }
+  .submit-main{
+
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background-color: #FF0000;
+
+  }
+  .submit-mbx{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    z-index: 9;
+  }
+  .input-dayin{
+    width: 440rpx;
+    height: 56rpx;
+    line-height: 56rpx;
+    border: 1px solid #DDDDDD;
+    margin-left: 10px;
+    padding-left: 10px;
+    box-sizing: border-box;
+  }
+  .mbx-div{
+    width: 180rpx;
+  }
 </style>
 <config>
   {
   "navigationBarTitleText": "店铺设置",
   "usingComponents": {
-  "icon": "~@/components/icon"
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+    "icon": "~@/components/icon",
+    "time": "~@/components/time",
+    "err-msg": "~@/components/err-msg",
+    "model": "~@/components/ModelComponents"
   }
   }
 </config>

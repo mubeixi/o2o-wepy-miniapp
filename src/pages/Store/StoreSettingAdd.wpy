@@ -1,0 +1,298 @@
+<template>
+  <div class="store-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <err-msg :errs="formCheckResult"></err-msg>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-title">
+        门店名称
+      </div>
+      <div class="store-titles flex1">
+        <input type="text" v-model="store_name"  placeholder="请输入门店名称" placeholder-class="__placeholder"  class="input-logistics" >
+      </div>
+    </div>
+    <div class="store-item "  @click.stop="$openPop('address')">
+      <div class="store-title" style="float: left;height: 108rpx;line-height: 108rpx">
+        所属区域
+      </div>
+      <address  @up="updateAddress" :visiable="false" :province="province" :city="city" :area="area"   class="address m-l-10 flex flex-vertical-center" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
+
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-title">
+        详细地址
+      </div>
+      <div class="store-titles flex1">
+        <input type="text" v-model="store_address"  placeholder="请输入详细地址" placeholder-class="__placeholder"  class="input-logistics" >
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="store-title">
+        联系方式
+      </div>
+      <div class="store-titles flex1">
+        <input type="text" v-model="store_mobile"  placeholder="请输入联系方式" placeholder-class="__placeholder"  class="input-logistics" >
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="titles">
+        营业开始时间
+      </div>
+      <div class="content fz-14 c9 flex flex-vertical-center">
+        <time @uptime="upStartTime" mode="time" :val="business_start">
+          <span class="fz-14" v-if="business_start">{{business_start}}</span>
+          <span class="fz-14 c9" v-else>请选择营业开始时间</span>
+        </time>
+        <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="titles">
+        营业结束时间
+      </div>
+      <div class="content fz-14 c9 flex flex-vertical-center">
+        <time @uptime="upEndTime" mode="time" :val="business_end">
+          <span class="fz-14" v-if="business_end">{{business_end}}</span>
+          <span class="fz-14 c9" v-else>请选择营业结束时间</span>
+        </time>
+        <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
+      </div>
+    </div>
+
+
+    <div class="submit-main" @click="save">
+      保存
+    </div>
+
+
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { validateFun } from '../../common/helper'
+  import { regPhone } from '../../common/regs'
+  import { getStoreList, opBizStore } from '../../api/store'
+  import { back, hideLoading, showLoading, toast } from '../../common/fun'
+
+  const moment = require('moment')
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      id: '',
+      store_name: '',
+      store_address: '',
+      store_mobile: '',
+      business_start: '',
+      business_end: '',
+      formCheckResult: '',
+      province: '',
+      city: '',
+      area: '',
+      selectArea: ''
+    },
+    onLoad(options) {
+      if (options.id) {
+        this.id = options.id
+        this.init()
+      }
+    },
+    methods: {
+      // 选择的地址
+      updateAddress(data) {
+        this.selectArea = data.str
+        let selectValue = data.id
+        this.province = selectValue[0]
+        this.city = selectValue[1]
+        this.area = selectValue[2]
+      },
+      init() {
+        showLoading('加载中')
+        getStoreList({store_id: this.id}).then(res => {
+          let arr = res.data[0]
+          this.store_name = arr.store_name
+          this.store_address = arr.store_address
+          this.province = arr.store_province
+          this.city = arr.store_city
+          this.area = arr.store_area
+          this.store_mobile = arr.store_mobile
+          this.business_start = arr.business_start
+          this.business_end = arr.business_end
+          this.selectArea = arr.area_address
+          this.province = arr.store_province
+          this.city = arr.store_city
+          this.area = arr.store_area
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      },
+      save() {
+        let data = {
+          store_name: this.store_name,
+          store_address: this.store_address,
+          store_mobile: this.store_mobile,
+          business_start: this.business_start,
+          business_end: this.business_end,
+          area_id: this.area
+        }
+        const rule = {
+          area_id: {
+            required: true,
+            message: {
+              required: '请选择地址'
+            }
+          },
+          store_name: {
+            required: true,
+            message: {
+              required: '门店名称必填'
+            }
+          },
+          store_address: {
+            required: true,
+            message: {
+              required: '门店地址必填'
+            }
+          },
+          store_mobile: {
+            required: true,
+            match: regPhone,
+            message: {
+              required: '联系电话必填',
+              match: '请填写正确的联系电话'
+            }
+          },
+          business_start: {
+            required: true,
+            type: String,
+            message: {
+              required: '营业开始时间必选'
+            }
+          },
+          business_end: {
+            required: true,
+            type: String,
+            message: {
+              required: '营业结束时间必选'
+            }
+          }
+        }
+        const checkRt = validateFun(data, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
+        let start = '2020-10-01 ' + this.business_start
+        let end = '2020-10-01 ' + this.business_end
+        start = moment(start).format('YYYY-MM-DD HH:MM:SS')
+        end = moment(end).format('YYYY-MM-DD HH:MM:SS')
+
+        let boo = moment(end).isAfter(start)
+        if (!boo) {
+          this.formCheckResult = ['结束时间必须大于开始时间']
+          return
+        }
+        showLoading('')
+        if (this.id) {
+          data.store_id = this.id
+        }
+        opBizStore(data).then(res => {
+          hideLoading()
+          toast('保存成功')
+          setTimeout(function() {
+            back()
+          }, 1000)
+        }).catch(e => {
+          hideLoading()
+        })
+      },
+      upStartTime(val) {
+        this.business_start = val
+      },
+      upEndTime(val) {
+        this.business_end = val
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .store-all{
+    background-color: #FFFFFF;
+    height: 100vh;
+    .store-item{
+      height: 108rpx;
+      border-bottom: 1px solid #EBEBEB;
+      box-sizing: border-box;
+      width: 710rpx;
+      margin: 0 auto;
+    }
+    .store-title{
+      color: #333333;
+      font-size: 32rpx;
+    }
+    .store-titles{
+      color: #999999;
+      font-size: 26rpx;
+    }
+  }
+  .input-logistics{
+    margin-left: 48rpx;
+    height: 108rpx;
+    font-size: 26rpx;
+    color: #333333;
+  }
+  .address{
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    z-index: 10;
+    height: 108rpx;
+    width: 560rpx;
+    float: left;
+  }
+  .__placeholder{
+    color: #CAC8C8;
+  }
+  .submit-main{
+    width:750rpx;
+    height:86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 32rpx;
+    background:rgba(0,168,255,1);
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    z-index: 4;
+  }
+  .picker-mbx{
+    flex: 1;
+    text-align: right;
+    height: 108rpx;
+    line-height: 108rpx;
+    color: #999999;
+    font-size: 26rpx;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "添加门店",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon",
+  "err-msg": "~@/components/err-msg",
+  "address": "~@/components/address",
+  "time": "~@/components/time",
+  }
+  }
+</config>

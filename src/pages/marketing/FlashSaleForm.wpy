@@ -1,0 +1,683 @@
+<style lang="scss">
+  @import "../../assets/app.scss";
+  @import "../../assets/mixins.scss";
+
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
+
+  .form{
+    background: #f8f8f8;
+    .group-cell{
+      background: white;
+      .cell-item{
+        .label{
+
+        }
+        .content{
+          padding-right: 20rpx;
+          text-align: left;
+          .line-input{
+            border:1px solid #eee;
+            height: 56rpx;
+            line-height: 56rpx;
+            text-align: center;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+    .safearea-space{
+      height: constant(safe-area-inset-bottom);
+      height: env(safe-area-inset-bottom);
+    }
+  }
+
+  .add-btn{
+    width: 155rpx;
+    height: 56rpx;
+    display: flex;
+    align-items: center;
+    border:1px solid #00A8FF;
+    color:#00A8FF;
+    border-radius: 5rpx;
+    justify-content: center
+  }
+
+  /*商品列表 start*/
+  .product-list{
+    height: 800rpx;
+    overflow: scroll;
+  }
+
+  .product-item{
+    padding: 30rpx 0;
+    background: white;
+    margin-bottom: 20rpx;
+    .info-box{
+      padding: 0 20rpx;
+      display: flex;
+      font-size: 14px;
+      height: 176rpx;
+      .check{
+        padding-right: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .check-icon{
+
+        }
+      }
+      .thumb{
+        width: 176rpx;
+        height: 176rpx;
+        background: #f2f2f2;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          color: #333;
+          font-size: 14px;
+          /*font-weight: bold;*/
+          line-height: 20px;
+          height: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+        .price-box{
+          color: $fun-red-color;
+          margin-bottom: 10px;
+          font-size: 14px;
+        }
+        .stock-box{
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .actions{
+      margin-top: 30rpx;
+      font-size: 12px;
+      display: flex;
+      .action{
+        justify-content: center;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: #888;
+        border-right: 1rpx solid #e7e7e7;
+        &:last-child{
+          border-right: none;
+        }
+        .title{
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  /*商品列表 end*/
+
+  .goods{
+
+    &-list{
+      width: 710rpx;
+      margin: 0 20rpx;
+    }
+    &-item{
+      background: white;
+      margin-bottom: 30rpx;
+      padding: 20rpx;
+      &:last-child{
+        margin-bottom: 0;
+      }
+      .thumb{
+        width: 150rpx;
+        height: 150rpx;
+        background: #f2f2f2;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          margin-bottom: 20px;
+          line-height: 20px;
+          height: 40px;
+          font-size: 14px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .price-box{
+          display: flex;
+          align-items: center;
+          font-size: 12px;
+          .selling-price{
+
+          }
+          .market-price{
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+  }
+
+  .model-seckill{
+    width: 500rpx;
+    box-sizing: border-box;
+    padding: 30rpx 44rpx;
+    border-radius: 10rpx;
+  }
+
+  .input-all{
+    width: 410rpx;
+    height: 66rpx;
+    line-height: 66rpx;
+    border: 1px solid #D6D6D6;
+    box-sizing: border-box;
+  }
+
+  .btns{
+    width: 130rpx;
+    height: 50rpx;
+    line-height: 50rpx;
+    text-align: center;
+    font-size: 26rpx;
+    color: #FFFFFF;
+    background-color: #BEBEBE;
+    border-radius: 6rpx;
+  }
+
+  .btns-submit{
+    background-color: #00A8FF;
+  }
+
+  .placeholder{
+    font-size: 12px;
+    color:#C2C2C2;
+  }
+
+  .search-input{
+    width: 300rpx;
+    height: 60rpx;
+    box-sizing: border-box;
+    padding-left: 10px;
+    line-height: 60rpx;
+    border: 1px solid #eeeeee;
+  }
+
+  .search-btn{
+    height: 60rpx;
+    line-height: 60rpx;
+    text-align: center;
+    width: 100rpx;
+    color: #FFFFFF;
+    background-color: #00A8FF;
+    border-radius: 10rpx;
+  }
+</style>
+<template>
+  <div class="page-wrap safearea bottom-btn">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <err-msg :errs="formCheckResult"></err-msg>
+    <div class="form">
+      <div class="group-cell">
+        <div class="cell-item">
+          <div class="label">活动名称</div>
+          <div class="content">
+            <input class="fz-14" type="text" v-model="formData.name" placeholder="请输入活动名称" />
+          </div>
+        </div>
+        <div class="cell-item">
+          <div class="label">每人限购</div>
+          <div class="content">
+            <input class="fz-14" type="number" v-model="formData.limits" placeholder="请输入限购数量,0则代表不限制" />
+          </div>
+          <div class="right">(件)</div>
+        </div>
+        <div class="cell-item">
+          <div class="label">开始时间</div>
+          <div class="content">
+            <time v-if="timeReady" @uptime="upStartTime" :val="formData.start_time">
+              <span class="fz-14" v-if="formData.start_time">{{formData.start_time}}</span>
+              <span class="fz-14 c9" v-else>请选择</span>
+            </time>
+          </div>
+          <div class="right">
+            <icon type="iconarrowleft" size="14" color="#999"></icon>
+          </div>
+        </div>
+        <div class="cell-item">
+          <div class="label">结束时间</div>
+          <div class="content">
+            <time v-if="timeReady" @uptime="upEndTime" :val="formData.end_time">
+              <span class="fz-14" v-if="formData.end_time">{{formData.end_time}}</span>
+              <span class="fz-14 c9" v-else>请选择</span>
+            </time>
+          </div>
+          <div class="right">
+            <icon type="iconarrowleft" size="14" color="#999"></icon>
+          </div>
+        </div>
+<!--        <div class="cell-item">-->
+<!--          <div class="label">参与分销</div>-->
+<!--          <div class="content">-->
+<!--            <switch :animation="animation" @change="taggleDistributor" :checked="formData.is_distribute" />-->
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+
+      <div class="m-t-20 m-b-20 flex flex-vertical-center">
+        <span  class="fz-16 c3  m-l-10">选择商品</span>
+        <div  @click="openproductPop" class="add-btn m-l-20"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加商品</span></div>
+        <div class="add-btn m-l-20"><span class="fz-12 p-l-4"  @click="setDiscount">批量设置折扣</span></div>
+      </div>
+
+      <div class="goods-list">
+        <div class="goods-item" v-for="(product,idx) in select_prod" :key="idx" @click="setActiveIdx(idx)">
+          <div class="flex">
+<!--            <div class="thumb" :style="{backgroundImage:'url('+product.ImgPath+')'}"></div>-->
+            <image class="thumb" :src="product.ImgPath"></image>
+            <div class="info">
+              <div class="title">{{product.Products_Name}}</div>
+              <div class="flex flex-vertical-center flex-justify-between">
+                <div class="price-box">
+                  <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{product.Products_PriceX}}</span></div>
+                  <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{product.Products_PriceY}}</span></div>
+                </div>
+                <icon @click="delPro(idx,product.Products_ID)" size="18" type="iconshanchu" color="#999"></icon>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center p-t-10 fz-14">
+            <span>折扣</span>
+            <input :value="product.discount"  class="bor m-l-10 m-r-10 w140 fz-12 p-l-4 p-r-4" placeholder="请输入数字 0.1-9.9" type="digit" min="0.1" max="9.9" @input="bindDiscountInput" /><span>折</span>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="safearea-box fixed bgwhite"></div>
+    <div class="safearea-box"></div>
+    <div class="btn action-btn btn-primary" @click="sub">
+      <span class="p-l-10">确定</span>
+    </div>
+
+    <popup-layer title="选择商品" ref="product" :autoClose="true">
+      <div class="flex flex-vertical-center p-l-10 fz-15 c3">
+        商品名称
+        <input type="text" v-model="searchs" class="search-input m-l-10"/>
+        <div class="search-btn m-l-20" @click="searchBtn">搜索</div>
+        <div class="search-btn m-l-20" @click="searchReset">重置</div>
+      </div>
+      <scroll-view scroll-y="true" class="product-list">
+        <div class="product-item" v-for="(product,idx) in proData" :key="idx">
+          <template v-if="product.Products_Status===1">
+            <div class="info-box" @click="taggleProductCheck(idx)">
+              <div class="check"   >
+                <div v-show="!product.disalbed">
+                  <icon
+                    class="check-icon"
+                    :color="product.check?'#F53636':'#999'"
+                    size="20"
+                    :type="product.check?'iconblchecked':'iconCircle'"
+                  ></icon>
+                </div>
+                <div v-show="product.disalbed">
+                  <icon
+                    class="check-icon"
+                    color="#eee"
+                    size="20"
+                    type="iconblchecked"
+                  ></icon>
+                </div>
+
+              </div>
+              <image class="thumb" :src="product.ImgPath"></image>
+              <div class="info">
+                <div class="title">{{product.Products_Name}}{{product.Products_ID}}</div>
+                <div class="price-box">
+                  <span class="sign">￥</span>
+                  <span>{{product.Products_PriceX}}</span>
+                  <span style="text-decoration: line-through" class="sign m-l-10 color-gray">￥</span>
+                  <span style="text-decoration: line-through" class="color-gray">{{product.Products_PriceY}}</span>
+                </div>
+                <div class="stock-box">
+                  <span class="stock">库存:{{product.Products_Count}}</span>
+                  <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
+                </div>
+              </div>
+            </div>
+          </template>
+
+        </div>
+      </scroll-view>
+      <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
+    </popup-layer>
+
+
+    <model positions="top-center" ref="myModel" :autoClose="false">
+      <div class="model-seckill">
+        <div class="fz-16 c3 text-center m-b-30">批量设置折扣</div>
+        <input type="digit" v-model="discount"  min="0.1" max="9.9"  class="input-all p-l-12" placeholder="请输入折扣0.1-9.9" placeholder-class="placeholder"/>
+        <div class="flex flex-vertical-center flex-justify-between m-t-25 p-l-27 p-r-27">
+          <div class="btns" @click="$closePop('myModel')">取消</div>
+          <div class="btns btns-submit" @click="sureDiscount">确定</div>
+        </div>
+      </div>
+
+    </model>
+
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { findArrayIdx, getArrColumn, validateFun } from '../../common/helper'
+  import { error, toast } from '../../common/fun'
+  import { bizProdList } from '../../api/product'
+  import { bizAddSpike, bizSpikeDetail } from '../../api/store'
+
+  const moment = require('moment')
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      searchs: '',
+      discount: '',
+      actIdx: 0,
+      timeReady: false,
+      formCheckResult: [],
+      proData: [],
+      select_prod: [],
+      spike_id: '',
+      formData: {
+        name: '',
+        start_time: '',
+        end_time: '',
+        limits: ''
+        // is_distribute: 0
+      },
+      animation: {}
+    },
+    methods: {
+      searchReset() {
+        this.searchs = ''
+        this.searchList()
+      },
+      searchBtn() {
+        this.searchList()
+      },
+      searchList() {
+        let data = {
+          page: 1,
+          pageSize: 9999,
+          pro_name: this.searchs
+        }
+        bizProdList(data).then(res => {
+          this.proData = res.data.map(item => {
+            const hasGoodsIds = getArrColumn(this.select_prod, 'prod_id')
+            item.check = hasGoodsIds.includes(item.Products_ID)
+            if (item.check) {
+              item.disalbed = true
+            } else {
+              item.disalbed = false
+            }
+
+            return {...item}
+          })
+        })
+      },
+      sureDiscount() {
+        this.select_prod.map(item => {
+          item.discount = this.discount
+        })
+        this.$closePop('myModel')
+      },
+      // 批量设置折扣
+      setDiscount() {
+        if (this.select_prod.length < 1) {
+          this.formCheckResult = ['请先选择商品']
+          return
+        }
+        this.$openPop('myModel')
+      },
+      sub() {
+        const rule = {
+          name: {
+            required: true,
+            type: String,
+            message: {
+              required: '活动名称必填',
+              type: '活动名称为字符串'
+            }
+          },
+          limits: {
+            required: true,
+            match: /^\d+$/,
+
+            message: {
+              required: '限购数量必填',
+              match: '限购数量必须大于等于0'
+            }
+          },
+          start_time: {
+            required: true,
+            type: String,
+            use: {
+              // after: (val, row) => moment(val).isAfter()
+            },
+            message: {
+              required: '开始时间必选',
+              type: '开始时间必须为字符串'
+              // after: '开始时间必须大于现在时间'
+            }
+          },
+          // is_distribute: {
+          //   required: true,
+          //   enum: [0, 1],
+          //   message: {
+          //     required: '是否分销必须上设置',
+          //     enum: '是否分销为0或1'
+          //   }
+          // },
+          end_time: {
+            required: true,
+            type: String,
+            use: {
+              after: (val, row) => moment(val).isAfter(row.start_time)
+            },
+            message: {
+              required: '结束时间必选',
+              type: '结束时间必须为字符串',
+              after: '结束时间必须在开始时间之后'
+            }
+          },
+          select_prod: {
+            required: true,
+            use: {
+              discount: (str) => {
+                let val = JSON.parse(str)
+                for (let item of val) {
+                  if (item.discount >= 0.1 && item.discount <= 9.9) {
+
+                  } else {
+                    return false
+                  }
+                }
+                return true
+              },
+              len: (val) => val.length > 0
+            },
+            message: {
+              required: '活动商品必选',
+              discount: '商品折扣只能在0.1到9.9之间'
+            }
+          },
+          spike_id: !this.spike_id ? {} : {
+            required: true,
+            message: {
+              required: '编辑模式下spike_id必填'
+            }
+          }
+        }
+
+        // let select_prod = [];
+        // for(var item of this.select_prod){
+        //   select_prod.push({prod_id: item.Products_ID, discount: item.discount ? item.discount : 0})
+        // }
+
+        let select_prod = this.select_prod.map(item => {
+          return {prod_id: item.Products_ID, discount: item.discount ? item.discount : 0}
+        })
+
+        let postData = {
+          ...this.formData,
+          select_prod: JSON.stringify(select_prod)
+        }
+
+        if (this.spike_id)postData.spike_id = this.spike_id
+
+        const checkRt = validateFun(postData, rule)
+        if (checkRt !== true) {
+          this.formCheckResult = checkRt
+          return
+        }
+
+        bizAddSpike(postData).then(res => {
+          toast('发布成功')
+          setTimeout(() => {
+            this.$back()
+          }, 1000)
+        }).catch(() => {})
+      },
+      setActiveIdx(idx) {
+        this.actIdx = idx
+      },
+      bindDiscountInput(e) {
+        const discount = e.$wx.detail.value
+        this.select_prod[this.actIdx].discount = discount
+      },
+      upStartTime(val) {
+        const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
+        this.formData.start_time = formatRt
+      },
+      upEndTime(val) {
+        const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
+        this.formData.end_time = formatRt
+      },
+      taggleDistributor(e) {
+        this.formData.is_distribute = e.$wx.detail.value ? 1 : 0
+      },
+      openproductPop() {
+      // 先把已经选中的放进来
+        for (let goods of this.proData) {
+          for (let item of this.select_prod) {
+            if (item.Products_ID === goods.Products_ID) {
+              goods.disalbed = true
+              // goods.check = true
+              // goods.discount = item.discount
+            }
+          }
+        }
+
+        this.$openPop('product')
+      },
+      surePro() {
+        this.$closePop('product')
+        const selects = this.proData.filter(item => item.check).map(item => {
+          return {...item, prod_id: item.Products_ID, discount: ''}
+        })
+
+        // 不能加已经存在的
+        for (let item of selects) {
+          if (findArrayIdx(this.select_prod, {Products_ID: item.Products_ID}) === false) {
+            this.select_prod.push(item)
+          }
+        }
+      },
+      delPro(idx, id) {
+        this.select_prod.splice(idx, 1)
+        this.proData.map(item => {
+          if (item.Products_ID == id) {
+            item.check = false
+            item.disalbed = false
+          }
+        })
+        // confirm({
+        //   content: '是否移除该商品'
+        // }).then(() => {
+        //   this.select_prod.splice(idx, 1)
+        // }).catch(() => {})
+      },
+      taggleProductCheck(idx) {
+        if (this.proData[idx].disalbed) {
+          error('该商品已经选中')
+          return
+        }
+        this.proData[idx].check = !this.proData[idx].check
+      },
+      async _init_func() {
+        if (this.spike_id) {
+          try {
+            let {data: info} = await bizSpikeDetail({spike_id: this.spike_id}).catch(() => { throw new Error('初始化参数失败') })
+            // let {start_time,end_time,name,limits,biz_id} = info
+            info.start_time = moment(info.start_time * 1000).format('YYYY-MM-DD HH:mm:ss')
+            info.end_time = moment(info.end_time * 1000).format('YYYY-MM-DD HH:mm:ss')
+            Object.assign(this.formData, info)
+
+            // 初始化商品
+            this.select_prod = info.spike_goods
+          } catch (e) {
+
+          }
+        }
+        this.timeReady = true
+
+        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => { throw new Error('获取商品列表错误') })
+        const hasGoodsIds = getArrColumn(this.select_prod, 'prod_id')
+        this.proData = reqData.data.map(item => {
+          item.check = hasGoodsIds.includes(item.Products_ID)
+          item.disalbed = false
+          return {...item}
+        })
+      }
+    },
+    onLoad(options) {
+      this.spike_id = options.spike_id
+    },
+    onShow() {
+      this._init_func()
+    },
+    onReady() {
+      var animation = wx.createAnimation({
+        duration: 100,
+        timingFunction: 'ease'
+      })
+
+      this.animation = animation
+      animation.scale(0.7).step()
+    }
+  })
+</script>
+<config>
+  {
+    "navigationBarTitleText": "限时抢购",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "wzw-im-tip": "~@/components/wzw-im-tip",
+      "err-msg": "~@/components/err-msg",
+      "icon": "~@/components/icon",
+      "model": "~@/components/ModelComponents",
+      "time": "~@/components/time",
+      "popup-layer": "~@/components/popup-layer"
+    }
+  }
+</config>
