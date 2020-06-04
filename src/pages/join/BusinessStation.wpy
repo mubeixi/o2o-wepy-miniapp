@@ -9,16 +9,16 @@
       <div class="circle">
         2
       </div>
-      <div class="line"></div>
-      <div class="circle">
+      <div class="line" v-if="applyProgressCount>0"></div>
+      <div class="circle" v-if="applyProgressCount>0">
         3
       </div>
-      <div class="line"></div>
-      <div class="circle">
+      <div class="line" v-if="applyProgressCount>1"></div>
+      <div class="circle" v-if="applyProgressCount>1">
         4
       </div>
-      <div class="line"></div>
-      <div class="circle">
+      <div class="line" v-if="applyProgressCount>2"></div>
+      <div class="circle" v-if="applyProgressCount>2">
         5
       </div>
     </div>
@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div class="rectangle flex flex-justify-between flex-vertical-center" >
+      <div class="rectangle flex flex-justify-between flex-vertical-center" v-if="joinConf.apply_flow.agree" >
         <div>
           <div class="station-title">签署入驻协议</div>
           <div class="station-title-sub">在线签署商家入住协议</div>
@@ -49,7 +49,7 @@
 
       </div>
 
-      <div class="rectangle flex flex-justify-between flex-vertical-center"    >
+      <div class="rectangle flex flex-justify-between flex-vertical-center"   v-if="joinConf.apply_flow.material" >
         <div>
           <div class="station-title">提交资质</div>
           <div class="station-title-sub">提交企业资料和银行账户信息</div>
@@ -92,7 +92,7 @@
 
       </div>
 
-      <div class="rectangle flex flex-justify-between flex-vertical-center"     >
+      <div class="rectangle flex flex-justify-between flex-vertical-center"    v-if="joinConf.apply_flow.pay" >
         <div>
           <div class="station-title">付款</div>
           <div class="station-title-sub">根据不同的入驻类目及入驻年限打款</div>
@@ -140,17 +140,33 @@
   import { linkTo } from '../../common/fun'
   import { ls } from '../../common/helper'
   import {confirm} from '../../common/helper'
+  import { initInfo } from '../../api/system'
+  import { Exception } from '../../common/Exception'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      info: {entry_process: {}}
+      info: {entry_process: {}},
+      applyProgressCount: 3, // 入驻可选的步骤有几个，默认全部需要3个
+      joinConf: {
+        apply_flow: {}
+      }
     },
     onShow() {
-      this.getBizInfo()
+      this._init_func()
     },
     methods: {
+      async _init_func() {
+        try {
+          // 初始化商户信息
+          this.joinConf = await initInfo().then(res => res.data).catch(err => { throw Error(err.msg) })
+          this.applyProgressCount = Object.values(this.joinConf.apply_flow).filter(item => parseInt(item) === 1).length
+          this.getBizInfo()
+        } catch (e) {
+          Exception.handle(e)
+        }
+      },
       // 利用isHasInfo标记为已经有信息了
       goShow(action) {
         if (action === 'showReason') {
