@@ -90,16 +90,26 @@
         this.selected = true
       },
       changeDateTimeColumn(e) {
-        console.log(e, 'ss')
-        const val = e.$wx.detail.value
-        let arr = this.dateTime
+        // console.log(e, 'ss')
+        // const val = e.$wx.detail.value
+        // let arr = this.dateTime
+        // let dateArr = this.dateTimeArray
+        // arr[e.$wx.detail.column] = val
+        // if (this.mode !== 'time') {
+        //   dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+        // }
+        // this.dateTimeArray = dateArr
+        // this.dateTime = arr
+          // 月份更改 对应的天数 日  也更改
+        const {column, value} = e.$wx.detail
+        this.$set(this.dateTime, column, value)
         let dateArr = this.dateTimeArray
-        arr[e.$wx.detail.column] = val
-        if (this.mode !== 'time') {
-          dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+        if ([1, 0].includes(column)) {
+          const newDayList = getMonthDay(dateArr[0][this.dateTime[0]], dateArr[1][this.dateTime[1]])
+          this.$set(this.dateTimeArray, 2, newDayList)
+          if (!newDayList.hasOwnProperty(this.dateTime[2])) this.$set(this.dateTime, 2, 0)
         }
-        this.dateTimeArray = dateArr
-        this.dateTime = arr
+
       }
     }
   })

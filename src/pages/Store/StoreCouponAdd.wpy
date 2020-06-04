@@ -332,12 +332,20 @@
         this.dateTime1 = e.$wx.detail.value
       },
       changeDateTimeColumn1(e) {
-        let arr = this.dateTime1
+        const {column, value} = e.$wx.detail
+        this.$set(this.dateTime1, column, value)
         let dateArr = this.dateTimeArray1
-        arr[e.$wx.detail.column] = e.$wx.detail.value
-        dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
-        this.dateTimeArray1 = dateArr
-        this.dateTime1 = arr
+        if ([1, 0].includes(column)) {
+          const newDayList = getMonthDay(dateArr[0][this.dateTime1[0]], dateArr[1][this.dateTime1[1]])
+          this.$set(this.dateTimeArray1, 2, newDayList)
+          if (!newDayList.hasOwnProperty(this.dateTime1[2])) this.$set(this.dateTime1, 2, 0)
+        }
+        // let arr = this.dateTime1
+        // let dateArr = this.dateTimeArray1
+        // arr[e.$wx.detail.column] = e.$wx.detail.value
+        // dateArr[2] = getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+        // this.dateTimeArray1 = dateArr
+        // this.dateTime1 = arr
       },
       saveCoupon() {
         showLoading()

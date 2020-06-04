@@ -1,0 +1,135 @@
+<template>
+  <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="feature-list">
+      <div class="feature-row">
+        <div class="feature-item" @click="goFlashSale('shop')">
+          <image src="/static/order/order1.png" class="img"></image>
+          <div class="title">普通订单</div>
+        </div>
+        <div class="feature-item" @click="goFlashSale('pintuan')">
+          <image src="/static/order/order2.png" class="img"></image>
+          <div class="title">拼团订单</div>
+        </div>
+        <div class="feature-item" @click="goFlashSale('spike')">
+          <image src="/static/order/order3.png" class="img"></image>
+          <div class="title">限时抢购订单</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-item" @click="goFlashSale('flashsale')">
+          <image src="/static/order/order4.png" class="img"></image>
+          <div class="title">秒杀订单</div>
+        </div>
+        <div class="feature-item" @click="goFlashSale('waimai')">
+          <image src="/static/order/order5.png" class="img"></image>
+          <div class="title">外卖订单</div>
+        </div>
+        <div class="feature-item" @click="goFlashSale('offline_qrcode')">
+          <image src="/static/order/order6.png" class="img"></image>
+          <div class="title">线下支付订单</div>
+        </div>
+      </div>
+
+
+      <div class="feature-row">
+        <div class="feature-item" @click="$linkTo('/pages/order/CheckChannel')">
+          <image src="/static/order/order7.png" class="img"></image>
+          <div class="title">核销订单</div>
+        </div>
+        <div class="feature-item" >
+
+        </div>
+        <div class="feature-item" >
+
+        </div>
+      </div>
+
+
+    </div>
+
+
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {checkIsLogin} from '../../common/helper'
+  import { linkTo } from '../../common/fun'
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      storeInfo: {
+        volidate: false
+      }
+    },
+    methods: {
+      goFlashSale(item) {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/order/OrderRetail?Order_Type=' + item)
+      }
+    },
+    created() {
+      // getSystemInfo({
+      //
+      // }).then(res => {
+      //   console.log(res)
+      //   toast('请求成功')
+      //   // eslint-disable-next-line handle-callback-err
+      // }).catch(err => {
+      //   wx.fun.error('请求失败')
+      // })
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .page-wrap{
+    height: 100vh;
+    background: white;
+  }
+  .feature{
+    &-list{
+      padding: 40rpx 0;
+    }
+    &-row{
+      display: flex;
+      padding: 40rpx 0;
+    }
+    &-item{
+      flex: 1;
+      text-align: center;
+      .img{
+        width: 100rpx;
+        height: 100rpx;
+      }
+      .title{
+        margin-top: 16rpx;
+        color: #333;
+        font-size: 14px;
+      }
+    }
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "订单列表",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
+  }
+</config>
