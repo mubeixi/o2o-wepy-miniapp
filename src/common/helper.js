@@ -327,7 +327,7 @@ export const confirm = (options) => {
  * @param redirect
  * @return {boolean}
  */
-export const checkIsLogin = (redirect = 1, tip = 0,errCall) => {
+export const checkIsLogin = (redirect = 1, tip = 0, errCall) => {
   let access_token = getAccessToken()
 
   if (!access_token) {
@@ -396,4 +396,26 @@ export const checkIsSettle = (redirect = 1, tip = 0) => {
   }
 
   return false
+}
+
+/**
+ * 传入俩个数组对象和对比参数
+ * @param
+ * @param 返回 去重后的数组
+ * @returns
+ */
+export const MergeArray = (oldArr = [], newArr = [], param) => {
+  if (!Array.isArray(oldArr) || !Array.isArray(oldArr)) return []
+  let ArrKey = {}
+  for (let item of oldArr) {
+    let objKey = item[param]
+    ArrKey[objKey] = 1
+  }
+  for (let item of newArr) {
+    let objKey = item[param]
+    if (!ArrKey[objKey]) {
+      oldArr.push(item)
+    }
+  }
+  return oldArr
 }

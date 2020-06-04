@@ -81,7 +81,8 @@
           <div class="grid-item" @click="goOrder">
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
-              订单管理<span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>
+              订单管理
+<!--              <span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>-->
 <!--              <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)">-->
 <!--                 -->
 <!--              </div>-->
@@ -131,7 +132,7 @@
   import { bizLogin, initInfo } from '../api/system'
   import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
-  import { get_order_num, getBackOrderNum } from '../api/order'
+  import { getOrderNum, getBackOrderNum } from '../api/order'
   import { checkIsLogin, checkIsSettle, confirm, ls } from '../common/helper'
   import IM from '../common/Im/Im'
   import { Exception } from '../common/Exception'
@@ -279,7 +280,7 @@
           this.$store.commit('SET_BIZ_INFO', this.infoData)
 
           // 订单角标
-          this.orderNum = await get_order_num({}).then(res => res.data).catch(err => {})
+          this.orderNum = await getOrderNum({}).then(res => res.data).catch(err => {})
           this.orderBackNum = await getBackOrderNum({}).then(res => res.data).catch(err => {})
 
           this.orderBackNum.orderSum = this.orderBackNum.waitprocess * 1 + this.orderBackNum.waitconfirm * 1
