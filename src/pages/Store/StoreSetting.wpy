@@ -57,13 +57,12 @@
         </div>
         <div class="store-titles flex flex-vertical-center">
           <time class="time-select" @uptime="upStartTime" mode="time" :val="start_time">
-            <span class="fz-14" v-if="start_time">{{start_time}}</span>
-            <span class="fz-14 c9" v-else>请选择开始时间</span>
+
+            <span class="fz-14 c9">{{start_time||'请选择开始时间'}}</span>
           </time>
           <span class="m-l-10 m-r-10">-</span>
           <time class="time-select" @uptime="upEndTime" mode="time" :val="end_time">
-            <span class="fz-14" v-if="end_time">{{end_time}}</span>
-            <span class="fz-14 c9" v-else>请选择结束时间</span>
+            <span class="fz-14 c9">{{end_time||'请选择结束时间'}}</span>
           </time>
           <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
         </div>
@@ -281,6 +280,7 @@
         })
       },
       upStartTime(e) {
+        console.log(e)
         this.start_time = e
         let data = {
           business_start: this.start_time

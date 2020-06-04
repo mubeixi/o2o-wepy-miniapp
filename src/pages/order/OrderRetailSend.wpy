@@ -193,7 +193,7 @@
       index: 0,
       arr: [],
       order_id: '',
-      listData: [],
+      listData: {},
       ship_num: '',
       remark: '',
       nameValue: '',
@@ -203,7 +203,7 @@
     onLoad(options) {
       if (!options.order_id) return
       this.order_id = options.order_id
-      this.getOrderDetail()
+      this.getOrderDetailFn()
     },
     methods: {
       send() {
@@ -225,7 +225,7 @@
           data.ShippingID = this.ship_num
         }
         systemSendOrder(data).then(res => {
-          toast(res.msg)
+          toast(res.msg, 'none')
           setTimeout(function() {
             back()
           }, 1000)
@@ -236,13 +236,15 @@
       bindPickerChange(e) {
         this.index = e.$wx.detail.value
       },
-      async getOrderDetail() {
-        let arr = await getOrderDetail({Order_ID: this.order_id}, {onlyData: true, tip: 'loading'}).catch(e => {})
-        this.listData = arr
+      async getOrderDetailFn() {
+        let orderInfo = await getOrderDetail({Order_ID: this.order_id}, {onlyData: true, tip: 'loading'}).catch(e => {})
+        this.listData = orderInfo
 
-        this.mobile = this.listData.Address_Mobile
-        this.nameValue = this.listData.Address_Name
-        this.listData.Order_CreateTime = moment(arr.Order_CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+        const {Address_Mobile, Address_Name} = orderInfo
+        this.mobile = Address_Mobile
+        this.nameValue = Address_Name
+        this.listData.Order_CreateTime = moment(orderInfo.Order_CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+
         getAvailableCityExpress().then(res => {
           for (let item in res.data) {
             let it = {}
@@ -252,11 +254,9 @@
           }
         })
 
-        for (let item of this.listData) {
-          for (let it of item['prod_list']) {
-            if (it.attr_info !== '') {
-              it.attr_info = JSON.parse(it.attr_info)
-            }
+        for (let it of this.listData.prod_list) {
+          if (typeof it.attr_info === 'string') {
+            it.attr_info = JSON.parse(it.attr_info)
           }
         }
       }
@@ -271,6 +271,10 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+
+  .page-wrap{
+    padding-bottom: 65px;
+  }
   .marginAuto{
     width: 710rpx;
     margin: 0 auto;
@@ -403,6 +407,7 @@
     border-radius: 10rpx;
     .orderDetailTop{
       width: 100%;
+      box-sizing: border-box;
       height: 70rpx;
       line-height: 70rpx;
       font-size: 30rpx;
@@ -433,10 +438,14 @@
       .inputView{
         height: 100rpx;
         width: 670rpx;
+        box-sizing: border-box;
         border-bottom: 1px solid #EBEBEB;
         display: flex;
         align-items: center;
         padding: 0px 10px;
+        &:last-child{
+          border-bottom: none;
+        }
       }
       .picker{
         flex: 1;

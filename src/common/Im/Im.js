@@ -315,6 +315,12 @@ class IM {
     this.intervalInstance = setInterval(this._holdHeartBeat.bind(this), this.heartBeatTimout)
   }
 
+  // 清空之前的聊天记录
+  clearHistory() {
+    this.chatList = [] // 清空记录
+    this.page = 1 // 重置页码
+  }
+
   close () {
     // this.task.close()
     wx.closeSocket()
@@ -356,9 +362,8 @@ class IM {
         break
     }
 
-    //不然本地发送的会没有头像
-    Object.assign(message,{nickname:this.sendName,headimg:this.sendAvatar})
-
+    // 不然本地发送的会没有头像
+    Object.assign(message, {nickname: this.sendName, avatar: this.sendAvatar})
 
     if (type === 'image') {
       await message.getImgInfo()
