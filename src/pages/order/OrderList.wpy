@@ -6,6 +6,7 @@
         <div class="feature-item" @click="goFlashSale('shop')">
           <image src="/static/order/order1.png" class="img"></image>
           <div class="title">普通订单</div>
+<!--          <span  class="order-tag">5</span>-->
         </div>
         <div class="feature-item" @click="goFlashSale('pintuan')">
           <image src="/static/order/order2.png" class="img"></image>
@@ -60,7 +61,8 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import {checkIsLogin} from '../../common/helper'
-  import { linkTo } from '../../common/fun'
+  import { error, linkTo } from '../../common/fun'
+  import {getOrderNum} from '../../api/order'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -70,21 +72,16 @@
       }
     },
     methods: {
+      async init() {
+        let arr = await getOrderNum({Order_Type: 'shop,pintuan,spike,flashsale,waimai,offline_qrcode'}).catch(e => { error(e.msg) })
+      },
       goFlashSale(item) {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/order/OrderRetail?Order_Type=' + item)
       }
     },
-    created() {
-      // getSystemInfo({
-      //
-      // }).then(res => {
-      //   console.log(res)
-      //   toast('请求成功')
-      //   // eslint-disable-next-line handle-callback-err
-      // }).catch(err => {
-      //   wx.fun.error('请求失败')
-      // })
+    onShow() {
+      this.init()
     }
 
   })
@@ -106,6 +103,7 @@
       padding: 40rpx 0;
     }
     &-item{
+      position: relative;
       flex: 1;
       text-align: center;
       .img{
@@ -118,6 +116,22 @@
         font-size: 14px;
       }
     }
+  }
+  .order-tag{
+    color:#fff;
+    display: block;
+    width: 20px;
+    height:20px;
+    font-size:14px;
+    text-align: center;
+    line-height: 20px;
+    border-radius: 50%;
+    padding: 2px;
+    background: red;
+    margin-left: 4px;
+    position: absolute;
+    top: -10rpx;
+    right: 60rpx;
   }
 
 </style>

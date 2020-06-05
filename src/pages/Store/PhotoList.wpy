@@ -11,28 +11,39 @@
 
     <div class="AlbumList-list">
       <block v-for="(item,index) of albumList" :key="index">
-        <div class="AlbumList-item" v-if="!item.temp">
-          <image :src="item.photo_img" class="AlbumList-img" @click="bindThumbClick(index,item.photo_img)"></image>
-          <icon v-if="showEdit&&item.checked" type="iconcheckbox-check" color="#eb5648" size="24" class="del-icon"
-                @click="change(index)"></icon>
-          <icon v-if="showEdit" type="iconcheckbox" color="#eb5648" size="24" class="del-icon"
-                @click="change(index)"></icon>
-          <div class="AlbumList-img-title">
-            {{item.desc}}
-          </div>
-        </div>
-      </block>
-
-
-      <block v-for="(item,index) of albumList" :key="index">
         <div class="AlbumList-item preview"  v-if="item.temp">
-          <image :src="item.photo_img" class="AlbumList-img"></image>
+          <image :src="item.photo_img" class="AlbumList-img" @click="bindThumbClick(index,item.photo_img)"></image>
           <div class="pre-mask"></div>
           <div class="AlbumList-img-progress" v-if="imgTempList[index].task_progress &&  imgTempList[index].task_progress<100">
             <progress :percent="imgTempList[index].task_progress" font-size="12" show-info activeColor="#fff" duration="50" stroke-width="3" />
           </div>
+          <icon v-if="showEdit&&item.checked" type="iconcheckbox-check" color="#eb5648" size="24" class="del-icon"
+          ></icon>
+          <icon v-if="showEdit" type="iconcheckbox" color="#eb5648" size="24" class="del-icon"
+          ></icon>
+        </div>
+        <div class="AlbumList-item" v-if="!item.temp">
+          <image :src="item.photo_img" class="AlbumList-img" @click="bindThumbClick(index,item.photo_img)"></image>
+          <icon v-if="showEdit&&item.checked" type="iconcheckbox-check" color="#eb5648" size="24" class="del-icon"
+                ></icon>
+          <icon v-if="showEdit" type="iconcheckbox" color="#eb5648" size="24" class="del-icon"
+               ></icon>
+<!--          <div class="AlbumList-img-title">-->
+<!--            {{item.desc}}-->
+<!--          </div>-->
         </div>
       </block>
+
+
+<!--      <block v-for="(item,index) of albumList" :key="index">-->
+<!--        <div class="AlbumList-item preview"  v-if="item.temp">-->
+<!--          <image :src="item.photo_img" class="AlbumList-img" @click="bindThumbClick(index,item.photo_img)"></image>-->
+<!--          <div class="pre-mask"></div>-->
+<!--          <div class="AlbumList-img-progress" v-if="imgTempList[index].task_progress &&  imgTempList[index].task_progress<100">-->
+<!--            <progress :percent="imgTempList[index].task_progress" font-size="12" show-info activeColor="#fff" duration="50" stroke-width="3" />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </block>-->
 
     </div>
 
@@ -42,7 +53,7 @@
       <icon type="iconshanchu" color="#ffffff" size="24" @click="delAll"></icon>
     </div>
 
-    <icon type="iconadd2" color="#3a549b" size="40" class="addImgList" @click="addImgList"></icon>
+    <icon type="iconadd2" v-if="!showEdit" color="#3a549b" size="40" class="addImgList" @click="addImgList"></icon>
 
     <div class="zhezhao" catchtouchmove="true" v-if="showRename">
       <div class="input-wrap">
@@ -108,7 +119,7 @@
 
           this.$set(this, 'imgTempList', imgTempListTemp.concat(arr1))
 
-          const tempArr = arr1.map(item => { return {photo_img: item.path, temp: 1} })
+          const tempArr = arr1.map(item => { return {photo_img: item.path, temp: 1,checked:false} })
           // for (var img of tempArr) {
           //   this.albumList.push(img)
           // }
@@ -137,23 +148,19 @@
         }
       },
       bindThumbClick(idx, img) {
-        wx.showActionSheet({
-          itemList: ['预览图片'],//, '移除图片'
-          success: (res) => {
-            const { tapIndex } = res
-            if (tapIndex === 0) {
-              wx.previewImage({
-                urls: [img]
-              })
-            }
-            // if (tapIndex === 1) {
-            //   this.albumList.splice(idx, 1)
-            // }
-          },
-          fail(res) {
+        if (this.showEdit) {
+          this.change(idx)
+        } else {
+          let arr = []
+          this.albumList.map(item => {
+            arr.push(item.photo_img)
+          })
 
-          }
-        })
+          wx.previewImage({
+            urls: arr,
+            current: img
+          })
+        }
       },
       confirmInput() {
         let data = {
@@ -305,7 +312,7 @@
 
   .AlbumList-list {
     width: 750rpx;
-    padding: 20px 20rpx 20rpx 40rpx;
+    padding: 20px 0rpx 20rpx 6rpx;
     box-sizing: border-box;
     display: flex;
     justify-content: flex-start;
@@ -313,10 +320,11 @@
   }
 
   .AlbumList-item {
-    width: 200rpx;
-    margin-bottom: 20rpx;
+    width: 240rpx;
+    height: 240rpx;
+    margin-bottom: 10rpx;
     position: relative;
-    margin-right: 30rpx;
+    margin-right: 6rpx;
 
     .preview{
       .pre-mask{
@@ -345,8 +353,8 @@
   }
 
   .AlbumList-img {
-    width: 200rpx;
-    height: 200rpx;
+    width: 240rpx;
+    height: 240rpx;
   }
 
   .AlbumList-img-title {
