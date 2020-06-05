@@ -124,7 +124,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { cityExpressCancelReason, dadaExceptionOrderReceive, getOrder, systemRejectOrder } from '../../api/order'
+  import { cityExpressCancelReason, dadaExceptionOrderReceive, getOrder, systemRejectOrder, getOrderNum } from '../../api/order'
   import { error, hideLoading, showLoading, toast } from '../../common/fun'
   import {confirm} from '../../common/helper'
   import { Exception } from '../../common/Exception'
@@ -133,6 +133,9 @@
     store,
     mixins: [pageMixin],
     data: {
+      orderNumber: {
+        sumNumber: 0
+      }, // 角标对象
       cancel_reason_list: [],
       show: false,
       reasonId: '',
@@ -189,8 +192,16 @@
     onShow() {
       this.page = 1
       this.getOrder(1)
+      this.getOrderIndex()
     },
     methods: {
+      async getOrderIndex() {
+        let arr = await getOrderNum({}, {onlyData: true}).catch(e => {
+          error(e.msg || '获取订单角标错误')
+        })
+        this.orderNumber = arr.type_data[this.Order_Type]
+        this.orderNumber.sumNumber = this.orderNumber.waitpay * 1 + this.orderNumber.waitsend * 1 + this.orderNumber.waitconfirm * 1 + this.orderNumber.waitcomment * 1
+      },
       sendOrder(id) {
         let data = '/pages/order/OrderRetailSend?order_id=' + id
         this.$linkTo(data)
@@ -219,7 +230,7 @@
             content: '该操作将取消同城配送订单，您需要重新发货才能继续为客户配送该订单。且该操作无法撤回,是否确认?'
           }).catch(res => { throw Error('nocare') })
           showLoading()
-          //dadaExceptionOrderReceive({Order_ID}).catch(err => { throw Error(err.msg) })
+          // dadaExceptionOrderReceive({Order_ID}).catch(err => { throw Error(err.msg) })
 
           this.page = 1
           this.getOrder(1)
