@@ -58,3 +58,6 @@ export const cityExpressCancelReason = (param, options) => fetch({act: 'cityExpr
 
 // 接收达达投递异常返回的订单产品
 export const dadaExceptionOrderReceive = (param, options) => fetch({act: 'dadaExceptionOrderReceive', param, options})
+
+// 商家主动取消订单
+export const cityExpressOrderReject = (param, options) => fetch({act: 'cityExpressOrderReject', param, options})
