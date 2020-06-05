@@ -11,7 +11,7 @@
             登录/注册
           </div>
       </div>
-      <template v-if="AccessToken && info.apply_switch">
+      <div class="flex flex-vertical-center" v-if="AccessToken && info.apply_switch">
         <div class="action"  v-if="status==2" @click.stop="goBusiness">
           <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
@@ -20,7 +20,7 @@
           <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
         </div>
-      </template>
+      </div>
     </div>
 
     <div class="finance-box" >
