@@ -135,6 +135,7 @@
     cityExpressOrderReject,
     dadaExceptionOrderReceive,
     getOrder,
+    getOrderNum,
     systemRejectOrder
   } from '../../api/order'
   import { error, hideLoading, showLoading, toast } from '../../common/fun'
@@ -145,6 +146,9 @@
     store,
     mixins: [pageMixin],
     data: {
+      orderNumber: {
+        sumNumber: 0
+      }, // 角标对象
       cancel_reason_list: [],
       current_handle_order: '',
       show: false,
@@ -202,8 +206,16 @@
     onShow() {
       this.page = 1
       this.getOrder(1)
+      this.getOrderIndex()
     },
     methods: {
+      async getOrderIndex() {
+        let arr = await getOrderNum({}, {onlyData: true}).catch(e => {
+          error(e.msg || '获取订单角标错误')
+        })
+        this.orderNumber = arr.type_data[this.Order_Type]
+        this.orderNumber.sumNumber = this.orderNumber.waitpay * 1 + this.orderNumber.waitsend * 1 + this.orderNumber.waitconfirm * 1 + this.orderNumber.waitcomment * 1
+      },
       sendOrder(id) {
         let data = '/pages/order/OrderRetailSend?order_id=' + id
         this.$linkTo(data)
