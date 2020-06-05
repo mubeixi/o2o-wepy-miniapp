@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="item-center p-t-10  p-l-7 p-r-12 flex " v-for="(pro,ind) of item.prod_list" :key="ind"  @click="sendOrder(item.Order_ID)">
-              <fun-img class="thumb m-r-14" :src="pro.prod_img"></fun-img>
+              <image class="thumb m-r-14" :src="pro.prod_img"></image>
               <div class="flex1" >
                   <div class="fz-14 c3 item-title m-b-10">
                     {{pro.prod_name}}
@@ -63,16 +63,16 @@
               </div>
             </div>
 
-<!--            <div-->
-<!--              class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between"-->
-<!--              v-if="Order_Type==='waimai' && item.Order_Status==3">-->
-<!--              <div class="item-btn c6 danger-btn m-r-10" @click="cancelLocalSend(item.Order_ID)">-->
-<!--                取消配送-->
-<!--              </div>-->
-<!--              <div class="item-btn c6 danger-btn" @click="bindLocalSendFail(item)">-->
-<!--                投递异常-->
-<!--              </div>-->
-<!--            </div>-->
+            <div
+              class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between"
+              v-if="item.isLocal">
+              <div v-if="item.Order_Status==3" class="item-btn c6 danger-btn m-r-10" @click="cancelLocalSend(item.Order_ID)">
+                取消配送
+              </div>
+              <div v-if="item.dadaFail" class="item-btn c6 danger-btn" @click="bindLocalSendFail(item)">
+                投递异常
+              </div>
+            </div>
             <div class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between" v-if="item.Order_Status==2">
               <div class="item-btn c6" @click="rejectOrder(item.Order_ID)">
                 拒单
@@ -110,11 +110,17 @@
     </div>
 
     <popup-layer ref="localSendCancelPopup">
-      <picker-view :value="reasonId" @change="bindCancelReasonChange">
-        <picker-view-column>
-          <view class="item" v-for="(item,index) in cancel_reason_list" :key="item.id">{{item.reason}}</view>
-        </picker-view-column>
-      </picker-view>
+      <div class="local-cancel-wrap">
+        <div class="title">
+          <div class="text">选择取消原因</div>
+          <div @click="subReasonFn" class="sub-btn">确认</div>
+        </div>
+        <picker-view indicator-style="height: 30px;" style="width: 100%; height: 150px;" @change="bindCancelReasonChange">
+          <picker-view-column >
+            <view style="line-height: 30px; text-align: center;" class="fz-14" v-for="(item,index) in cancel_reason_list" :key="item.id">{{item.reason}}</view>
+          </picker-view-column>
+        </picker-view>
+      </div>
     </popup-layer>
 
   </div>
@@ -124,7 +130,13 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { cityExpressCancelReason, dadaExceptionOrderReceive, getOrder, systemRejectOrder } from '../../api/order'
+  import {
+    cityExpressCancelReason,
+    cityExpressOrderReject,
+    dadaExceptionOrderReceive,
+    getOrder,
+    systemRejectOrder
+  } from '../../api/order'
   import { error, hideLoading, showLoading, toast } from '../../common/fun'
   import {confirm} from '../../common/helper'
   import { Exception } from '../../common/Exception'
@@ -134,6 +146,7 @@
     mixins: [pageMixin],
     data: {
       cancel_reason_list: [],
+      current_handle_order: '',
       show: false,
       reasonId: '',
       prod_name: '',
@@ -214,12 +227,12 @@
         try {
           const {Order_ID} = orderInfo
 
-          confirm({
+          await confirm({
             title: '操作提醒',
             content: '该操作将取消同城配送订单，您需要重新发货才能继续为客户配送该订单。且该操作无法撤回,是否确认?'
           }).catch(res => { throw Error('nocare') })
           showLoading()
-          //dadaExceptionOrderReceive({Order_ID}).catch(err => { throw Error(err.msg) })
+          await dadaExceptionOrderReceive({Order_ID}).catch(err => { throw Error(err.msg) })
 
           this.page = 1
           this.getOrder(1)
@@ -230,16 +243,46 @@
         }
       },
       bindCancelReasonChange(e) {
-        const val = e.detail.value
+        console.log(e.$wx)
+        const val = e.$wx.detail.value
         this.reasonId = this.cancel_reason_list[val[0]].id
       },
+      async subReasonFn() {
+        try {
+          showLoading('操作中')
+          cityExpressOrderReject({reason_id: this.reasonId, Order_ID: this.current_handle_order}).catch(err => Exception.handle(Error(err.msg)))
+          toast('操作成功')
+          this.$closePop('localSendCancelPopup')
+          this.page = 1
+          this.getOrder(1)
+        } catch (e) {
+
+        } finally {
+          hideLoading()
+        }
+      },
       async cancelLocalSend(Order_ID) {
-        const {can_cancel = 0, cancel_reason_list = []} = await cityExpressCancelReason({Order_ID}).then(res => res.data).catch(err => {
-          Exception.handle(Error(err.msg))
-        })
-        if (can_cancel) {
-          this.cancel_reason_list = cancel_reason_list
-          this.$openPop('localSendCancelPopup')
+        try {
+          await confirm({
+            title: '操作提醒',
+            content: '该操作将取消同城配送订单，您需要重新发货才能继续为客户配送该订单。且该操作无法撤回,是否确认?'
+          }).catch(res => { throw Error('nocare') })
+
+          showLoading()
+          const {can_cancel = 0, cancel_reason_list = []} = await cityExpressCancelReason({Order_ID}).then(res => res.data).catch(err => {
+            Exception.handle(Error(err.msg))
+          })
+          if (can_cancel) {
+            this.current_handle_order = Order_ID
+            this.cancel_reason_list = cancel_reason_list
+            this.$openPop('localSendCancelPopup')
+          } else {
+            error('该订单无法取消')
+          }
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
         }
       },
       rejectOrder(id) {
@@ -271,16 +314,32 @@
         if (this.status >= 0) {
           data.Order_Status = this.status
         }
-        let arr = await getOrder(data, {tip: '加载中'}).catch(e => { throw error('获取列表错误') })
+        let reqData = await getOrder(data, {tip: '加载中'}).then(res => res.data).catch(e => { throw error('获取列表错误') })
+
+        let arr = []
+
+        arr = reqData.map(row => {
+          row.dadaFail = false
+          if (Array.isArray(row.city_express_order) && row.city_express_order.length > 0 && row.city_express_order[0].order_status === 9) {
+            row.dadaFail = true
+          }
+          if(row.Order_Shipping && typeof row.Order_Shipping === 'string'){
+            row.Order_Shipping = JSON.parse(row.Order_Shipping)
+          }
+
+          row.isLocal = row.Order_Shipping.Express === '同城配送'
+
+          return row
+        })
 
         if (order === 1) {
-          this.list = arr.data
+          this.list = arr
         } else {
-          arr.data.map(item => {
+          arr.map(item => {
             this.list.push(item)
           })
         }
-        this.totalCount = arr.totalCount
+        this.totalCount = reqData.totalCount
 
         for (let item of this.list) {
           for (let it of item['prod_list']) {
@@ -304,6 +363,28 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+  .local-cancel-wrap{
+    .title{
+      padding: 20px 15px ;
+      position: relative;
+      .text{
+
+        text-align: center;
+      }
+      .sub-btn{
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: $fun-primary-color;
+        font-size: 14px;
+        padding:6px 12px;
+        border-radius: 2px;
+        color: #fff;
+        text-align: center;
+      }
+    }
+  }
 
   .order-tab{
     width: 710rpx;
