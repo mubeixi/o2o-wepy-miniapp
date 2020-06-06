@@ -1,11 +1,12 @@
 import { IM_APPID, IM_APPSECRET, IM_WSS_URL } from '../env'
-import { bindUid, getAccessToken, sendMsg, getMsgList } from './Fetch'
+import { bindUid, getAccessToken, sendMsg, getMsgList, getNoReadMsg } from './Fetch'
 import moment from 'moment'
 import Promisify from '../promisify'
 import { ls as Storage, createUpTaskArr, uploadImages, getDomain } from '../helper'
 import { modal } from '../fun'
 import {Exception} from '../Exception'
 import eventHub from '../eventHub'
+import store from '@/store'
 
 // 消息类,就先不用继承了吧
 /**
@@ -326,6 +327,19 @@ class IM {
     wx.closeSocket()
     this.clearIntervalFn()
     // this.task = null
+  }
+
+  /**
+   * 获取未读消息总数
+   */
+  async getNoReadMsgCount() {
+    const total = await getNoReadMsg({out_uid: this.getOutUid()}).then(res => res.totalCount).catch(err => {
+      console.log(err.msg || '获取未读记录失败')
+      return 0
+    })
+    console.log(total)
+    store.commit('SET_TABBAR_TAG', {idx: 1, num: total})
+    return total
   }
 
   /**

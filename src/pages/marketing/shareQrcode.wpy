@@ -28,7 +28,7 @@
         </div>
         <div class="control">
           <button @click="backSetting" class="action-btn-sure ">取消</button>
-          <button open-type='openSetting' bindopensetting="openSetting" class="btn-sub action-btn-sure">确定</button>
+          <button open-type="openSetting" bindopensetting="openSetting" class="btn-sub action-btn-sure">确定</button>
         </div>
       </div>
     </wzw-dialog>

@@ -1,0 +1,10 @@
+<cover-view class="tabbar">
+  <cover-view class="tab-bar-border"></cover-view>
+  <cover-view class="tabbar-item-wrap {{selected===index?active:''}}" wx:for="{{list}}" wx:key="index" data-path="{{item.pagePath}}" data-index="{{index}}"  bindtap="switchTab">
+    <cover-view class="tabbar-item">
+      <cover-image src="{{selected === index ? item.selectedIconPath:item.iconPath}}" class="item-icon"></cover-image>
+      <cover-view class='item-title' style="color:{{selected === index?selectedColor:color}}">{{item.text}}</cover-view>
+      <cover-view class="item-tag {{tags[index]<10?'circle':''}}" wx:if="{{tags[index]>0}}">{{tags[index]}}</cover-view>
+    </cover-view>
+  </cover-view>
+</cover-view>
