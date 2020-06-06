@@ -119,7 +119,7 @@
       <copyright></copyright>
     </div>
 
-
+<!--    <fun-tabbar></fun-tabbar>-->
   </div>
 </template>
 
@@ -257,6 +257,16 @@
 
         })
       },
+      async refreshTabTag() {
+        if (!eventHub.imInstance) return
+        const count = await eventHub.imInstance.getNoReadMsgCount()
+        if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+          console.log('更新IM下标数量' + count)
+          this.$wx.getTabBar().setData({
+            tags: [0, count]
+          })
+        }
+      },
       async getInit() {
         try {
         // 初始化商户信息
@@ -294,18 +304,28 @@
             await imInstance.start() // 等拿token
 
             imInstance.openListen()
-
             eventHub.imInstance = imInstance // 全局用一个句柄
           }
+
+          this.refreshTabTag()
+
+
         } catch (e) {
           Exception.handle(e)
         }
       }
     },
-    onload() {
+    onLoad() {
 
     },
     onShow() {
+      if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+        console.log('初始化？？？')
+        this.$wx.getTabBar().setData({
+          selected: 0
+        })
+      }
+
       this.AccessToken = getAccessToken()
       if (this.AccessToken) {
         this.getInit()
@@ -313,7 +333,6 @@
       this.status = ls.get('status')
     },
     created() {
-
     }
 
   })
@@ -322,7 +341,9 @@
 <style lang="scss">
   @import "../assets/variables.scss";
   @import "../assets/mixins.scss";
-
+  .page-wrap{
+    padding-bottom: 50px;
+  }
   .order-tag{
     color:#fff;
     display: block;
