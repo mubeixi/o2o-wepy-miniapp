@@ -9,12 +9,11 @@ module.exports = {
   wpyExt: '.wpy',
   eslint: true,
   cliLogs: !prod,
-  static: ['static'],
+  static: ['static','custom-tab-bar'],
   build: {
   },
   resolve: {
     alias: {
-      counter: path.join(__dirname, 'src/components/counter'),
       '@': path.join(__dirname, 'src')
     },
     aliasFields: ['wepy', 'weapp'],

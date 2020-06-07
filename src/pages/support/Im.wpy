@@ -167,6 +167,7 @@
   import { error, modal } from '../../common/fun'
   import {Exception} from '../../common/Exception'
   import eventHub from '../../common/eventHub'
+  import { readMsg } from '@/common/Im/Fetch'
 
   let imInstance = null
 
@@ -317,6 +318,13 @@
 
         // 先加载一下最近消息
         await imInstance.getHistory()
+
+        // 将最后一个设置为已读
+        if (this.chatList.length > 0) {
+          await readMsg({msg_id: this.chatList[this.chatList.length - 1].id, to: imInstance.getToUid(), out_uid: imInstance.getOutUid()}).catch(err => {
+            console.log(err.msg || '消息设置已读失败')
+          })
+        }
 
         // productId, orderId,
 
