@@ -280,7 +280,7 @@
             }
           }).catch(err => { throw Error(err.msg) })
 
-          let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+          let arr = await getBizInfo({}, {onlyData: true}).catch(e => { throw Error(e.msg) })
           this.infoData = arr[0]
           // 每次刷新请求接口 是否入驻
           if (this.infoData.status) {
