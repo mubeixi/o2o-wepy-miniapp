@@ -66,12 +66,26 @@ export default {
       console.log(res)
     })
 
-    eventHub.$on('IM_TAKE_MSG', (res) => {
+    eventHub.$on('IM_TAKE_MSG', async (res) => {
       // 只有当前页面响应
       console.log(ls.get('currentPagePath'), this.currentPagePath)
       if (ls.get('currentPagePath') === this.currentPagePath) {
-        console.log(res, this.$refs)
+        // console.log(res, this.$refs)
+
+
+
         if (this.$refs.hasOwnProperty('wzwImTip')) this.$refs.wzwImTip.show(res)
+
+        if(eventHub.imInstance){
+          const count = await eventHub.imInstance.getNoReadMsgCount()
+          if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+            console.log('更新IM下标数量' + count)
+            this.$wx.getTabBar().setData({
+              tags: [0, count]
+            })
+          }
+        }
+
       }
     })
   },

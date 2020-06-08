@@ -67,6 +67,43 @@
     background: white;
     z-index: 10;
   }
+  .wxGetPhone{
+    padding-top: 80px !important;
+  }
+  .wxGetPhoneName{
+    width: 750rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .wxGetPhoneText{
+    width: 400rpx;
+    color: #333333;
+    line-height: 20px;
+    text-align: left;
+    font-size: 12px;
+    margin: 0 auto 140rpx;
+  }
+  .wxGetPhoneBtn{
+    width: 500rpx !important;
+    height: 80rpx !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 500rpx !important;
+  }
+  .OtherPhoneBtn{
+    background-color: #FFFFff !important;
+    color: #333333;
+    font-weight: normal;
+    border: 1px solid #333333;
+  }
+  .iconwx{
+    margin-right: 10px;
+  }
+
   .wrap{
     text-align: center;
     height: 100vh;
@@ -154,6 +191,15 @@
     }
 
   }
+
+  .store-logo{
+    width: 90rpx;
+    height: 90rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+
 </style>
 <template>
   <div class="wrap">
@@ -181,7 +227,7 @@
 
           <div class="flex flex-vertical-center flex-justify-between p-t-10" >
             <div class="fz-12 text-right">登录即表示您已阅读并接受<span class="color-primary">《用户服务协议》</span></div>
-<!--            <span class="c6 fz-12" style="text-decoration: underline" @click="cancel">暂不登录</span>-->
+            <!--            <span class="c6 fz-12" style="text-decoration: underline" @click="cancel">暂不登录</span>-->
           </div>
         </div>
       </form>
@@ -213,6 +259,29 @@
         <div class="action">
           <div><button @click="bingPhoneFn" class="sub-btn m-b-15" type="primary" >立即绑定</button></div>
         </div>
+      </div>
+    </popup-layer>
+
+
+    <popup-layer ref="phoneWx" :autoClose="false" :topStr="menuButtonInfo.height+menuButtonInfo.top+10+'px'" :showMask="false">
+      <div class="form pwd-wrap  wxGetPhone" :style="{top:menuButtonInfo.height+menuButtonInfo.top+10+'px'}">
+        <image :src="bindPhoneTempData.avatarUrl" class="store-logo m-b-20"></image>
+        <div class="wxGetPhoneName">
+          Hi,{{bindPhoneTempData.nickName}}
+        </div>
+        <div class="wxGetPhoneText">
+          你可以使用微信手机号登录，也可以使用其他手机号加验证码登录哦
+        </div>
+
+        <button form-type="submit" class="sub-btn wxGetPhoneBtn  m-b-22" type="primary"   open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">
+          <icon size="24" class="iconwx" color="#ffffff" type="iconwx"></icon><span class="text fz-14">微信手机号一键登录</span>
+        </button>
+
+        <button form-type="submit" class="sub-btn wxGetPhoneBtn OtherPhoneBtn" @click="showOtherPhone" type="primary" >
+          <span class="text fz-14 c3" >其他手机号登录</span>
+        </button>
+
+
       </div>
     </popup-layer>
 
@@ -269,15 +338,36 @@
       bindPhoneTempData: null// 如果需要绑定手机，需要临时储存服务端给的信息
     },
     methods: {
+      async getPhoneNumber(e) {
+        let loginData = e.$wx.detail
+        if (!loginData.iv) return
+        const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
+        const {code: lp_code} = wxLoginRt
+        let postData = {
+          code: this.captcha,
+          lp_code,
+          lp_raw_data: JSON.stringify(this.bindPhoneTempData),
+          login_method: 'wx_lp',
+          phone_data: loginData.encryptedData,
+          iv: loginData.iv
+        }
+        bizLogin(postData, {reqHeader: true, tip: '绑定中'}).then(res => {
+          this.loginCall(res.data)
+        }).catch(() => {})
+      },
+      showOtherPhone() {
+        this.$refs.phone.show()
+        this.$refs.phoneWx.close()
+      },
       // 拦截
       bindBackFn() {
         console.log('拦截返回成功了')
-        if (this.binbPhoneShow) {
-          error('请绑定手机号')
-          // this.pageTitle = '登录'
-          // this.$refs.phone.close()
-          return
-        }
+        // if (this.binbPhoneShow) {
+        //   error('请绑定手机号')
+        //   // this.pageTitle = '登录'
+        //   // this.$refs.phone.close()
+        //   return
+        // }
         if (this.bindPwdShow) {
           wx.showModal({
             title: '操作提示',
@@ -549,7 +639,7 @@
             this.pageTitle = '绑定手机'
             this.binbPhoneShow = true // 设置这个之后，无法后退
 
-            this.$refs.phone.show()
+            this.$refs.phoneWx.show()
           }
         } catch (e) {
           console.log(e)
@@ -567,14 +657,14 @@
 </script>
 <config>
   {
-    "navigationStyle": "custom",
-    "navigationBarTitleText": "登录页面",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "icon": "~@/components/icon",
-      "page-title": "~@/components/page-title",
-      "err-msg": "~@/components/err-msg",
-      "popup-layer": "~@/components/popup-layer"
-    }
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "登录页面",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "page-title": "~@/components/page-title",
+  "err-msg": "~@/components/err-msg",
+  "popup-layer": "~@/components/popup-layer"
+  }
   }
 </config>

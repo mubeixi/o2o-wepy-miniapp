@@ -154,7 +154,7 @@
     getArrColumn,
     chooseImageByPromise,
     checkIsLogin,
-    getDomain
+    getDomain, findArrayIdx
   } from '../../common/helper'
   import IM from '../../common/Im/Im'
 
@@ -257,6 +257,7 @@
       },
       toRoom (idx) {
         const chatItem = this.chatList[idx]
+        chatItem.no_read = 0
         // 商家得找客户聊
         const str = chatItem.to_uid.indexOf('user') !== -1 ? chatItem.to_uid : chatItem.from_uid
 
@@ -321,6 +322,19 @@
     },
     onReady() {
       this.delBtnWidth = this.getEleWidth(180)
+
+      // 给单个的行记录也累加数量
+      eventHub.$on('IM_TAKE_MSG', (res) => {
+        // 只有当前页面响应
+
+        console.log(res)
+
+        if (eventHub.imInstance) {
+          const idx = findArrayIdx(this.chatList, {from_uid: res.from_uid})
+          console.log(idx)
+          if (idx !== false) this.$set(this.chatList[idx], 'no_read', this.chatList[idx].no_read + 1)
+        }
+      })
     },
     onLoad(options) {
       if (!checkIsLogin(1, 0)) return
