@@ -1,56 +1,32 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
   .page-wrap{
     position: absolute;
-    left: 0;
-    right: 0;
+    width: 750rpx;
     top:0;
     bottom: 0;
+    display: flex;
+    flex-direction: column;
     padding-bottom: constant(safe-area-inset-bottom);
     padding-bottom: env(safe-area-inset-bottom);
   }
   .im-card-box{
-    height: 100%;
-    bottom: constant(safe-area-inset-bottom);
-    bottom: env(safe-area-inset-bottom);
+    flex:1;
     overflow-y: scroll;
     width: 750rpx;
     background: #e5e5e5;
-
-    /*.im-item-box{*/
-    /*  &:last-child{*/
-    /*    margin-bottom: 110rpx;*/
-    /*  }*/
-    /*}*/
-
   }
-  .show-new-tip{
-    position: fixed;
-    transform: translateY(-80px);
-    bottom: constant(safe-area-inset-bottom);
-    bottom: env(safe-area-inset-bottom);
-    right: 20px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border: 1px solid #e7e7e7;
-    font-size: 12px;
-    color: $fun-blue-color;
-    background: #fff;
-    z-index: 9;
-  }
+
   .im-bottom-action{
-    position: fixed;
     width: 750rpx;
-    left: 0;
-    bottom: 0;
     background: #f2f2f2;
     .safearea-space{
       height: constant(safe-area-inset-bottom);
       height: env(safe-area-inset-bottom);
     }
     .onther{
+      border-top: 1px solid #E2E2E2;
       padding: 40rpx 0;
       display: flex;
       .onther-item{
@@ -76,7 +52,7 @@
       align-items: center;
       width: 750rpx;
       height: 110rpx;
-      border-bottom: 1px solid #E2E2E2;
+
       .input-box{
         margin-left: 20rpx;
         flex: 1;
@@ -97,6 +73,16 @@
       .submit-btn{
         padding-right: 20rpx;
         height: 110rpx;
+        .text-btn{
+          background: linear-gradient(to right, #FF0006, #FF8417);
+          line-height: 48rpx;
+          margin-top: 31rpx;
+          height: 48rpx;
+          padding: 0 10px;
+          text-align: center;
+          color: #fff;
+          font-size: 12px;
+        }
         .img-btn{
           margin-top: 31rpx;
           width: 48rpx;
@@ -116,6 +102,21 @@
     }
 
   }
+
+  .show-new-tip{
+    position: fixed;
+    transform: translateY(-80px);
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
+    right: 20px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #e7e7e7;
+    font-size: 12px;
+    color: $fun-blue-color;
+    background: #fff;
+    z-index: 9;
+  }
 </style>
 <template>
   <div class="page-wrap">
@@ -132,16 +133,7 @@
       @scrolltolower="bindScrolltolower"
     >
       <block v-for="(chat,idx) in chatList" :key="idx">
-        <div class="im-item-box" v-if="idx=== chatList.length-1" :style="{marginBottom:showOnther?'426rpx':'110rpx' }">
-          <wzw-im-card
-            :msg-id="'msg-'+idx"
-            :message="chat"
-            @bindProductSend="handleProductSend"
-          />
-          <!--用来搞事的-->
-          <div class="div-line h10" :id="'msg-'+idx"></div>
-        </div>
-        <div class="im-item-box" v-else>
+        <div class="im-item-box" >
           <wzw-im-card
             :msg-id="'msg-'+idx"
             :message="chat"
@@ -151,21 +143,18 @@
           <div class="div-line h10" :id="'msg-'+idx"></div>
         </div>
       </block>
-
-
     </scroll-view>
-    <div :style="{height:'426rpx'}" v-if="showOnther"></div>
-    <div :style="{height:'110rpx'}"></div>
     <div class="show-new-tip" :style="{marginBottom:showOnther?'130px':'0px'}" v-if="showNewMsg && !isToLower" @click="showNewMsgFun">
       <icon color="#00A8FF" size="12" type="iconright1" display="inline"></icon>有新消息
     </div>
     <div class="im-bottom-action">
       <div class="text">
         <div class="input-box">
-          <input type="text" confirm-type="发送" @confirm="sendMsg" @focus="mode='text'" @blur="inputBlur" class="input-ele"  v-model="tempText" />
+          <input type="text" @focus="mode='text'" @blur="inputBlur" class="input-ele"  v-model="tempText" />
         </div>
         <div class="submit-btn" @click="taggleMore">
-          <image class="img-btn"  src="/static/im/im-action-more.png"></image>
+          <div  v-if="mode=='text' && tempText" class="text-btn">发送</div>
+          <image class="img-btn" v-else  src="/static/im/im-action-more.png"></image>
         </div>
       </div>
       <div class="onther" v-if="showOnther">
@@ -178,7 +167,6 @@
           <div class="label">拍照</div>
         </div>
       </div>
-      <div class="safearea-space"></div>
     </div>
   </div>
 </template>
@@ -330,8 +318,15 @@
         }
       },
       taggleMore () {
-        this.showOnther = !this.showOnther
-        if (this.showOnther) this.refreshScrollBottomPostion()
+        if(!this.tempText){
+          this.showOnther = !this.showOnther
+          if (this.showOnther) this.refreshScrollBottomPostion()
+        }
+
+        if(this.tempText){
+          this.sendMsg()
+        }
+
       },
       async _init_func (options) {
         const { productId, orderId, origin } = options
