@@ -111,6 +111,21 @@
             </div>
           </div>
         </div>
+        <div class="grid-row">
+
+          <div class="grid-item" @click="goLive">
+            <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
+            <div class="grid-item-title">直播活动</div>
+          </div>
+
+          <div class="grid-item">
+
+          </div>
+
+          <div class="grid-item">
+
+          </div>
+        </div>
       </div>
 
     </div>
@@ -133,11 +148,12 @@
   import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
   import { getOrderNum, getBackOrderNum } from '../api/order'
-  import { checkIsLogin, checkIsSettle, confirm, ls } from '../common/helper'
+  import { checkIsLogin, checkIsSettle, confirm, findArrayIdx, getArrColumn, ls } from '../common/helper'
   import IM from '../common/Im/Im'
   import { Exception } from '../common/Exception'
   import eventHub from '../common/eventHub'
   import { getAccessToken } from '../common/request'
+  import { getLiveApplyStatus } from '@/api/live'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -145,6 +161,7 @@
       storeInfo: {
         volidate: false
       },
+      liveInfo: {},
       orderBackNum: {
         orderSum: 0,
         waitprocess: 0,
@@ -162,6 +179,14 @@
       }
     },
     methods: {
+      goLive() {
+        if (!checkIsLogin(1, 1)) return
+        if (this.liveInfo.id) {
+          linkTo('/pages/live/room')
+        } else {
+          linkTo('/pages/live/apply')
+        }
+      },
       goStoreSetting() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreSetting')
@@ -293,8 +318,13 @@
           // 订单角标
           this.orderNum = await getOrderNum({}).then(res => res.data).catch(err => {})
           this.orderBackNum = await getBackOrderNum({}).then(res => res.data).catch(err => {})
-
           this.orderBackNum.orderSum = this.orderBackNum.waitprocess * 1 + this.orderBackNum.waitconfirm * 1
+
+          // 直播的事情
+          const live = await getLiveApplyStatus().then(res => res.data).catch(err => { throw Error(err.msg) })
+          if (live) {
+            this.liveInfo = live
+          }
 
           if (!ls.get('listenStatus')) {
             // IM全局
@@ -308,8 +338,6 @@
           }
 
           this.refreshTabTag()
-
-
         } catch (e) {
           Exception.handle(e)
         }

@@ -1,0 +1,395 @@
+<template>
+  <div class="page-wrap">
+    <div class="section p-15 bgwhite secton-anchor-info m-b-15">
+      <div class="text-center">
+        <image class="biz-logo" :src="bizInfo.biz_logo" v-if="bizInfo.id"></image>
+      </div>
+      <div class="text-center c3 fz-bold m-t-15 m-b-15">{{bizInfo.biz_shop_name}}</div>
+      <div class="countdown">
+        <block v-if="!countdown.is_start">
+          <span>距开始：</span>
+          <span class="end-time-block">{{countdown.d}}</span>
+          <span class="delimiter">天</span>
+          <span class="end-time-block">{{countdown.h}}</span>
+          <span class="delimiter">时</span>
+          <span class="end-time-block">{{countdown.m}}</span>
+          <span class="delimiter">分</span>
+          <span class="end-time-block">{{countdown.s}}</span>
+          <span class="delimiter">秒</span>
+        </block>
+        <block v-else>
+          <span>活动已开始</span>
+        </block>
+      </div>
+      <div class="flex flex-justify-center flex-vertical-center m-t-30 m-b-15">
+        <div class="c3">主播昵称:</div><div class="c8">{{liveInfo.anchor_name}}</div>
+      </div>
+      <div class="flex flex-justify-center flex-vertical-center p-b-15">
+        <div class="c3">主播微信:</div><div class="c8">{{liveInfo.anchor_wechat}}</div>
+      </div>
+    </div>
+    <div class="section p-15 bgwhite secton-live-qr m-b-15">
+      <div class="text-center c3 fz-bold m-b-15">开播码</div>
+      <div class="qr-box text-center" >
+        <image @click="previewQR" class="qr" v-if="liveInfo.start_live_img" :src="liveInfo.start_live_img"></image>
+        <div v-else class="c7 fz-12 text-center" style="height: 222rpx;line-height: 222rpx">通过审核即可获得</div>
+      </div>
+      <div class="fz-11 c6 text-center m-t-15">用微信扫描上方开播码即可开始直播</div>
+    </div>
+    <div class="section bgwhite secton-goods-list m-b-15 p-t-15 p-b-15" >
+      <div class="text-center c3 fz-bold">本场直播商品</div>
+      <div class="goods-list">
+        <div class="goods-list-item" v-for="(item,idx) in selectProductList">
+          <div class="cover" :style="{backgroundImage:'url('+item.ImgPath+')'}"></div>
+          <div class="m-t-10 m-b-10 fz-13 c3 goods-title">{{item.Products_Name}}</div>
+          <div class="color-red"><span class="fz-10">￥</span><span class="fz-14">{{item.Products_PriceX}}</span></div>
+        </div>
+
+
+      </div>
+    </div>
+
+    <div style="height: 200rpx;"></div>
+    <div class="section bgwhite secton-handler">
+      <div class="validate-msg">
+<!--        1为通过，0为待审核，-1为驳回-->
+        <layout-icon v-if="liveInfo.status===0" type="icontime" color="#E41515" size="12"></layout-icon>
+        <layout-icon v-if="liveInfo.status===-1" type="iconicon-" color="#E41515" size="12"></layout-icon>
+        <layout-icon v-if="liveInfo.status===1" type="iconblchecked" color="#E41515" size="12"></layout-icon>
+        <div class="msg fz-10 m-l-4" v-if="liveInfo.status===0">审核中</div>
+        <div class="msg fz-10 m-l-4" v-if="liveInfo.status===-1">申请被驳回，驳回原因：{{liveInfo.reject_reason}}</div>
+        <div class="msg fz-10 m-l-4" v-if="liveInfo.status===1">审核通过</div>
+      </div>
+      <div class="action-btn-list">
+        <div class="action-btn-item del" @click="delLiveApplyFn">删除申请</div>
+        <div class="action-btn-item edit" @click="saveLiveQrcode" v-if="liveInfo.status===1">保存开播码</div>
+        <div class="action-btn-item edit" v-else @click="editLive">修改申请</div>
+      </div>
+    </div>
+
+    <wzw-dialog ref="commentModal" :autoClose="false" positions="center">
+      <div class="refuseApplyDialog">
+        <div class="c3 fz-14 modal-title">
+          是否开启相册权限
+        </div>
+        <div class="fz-12 m-b-20 m-t-10 c9">
+          很抱歉，该功能您需开启相册授权才能保存
+        </div>
+        <div class="control">
+          <button @click="backSetting" class="action-btn-sure ">取消</button>
+          <button open-type="openSetting" bindopensetting="openSetting" class="btn-sub action-btn-sure">确定</button>
+        </div>
+      </div>
+    </wzw-dialog>
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { confirm, findArrayIdx, saveImageToDisk } from '@/common/helper'
+  import { bizProdList } from '@/api/product'
+  import { getLiveApplyStatus, delLiveApply } from '@/api/live'
+  import { error, hideLoading, linkTo, showLoading, toast } from '@/common/fun'
+  import { Exception } from '@/common/Exception'
+  import { getBizInfo } from '@/api/store'
+  import {getCountdownFunc} from '@/common/helper'
+
+  let countdownInstance = null
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      bizInfo: {},
+      selectProductList: [],
+      liveInfo: {
+        start_time: ''
+      },
+      countdown: {
+        h: 0,
+        s: 0,
+        m: 0,
+        d: 0,
+        is_start: false,
+        is_end: false
+      }
+    },
+    onUnload() {
+      clearInterval(countdownInstance)
+    },
+    methods: {
+      previewQR() {
+        wx.previewImage({
+          urls: [this.liveInfo.start_live_img]
+        })
+      },
+      editLive() {
+        linkTo('/pages/live/apply')
+      },
+      async delLiveApplyFn() {
+        try {
+          await confirm({
+            content: '删除操作无法退回，是否确认删除该直播间'
+          }).catch(() => {
+            throw Error('nocare')
+          })
+          showLoading()
+          await delLiveApply({live_id: this.liveInfo.id}).catch(err => { throw Error(err.msg) })
+          toast('删除成功')
+          setTimeout(() => {
+            wx.switchTab({
+              url: '/pages/index'
+            })
+          }, 1000)
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
+      },
+      backSetting () {
+        this.$refs.commentModal.close()
+      },
+      openSetting () {
+        const _self = this
+        wx.authorize({
+          scope: 'scope.writePhotosAlbum',
+          success () {
+            _self.saveFn()
+          },
+          fail () {
+            _self.$refs.commentModal.show()
+            error('拒绝相册授权,保存失败')
+          }
+        })
+      },
+      saveLiveQrcode() {
+        const _self = this
+        wx.getSetting({
+          success: (res) => {
+            if (!res.authSetting['scope.writePhotosAlbum']) {
+              this.openSetting()
+            } else { // 用户已经授权过了
+              _self.saveFn()
+            }
+          }
+        })
+      },
+      async saveFn () {
+        const handleRT = await saveImageToDisk({
+          fileUrl: this.liveInfo.start_live_img,
+          type: 'online'
+        })
+        if (handleRT === false) {
+          error('保存失败')
+          return
+        }
+        toast('保存成功')
+      },
+      stampFunc() {
+        const data = getCountdownFunc({
+          start_timeStamp: this.liveInfo.end_time_unix
+          // end_timeStamp: new Date(this.groupInfo.join_end_time).getTime()/1000
+        })
+        console.log(data)
+        if (data) {
+          this.countdown = data
+        } else {
+          clearInterval(countdownInstance)
+        }
+      },
+      async init() {
+        showLoading('加载中')
+
+        let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+        this.bizInfo = arr[0]
+
+        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => {})
+        this.proData = reqData.data.map(item => {
+          return {...item, check: false}
+        })
+
+        const vo = await getLiveApplyStatus().then(res => res.data).catch(err => Exception.handle(Error(err.msg)))
+        if (vo) {
+          this.liveInfo = vo
+
+          countdownInstance = setInterval(() => {
+            this.stampFunc()
+          }, 1000)
+          // this.end_time = vo.end_time
+          // this.start_time = vo.start_time
+          // this.anchor_name = vo.anchor_name
+          // this.anchor_wechat = vo.anchor_wechat
+          // this.goods_ids = vo.goods_ids
+          // this.live_id = vo.id
+          if (Array.isArray(vo.live_goods) && vo.live_goods.length > 0) {
+            for (const goods of vo.live_goods) {
+              const idx = findArrayIdx(this.proData, {Products_ID: goods.Products_ID})
+              if (idx !== false) this.selectProductList.push(this.proData[idx])
+            }
+            // this.goods_ids = getArrColumn(this.selectProductList, 'Products_ID').join(',')
+          }
+        }
+
+        hideLoading()
+      }
+    },
+    onHide() {
+      clearInterval(countdownInstance)
+    },
+    onShow() {
+      this.init()
+    },
+    onLoad(options) {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .refuseApplyDialog{
+    width: 560rpx;
+    box-sizing: border-box;
+    padding-left: 40rpx;
+    padding-right: 40rpx;
+    .modal-title{
+      height: 80rpx;
+      line-height: 80rpx;
+      text-align: center;
+      font-weight: bold;
+    }
+    .btn-sub{
+      color: #1aac19;
+    }
+
+  }
+
+
+  .page-wrap{
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .biz-logo{
+    width: 190rpx;
+    height: 190rpx;
+  }
+  .countdown{
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:690rpx;
+    height:100rpx;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 30rpx 0px rgba(0, 0, 0, 0.1);
+    border-radius:10rpx;
+    .delimiter{
+      color: #888;
+      padding: 0 6rpx;
+      font-size: 30rpx;
+    }
+    .end-time-block{
+      color: #fff;
+      font-size: 30rpx;
+      width:48rpx;
+      height:48rpx;
+      text-align: center;
+      line-height: 48rpx;
+      background:linear-gradient(180deg,rgba(27,91,255,1) 0%,rgba(0,168,255,1) 100%);
+      border-radius:5rpx;
+    }
+  }
+
+  .goods-list{
+    margin: 0 30rpx;
+    display: flex;
+    flex-wrap: wrap;
+    .goods-list-item{
+      width: 335rpx;
+      margin-bottom: 20rpx;
+      &:nth-child(odd){
+        margin-right: 20rpx;
+      }
+      .goods-title{
+        line-height: 17px;
+        height: 34px;
+        overflow: hidden;
+      }
+      .cover{
+        width: 335rpx;
+        height: 335rpx;
+        @include cover-img();
+      }
+    }
+  }
+  .qr-box{
+    height: 222rpx;
+    width: 222rpx;
+    margin: 0 auto;
+    background: #f8f8f8;
+  }
+  .qr{
+    width: 222rpx;
+    height: 222rpx;
+  }
+  .secton-handler{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 166rpx;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+    .validate-msg{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40rpx;
+      background: #FFF1F1;
+      font-size: 2orpx;
+      color: #E41515;
+    }
+    .action-btn-list{
+      height: 124rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .action-btn-item{
+        width:280rpx;
+        height:70rpx;
+        border:1px solid $fun-blue-color;
+        border-radius:35rpx;
+        text-align: center;
+        line-height: 70rpx;
+        &.del{
+          margin-right: 34rpx;
+          color: $fun-blue-color;
+        }
+        &.edit{
+          color: #fff;
+          background: $fun-blue-color;
+        }
+      }
+    }
+  }
+</style>
+<config>
+  {
+  "navigationBarTitleText": "直播台",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+    "wzw-dialog": "~@/components/ModelComponents",
+    "layout-icon": "~@/components/icon",
+  }
+  }
+</config>

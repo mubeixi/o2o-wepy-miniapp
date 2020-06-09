@@ -2,19 +2,27 @@
   <div class="seckill-add page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
-      <block v-if="pro_id">
-        <div  class="flex  product-mbx" @click="openPop('product')">
-            <div class="thumbs" :style="{backgroundImage:'url('+selectValue.ImgPath+')'}">
+      <block v-if="selectProductList.length>0">
+        <div @click="openPop('product')">
+          <div  class="flex  product-mbx"  v-for="(product,idx) in selectProductList" :key="idx">
+            <div class="thumbs" :style="{backgroundImage:'url('+product.ImgPath+')'}">
             </div>
             <div class="info">
               <div class="title-my">
-                {{selectValue.Products_Name}}
+                {{product.Products_Name}}
               </div>
               <div class="fz-13 c6">
-                原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">{{selectValue.Products_PriceX}}</span>
+                原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">{{product.Products_PriceX}}</span>
               </div>
             </div>
+          </div>
         </div>
+        <div style="width: 750rpx;height: 50rpx;"></div>
+        <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
+          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
+          编辑商品
+        </div>
+
       </block>
       <block v-else>
         <div style="width: 750rpx;height: 50rpx;"></div>
@@ -23,40 +31,18 @@
           选择商品
         </div>
       </block>
-      <block v-if="pro_id&&selectValue.Products_Type!==0">
-        <div class="submitq flex flex-vertical-center flex-justify-center" @click="goAdd">
-          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-2"></icon>
-          设置商品的型号
-        </div>
-      </block>
 
 
-    <div class="store-item flex flex-vertical-center" v-if="selectValue.Products_Type===0||!pro_id">
-      <div  class="titles">
-        秒杀价格
-      </div>
-      <div class="flex flex1 fz-13" >
-        <input type="digit" v-model="price"  class="flex flex1 p-l-26" placeholder="请输入秒杀价格"  placeholder-class="place"/>
-        元
-      </div>
-    </div>
-    <div class="store-item flex flex-vertical-center"  v-if="selectValue.Products_Type===0||!pro_id">
-      <div  class="titles">
-        活动库存
-      </div>
-      <div class="flex flex1 fz-13" >
-        <input type="number" v-model="count"  class="flex flex1 p-l-26" placeholder="请输入活动库存"  placeholder-class="place"/>
-        件
-      </div>
-    </div>
+
+
     <div class="store-item flex flex-vertical-center flex-justify-between" >
       <div class="titles">
         开始时间
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
         <time @uptime="upStartTime" :val="start_time">
-          <span class="fz-14" v-if="start_time">{{start_time}}</span>
-          <span class="fz-14 c9" v-else>请选择开始时间</span>
+          <span class="fz-14 c3" v-if="start_time">{{start_time}}</span>
+          <span class="fz-14 c9" v-else>最少三小时以后</span>
         </time>
         <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
       </div>
@@ -67,28 +53,41 @@
       </div>
       <div class="content fz-14 c9 flex flex-vertical-center">
         <time @uptime="upEndTime" :val="end_time">
-          <span class="fz-14" v-if="end_time">{{end_time}}</span>
-          <span class="fz-14 c9" v-else>请选择结束时间</span>
+          <span class="fz-14 c3" v-if="end_time">{{end_time}}</span>
+          <span class="fz-14 c9" v-else>直播时长最少半小时，最长12小时</span>
         </time>
         <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
       </div>
     </div>
+
     <div class="store-item flex flex-vertical-center">
       <div  class="titles">
-        每人限购
+        主播昵称
       </div>
-      <div class="flex flex1 fz-13" >
-        <input type="number"  v-model="limit" class="flex flex1 p-l-26" placeholder="请输入限购,0为不限购"  placeholder-class="place"/>
-        件
+      <div class="flex1 fz-13" >
+        <input v-model="anchor_name" class="p-l-26 text-right" placeholder="直播间主播昵称"  placeholder-class="place"/>
       </div>
     </div>
+
+    <div class="store-item flex flex-vertical-center">
+      <div  class="titles">
+        主播微信号
+      </div>
+      <div class="flex1 fz-13" >
+        <input v-model="anchor_wechat" class="p-l-26 text-right" placeholder="必须是已认证过的微信号"  placeholder-class="place"/>
+      </div>
+    </div>
+    <div class="fz-12 c9 p-10 text-right">
+      <div class="tip-item">* 主播微信号只用于开播时的审核，不会展示给消费者</div>
+    </div>
+
 
     <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
     <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
     <!--action-btn全局有样式-->
-    <div class="fz-16 btn action-btn btn-primary"  @click="addSeckill">
+    <div class="fz-16 btn action-btn btn-primary"  @click="addLive">
       确定
     </div>
 
@@ -146,9 +145,11 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { ls, validateFun } from '../../common/helper'
-  import { bizFlashsaleDetail, bizOperateFlashsale, bizProdList } from '../../api/product'
+  import { confirm, findArrayIdx, getArrColumn, ls, objTranslate, validateFun } from '../../common/helper'
+  import { bizProdList } from '../../api/product'
+  import { applyLive, getLiveApplyStatus } from '@/api/live'
   import { back, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { Exception } from '@/common/Exception'
 
   const moment = require('moment')
 
@@ -164,64 +165,36 @@
       limit: '',
       proData: [],
       pro_id: '',
-      selectValue: [],
+      selectProductList: [],
+      live_id: '',
       end_time: '',
       start_time: '',
+      anchor_name: '',
+      anchor_wechat: '',
+      goods_ids: '',
       editData: {}
     },
     onUnload() {
-      ls.remove('skuvaljosn')
+
     },
     methods: {
-      addSeckill() {
-        let skuvaljosn = ls.get('skuvaljosn')
+      addLive() {
+        // if (this.selectProductList.length < 1) {
+        //   this.formCheckResult = ['请选择商品']
+        //   return
+        // }
+
         let data = {
           start_time: this.start_time,
           end_time: this.end_time,
-          limits: this.limit
+          anchor_name: this.anchor_name,
+          anchor_wechat: this.anchor_wechat,
+          goods_ids: this.goods_ids
         }
-        if (this.selectValue.Products_Type != 0) {
-          let arr = []
-          if (skuvaljosn) {
-            for (let it in skuvaljosn) {
-              if (skuvaljosn[it].check) {
-                let obj = {
-                  id: skuvaljosn[it].Product_Attr_ID,
-                  name: skuvaljosn[it].Attr_Value.mobile_prod_attr_name,
-                  price: skuvaljosn[it].price,
-                  count: skuvaljosn[it].count
-                }
-                arr.push(obj)
-              }
-            }
-          } else {
-            arr = this.mbx
-          }
 
-          let mbx = {
-            prod_id: this.pro_id,
-            data: arr
-          }
-          data.select_prod = JSON.stringify(mbx)
-        } else {
-          let mbx = {
-            prod_id: this.pro_id,
-            price: this.price,
-            count: this.count
-          }
-          data.select_prod = JSON.stringify(mbx)
-        }
         const rule = {
-          select_prod: {
+          goods_ids: {
             required: false
-          },
-          limits: {
-            required: true,
-            match: /^\d+$/,
-            message: {
-              required: '限购数量必填',
-              match: '限购数量必须大于等于0'
-            }
           },
           start_time: {
             required: true,
@@ -253,54 +226,21 @@
           this.formCheckResult = checkRt
           return
         }
-        if (!this.pro_id) {
-          this.formCheckResult = ['请选择秒杀商品']
-          return
-        }
-        if (this.selectValue.Products_Type == 0) {
-          if (!this.price) {
-            this.formCheckResult = ['请输入秒杀价格']
-            return
-          }
-          if (!this.count) {
-            this.formCheckResult = ['请输入秒杀库存']
-            return
-          }
+
+        if (this.live_id) {
+          data.live_id = this.live_id
         }
 
-        if (this.id) {
-          data.flashsale_id = this.id
-        }
-        console.log(data, this.id, 'sss')
-        bizOperateFlashsale(data).then(res => {
-          toast('操作成功')
-          ls.remove('skuvaljosn')
-          setTimeout(() => {
-            back()
-          }, 1000)
+        applyLive(data).then(res => {
+          // toast('操作成功')
+
+          confirm({showCancel: false, title: '提示', content: res.msg}).then(() => {
+            linkTo('/pages/live/room')
+          }).catch(() => {})
+
         }).catch(e => {
 
         })
-      },
-      goAdd() {
-        let arr = ls.get('skuvaljosn')
-        if (!arr) {
-          if (this.editData.Products_Type) {
-            for (let item of this.editData.attr_json) {
-              for (let it in this.selectValue.skuvaljosn) {
-                if (this.selectValue.skuvaljosn[it].Product_Attr_ID == item.id) {
-                  this.selectValue.skuvaljosn[it].price = item.price
-                  this.selectValue.skuvaljosn[it].count = item.count
-                  this.selectValue.skuvaljosn[it].check = true
-                }
-              }
-            }
-          }
-
-          ls.set('skuvaljosn', this.selectValue.skuvaljosn)
-        }
-
-        linkTo('/pages/marketing/SeckillAddSelect')
       },
       upStartTime(val) {
         const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
@@ -320,21 +260,24 @@
       surePro() {
         this.closePop('product')
         let that = this
+        const tempArr = []
         this.proData.map(item => {
           if (item.check) {
-            that.selectValue = item
-            if (item.Products_ID != that.pro_id) {
-              ls.remove('skuvaljosn')
-            }
-            that.pro_id = item.Products_ID
+            tempArr.push(item)
           }
         })
+        that.selectProductList = tempArr.concat([])
+        this.goods_ids = getArrColumn(this.selectProductList, 'Products_ID').join(',')
       },
       taggleProductCheck(idx) {
-        this.proData = this.proData.map(item => {
-          return {...item, check: false}
-        })
-        this.proData[idx].check = true
+        // this.proData = this.proData.map(item => {
+        //   return {...item, check: false}
+        // })
+        console.log(idx)
+        const proData = objTranslate(this.proData)
+        proData[idx].check = !proData[idx].check
+
+        this.$set(this, 'proData', proData)
       },
       openPop(name) {
         this.$refs[name].show()
@@ -342,47 +285,41 @@
       closePop(name) {
         this.$refs[name].close()
       },
-      getMbx() {
-        showLoading('加载中')
-        bizFlashsaleDetail({flashsale_id: this.id }).then(res => {
-          this.editData = res.data
-          this.price = this.editData.price
-          this.count = this.editData.stock
-          this.limit = this.editData.limits
-          this.start_time = moment(this.editData.start_time).format('YYYY-MM-DD HH:mm:ss')
-          this.end_time = moment(this.editData.end_time).format('YYYY-MM-DD HH:mm:ss')
-          if (this.editData.Products_Type != 0) {
-            this.mbx = this.editData.attr_json.data
-          }
 
-          for (let item of this.proData) {
-            if (item.Products_ID == this.editData.Products_ID) {
-              this.selectValue = item
-              item.check = true
-              this.pro_id = item.Products_ID
-            }
-          }
-          hideLoading()
-        }).catch(e => { hideLoading() })
-      },
       async init() {
         showLoading('加载中')
         let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => {})
-        this.proData = reqData.data.map(item => {
+        const proData = reqData.data.map(item => {
           return {...item, check: false}
         })
 
-        if (this.id) {
-          this.getMbx()
-        } else {
-          hideLoading()
+        const vo = await getLiveApplyStatus().then(res => res.data).catch(err => Exception.handle(Error(err.msg)))
+        if (vo) {
+          this.end_time = vo.end_time
+          this.start_time = vo.start_time
+          this.anchor_name = vo.anchor_name
+          this.anchor_wechat = vo.anchor_wechat
+          this.goods_ids = vo.goods_ids
+          this.live_id = vo.id
+          if (Array.isArray(vo.live_goods) && vo.live_goods.length > 0) {
+            for (const goods of vo.live_goods) {
+              const idx = findArrayIdx(proData, {Products_ID: goods.Products_ID})
+              if (idx !== false) {
+                this.selectProductList.push(proData[idx])
+                proData[idx].check = true
+              }
+            }
+            this.goods_ids = getArrColumn(this.selectProductList, 'Products_ID').join(',')
+          }
         }
+
+        this.$set(this, 'proData', proData)
+        // this.proData = objTranslate(proData)
+
+        hideLoading()
       }
     },
     onLoad(options) {
-      if (options.id) {
-        this.id = options.id
-      }
       this.init()
     }
 
@@ -432,7 +369,7 @@
     color: #333333;
   }
   .place{
-    color: #CAC8C8;
+    color: #999;
   }
   .store-titles{
     display: flex;
@@ -552,7 +489,7 @@
 </style>
 <config>
   {
-  "navigationBarTitleText": "添加秒杀",
+  "navigationBarTitleText": "直播设置",
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
