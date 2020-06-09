@@ -50,7 +50,7 @@
     </div>
 
     <div style="height: 200rpx;"></div>
-    <div class="section bgwhite secton-handler">
+    <div class="section bgwhite section-handler">
       <div class="validate-msg">
 <!--        1为通过，0为待审核，-1为驳回-->
         <layout-icon v-if="liveInfo.status===0" type="icontime" color="#E41515" size="12"></layout-icon>
@@ -65,6 +65,11 @@
         <div class="action-btn-item edit" @click="saveLiveQrcode" v-if="liveInfo.status===1">保存开播码</div>
         <div class="action-btn-item edit" v-else @click="editLive">修改申请</div>
       </div>
+    </div>
+
+    <div class="poster-box" @click="createPoster" v-if="liveInfo.status===1">
+      <image class="icon" src="/static/poster.png"></image>
+      <div class="label">生成海报</div>
     </div>
 
     <wzw-dialog ref="commentModal" :autoClose="false" positions="center">
@@ -82,6 +87,8 @@
       </div>
     </wzw-dialog>
 
+    <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
+
 
   </div>
 </template>
@@ -90,14 +97,15 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { confirm, findArrayIdx, saveImageToDisk } from '@/common/helper'
+  import { confirm, findArrayIdx, getDomain, saveImageToDisk } from '@/common/helper'
   import { bizProdList } from '@/api/product'
-  import { getLiveApplyStatus, delLiveApply } from '@/api/live'
+  import { getLiveApplyStatus, delLiveApply, getLiveQrcode } from '@/api/live'
   import { error, hideLoading, linkTo, showLoading, toast } from '@/common/fun'
   import { Exception } from '@/common/Exception'
   import { getBizInfo } from '@/api/store'
-  import {getCountdownFunc} from '@/common/helper'
-
+  import { getCountdownFunc } from '@/common/helper'
+  import wxPromisify from '@/common/promisify'
+  let canvasInstance = null
   let countdownInstance = null
 
   wepy.page({
@@ -105,7 +113,11 @@
     mixins: [pageMixin],
     data: {
       bizInfo: {},
+      drawPosterDone: false,
       selectProductList: [],
+      posterInfo: {
+
+      },
       liveInfo: {
         start_time: ''
       },
@@ -122,6 +134,79 @@
       clearInterval(countdownInstance)
     },
     methods: {
+      async createPoster() {
+        try {
+          showLoading('生成中')
+          console.log(this.posterInfo)
+          const { img, name, qrcode, start_time } = this.posterInfo
+
+          const wrapHeight = 1408
+          const wrapWidth = 750
+          const ctx = canvasInstance
+          ctx.setFillStyle('#ffffff')
+
+          ctx.fillRect(0, 0, wrapWidth, wrapHeight)
+
+          const bizLogoTempFile = await wxPromisify('getImageInfo', { src: getDomain(this.bizInfo.biz_logo) }).catch(e => {
+            throw Error(e.errMsg || '缓存商家头像失败')
+          })
+          ctx.save()
+          ctx.beginPath()
+          ctx.arc(40 + 40, 46 + 40, 40, 0, 2 * Math.PI)
+          ctx.clip()
+          ctx.drawImage(bizLogoTempFile.path, 40, 46, 80, 80)
+          ctx.restore()
+
+          ctx.setFontSize(40)
+          ctx.setFillStyle('#333')
+          ctx.fillText(this.bizInfo.biz_shop_name, 140, 96)
+
+          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(img) }).catch(e => {
+            throw Error(e.errMsg || '缓存海报背景失败')
+          })
+          ctx.drawImage(wrapTempFile.path, 40, 175, 670, 670)
+
+          const qrcodeTempFile = await wxPromisify('getImageInfo', { src: getDomain(qrcode) }).catch(e => {
+            throw Error(e.errMsg || '缓存二维码失败')
+          })
+          ctx.drawImage(qrcodeTempFile.path, 238, 1030, 274, 274)
+
+          // ctx.setFontSize(53)
+
+          ctx.setFontSize(30)
+          ctx.setFillStyle('#555')
+          ctx.fillText(start_time, 40, 960)
+
+          ctx.setFontSize(18)
+          ctx.setFillStyle('#777')
+          ctx.textAlign = 'center'
+          ctx.fillText('长摁扫码进入直播间', 375, 1350)
+
+          ctx.font = 'normal bold 53px sans-serif'
+          ctx.textAlign = 'left'
+          ctx.setFillStyle('#333333')
+          ctx.fillText(name, 40, 890)
+
+          await new Promise(resolve => {
+            ctx.draw(false, function () {
+              console.log('draw done')
+              resolve()
+            })
+          })
+
+          const { tempFilePath } = await wxPromisify('canvasToTempFilePath', { canvasId: 'myCanvas' })
+
+          this.drawPosterDone = true
+
+          wx.previewImage({
+            urls: [tempFilePath]
+          })
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
+      },
       previewQR() {
         wx.previewImage({
           urls: [this.liveInfo.start_live_img]
@@ -217,6 +302,14 @@
         if (vo) {
           this.liveInfo = vo
 
+          if (vo.status === 1) {
+            getLiveQrcode({live_id: vo.id}).then(res => {
+              this.posterInfo = res.data
+            }).catch(err => {
+              Exception.handle(Error(err.msg))
+            })
+          }
+
           countdownInstance = setInterval(() => {
             this.stampFunc()
           }, 1000)
@@ -241,6 +334,9 @@
     onHide() {
       clearInterval(countdownInstance)
     },
+    onReady() {
+      canvasInstance = wx.createCanvasContext('myCanvas')
+    },
     onShow() {
       this.init()
     },
@@ -254,7 +350,39 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
-
+  .myCanvas {
+    position: fixed;
+    left: 100%;
+    top: 0;
+    background: white;
+    width: 750px;
+    height: 1408px;
+  }
+  .poster-box{
+    position: fixed;
+    margin-bottom: constant(safe-area-inset-bottom);
+    margin-bottom: env(safe-area-inset-bottom);
+    right: 40rpx;
+    bottom: 200rpx;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow:0px 0px 20rpx 0px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    .label{
+      font-size: 10px;
+      line-height: 20px;
+      height: 20px;
+      color: #07c160;
+    }
+    .icon{
+      margin-top: 5px;
+      width: 35px;
+      height: 35px;
+      vertical-align: top;
+    }
+  }
   .refuseApplyDialog{
     width: 560rpx;
     box-sizing: border-box;
@@ -341,7 +469,7 @@
     width: 222rpx;
     height: 222rpx;
   }
-  .secton-handler{
+  .section-handler{
     position: fixed;
     bottom: 0;
     left: 0;

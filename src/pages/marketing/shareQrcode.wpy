@@ -171,6 +171,7 @@
           const wrapWidth = 1100
           const ctx = canvasInstance
 
+
           const userInfo = {
             avatar: getDomain(this.bizInfo.biz_logo),
             nickname: this.bizInfo.biz_shop_name,
