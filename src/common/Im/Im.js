@@ -400,6 +400,18 @@ class IM {
       }).catch(err => {
         console.log('消息发送失败')
         this.chatList[chatIdx].sendStatus = -1 // 标记失败
+        // 重连啊
+        if (err.errorCode === 66000) {
+          this._getAccessToken().then(res => {
+            sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }).then(res => {
+              console.log('发送成功', res)
+              this.chatList[chatIdx].sendStatus = 1 // 标记成功
+              return res.data
+            }).catch(() => {
+              console.log('消息重发失败')
+            })
+          }).catch(() => {})
+        }
         Exception.handle(Error(err.msg))
       })
     } else {

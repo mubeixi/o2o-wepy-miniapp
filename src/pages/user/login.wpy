@@ -227,7 +227,7 @@
 
           <div class="flex flex-vertical-center flex-justify-between p-t-10" >
             <div class="fz-12 text-right">登录即表示您已阅读并接受<span class="color-primary">《用户服务协议》</span></div>
-<!--            <span class="c6 fz-12" style="text-decoration: underline" @click="cancel">暂不登录</span>-->
+            <!--            <span class="c6 fz-12" style="text-decoration: underline" @click="cancel">暂不登录</span>-->
           </div>
         </div>
       </form>
@@ -341,11 +341,18 @@
       async getPhoneNumber(e) {
         let loginData = e.$wx.detail
         if (!loginData.iv) return
+<<<<<<< HEAD
+
+        let postData = {
+          code: this.captcha,
+          lp_code: '89757',
+=======
         const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
         const {code: lp_code} = wxLoginRt
         let postData = {
           code: this.captcha,
           lp_code,
+>>>>>>> origin/develop
           lp_raw_data: JSON.stringify(this.bindPhoneTempData),
           login_method: 'wx_lp',
           phone_data: loginData.encryptedData,
@@ -657,14 +664,14 @@
 </script>
 <config>
   {
-    "navigationStyle": "custom",
-    "navigationBarTitleText": "登录页面",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "icon": "~@/components/icon",
-      "page-title": "~@/components/page-title",
-      "err-msg": "~@/components/err-msg",
-      "popup-layer": "~@/components/popup-layer"
-    }
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "登录页面",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "page-title": "~@/components/page-title",
+  "err-msg": "~@/components/err-msg",
+  "popup-layer": "~@/components/popup-layer"
+  }
   }
 </config>
