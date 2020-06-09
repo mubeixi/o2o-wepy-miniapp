@@ -4,15 +4,19 @@
       <div class="order-tab flex flex-vertical-center fz14 c3 p-t-10">
           <div class="order-item" :class="{'active':status==-1}" @click="changeTab(-1)">
             全部
+<!--            <span  class="order-tag" v-if="orderNumber.sumNumber>0">{{orderNumber.sumNumber>99?'n':orderNumber.sumNumber}}</span>-->
           </div>
           <div class="order-item" :class="{'active':status==1}"   @click="changeTab(1)">
             待付款
+            <span  class="order-tag" v-if="orderNumber.waitpay>0">{{orderNumber.waitpay>99?'n':orderNumber.waitpay}}</span>
           </div>
           <div class="order-item"  :class="{'active':status==2}"   @click="changeTab(2)">
             待发货
+            <span  class="order-tag" v-if="orderNumber.waitsend>0">{{orderNumber.waitsend>99?'n':orderNumber.waitsend}}</span>
           </div>
           <div class="order-item"  :class="{'active':status==0}"  @click="changeTab(0)">
             待确认
+            <span  class="order-tag" v-if="orderNumber.waitconfirm>0">{{orderNumber.waitconfirm>99?'n':orderNumber.waitconfirm}}</span>
           </div>
           <div class="order-item"  :class="{'active':status==4}"   @click="changeTab(4)">
             已完成
@@ -147,7 +151,6 @@
     mixins: [pageMixin],
     data: {
       orderNumber: {
-        sumNumber: 0
       }, // 角标对象
       cancel_reason_list: [],
       current_handle_order: '',
@@ -214,7 +217,6 @@
           error(e.msg || '获取订单角标错误')
         })
         this.orderNumber = arr.type_data[this.Order_Type]
-        this.orderNumber.sumNumber = this.orderNumber.waitpay * 1 + this.orderNumber.waitsend * 1 + this.orderNumber.waitconfirm * 1 + this.orderNumber.waitcomment * 1
       },
       sendOrder(id) {
         let data = '/pages/order/OrderRetailSend?order_id=' + id
@@ -406,6 +408,7 @@
     .order-item{
       flex: 1;
       text-align: center;
+      position: relative;
     }
     .active{
       color: #00A8FF;
@@ -543,6 +546,22 @@
         }
       }
     }
+  }
+  .order-tag{
+    color:#fff;
+    display: block;
+    width: 14px;
+    height:14px;
+    font-size:12px;
+    text-align: center;
+    line-height: 14px;
+    border-radius: 50%;
+    padding: 2px;
+    background: red;
+    margin-left: 4px;
+    position: absolute;
+    top: 0rpx;
+    right: -10rpx;
   }
 
 
