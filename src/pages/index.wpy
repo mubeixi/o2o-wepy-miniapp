@@ -111,11 +111,11 @@
             </div>
           </div>
         </div>
-        <div class="grid-row">
+        <div class="grid-row"  v-if="AccessToken&&info.live_flag===1">
 
           <div class="grid-item" @click="goLive">
             <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
-            <div class="grid-item-title">直播活动</div>
+            <div class="grid-item-title">直播申请</div>
           </div>
 
           <div class="grid-item">
@@ -297,6 +297,7 @@
         // 初始化商户信息
           await initInfo().then(res => {
             this.info = res.data
+            this.info.live_flag = Number(this.info.live_flag)
             // 利用开关控制是否提示入驻
             if (this.info.apply_switch && !this.info.entry_process) {
               confirm({ title: '提示', content: '你还未入驻成功，即将前往入驻页面' }).then(() => {
