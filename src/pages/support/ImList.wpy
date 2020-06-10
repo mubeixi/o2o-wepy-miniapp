@@ -81,6 +81,7 @@
       }
       .msg{
         max-width: 600rpx;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
