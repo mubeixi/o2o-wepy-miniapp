@@ -218,6 +218,7 @@ class IM {
    * @param ext
    */
   setSendInfo ({ type, id, ...ext }) {
+    console.log(type, id)
     // 获取发送人的信息要用的
     this.setIdentity({ type, id })
 
@@ -468,7 +469,11 @@ class IM {
 
     // 只允许限定的类别
     if (this.allowMsgType.includes(type)) {
-      this.chatList.push({ ...messageObj, direction: 'from' })
+      // 只有IM详情页才需要
+      if (this.receiveIdentity && this.receiveId && messageObj.from_uid === this.getToUid()) {
+        this.chatList.push({ ...messageObj, direction: 'from' })
+      }
+
       eventHub.$emit('getMsg', {...messageObj})
       if (this.listenStatus) {
         eventHub.$emit('IM_TAKE_MSG', {...messageObj})
