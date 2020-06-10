@@ -28,7 +28,6 @@ export default {
     currentPagePath: ''
     // mixin: 'PageMin'
   },
-
   methods: {
     $back: back,
     $linkTo: linkTo,
@@ -39,6 +38,15 @@ export default {
     },
     $closePop(name) {
       this.$refs[name].close()
+    },
+    _init_func(options) {
+      let users_id = options.users_id || ls.get('users_id')
+
+      // 如果连接里面已经有了，就不需要搞事
+      if (users_id) {
+        // 不管ls有没有，都存一次
+        ls.set('users_id', users_id)
+      }
     },
     mixintap () {
       this.mixin = 'MixinText' + (Math.random() + '').substring(3, 7)
@@ -72,11 +80,9 @@ export default {
       if (ls.get('currentPagePath') === this.currentPagePath) {
         // console.log(res, this.$refs)
 
-
-
         if (this.$refs.hasOwnProperty('wzwImTip')) this.$refs.wzwImTip.show(res)
 
-        if(eventHub.imInstance){
+        if (eventHub.imInstance) {
           const count = await eventHub.imInstance.getNoReadMsgCount()
           if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
             console.log('更新IM下标数量' + count)
@@ -85,11 +91,10 @@ export default {
             })
           }
         }
-
       }
     })
   },
-  onLoad() {
+  onLoad(options) {
     this.menuButtonInfo = wx.getMenuButtonBoundingClientRect()
     this.systemInfo = wx.getSystemInfoSync()
     const {height, top, left} = this.menuButtonInfo
@@ -97,6 +102,7 @@ export default {
 
     this.diyHeadHeight = top + height + (top - this.systemInfo.statusBarHeight) + 10
     this.diyHeadRight = this.systemInfo.windowWidth - left
+    this._init_func(options)
   }
 }
 

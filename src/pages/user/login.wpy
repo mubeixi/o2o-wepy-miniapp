@@ -612,9 +612,10 @@
         wx.navigateBack()
       },
       async loginCall(userData) {
-        const {access_token, status, Users_id, biz_account, id: biz_id} = userData
+
+        const {access_token, status, biz_account, id: biz_id} = userData
         ls.set('access_token', access_token)
-        ls.set('users_id', Users_id)
+        ls.set('users_id', userData.Users_ID)
         ls.set('biz_account', biz_account)
         ls.set('biz_id', biz_id)
         ls.set('status', status)
