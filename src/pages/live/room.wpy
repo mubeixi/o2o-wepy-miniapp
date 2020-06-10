@@ -319,13 +319,16 @@
           // this.anchor_wechat = vo.anchor_wechat
           // this.goods_ids = vo.goods_ids
           // this.live_id = vo.id
+          const selectProductList = []
           if (Array.isArray(vo.live_goods) && vo.live_goods.length > 0) {
             for (const goods of vo.live_goods) {
               const idx = findArrayIdx(this.proData, {Products_ID: goods.Products_ID})
-              if (idx !== false) this.selectProductList.push(this.proData[idx])
+              if (idx !== false) selectProductList.push(this.proData[idx])
             }
             // this.goods_ids = getArrColumn(this.selectProductList, 'Products_ID').join(',')
           }
+
+          this.selectProductList = selectProductList
         }
 
         hideLoading()
