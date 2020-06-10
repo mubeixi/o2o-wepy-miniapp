@@ -39,12 +39,11 @@ export default {
     $closePop(name) {
       this.$refs[name].close()
     },
-    _init_func(options) {
-      let users_id = options.users_id || ls.get('users_id')
-
-      // 如果连接里面已经有了，就不需要搞事
+    default_init_func(option) {
+      let users_id = option.users_id || ls.get('users_id')
+        // 如果连接里面已经有了，就不需要搞事
       if (users_id) {
-        // 不管ls有没有，都存一次
+          // 不管ls有没有，都存一次
         ls.set('users_id', users_id)
       }
     },
@@ -102,7 +101,8 @@ export default {
 
     this.diyHeadHeight = top + height + (top - this.systemInfo.statusBarHeight) + 10
     this.diyHeadRight = this.systemInfo.windowWidth - left
-    this._init_func(options)
+    const opt = { ...options }
+    this.default_init_func(opt)
   }
 }
 
