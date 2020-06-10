@@ -199,51 +199,89 @@
     overflow: hidden;
     margin: 0 auto;
   }
+  .otherLogin-top-item {
+    width: 630rpx;
+    height: 88rpx;
+    border-radius: 4px;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 88rpx;
+    color: white;
+  }
+  .wxBtn{
+    background: #59a228 !important;
+    color: #FFFFFF;
+  }
+  .phoneIcon{
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    padding: 0px;
+  }
+  .wxLoginLogo{
+    margin: 180rpx 0px;
+  }
 
 </style>
 <template>
   <div class="wrap">
     <page-title :letfFn="true" @clickLeft="bindBackFn" :title="pageTitle"></page-title>
     <err-msg :topStr="menuButtonInfo.height+menuButtonInfo.top+10+'px'" :errs="formCheckResult"></err-msg>
-    <image class="img m-t-25" mode="widthFix" src="/static/copyright.png"></image>
+    <block v-if="mode!=='wxLogin'">
+      <image class="img m-t-25" mode="widthFix" src="/static/copyright.png"></image>
 
-    <div class="form">
-      <form style="display: block" @submit="formSubmit" @reset="formReset">
-        <div class="form-item uni-column">
-          <input @input="inputPhone" class="fun-input" name="input" placeholder="请输入手机号码" maxlength="11"  minlength="11"/>
-        </div>
-        <div class="form-item uni-column" v-if="mode==='code'">
-          <input @input="inputCaptcha" class="fun-input" name="captcha" placeholder="请输入短信验证码" />
-          <div class="sendCaptcha" >
-            <span class="text" @click="sendCaptcha" v-if="!captchaSend">获取验证码</span><span class="text active" v-else>{{s}}s</span>
+      <div class="form">
+        <form style="display: block" @submit="formSubmit" @reset="formReset">
+          <div class="form-item uni-column">
+            <input @input="inputPhone" class="fun-input" name="input" placeholder="请输入手机号码" maxlength="11"  minlength="11"/>
           </div>
-        </div>
-        <div class="form-item uni-column" v-if="mode==='password'">
-          <input @input="inputPassword" type="password" class="fun-input" name="password" placeholder="请输入密码" />
-        </div>
-        <div class="action">
-          <div><button form-type="submit" class="sub-btn m-b-15" type="primary" >立即登录</button></div>
-          <!--<div><button @click="cancel" class="sub-btn m-b-20" >暂不登录</button></div>-->
-
-          <div class="flex flex-vertical-center flex-justify-between p-t-10" >
-            <div class="fz-12 text-right">登录即表示您已阅读并接受<span class="color-primary">《用户服务协议》</span></div>
-<!--            <span class="c6 fz-12" style="text-decoration: underline" @click="cancel">暂不登录</span>-->
+          <div class="form-item uni-column" v-if="mode==='code'">
+            <input @input="inputCaptcha" class="fun-input" name="captcha" placeholder="请输入短信验证码" />
+            <div class="sendCaptcha" >
+              <span class="text" @click="sendCaptcha" v-if="!captchaSend">获取验证码</span><span class="text active" v-else>{{s}}s</span>
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
+          <div class="form-item uni-column" v-if="mode==='password'">
+            <input @input="inputPassword" type="password" class="fun-input" name="password" placeholder="请输入密码" />
+          </div>
+          <div class="action">
+            <div><button form-type="submit" class="sub-btn m-b-15" type="primary" >立即登录</button></div>
+            <!--<div><button @click="cancel" class="sub-btn m-b-20" >暂不登录</button></div>-->
 
-    <div class="channel-list">
-      <div class="channel-item" >
-        <button class="btn" open-type="getUserInfo" @getuserinfo="weixinlogin"><icon size="24" class="icon" color="#09bb07" type="iconlogo-wechat"></icon><span class="text fz-14">微信登录</span></button>
+            <div class="flex flex-vertical-center flex-justify-between p-t-10" >
+              <div class="fz-12 text-right">登录即表示您已阅读并接受<span class="color-primary">《用户服务协议》</span></div>
+              <!--            <span class="c6 fz-12" style="text-decoration: underline" @click="cancel">暂不登录</span>-->
+            </div>
+          </div>
+        </form>
       </div>
-      <div class="channel-item" @click="mode='code'" v-if="mode==='password'">
-        <icon size="24" class="icon" color="#09bb07" type="iconphone"></icon><span class="text fz-14">验证码登录</span>
+
+      <div class="channel-list">
+        <div class="channel-item" >
+          <button class="btn" open-type="getUserInfo" @getuserinfo="weixinlogin"><icon size="24" class="icon" color="#09bb07" type="iconlogo-wechat"></icon><span class="text fz-14">微信登录</span></button>
+        </div>
+        <div class="channel-item" @click="mode='code'" v-if="mode==='password'">
+          <icon size="24" class="icon" color="#09bb07" type="iconphone"></icon><span class="text fz-14">验证码登录</span>
+        </div>
+        <div class="channel-item" @click="mode='password'" v-if="mode==='code'">
+          <icon size="24" class="icon" color="#09bb07" type="iconmimadenglu"></icon><span class="text fz-14">密码登录</span>
+        </div>
       </div>
-      <div class="channel-item" @click="mode='password'" v-if="mode==='code'">
-        <icon size="24" class="icon" color="#09bb07" type="iconmimadenglu"></icon><span class="text fz-14">密码登录</span>
+    </block>
+    <block v-if="mode==='wxLogin'">
+      <image class="img wxLoginLogo" mode="widthFix" src="/static/copyright.png"></image>
+
+      <div  class="otherLogin-top-item" >
+        <button @getuserinfo="weixinlogin" class="wxBtn" open-type="getUserInfo">
+          微信登录
+        </button>
       </div>
-    </div>
+
+      <div class="channel-item phoneIcon" open-type="getUserInfo"  @click="mode='code'">
+        <icon class="icon" color="#333333" size="24" type="iconshouji"  ></icon>
+      </div>
+    </block>
 
     <popup-layer ref="phone" :autoClose="false" :topStr="menuButtonInfo.height+menuButtonInfo.top+10+'px'" :showMask="false">
       <div class="form pwd-wrap" :style="{top:menuButtonInfo.height+menuButtonInfo.top+10+'px'}">
@@ -321,7 +359,7 @@
     mixins: [pageMixin],
     data: {
       wx_code: '',
-      mode: 'password',
+      mode: 'wxLogin',
       binbPhoneShow: false,
       bindPwdShow: false,
       pageTitle: '登录',
@@ -353,7 +391,9 @@
         }
         bizLogin(postData, {reqHeader: true, tip: '绑定中'}).then(res => {
           this.loginCall(res.data)
-        }).catch(() => {})
+        }).catch((e) => {
+          error(e.msg )
+        })
       },
       showOtherPhone() {
         this.$refs.phone.show()
