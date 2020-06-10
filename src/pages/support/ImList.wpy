@@ -81,6 +81,7 @@
       }
       .msg{
         max-width: 600rpx;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
@@ -366,6 +367,10 @@
       })
     },
     onLoad(options) {
+      
+    },
+    onShow() {
+
       if (!checkIsLogin(1, 0)) return
       if (eventHub.imInstance) {
         this.imInstance = imInstance = eventHub.imInstance
@@ -376,9 +381,9 @@
       imInstance.setSendInfo({ type: 'biz', id: ls.get('biz_id') })
       this.out_uid = imInstance.getOutUid()
 
-      this._init_func(options)
-    },
-    onShow() {
+      this._init_func()
+
+      
       if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
         console.log('初始化？？？')
         this.$wx.getTabBar().setData({
