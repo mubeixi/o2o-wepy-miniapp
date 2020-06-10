@@ -154,7 +154,7 @@
     getArrColumn,
     chooseImageByPromise,
     checkIsLogin,
-    getDomain, findArrayIdx
+    getDomain, findArrayIdx, objTranslate
   } from '../../common/helper'
   import IM from '../../common/Im/Im'
 
@@ -162,6 +162,7 @@
   import { Exception } from '../../common/Exception'
   import { delChat, getChatList } from '../../common/Im/Fetch'
   import eventHub from '../../common/eventHub'
+  import moment from 'moment'
 
   let imInstance = null
 
@@ -327,12 +328,20 @@
       eventHub.$on('IM_TAKE_MSG', (res) => {
         // 只有当前页面响应
 
-        console.log(res)
+        console.log(objTranslate(res))
 
         if (eventHub.imInstance) {
-          const idx = findArrayIdx(this.chatList, {from_uid: res.from_uid})
+          const idx = findArrayIdx(this.chatList, {uid: res.from_uid})
           console.log(idx)
-          if (idx !== false) this.$set(this.chatList[idx], 'no_read', this.chatList[idx].no_read + 1)
+          if (idx !== false) {
+            const tempNoReadCount = this.chatList[idx].no_read
+            // 得自己拼接，不容易啊
+            res.no_read = tempNoReadCount + 1
+            res.uid = res.from_uid
+            res.to_uid = this.out_uid
+            res.time = moment().format('YYYY-MM-DD hh:mm')
+            this.$set(this.chatList, idx, res)
+          }
         }
       })
     },

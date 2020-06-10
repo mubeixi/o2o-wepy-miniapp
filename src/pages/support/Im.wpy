@@ -135,12 +135,13 @@
       <block v-for="(chat,idx) in chatList" :key="idx">
         <div class="im-item-box" >
           <wzw-im-card
+            @itemClick="bindItemClick"
             :msg-id="'msg-'+idx"
             :message="chat"
             @bindProductSend="handleProductSend"
           />
           <!--用来搞事的-->
-          <div class="div-line h10" :id="'msg-'+idx"></div>
+          <div class="div-line h1" :id="'msg-'+idx"></div>
         </div>
       </block>
     </scroll-view>
@@ -223,6 +224,9 @@
       }
     },
     methods: {
+      bindItemClick(){
+        this.showOnther = false
+      },
       showNewMsgFun() {
         this.setViewIdx()
         this.refreshScrollBottomPostion()

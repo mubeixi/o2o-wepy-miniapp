@@ -379,7 +379,6 @@
       async getPhoneNumber(e) {
         let loginData = e.$wx.detail
         if (!loginData.iv) return
-
         const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
         const {code: lp_code} = wxLoginRt
         let postData = {
