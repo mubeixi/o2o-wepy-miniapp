@@ -379,11 +379,18 @@
       async getPhoneNumber(e) {
         let loginData = e.$wx.detail
         if (!loginData.iv) return
+<<<<<<< HEAD
+
+        let postData = {
+          code: this.captcha,
+          lp_code: '89757',
+=======
         const wxLoginRt = await wxPromisify('login').catch(() => { throw Error('微信login错误') })
         const {code: lp_code} = wxLoginRt
         let postData = {
           code: this.captcha,
           lp_code,
+>>>>>>> origin/develop
           lp_raw_data: JSON.stringify(this.bindPhoneTempData),
           login_method: 'wx_lp',
           phone_data: loginData.encryptedData,
@@ -697,14 +704,14 @@
 </script>
 <config>
   {
-    "navigationStyle": "custom",
-    "navigationBarTitleText": "登录页面",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "icon": "~@/components/icon",
-      "page-title": "~@/components/page-title",
-      "err-msg": "~@/components/err-msg",
-      "popup-layer": "~@/components/popup-layer"
-    }
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "登录页面",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "page-title": "~@/components/page-title",
+  "err-msg": "~@/components/err-msg",
+  "popup-layer": "~@/components/popup-layer"
+  }
   }
 </config>

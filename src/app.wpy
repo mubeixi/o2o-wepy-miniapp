@@ -128,6 +128,8 @@ wepy.app({
       "pages/marketing/shareQrcode",
       "pages/support/ImList",
       "pages/support/Im",
+      "pages/live/apply",
+      "pages/live/room",
       "pages/demo"
 
     ],

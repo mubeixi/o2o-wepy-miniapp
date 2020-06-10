@@ -371,6 +371,51 @@ export function sleep (fn, par, time = 3000) {
 
 export const setNavigationBarTitle = (title) => wx.setNavigationBarTitle({title})
 
+
+
+export const formatNumber = n => {
+  n = n.toString()
+  return n[1] ? n : '0' + n
+}
+
+
+
+export const getCountdownFunc = ({ start_timeStamp, end_timeStamp, current = (new Date()).getTime() } = {}) => {
+  let { d = 0, h = 0, m = 0, s = 0 } = {}
+
+  // 时间戳格式转换
+  current = parseInt(current / 1000)
+  console.log(start_timeStamp, current)
+  console.log(start_timeStamp - current)
+  let countTime = 0
+  let is_start = false
+  let is_end = false
+
+  // 还没开始
+  if (start_timeStamp > current) {
+    countTime = start_timeStamp - current
+  } else if (start_timeStamp < current) {
+    // 还在进行中
+    is_start = true
+    countTime = 0
+    return false
+  }
+
+  d = parseInt(countTime / (60 * 60 * 24))
+  h = parseInt((countTime) / (60 * 60))
+  m = parseInt((countTime - d * 60 * 60 * 24 - h * 60 * 60) / 60)
+  s = countTime - d * 60 * 60 * 24 - h * 60 * 60 - m * 60
+
+  return {
+    d,
+    h: formatNumber(h),
+    m: formatNumber(m),
+    s: formatNumber(s),
+    is_start,
+    is_end
+  }
+}
+
 /**
  * 检查是否入驻
  */
