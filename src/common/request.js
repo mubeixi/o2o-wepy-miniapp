@@ -5,7 +5,7 @@ import { emptyObject, ls, objTranslate } from './helper'
 import { hexMD5 } from './tool/md5'
 import Base64 from './tool/base64.js'
 
-export const getUsersID = () => ls.get('users_id') ? ls.get('users_id') : 'wkbq6nc2kc'
+export const getUsersID = () => ls.get('users_id') ? ls.get('users_id') : ''
 
 export const getAccessToken = () => ls.get('access_token')
 
