@@ -220,7 +220,8 @@
     padding: 0px;
   }
   .wxLoginLogo{
-    margin: 180rpx 0px;
+    margin-bottom: 180rpx;
+    margin-top: 40%;
   }
 
 </style>
@@ -279,7 +280,7 @@
       </div>
 
       <div class="channel-item phoneIcon" open-type="getUserInfo"  @click="mode='code'">
-        <icon class="icon" color="#333333" size="24" type="iconshouji"  ></icon>
+        <icon class="icon" color="#333333" size="36" type="iconshouji"  ></icon>
       </div>
     </block>
 

@@ -9,10 +9,26 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 .iconshouji:before {
   content: "\e663";
 }
+
+.iconzhibo-:before {
+  content: "\e617";
+}
+
+.iconfaqizhibo:before {
+  content: "\e67a";
+}
+
+.iconicon-:before {
+  content: "\e64f";
+}
+
+.icontime:before {
+  content: "\e66e";
+}
+
 .iconwx:before {
   content: "\e616";
 }
@@ -232,3 +248,4 @@
 .iconright:before {
   content: "\e602";
 }
+
