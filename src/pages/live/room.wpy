@@ -164,28 +164,52 @@
           const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(img) }).catch(e => {
             throw Error(e.errMsg || '缓存海报背景失败')
           })
-          ctx.drawImage(wrapTempFile.path, 40, 175, 670, 670)
 
+          ctx.save()
+          const radiusRect = (left, top, width, height, r) => {
+            const pi = Math.PI
+            ctx.beginPath()
+            ctx.arc(left + r, top + r, r, -pi, -pi / 2)
+            ctx.arc(left + width - r, top + r, r, -pi / 2, 0)
+            ctx.arc(left + width - r, top + height - r, r, 0, pi / 2)
+            ctx.arc(left + r, top + height - r, r, pi / 2, pi)
+            ctx.clip()
+          }
+
+          radiusRect(40, 175, 670, 670, 30)
+          ctx.drawImage(wrapTempFile.path, 40, 175, 670, 670)
+          ctx.restore()
           const qrcodeTempFile = await wxPromisify('getImageInfo', { src: getDomain(qrcode) }).catch(e => {
             throw Error(e.errMsg || '缓存二维码失败')
           })
-          ctx.drawImage(qrcodeTempFile.path, 238, 1030, 274, 274)
+          ctx.drawImage(qrcodeTempFile.path, 238, 1040, 274, 274)
 
           // ctx.setFontSize(53)
 
           ctx.setFontSize(30)
-          ctx.setFillStyle('#555')
-          ctx.fillText(start_time, 40, 960)
+          ctx.setFillStyle('#777')
+          ctx.fillText(start_time, 130, 995)
 
           ctx.setFontSize(18)
           ctx.setFillStyle('#777')
           ctx.textAlign = 'center'
-          ctx.fillText('长摁扫码进入直播间', 375, 1350)
+          ctx.fillText('长摁扫码进入直播间', 375, 1360)
+
+
+          ctx.textAlign = 'left'
+          ctx.setFillStyle('#2287ff')
+          ctx.fillRect(40, 960, 70, 43)
+
+          ctx.setFontSize(24)
+
+          ctx.setFillStyle('#fff')
+          const statusText = this.countdown.is_start ? '直播' : '预告'
+          ctx.fillText(statusText, 50, 990)
 
           ctx.font = 'normal bold 53px sans-serif'
-          ctx.textAlign = 'left'
+
           ctx.setFillStyle('#333333')
-          ctx.fillText(name, 40, 890)
+          ctx.fillText(name, 40, 930)
 
           await new Promise(resolve => {
             ctx.draw(false, function () {
@@ -277,7 +301,7 @@
       },
       stampFunc() {
         const data = getCountdownFunc({
-          start_timeStamp: this.liveInfo.end_time_unix
+          start_timeStamp: this.liveInfo.start_time_unix
           // end_timeStamp: new Date(this.groupInfo.join_end_time).getTime()/1000
         })
         console.log(data)

@@ -21,10 +21,7 @@
   .im-bottom-action{
     width: 750rpx;
     background: #f2f2f2;
-    .safearea-space{
-      height: constant(safe-area-inset-bottom);
-      height: env(safe-area-inset-bottom);
-    }
+
     .onther{
       border-top: 1px solid #E2E2E2;
       padding: 40rpx 0;
@@ -251,7 +248,7 @@
         }
       },
       bindScrolltolower() {
-
+        this.showNewMsg = false
       },
       /**
        * 手动让视图到底部，适用于高度变化的情况

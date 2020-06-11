@@ -104,10 +104,10 @@
         this.$emit('bindProductSend', objTranslate(this.message.content))
       },
       previewImg () {
-        if (this.message.content.indexOf('.gif') === -1) {
-          error('gif暂不支持全屏预览')
-          return
-        }
+        // if (this.message.content.indexOf('.gif') !== -1) {
+        //   error('gif暂不支持全屏预览')
+        //   return
+        // }
         const urls = [this.message.content]
         wx.previewImage({
           urls: urls
