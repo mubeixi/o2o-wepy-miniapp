@@ -33,6 +33,10 @@ export const getMsgList = (param, options) => Fetch({ url: '/chat/getMsgList', p
 // 查询会话列表
 export const getChatList = (param, options) => Fetch({ url: '/chat/getChatList', param, options })
 
+// 查询是否在线
+export const checkOnline = (param, options) => Fetch({ url: '/chat/checkOnline', param, options })
+
+
 // 查询未读消息
 export const getNoReadMsg = (param, options) => Fetch({ url: '/chat/getNoReadMsg', param, options })
 

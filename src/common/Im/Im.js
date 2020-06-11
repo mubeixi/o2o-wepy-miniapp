@@ -1,5 +1,5 @@
 import { IM_APPID, IM_APPSECRET, IM_WSS_URL } from '../env'
-import { bindUid, getAccessToken, sendMsg, getMsgList, getNoReadMsg } from './Fetch'
+import { bindUid, getAccessToken, sendMsg, getMsgList, getNoReadMsg, checkOnline } from './Fetch'
 import moment from 'moment'
 import Promisify from '../promisify'
 import { ls as Storage, createUpTaskArr, uploadImages, getDomain } from '../helper'
@@ -359,6 +359,17 @@ class IM {
   }
 
   /**
+   * check是否在线
+   * @returns {Promise<boolean>}
+   */
+  async checkIsOnline() {
+    await checkOnline({ out_uid: this.getOutUid() }).catch(() => {
+      return false
+    })
+    return true
+  }
+
+  /**
    * 发送之前，需要先检查token是否过期，过期则刷新token
    * @param content
    * @param type
@@ -393,6 +404,8 @@ class IM {
 
       // 为了预防有需要异步上传的情况
       const content = await message.getContent(chatIdx, this.chatList)
+
+      // checkOnline({ out_uid: this.getOutUid() })
 
       sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }).then(res => {
         console.log('发送成功', res)
