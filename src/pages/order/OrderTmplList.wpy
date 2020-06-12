@@ -31,6 +31,14 @@
       }
     }
   }
+  .btnSelect{
+    width: 600rpx;
+    height: 70rpx;
+    line-height: 70rpx;
+    border-radius: 20rpx;
+    text-align: center;
+    margin:40rpx auto;
+  }
 
 </style>
 <template>
@@ -49,6 +57,10 @@
             <div @click.stop="delFn(row,idx)" class="action"><icon size="18"  color="#444" type="iconshanchu"></icon><span class="fz-14 c8 p-l-8">删除</span></div>
           </div>
         </div>
+      </div>
+
+      <div @click="noSelect"  class="btnSelect btn-primary">
+        暂不选择
       </div>
 
       <div class="safearea-box"></div>
@@ -83,6 +95,11 @@
     },
 
     methods: {
+      noSelect() {
+        this.select = ''
+        eventHub.$emit('goods-order-tmpl', {tmpl: {id: '', title: ''}})
+        this.$back()
+      },
       selectFn(row) {
         if (this.mode === 'none') return
         this.select = row.id
