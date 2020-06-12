@@ -2,9 +2,16 @@
   <div class="page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="head" >
-      <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')"  v-if="AccessToken">
-        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
-        <span class="store-title">{{info.biz_shop_name}}</span>
+      <div class="base"   v-if="AccessToken">
+        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"  @click.stop="$linkTo('/pages/store/StoreSetting')"></image>
+        <block v-if="info.biz_shop_name">
+          <span class="store-title" @click.stop="$linkTo('/pages/store/StoreSetting')">{{info.biz_shop_name}}</span>
+        </block>
+        <block v-else>
+          <span class="store-title store-setting-name" @click.stop="$linkTo('/pages/store/StoreInfo')">设置店名 <icon type="iconarrowleft" color="#fdad58"  class="iconarrowleft"></icon></span>
+
+        </block>
+
       </div>
       <div class="base" @click.stop="$linkTo('/pages/user/login')"  v-else>
           <div class="login-main">
@@ -548,6 +555,13 @@
     font-size: 18px;
     padding: 10rpx;
     font-weight: bold;
+  }
+  .store-setting-name{
+    display: flex;
+    align-items: center;
+    color: #fdad58 !important;
+    height: 40rpx;
+    line-height: 40rpx;
   }
 
 
