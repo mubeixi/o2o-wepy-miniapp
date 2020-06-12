@@ -385,6 +385,8 @@
         const {code: lp_code} = wxLoginRt
         let postData = {
           lp_code,
+          login_method: 'wx_lp',
+          lp_raw_data: JSON.stringify(this.bindPhoneTempData),
           phone_data: loginData.encryptedData,
           iv: loginData.iv
         }
@@ -612,7 +614,6 @@
         wx.navigateBack()
       },
       async loginCall(userData) {
-
         const {access_token, status, biz_account, id: biz_id} = userData
         ls.set('access_token', access_token)
         ls.set('users_id', userData.Users_ID)
