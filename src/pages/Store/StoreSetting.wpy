@@ -119,9 +119,73 @@
             <switch :checked="print_config.auto==1" bindchange="switch1ChangeM" style="transform: scale(.8)"></switch>
           </div>
         </div>
-        <div class="wzw-info">
-          开启此开关后，消费者付款完成后会自动打印小票
+        <div class="wzw-info" style="margin-bottom: 30rpx">
+          开启此开关后，消费者付款完成会自动打印下方开启的订单类型小票
         </div>
+
+        <block v-if="print_config.auto==1">
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              商城订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.shop==1" bindchange="switch1ChangeOrder($event,1)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              外卖订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.waimai==1" bindchange="switch1ChangeOrder($event,2)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              拼团订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.pintuan==1" bindchange="switch1ChangeOrder($event,3)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              赠品订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.gift==1" bindchange="switch1ChangeOrder($event,4)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              秒杀订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.flashsale==1" bindchange="switch1ChangeOrder($event,5)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              限时抢购订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.spike==1" bindchange="switch1ChangeOrder($event,6)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              线下到店支付订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.offline==1" bindchange="switch1ChangeOrder($event,7)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+
+        </block>
+
+
 
         <div class="submit-mbx" @click="saveMbx">
           保存
@@ -217,7 +281,16 @@
         sn: '',
         secret: '',
         count: '',
-        auto: ''
+        auto: '',
+        order_type_list: {
+          shop: '',
+          waimai: '',
+          pintuan: '',
+          gift: '',
+          flashsale: '',
+          spike: '',
+          offline: ''
+        }
       }
     },
     onShow() {
@@ -276,6 +349,9 @@
           this.print_config.secret = this.infoData.print_config.secret
           this.print_config.count = this.infoData.print_config.count
           this.print_config.auto = this.infoData.print_config.auto
+          if (this.infoData.print_config.order_type_list) {
+            this.print_config.order_type_list = this.infoData.print_config.order_type_list
+          }
           this.business_status = this.infoData.business_status
         })
       },
@@ -338,6 +414,58 @@
           this.print_config.auto = 1
         } else {
           this.print_config.auto = 0
+        }
+      },
+      switch1ChangeOrder(e, index) {
+        let boo = e.$wx.detail.value
+        if (boo) {
+          switch (index) {
+            case 1:
+              this.print_config.order_type_list.shop = 1
+              break
+            case 2:
+              this.print_config.order_type_list.waimai = 1
+              break
+            case 3:
+              this.print_config.order_type_list.pintuan = 1
+              break
+            case 4:
+              this.print_config.order_type_list.gift = 1
+              break
+            case 5:
+              this.print_config.order_type_list.flashsale = 1
+              break
+            case 6:
+              this.print_config.order_type_list.spike = 1
+              break
+            case 7:
+              this.print_config.order_type_list.offline = 1
+              break
+          }
+        } else {
+          switch (index) {
+            case 1:
+              this.print_config.order_type_list.shop = 0
+              break
+            case 2:
+              this.print_config.order_type_list.waimai = 0
+              break
+            case 3:
+              this.print_config.order_type_list.pintuan = 0
+              break
+            case 4:
+              this.print_config.order_type_list.gift = 0
+              break
+            case 5:
+              this.print_config.order_type_list.flashsale = 0
+              break
+            case 6:
+              this.print_config.order_type_list.spike = 0
+              break
+            case 7:
+              this.print_config.order_type_list.offline = 0
+              break
+          }
         }
       },
       switch1Changes(e) {
