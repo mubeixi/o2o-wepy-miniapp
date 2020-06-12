@@ -10,8 +10,8 @@ import wepy from '@wepy/core'
 import vuex from '@wepy/x'
 import { FunError } from './mixins'
 import { ls } from './common/helper'
-import IM from '@/common/Im/Im'
-import eventHub from '@/common/eventHub'
+// import IM from '@/common/Im/Im'
+// import eventHub from '@/common/eventHub'
 
 wepy.use(vuex)
 
@@ -45,16 +45,16 @@ wepy.app({
   onShow(){
 
     // 如果有的
-    if (eventHub.imInstance) {
-      // IM全局
-      const imInstance = new IM()
-      // 设置本地用户信息
-      imInstance.setSendInfo({ type: 'biz', id: this.infoData.id, name: this.infoData.biz_shop_name, avatar: this.infoData.biz_logo })
-      await imInstance.start() // 等拿token
+    // if (eventHub.imInstance) {
+    //   // IM全局
+    //   const imInstance = new IM()
+    //   // 设置本地用户信息
+    //   imInstance.setSendInfo({ type: 'biz', id: this.infoData.id, name: this.infoData.biz_shop_name, avatar: this.infoData.biz_logo })
+    //   await imInstance.start() // 等拿token
 
-      imInstance.openListen()
-      eventHub.imInstance = imInstance // 全局用一个句柄
-    }
+    //   imInstance.openListen()
+    //   eventHub.imInstance = imInstance // 全局用一个句柄
+    // }
 
   },
 

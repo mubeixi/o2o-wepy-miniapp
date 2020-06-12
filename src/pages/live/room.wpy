@@ -138,7 +138,7 @@
         try {
           showLoading('生成中')
           console.log(this.posterInfo)
-          const { img, name, qrcode, start_time } = this.posterInfo
+          const { img, name, qrcode, start_time,shop_name } = this.posterInfo
 
           const wrapHeight = 1408
           const wrapWidth = 750
@@ -159,7 +159,7 @@
 
           ctx.setFontSize(40)
           ctx.setFillStyle('#333')
-          ctx.fillText(this.bizInfo.biz_shop_name, 140, 96)
+          ctx.fillText(shop_name, 140, 96)
 
           const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(img) }).catch(e => {
             throw Error(e.errMsg || '缓存海报背景失败')

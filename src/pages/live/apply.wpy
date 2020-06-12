@@ -62,6 +62,14 @@
 
     <div class="store-item flex flex-vertical-center">
       <div  class="titles">
+        活动名称
+      </div>
+      <div class="flex1 fz-13" >
+        <input v-model="live_name" class="p-l-26 text-right" placeholder="活动名称"  placeholder-class="place"/>
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center">
+      <div  class="titles">
         主播昵称
       </div>
       <div class="flex1 fz-13" >
@@ -188,6 +196,7 @@
           start_time: this.start_time,
           end_time: this.end_time,
           anchor_name: this.anchor_name,
+          live_name:this.live_name,
           anchor_wechat: this.anchor_wechat,
           goods_ids: this.goods_ids
         }
@@ -298,6 +307,7 @@
           this.end_time = vo.end_time
           this.start_time = vo.start_time
           this.anchor_name = vo.anchor_name
+          this.live_name = vo.live_name
           this.anchor_wechat = vo.anchor_wechat
           this.goods_ids = vo.goods_ids
           this.live_id = vo.id
