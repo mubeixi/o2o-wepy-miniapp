@@ -1463,6 +1463,7 @@
       margin-bottom: 20rpx;
       margin-right: 20rpx;
       position: relative;
+      background-size: 100% 100%;
       .progress{
         position: absolute;
         width: 100%;
