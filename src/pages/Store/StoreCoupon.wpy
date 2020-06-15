@@ -19,7 +19,8 @@
 <!--          <div class="newuser">新用户专用</div>-->
         </div>
         <div class="right-q">{{item.Coupon_Subject}}</div>
-        <div class="right-w">全场满{{item.Coupon_Condition}}可用 <span class="m-l-8 color-blue">{{item.front_show==1?'可领取':'用于赠送'}}</span></div>
+        <div class="right-w"  v-if="item.coupon_prod!=0">指定商品满{{item.Coupon_Condition}}可用 <span class="m-l-8 color-blue">{{item.front_show==1?'可领取':'用于赠送'}}</span></div>
+        <div class="right-w"  v-else>全场满{{item.Coupon_Condition}}可用 <span class="m-l-8 color-blue">{{item.front_show==1?'可领取':'用于赠送'}}</span></div>
       </div>
     </div>
     <div class="submits" @click="goAdd">

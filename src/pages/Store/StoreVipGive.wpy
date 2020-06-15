@@ -163,7 +163,7 @@
         this.coupon_prod = ls.get('coupon_prod')
         this.pro_prod = ls.get('pro_prod')
 
-        getCouponList({status: 1}).then(res => {
+        getCouponList({status: 1, front_show: 2}).then(res => {
           this.couponList = res.data.map(item => {
             return {...item, check: false}
           })
