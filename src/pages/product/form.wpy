@@ -1013,6 +1013,12 @@
 
         let {Products_Status, ...productInfoLast} = productInfo
 
+        // 去掉
+        // if (!this.initConf.pintuan_switch) {
+        //   delete productInfoLast.pintuan_pricex
+        //   delete productInfoLast.pintuan_people
+        // }
+
         systemOperateProd(productInfoLast, {tip: '保存商品'}).then(res => {
           toast('操作成功')
           wx.navigateBack()
