@@ -87,6 +87,9 @@ class XHR {
 
   static formData = (param) => {
     let _param = {access_token: getAccessToken(), biz_id: getBizId(), env: getEnv(), ...param}
+    if(!_param.hasOwnProperty('biz_id')){
+      _param.biz_id = getBizId()
+    }
 
     // 数据加密
     let postData = createToken(_param)

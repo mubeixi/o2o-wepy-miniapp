@@ -127,6 +127,8 @@ wepy.app({
       "pages/statistics/SeckillData",
       "pages/marketing/Seckill",
       "pages/marketing/SeckillAdd",
+      "pages/marketing/Group",
+      "pages/marketing/GroupForm",
       "pages/marketing/SeckillAddSelect",
       "pages/marketing/FlashSale",
       "pages/marketing/FlashSaleForm",

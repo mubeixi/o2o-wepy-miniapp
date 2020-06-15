@@ -23,72 +23,34 @@
           选择商品
         </div>
       </block>
-      <block v-if="pro_id&&selectValue.Products_Type!==0">
-        <div class="submitq flex flex-vertical-center flex-justify-center" @click="goAdd">
-          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-2"></icon>
-          设置商品的型号
-        </div>
-      </block>
 
 
-    <div class="store-item flex flex-vertical-center" v-if="selectValue.Products_Type===0||!pro_id">
+    <div class="store-item flex flex-vertical-center">
       <div  class="titles">
-        秒杀价格
+        拼团价格
       </div>
       <div class="flex flex1 fz-13" >
-        <input type="digit" v-model="price"  class="flex flex1 p-l-26" placeholder="请输入秒杀价格"  placeholder-class="place"/>
+        <input type="digit" v-model="pintuan_pricex"  class="flex flex1 p-l-26" placeholder="请输入拼团价格"  placeholder-class="place"/>
         元
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center"  v-if="selectValue.Products_Type===0||!pro_id">
+    <div class="store-item flex flex-vertical-center"  >
       <div  class="titles">
-        活动库存
+        拼团人数
       </div>
       <div class="flex flex1 fz-13" >
-        <input type="number" v-model="count"  class="flex flex1 p-l-26" placeholder="请输入活动库存"  placeholder-class="place"/>
-        件
+        <input type="number" v-model="pintuan_people"  class="flex flex1 p-l-26" placeholder="请输入拼团人数"  placeholder-class="place"/>
+        人成团
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between" >
-      <div class="titles">
-        开始时间
-      </div>
-      <div class="content fz-14 c9 flex flex-vertical-center">
-        <time @uptime="upStartTime" :val="start_time">
-          <span class="fz-14" v-if="start_time">{{start_time}}</span>
-          <span class="fz-14 c9" v-else>请选择开始时间</span>
-        </time>
-        <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
-      </div>
-    </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between" >
-      <div class="titles">
-        结束时间
-      </div>
-      <div class="content fz-14 c9 flex flex-vertical-center">
-        <time @uptime="upEndTime" :val="end_time">
-          <span class="fz-14" v-if="end_time">{{end_time}}</span>
-          <span class="fz-14 c9" v-else>请选择结束时间</span>
-        </time>
-        <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
-      </div>
-    </div>
-    <div class="store-item flex flex-vertical-center">
-      <div  class="titles">
-        每人限购
-      </div>
-      <div class="flex flex1 fz-13" >
-        <input type="number"  v-model="limit" class="flex flex1 p-l-26" placeholder="请输入限购,0为不限购"  placeholder-class="place"/>
-        件
-      </div>
-    </div>
+
 
     <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
     <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
     <!--action-btn全局有样式-->
-    <div class="fz-16 btn action-btn btn-primary"  @click="addSeckill">
+    <div class="fz-16 btn action-btn btn-primary"  @click="subFn">
       确定
     </div>
 
@@ -96,8 +58,9 @@
     <popup-layer title="选择商品" ref="product" :autoClose="true">
       <div class="product-list">
         <template v-for="(product,idx) in proData" :key="idx">
-          <div class="product-item" v-if="product.Products_Status===1">
-            <div class="info-box" @click="taggleProductCheck(idx)">
+          <div class="product-item" v-if="product.Products_Status===1 && product.is_pintuan == 0">
+            <!--只显示不拼团的-->
+            <div class="info-box"  @click="taggleProductCheck(idx)">
               <div class="check"   >
                 <div v-show="!product.disalbed">
                   <icon
@@ -148,8 +111,15 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { ls, validateFun } from '../../common/helper'
-  import { bizFlashsaleDetail, bizOperateFlashsale, bizProdList } from '../../api/product'
-  import { back, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import {
+    bizFlashsaleDetail,
+    bizOperateFlashsale,
+    bizProdList,
+    getProductDetail,
+    systemOperateProd
+  } from '../../api/product'
+  import { back, error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { floatNumber, intNumber } from '@/common/regs'
 
   const moment = require('moment')
 
@@ -157,125 +127,77 @@
     store,
     mixins: [pageMixin],
     data: {
+      pintuan_pricex: '',
+      pintuan_people: '',
       mbx: [],
       formCheckResult: '',
       id: '',
-      price: '',
-      count: '',
-      limit: '',
+
       proData: [],
       pro_id: '',
-      selectValue: [],
-      end_time: '',
-      start_time: '',
+      selectValue: null,
       editData: {}
     },
     onUnload() {
-      ls.remove('skuvaljosn')
+
     },
     methods: {
-      addSeckill() {
-        let skuvaljosn = ls.get('skuvaljosn')
-        let data = {
-          start_time: this.start_time,
-          end_time: this.end_time,
-          limits: this.limit
+      subFn() {
+        if (!this.selectValue) {
+          error('请先选择商品')
+          return
         }
-        if (this.selectValue.Products_Type != 0) {
-          let arr = []
-          if (skuvaljosn) {
-            for (let it in skuvaljosn) {
-              if (skuvaljosn[it].check) {
-                let obj = {
-                  id: skuvaljosn[it].Product_Attr_ID,
-                  name: skuvaljosn[it].Attr_Value.mobile_prod_attr_name,
-                  price: skuvaljosn[it].price,
-                  count: skuvaljosn[it].count
-                }
-                arr.push(obj)
-              }
-            }
-          } else {
-            arr = this.mbx
-          }
 
-          let mbx = {
-            prod_id: this.pro_id,
-            data: arr
-          }
-          data.select_prod = JSON.stringify(mbx)
-        } else {
-          let mbx = {
-            prod_id: this.pro_id,
-            price: this.price,
-            count: this.count
-          }
-          data.select_prod = JSON.stringify(mbx)
+        const formData = {
+          prod_id: this.pro_id,
+          pintuan_pricex: this.pintuan_pricex,
+          pintuan_people: this.pintuan_people
         }
         const rule = {
+          // 如果拼团价格为0，则不校验拼团人数了
+          pintuan_people: {
+            match: intNumber,
+            required: true,
+            size: {min: 2},
+            message: {
+              required: '拼团人数必填',
+              match: '拼团人数必须为数字',
+              size: '拼团人数必须不低于2'
+            }
+          },
+          pintuan_pricex: {
+            match: floatNumber,
+            required: true,
+            size: {min: 0},
+            use: {
+              compareMarketPrice: (val, row) => {
+                return parseFloat(val) < parseFloat(this.selectValue.Products_PriceY)
+              }
+            },
+            message: {
+              required: '拼团价必填',
+              match: '拼团价必须为数字',
+              size: '拼团价必须大于0',
+              compareMarketPrice: '拼团价必须小于原价'
+            }
+          },
           select_prod: {
             required: false
-          },
-          limits: {
-            required: true,
-            match: /^\d+$/,
-            message: {
-              required: '限购数量必填',
-              match: '限购数量必须大于等于0'
-            }
-          },
-          start_time: {
-            required: true,
-            type: String,
-            use: {
-              // after: (val, row) => moment(val).isAfter()
-            },
-            message: {
-              required: '开始时间必选',
-              type: '开始时间必须为字符串'
-              // after: '开始时间必须大于现在时间'
-            }
-          },
-          end_time: {
-            required: true,
-            type: String,
-            use: {
-              after: (val, row) => moment(val).isAfter(row.start_time)
-            },
-            message: {
-              required: '结束时间必选',
-              type: '结束时间必须为字符串',
-              after: '结束时间必须在开始时间之后'
-            }
           }
         }
-        const checkRt = validateFun(data, rule)
+        const checkRt = validateFun(formData, rule)
         if (checkRt !== true) {
           this.formCheckResult = checkRt
           return
         }
         if (!this.pro_id) {
-          this.formCheckResult = ['请选择秒杀商品']
+          this.formCheckResult = ['请选择商品']
           return
         }
-        if (this.selectValue.Products_Type == 0) {
-          if (!this.price) {
-            this.formCheckResult = ['请输入秒杀价格']
-            return
-          }
-          if (!this.count) {
-            this.formCheckResult = ['请输入秒杀库存']
-            return
-          }
-        }
 
-        if (this.id) {
-          data.flashsale_id = this.id
-        }
-        console.log(data, this.id, 'sss')
-        bizOperateFlashsale(data).then(res => {
+        systemOperateProd(formData).then(res => {
           toast('操作成功')
-          ls.remove('skuvaljosn')
+
           setTimeout(() => {
             back()
           }, 1000)
@@ -283,26 +205,7 @@
 
         })
       },
-      goAdd() {
-        let arr = ls.get('skuvaljosn')
-        if (!arr) {
-          if (this.editData.Products_Type) {
-            for (let item of this.editData.attr_json) {
-              for (let it in this.selectValue.skuvaljosn) {
-                if (this.selectValue.skuvaljosn[it].Product_Attr_ID == item.id) {
-                  this.selectValue.skuvaljosn[it].price = item.price
-                  this.selectValue.skuvaljosn[it].count = item.count
-                  this.selectValue.skuvaljosn[it].check = true
-                }
-              }
-            }
-          }
 
-          ls.set('skuvaljosn', this.selectValue.skuvaljosn)
-        }
-
-        linkTo('/pages/marketing/SeckillAddSelect')
-      },
       upStartTime(val) {
         const formatRt = moment(val).format('YYYY-MM-DD HH:mm:ss')
         this.start_time = formatRt
@@ -343,21 +246,15 @@
       closePop(name) {
         this.$refs[name].close()
       },
-      getMbx() {
+      getCurrentInfo() {
         showLoading('加载中')
-        bizFlashsaleDetail({flashsale_id: this.id }).then(res => {
+        getProductDetail({prod_id: this.id }).then(res => {
           this.editData = res.data
-          this.price = this.editData.price
-          this.count = this.editData.stock
-          this.limit = this.editData.limits
-          this.start_time = moment(this.editData.start_time).format('YYYY-MM-DD HH:mm:ss')
-          this.end_time = moment(this.editData.end_time).format('YYYY-MM-DD HH:mm:ss')
-          if (this.editData.Products_Type != 0) {
-            this.mbx = this.editData.attr_json.data
-          }
+          this.pintuan_pricex = this.editData.pintuan_pricex
+          this.pintuan_people = this.editData.pintuan_people
 
           for (let item of this.proData) {
-            if (item.Products_ID == this.editData.Products_ID) {
+            if (item.Products_ID === this.editData.Products_ID) {
               this.selectValue = item
               item.check = true
               this.pro_id = item.Products_ID
@@ -374,7 +271,7 @@
         })
 
         if (this.id) {
-          this.getMbx()
+          this.getCurrentInfo()
         } else {
           hideLoading()
         }
@@ -553,7 +450,7 @@
 </style>
 <config>
   {
-  "navigationBarTitleText": "添加秒杀",
+  "navigationBarTitleText": "添加拼团商品",
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
