@@ -78,7 +78,7 @@
           </div>
         </div>
 
-        <div class="group-cell">
+        <div class="group-cell" v-if="initConf.pintuan_switch">
           <div class="cell-item">
             <div class="label"></div>
             <div class="content">
@@ -656,6 +656,7 @@
 
   import eventHub from '../../common/eventHub'
   import { Exception } from '../../common/Exception'
+  import { initInfo } from '@/api/system'
 
   export default {
     components: { Index }
@@ -694,10 +695,13 @@
       shippingTmplList: [],
       focusPromiseIdx: 0,
       promiseList: [],
-      promiseIntoViewId:'',
+      promiseIntoViewId: '',
       limitBuyIndex: 0,
       PROD_LIMIT_TYPE: [],
       _default: null,
+      initConf: {
+        pintuan_switch: 0
+      },
       placeholderCotnent: '请输入文字介绍...',
       editorInstance: null,
       thumbLimit: 5,
@@ -850,7 +854,7 @@
             }
           },
           // 如果拼团价格为0，则不校验拼团人数了
-          pintuan_people: {
+          pintuan_people: !this.initConf.pintuan_switch ? {required: false} : {
             match: intNumber,
             required: true,
             size: {min: 2},
@@ -860,7 +864,7 @@
               size: '拼团人数必须不低于2'
             }
           },
-          pintuan_pricex: {
+          pintuan_pricex: !this.initConf.pintuan_switch ? {required: false} : {
             match: floatNumber,
             required: true,
             size: {min: 0},
@@ -1131,7 +1135,7 @@
       },
       addPromise() {
         this.promiseList.push('')
-        this.promiseIntoViewId = 'promise'+(this.promiseList.length-1)
+        this.promiseIntoViewId = 'promise' + (this.promiseList.length - 1)
       },
       productLimitTaggle(e) {
         console.log(e.$wx)
@@ -1245,6 +1249,8 @@
           this._default = await getSystemProdConfig({prod_id: this.Products_ID}, {onlyData: true}).catch(() => { throw Error('获取公共配置失败') })
           const { prod_limit_type = [], shop_damage = [] } = this._default
           this.PROD_LIMIT_TYPE = prod_limit_type
+
+          this.initConf = await initInfo().then(res => res.data).catch(err => { throw Error(err.msg) })
 
           this.shopDamageList = shop_damage
 
@@ -1365,7 +1371,6 @@
         this.toLogin = false
         this._init_func()
       }
-
     },
     onShow() {
       if (!checkIsLogin(1, 1, back)) {

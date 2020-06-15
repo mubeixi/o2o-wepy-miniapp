@@ -1,0 +1,291 @@
+<template>
+  <div class="page-wrap" >
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+<!--    <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>-->
+    <div class="product-list">
+      <div class="product-item" v-for="(product,idx) in productList" :key="idx">
+        <div class="info-box">
+          <image class="thumb" :src="product.Products_JSON.ImgPath[0]"></image>
+          <div class="info">
+            <div class="title">{{product.Products_Name}}</div>
+            <div class="price-box">
+              <span class="sign" style="margin-right: 4rpx">拼团价: ¥</span>
+              <span class="font-15">{{product.pintuan_pricex}}</span>
+              <span class="p-l-20 p-r-4 fz-12 color-gray">原价:</span>
+              <span class="sign color-gray text-through">￥</span>
+              <span class="color-gray font-13 text-through">{{product.Products_PriceX}}</span>
+            </div>
+            <div class="stock-box">
+              <span class="sale">库存:{{product.Products_Count}}</span>
+            </div>
+          </div>
+        </div>
+<!--        <div class="time-my">-->
+<!--          {{product.start_time}} 至 {{product.end_time}}-->
+<!--        </div>-->
+        <div class="actions">
+          <div class="action" @click="edit(product.Products_ID)">
+            <icon type="iconbianji1"></icon>
+            <span class="title">编辑</span>
+          </div>
+          <div class="action"   @click="delProd(product.Products_ID,idx)">
+            <icon size="18" type="iconshanchu"></icon>
+            <span class="title">删除</span>
+          </div>
+
+<!--          <div class="action" @click="toData(product)">-->
+<!--              <icon type="iconshuju"></icon>-->
+<!--              <span class="title">数据</span>-->
+<!--          </div>-->
+<!--          <div class="action" @click="bindShare(product.id)">-->
+<!--            <icon size="14" type="iconfenxiang1"></icon>-->
+<!--            <span class="title">分享</span>-->
+<!--          </div>-->
+        </div>
+      </div>
+    </div>
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center" @click="$linkTo('/pages/marketing/GroupForm')">
+      <icon type="iconadd" color="#fff"  size="20"  class="m-r-9"></icon>
+      添加拼团
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+
+  import { bizProdDel, getProdList, systemOperateProd } from '@/api/product'
+  import { error, hideLoading, linkTo, showLoading, toast } from '@/common/fun'
+  import { Exception } from '@/common/Exception'
+  import { getDomain } from '@/common/helper'
+  import {ls} from '@/common/helper'
+  import wxPromisify from '../../common/promisify'
+  let canvasInstance = null
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      bizInfo: {},
+      productList: [],
+      page: 1,
+      pageSize: 4,
+      totalCount: 0
+    },
+    onReachBottom() {
+      if (this.productList.length < this.totalCount) {
+        this.page++
+        this.init()
+      }
+    },
+    methods: {
+      async delProd(prod_id, idx) {
+        try {
+          const {confirm} = await wxPromisify('showModal', {
+            title: '提示',
+            content: '删除操作不可逆,是否确定删除该商品?'
+          })
+          if (!confirm) return
+          await systemOperateProd({prod_id, pintuan_people: 0, pintuan_pricex: 0}, {tip: 'loading'}).catch(() => { throw Error('删除失败') })
+          this.productList.splice(idx, 1)
+        } catch (e) {
+          error(e.message())
+        }
+      },
+      del(id, status, idx) {
+        showLoading()
+        let data = {
+          flashsale_id: id,
+          status: status === 1 ? 2 : 1
+        }
+        bizProdDel(data).then(res => {
+          toast('操作成功')
+          this.productList[idx].status = status == 1 ? 2 : 1
+          hideLoading()
+        }).catch(e => { hideLoading() })
+      },
+      edit(id) {
+        this.$linkTo('/pages/marketing/GroupForm?id=' + id)
+      },
+      init() {
+        let data = {
+          biz_id: '',
+          biz_ids: ls.get('biz_id'),
+          pintuan_flag: 1,
+          page: this.page,
+          pageSize: this.pageSize
+        }
+        getProdList(data).then(res => {
+          for (let item of res.data) {
+            this.productList.push(item)
+          }
+          this.totalCount = res.totalCount
+        })
+      }
+    },
+    onShow() {
+      this.productList = []
+      this.page = 1
+      this.bizInfo = ls.get('bizInfo')
+      this.init()
+    },
+    onReady () {
+      // canvasInstance = wx.createCanvasContext('myCanvas')
+    },
+    onLoad() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+  .myCanvas {
+    position: fixed;
+    left: 100%;
+    top: 0;
+    background: white;
+    width: 750px;
+    height: 1334px;
+  }
+  .page-wrap{
+    padding-bottom: 44px; //.btn的是44px
+  }
+
+  /** 顶部start **/
+  .action{
+    display: flex;
+    align-items: center;
+    padding: 30rpx;
+    .item{
+      flex:1;
+      text-align: center;
+      .icon{
+        width: 70rpx;
+        height: 70rpx;
+        border-radius: 50%;
+      }
+      .title{
+        color: #333;
+        font-size: 14px;
+      }
+    }
+  }
+  /** 顶部end **/
+
+  /*商品列表 start*/
+  .product-list{
+
+  }
+  .product-item{
+    padding: 30rpx 0;
+    background: white;
+    margin-bottom: 20rpx;
+    .info-box{
+      padding: 0 20rpx;
+      display: flex;
+      font-size: 14px;
+      height: 200rpx;
+      .check{
+        padding-right: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .check-icon{
+
+        }
+      }
+      .thumb{
+        width: 200rpx;
+        height: 200rpx;
+      }
+      .info{
+        flex: 1;
+        padding-left: 20rpx;
+        .title{
+          color: #333;
+          font-size: 14px;
+          /*font-weight: bold;*/
+          line-height: 20px;
+          height: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+        .price-box{
+          color: $fun-red-color;
+          margin-bottom: 20px;
+          font-size: 12px;
+        }
+        .stock-box{
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .actions{
+      margin-top: 30rpx;
+      font-size: 12px;
+      display: flex;
+      .action{
+        justify-content: center;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: #888;
+        border-right: 1rpx solid #e7e7e7;
+        &:last-child{
+          border-right: none;
+        }
+        .title{
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  /*商品列表 end*/
+
+  .font-13{
+    font-size: 13px;
+  }
+  .font-15{
+    font-size: 15px;
+  }
+  .time-my{
+    margin: 40rpx 0rpx;
+    font-size: 12px;
+    color: #888;
+    height: 11px;
+    padding-left: 20rpx;
+    line-height: 11px;
+  }
+
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "拼团",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
+  }
+</config>

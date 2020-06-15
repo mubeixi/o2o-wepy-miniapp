@@ -64,3 +64,6 @@ export const getProductSharePic = (param, options) => fetch({
   param,
   options
 })
+
+// 获取商品列表
+export const getProdList = (param, options) => fetch({act: 'get_prod', param, options})
