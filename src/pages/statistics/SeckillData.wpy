@@ -179,14 +179,14 @@
           <div class="seckill-data-echarts-title">
             时段成交分析
           </div>
-        <echarts ref="catTime" :propData="data_list" :conf="charts.conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
+        <echarts @touchendFn="bindTouchendFn" @touchstartFn="bindTouchstartFn" @touchmoveFn="bindTouchmoveFn" ref="catTime" :propData="data_list" :conf="charts.conf" :lazyLoad="chartReady" class="swiper-echarts" :onInit="onInitChart1" ></echarts>
       </div>
 
     <div class="seckill-data-echarts">
       <div class="seckill-data-echarts-title">
         成交地域分析
       </div>
-      <echarts ref="pie" :propData="addressCircles.circles" :conf="addressCircles.circlesConf"  class="pie-echarts" :onInit="onInitChartPie" ></echarts>
+      <echarts @touchendFn="bindTouchendFn" @touchstartFn="bindTouchstartFn" @touchmoveFn="bindTouchmoveFn" ref="pie" :propData="addressCircles.circles" :conf="addressCircles.circlesConf"  class="pie-echarts" :onInit="onInitChartPie" ></echarts>
     </div>
 
   </div>
@@ -198,7 +198,7 @@
   import { bizFlashsaleStatustic, getNewOldTradeStatistic } from '../../api/store'
   import { back, error} from '../../common/fun'
   import { createF2Chart } from '../../mixins/f2'
-  import { objTranslate } from '../../common/helper'
+  import { getCharCount, getTouchEventInfo, objTranslate, pageScrollToFn } from '../../common/helper'
   const moment = require('moment')
 
   /**
@@ -222,6 +222,8 @@
     store,
     mixins: [pageMixin],
     data: {
+      moveStartY: 0,
+      pageScrollTopNum: 0,
       flashsale_id: '',
       time_list: [],
       data_list: [],
@@ -332,11 +334,35 @@
       }
     },
     methods: {
+      bindTouchmoveFn(e) {
+        // console.log(e.$wx)
+        const {x, y, type} = getTouchEventInfo(e.$wx)
+        // console.log(x, y, type)
+
+        // const evalScrollTop = y - this.moveStartY + this.pageScrollTopNum // 计算最新的顶部距离
+        // if (evalScrollTop < 0) return
+        // pageScrollToFn(evalScrollTop)
+      },
+      bindTouchstartFn(e) {
+        // console.log(e.$wx)
+
+        const {x, y, type} = getTouchEventInfo(e.$wx)
+        console.log(x, y, type)
+        this.moveStartY = y
+      },
+      bindTouchendFn(e) {
+        console.log(e.$wx)
+        const {x, y, type} = getTouchEventInfo(e.$wx)
+        console.log(x, y, type)
+        var evalScrollTop = this.moveStartY - y + this.pageScrollTopNum // 计算最新的顶部距离
+        console.log(evalScrollTop)
+        if (evalScrollTop < 0)evalScrollTop = 0
+        pageScrollToFn(this.pageScrollTopNum, evalScrollTop, 60)
+      },
       async initData() {
         let {pay_time_statistic, count, address_pay_statistic} = await bizFlashsaleStatustic({flashsale_id: this.flashsale_id}).then(res => res.data).catch(e => { error(e.msg || '获取秒杀失败') })
 
         this.count = count
-        console.log(pay_time_statistic)
 
         const vallist = Object.values(pay_time_statistic)
         this.charts.conf = {
@@ -347,7 +373,25 @@
         const time_list = []
         const data_list = []
         for (var key in pay_time_statistic) {
-          var t = moment(`${key}:00:00`).format('YYYY-MM-DD HH:mm:ss')
+          // 补齐时间，避免格式问题
+          var timeStr = ''
+          if (getCharCount(key, ':') === 0) {
+            // 需要补时分秒的
+            if (getCharCount(key, ' ') === 0) {
+              timeStr = `${key} 00:00:00`
+            } else {
+              // 已经有小时了
+              timeStr = `${key}:00:00`
+            }
+          }
+          if (getCharCount(key, ':') === 1) {
+            timeStr = `${key}:00`
+          }
+          if (getCharCount(key, ':') === 2) {
+            timeStr = `${key}`
+          }
+
+          var t = moment(timeStr).format('YYYY-MM-DD HH:mm:ss')
           time_list.push(t)
           var item = {
             value: pay_time_statistic[key], // + parseInt(Math.random() * 100) + 1,
@@ -379,6 +423,10 @@
         this.addressCircles = addressCircles
         this.$refs.pie.init()
       }
+    },
+    onPageScroll(e) {
+      // 记录位置
+      this.pageScrollTopNum = e.scrollTop
     },
     onLoad(query) {
       if (!query.flashsale_id) {

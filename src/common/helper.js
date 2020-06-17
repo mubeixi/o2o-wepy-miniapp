@@ -4,6 +4,7 @@ import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
 import wxPromisify from './promisify'
+import F2 from '@/lib/f2-canvas/f2'
 
 export const objTranslate = (obj) => JSON.parse(JSON.stringify(obj))
 
@@ -371,14 +372,10 @@ export function sleep (fn, par, time = 3000) {
 
 export const setNavigationBarTitle = (title) => wx.setNavigationBarTitle({title})
 
-
-
 export const formatNumber = n => {
   n = n.toString()
   return n[1] ? n : '0' + n
 }
-
-
 
 export const getCountdownFunc = ({ start_timeStamp, end_timeStamp, current = (new Date()).getTime() } = {}) => {
   let { d = 0, h = 0, m = 0, s = 0 } = {}
@@ -463,4 +460,81 @@ export const MergeArray = (oldArr = [], newArr = [], param) => {
     }
   }
   return oldArr
+}
+
+export function getCharCount(str, char) {
+  var regex = new RegExp(char, 'g') // 使用g表示整个字符串都要匹配
+  var result = str.match(regex)          // match方法可在字符串内检索指定的值，或找到一个或多个正则表达式的匹配。
+  var count = !result ? 0 : result.length
+  return count
+}
+
+/**
+ * 获取滑动事件的参数
+ * @param event
+ * @returns {{x: number, y: number, type: *}}
+ */
+export function getTouchEventInfo(event) {
+  const type = event.type
+  let x = 0
+  let y = 0
+  const touches = event.changedTouches
+
+  if (touches && touches.length > 0) {
+    x = touches[0].clientX
+    y = touches[0].clientY
+  }
+
+  return {
+    type,
+    x,
+    y
+  }
+}
+
+/**
+ * 模拟惯性滑动
+ * @param nowScrollTop
+ * @param evalScrollTop
+ * @param duration
+ */
+export function pageScrollToFn(nowScrollTop, evalScrollTop, duration = 100) {
+  wx.pageScrollTo({
+    scrollTop: evalScrollTop,
+    duration
+  })
+  /**
+   * 缓动代码
+   */
+  // var startTime = Date.now()
+  //
+  // var v = (evalScrollTop - nowScrollTop) / duration // 最后一段时间手指划动速度
+  // if (v === 0) return
+  // var dir = v > 0 ? -1 : 1 // 加速度方向
+  // var deceleration = dir * 0.0006 // 加速度大小，单位px/ms*ms
+  // // var durationVal = v / deceleration // 速度消减至0所需时间(ms)
+  // // var dist = v * durationVal / 2 // 最终移动多少
+  // console.log(v, dir)
+  //
+  // function inertiaMove() {
+  //   // if (stopInertiaMove) return
+  //   var nowTime = Date.now()
+  //   var t = nowTime - startTime
+  //   var nowV = v + t * deceleration
+  //   console.log(nowV)
+  //   // 速度方向变化表示速度达到0了
+  //   if (dir * nowV > 0) {
+  //     return
+  //   }
+  //   if (nowV > 20) {
+  //     return
+  //   }
+  //   var moveY = (v + nowV) / 2 * t
+  //   wx.pageScrollTo({
+  //     scrollTop: nowScrollTop + moveY,
+  //     duration: 10
+  //   })
+  //   setTimeout(inertiaMove, 10)
+  // }
+  // inertiaMove()
 }
