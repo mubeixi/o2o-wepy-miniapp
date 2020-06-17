@@ -388,6 +388,7 @@
 </style>
 <config>
   {
+    "navigationBarTitleText": "店铺海报",
     "usingComponents": {
       "wzw-dialog": "~@/components/ModelComponents",
       "wzw-im-tip": "~@/components/wzw-im-tip",
