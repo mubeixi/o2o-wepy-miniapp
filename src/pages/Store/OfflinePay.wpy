@@ -127,7 +127,7 @@
           this.current_url = await bizPaySign().then(res => res.data.img_url).catch((err) => { throw Error(err.msg) })
         } catch (e) {
           Exception.handle(e)
-        }finally {
+        } finally {
           hideLoading()
         }
       },
