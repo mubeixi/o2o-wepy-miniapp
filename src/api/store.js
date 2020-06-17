@@ -129,11 +129,8 @@ export const bizMoneyRecord = (param, options) => fetch({act: 'bizMoneyRecord', 
 // 修改限时抢购状态
 export const bizSpikeStatus = (param, options) => fetch({act: 'bizSpikeStatus', param, options})
 
-
 // 秒杀活动统计
 export const bizFlashsaleStatustic = (param, options) => fetch({act: 'bizFlashsaleStatustic', param, options})
-
-
 
 // 获取分销微信二维码
 export const getDistributeWxQrcode = (param, options) => fetch({act: 'get_distribute_wxqrcode', param, options})
@@ -162,7 +159,5 @@ export const movePhoto = (param, options) => fetch({ act: 'movePhoto', param, op
 // 添加或者编辑相册
 export const opPhoto = (param, options) => fetch({ act: 'opPhoto', param, options })
 
-
-
-
-
+// 获取商家收款码
+export const bizPaySign = (param, options) => fetch({ act: 'bizPaySign', param, options })
