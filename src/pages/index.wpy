@@ -316,9 +316,9 @@
           let arr = await getBizInfo({}, {onlyData: true}).catch(e => { throw Error(e.msg) })
           this.infoData = arr[0]
           // 每次刷新请求接口 是否入驻
-          if (this.infoData.status) {
-            this.status = this.infoData.status
-            ls.set('status', this.infoData.status)
+          if (this.infoData.real_status) {
+            this.status = this.infoData.real_status
+            ls.set('status', this.infoData.real_status)
           }
 
           this.$store.commit('SET_BIZ_INFO', this.infoData)
