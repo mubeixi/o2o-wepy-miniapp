@@ -53,7 +53,7 @@
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between">
         <div class="store-title">
-          外卖营业时间
+          营业时间
         </div>
         <div class="store-titles flex flex-vertical-center">
           <time class="time-select" @uptime="upStartTime" mode="time" :val="start_time">
@@ -69,7 +69,7 @@
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('business_status_popup')">
         <div class="store-title">
-          外卖营业状态
+          营业状态
         </div>
         <div class="store-titles">
           {{business_status==1?'开启':'关闭'}}
@@ -211,7 +211,7 @@
 
       <model ref="business_status_popup">
         <div class="wzw-title">
-          外卖营业状态
+          营业状态
         </div>
         <div class="flex flex-vertical-center flex-justify-between wzw-content">
           <div>
@@ -222,7 +222,7 @@
           </div>
         </div>
         <div class="wzw-info">
-          外卖的营业状态，关闭后消费者在前台看到店铺外卖营业状态是已打样
+          营业状态，关闭后消费者在前台看到店铺营业状态是已打样
         </div>
       </model>
 
