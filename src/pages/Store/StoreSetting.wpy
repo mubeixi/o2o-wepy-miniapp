@@ -76,6 +76,15 @@
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('out_time_popup')">
+        <div class="store-title">
+          非营业状态是否允许下单
+        </div>
+        <div class="store-titles">
+          {{out_business_time_order==1?'开启':'关闭'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
       <div class="store-item flex flex-vertical-center flex-justify-between"  @click="$linkTo('/pages/store/AlbumList')">
         <div class="store-title">
           相册
@@ -209,6 +218,23 @@
       </div>
     </model>
 
+    <model ref="out_time_popup">
+        <div class="wzw-title">
+          非营业时间是否允许下单
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content">
+          <div>
+            开启
+          </div>
+          <div>
+            <switch :checked="out_business_time_order==1" bindchange="outTimeChanges" style="transform: scale(.8)"></switch>
+          </div>
+        </div>
+        <div class="wzw-info">
+          店铺的营业状态，关闭后消费者在前台看到的店铺营业状态为已打样
+        </div>
+    </model>
+
       <model ref="business_status_popup">
         <div class="wzw-title">
           营业状态
@@ -222,7 +248,7 @@
           </div>
         </div>
         <div class="wzw-info">
-          营业状态，关闭后消费者在前台看到店铺营业状态是已打样
+          店铺的营业状态，关闭后消费者在前台看到的店铺营业状态为已打样
         </div>
       </model>
 
@@ -272,6 +298,7 @@
     data: {
       formCheckResult: '',
       infoData: {},
+      out_business_time_order:0,//非营业时间是否允许下单
       arrive_get: 0,
       start_time: '',
       end_time: '',
@@ -349,6 +376,7 @@
           this.print_config.secret = this.infoData.print_config.secret
           this.print_config.count = this.infoData.print_config.count
           this.print_config.auto = this.infoData.print_config.auto
+          this.out_business_time_order = this.infoData.out_business_time_order
           if (this.infoData.print_config.order_type_list) {
             this.print_config.order_type_list = this.infoData.print_config.order_type_list
           }
@@ -389,6 +417,24 @@
         }).catch(e => {
           hideLoading()
         })
+      },
+      async outTimeChanges(e){
+        showLoading()
+        let boo = e.$wx.detail.value
+        let data = {}
+        if (boo) {
+          data.out_business_time_order = 1
+        } else {
+          data.out_business_time_order = 0
+        }
+        await opBizInfo(data).then(res => {
+          if (boo) {
+            this.out_business_time_order = 1
+          } else {
+            this.out_business_time_order = 0
+          }
+        }).catch(e => {})
+        hideLoading()
       },
       async switchStatusChanges(e) {
         showLoading()
