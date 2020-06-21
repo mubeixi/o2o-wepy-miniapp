@@ -246,7 +246,7 @@
       index: 0,
       provider: {}, // 服务商
       businessTypeValue: '',
-      free_shipping: 1,
+      free_shipping: 2,
       business_type: {},
       dada: {status: 0},
       meituan: {},
@@ -296,7 +296,7 @@
         } else {
           showLoading('关闭中')
         }
-        opCityExpressConfig({free_shipping: this.free_shipping}).then(res => {
+        opCityExpressConfig({free_shipping: this.free_shipping == 1 ? 2 : 1}).then(res => {
           if (boo) {
             this.free_shipping = 1
           } else {
@@ -359,6 +359,7 @@
           let arr = res.data.business_type
           this.businessTypeValue = res.data.city_express_config.business_type
           this.cityData = res.data.city_express_config
+          this.free_shipping = res.data.city_express_config.free_shipping ? res.data.city_express_config.free_shipping : 2
           this.appoint_send = res.data.city_express_config.appoint_send
           this.open = res.data.city_express_config.open ? res.data.city_express_config.open : 0
           if (this.open === 1) {
