@@ -228,7 +228,7 @@ const moment = require('moment')
   }
   .settlement-data{
     width: 710rpx;
-    height: 390rpx;
+    /*height: 390rpx;*/
     line-height: 390rpx;
     margin: 0 auto 20rpx;
     border-radius: 10rpx;
