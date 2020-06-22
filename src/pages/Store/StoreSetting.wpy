@@ -138,7 +138,7 @@
               商城订单
             </div>
             <div>
-              <switch :checked="print_config.order_type_list.shop==1" bindchange="switch1ChangeOrder($event,1)" style="transform: scale(.7)"></switch>
+              <switch :checked="print_config.order.shop==1" bindchange="switch1ChangeOrder($event,1)" style="transform: scale(.7)"></switch>
             </div>
           </div>
           <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
@@ -146,7 +146,7 @@
               外卖订单
             </div>
             <div>
-              <switch :checked="print_config.order_type_list.waimai==1" bindchange="switch1ChangeOrder($event,2)" style="transform: scale(.7)"></switch>
+              <switch :checked="print_config.order.waimai==1" bindchange="switch1ChangeOrder($event,2)" style="transform: scale(.7)"></switch>
             </div>
           </div>
           <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
@@ -154,7 +154,7 @@
               拼团订单
             </div>
             <div>
-              <switch :checked="print_config.order_type_list.pintuan==1" bindchange="switch1ChangeOrder($event,3)" style="transform: scale(.7)"></switch>
+              <switch :checked="print_config.order.pintuan==1" bindchange="switch1ChangeOrder($event,3)" style="transform: scale(.7)"></switch>
             </div>
           </div>
           <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
@@ -162,7 +162,7 @@
               赠品订单
             </div>
             <div>
-              <switch :checked="print_config.order_type_list.gift==1" bindchange="switch1ChangeOrder($event,4)" style="transform: scale(.7)"></switch>
+              <switch :checked="print_config.order.gift==1" bindchange="switch1ChangeOrder($event,4)" style="transform: scale(.7)"></switch>
             </div>
           </div>
           <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
@@ -170,7 +170,7 @@
               秒杀订单
             </div>
             <div>
-              <switch :checked="print_config.order_type_list.flashsale==1" bindchange="switch1ChangeOrder($event,5)" style="transform: scale(.7)"></switch>
+              <switch :checked="print_config.order.flashsale==1" bindchange="switch1ChangeOrder($event,5)" style="transform: scale(.7)"></switch>
             </div>
           </div>
 
@@ -179,7 +179,7 @@
               限时抢购订单
             </div>
             <div>
-              <switch :checked="print_config.order_type_list.spike==1" bindchange="switch1ChangeOrder($event,6)" style="transform: scale(.7)"></switch>
+              <switch :checked="print_config.order.spike==1" bindchange="switch1ChangeOrder($event,6)" style="transform: scale(.7)"></switch>
             </div>
           </div>
 
@@ -188,7 +188,7 @@
               线下到店支付订单
             </div>
             <div>
-              <switch :checked="print_config.order_type_list.offline==1" bindchange="switch1ChangeOrder($event,7)" style="transform: scale(.7)"></switch>
+              <switch :checked="print_config.order.offline==1" bindchange="switch1ChangeOrder($event,7)" style="transform: scale(.7)"></switch>
             </div>
           </div>
 
@@ -309,7 +309,7 @@
         secret: '',
         count: '',
         auto: '',
-        order_type_list: {
+        order: {
           shop: '',
           waimai: '',
           pintuan: '',
@@ -377,8 +377,8 @@
           this.print_config.count = this.infoData.print_config.count
           this.print_config.auto = this.infoData.print_config.auto
           this.out_business_time_order = this.infoData.out_business_time_order
-          if (this.infoData.print_config.order_type_list) {
-            this.print_config.order_type_list = this.infoData.print_config.order_type_list
+          if (this.infoData.print_config.order) {
+            this.print_config.order = this.infoData.print_config.order
           }
           this.business_status = this.infoData.business_status
         })
@@ -467,49 +467,49 @@
         if (boo) {
           switch (index) {
             case 1:
-              this.print_config.order_type_list.shop = 1
+              this.print_config.order.shop = 1
               break
             case 2:
-              this.print_config.order_type_list.waimai = 1
+              this.print_config.order.waimai = 1
               break
             case 3:
-              this.print_config.order_type_list.pintuan = 1
+              this.print_config.order.pintuan = 1
               break
             case 4:
-              this.print_config.order_type_list.gift = 1
+              this.print_config.order.gift = 1
               break
             case 5:
-              this.print_config.order_type_list.flashsale = 1
+              this.print_config.order.flashsale = 1
               break
             case 6:
-              this.print_config.order_type_list.spike = 1
+              this.print_config.order.spike = 1
               break
             case 7:
-              this.print_config.order_type_list.offline = 1
+              this.print_config.order.offline = 1
               break
           }
         } else {
           switch (index) {
             case 1:
-              this.print_config.order_type_list.shop = 0
+              this.print_config.order.shop = 0
               break
             case 2:
-              this.print_config.order_type_list.waimai = 0
+              this.print_config.order.waimai = 0
               break
             case 3:
-              this.print_config.order_type_list.pintuan = 0
+              this.print_config.order.pintuan = 0
               break
             case 4:
-              this.print_config.order_type_list.gift = 0
+              this.print_config.order.gift = 0
               break
             case 5:
-              this.print_config.order_type_list.flashsale = 0
+              this.print_config.order.flashsale = 0
               break
             case 6:
-              this.print_config.order_type_list.spike = 0
+              this.print_config.order.spike = 0
               break
             case 7:
-              this.print_config.order_type_list.offline = 0
+              this.print_config.order.offline = 0
               break
           }
         }
