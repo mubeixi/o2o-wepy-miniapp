@@ -93,9 +93,10 @@ page{
   .action-btn{
     position: fixed;
     left: 0;
-    z-index: 3;
-    bottom: constant(safe-area-inset-bottom);
-    bottom: env(safe-area-inset-bottom);
+    z-index: 4;
+    bottom:0;
+    //bottom: constant(safe-area-inset-bottom);
+    //bottom: env(safe-area-inset-bottom);
   }
 
 }
