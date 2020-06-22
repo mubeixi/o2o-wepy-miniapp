@@ -338,10 +338,9 @@
         </div>
 
         <div class="safearea-space"></div>
-        <button @click="subFn" class="btn action-btn btn-primary">保存数据</button>
+
       </form>
     </div>
-
     <popup-layer ref="couponPop" title="选择优惠券" mainBgColor="#F7F4F8" >
       <div class="coupon-wrap" style="overflow-y: scroll;box-sizing: border-box;" :style="{maxHeight: systemInfo.windowHeight-150+'px'}">
         <div class="coupon-item flex flex-justify-between" @click="couponChange(index)"  v-for="(item,index) of couponList" :key="index">
@@ -370,18 +369,18 @@
       <button @click="closePop('couponPop')" class="btn btn-primary">确定</button>
     </popup-layer>
 
-      <div v-show="bizProdCateFormShow" style="width: 100%;height: 100%;left: 0;top: 0;position: fixed;background: rgba(0,0,0,.3);z-index:101;">
-        <div class="posi" style="width: 426rpx;overflow: hidden;background: white;border-radius: 6rpx;box-sizing: border-box;padding: 20rpx;">
-          <div class="text-center c3">添加分类</div>
-          <div style="margin: 48rpx auto;">
-            <input type="text" style="width: 340rpx;height: 66rpx;padding: 0 20rpx;box-sizing: border-box;line-height: 66rpx;" class="bor fz-14" v-model="newBizProdCateText" placeholder="请填写新分类名称" />
-          </div>
-          <div class="flex flex-vertical-center flex-justify-between">
-            <div @click="bizProdCateFormShow=false" style="width: 144rpx;height: 50rpx;line-height: 50rpx;border-radius: 25rpx;" class="btn-cancel text-center fz-14">取消</div>
-            <div @click="bindAddBizProdCate" style="width: 144rpx;height: 50rpx;line-height: 50rpx;border-radius: 25rpx;" class="btn-primary text-center fz-14">确定</div>
-          </div>
+    <div v-show="bizProdCateFormShow" style="width: 100%;height: 100%;left: 0;top: 0;position: fixed;background: rgba(0,0,0,.3);z-index:101;">
+      <div class="posi" style="width: 426rpx;overflow: hidden;background: white;border-radius: 6rpx;box-sizing: border-box;padding: 20rpx;">
+        <div class="text-center c3">添加分类</div>
+        <div style="margin: 48rpx auto;">
+          <input type="text" style="width: 340rpx;height: 66rpx;padding: 0 20rpx;box-sizing: border-box;line-height: 66rpx;" class="bor fz-14" v-model="newBizProdCateText" placeholder="请填写新分类名称" />
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between">
+          <div @click="bizProdCateFormShow=false" style="width: 144rpx;height: 50rpx;line-height: 50rpx;border-radius: 25rpx;" class="btn-cancel text-center fz-14">取消</div>
+          <div @click="bindAddBizProdCate" style="width: 144rpx;height: 50rpx;line-height: 50rpx;border-radius: 25rpx;" class="btn-primary text-center fz-14">确定</div>
         </div>
       </div>
+    </div>
 
     <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false" >
 
@@ -632,6 +631,7 @@
     </popup-layer>
 
     <div class="safearea-box"></div>
+    <div @click="subFn" class="btn action-btn btn-primary">保存数据</div>
   </div>
 </template>
 <script>
@@ -1442,9 +1442,22 @@
     }
   }
 
-  .page-wrap{
-    background: #fff;
-  }
+  /*.page-wrap{*/
+  /*  background: #fff;*/
+  /*  position: absolute;*/
+  /*  top: 0;*/
+  /*  left: 0;*/
+  /*  right: 0;*/
+  /*  bottom: 0;*/
+  /*  z-index: 1;*/
+  /*  overflow-x: hidden;*/
+  /*  overflow-y: scroll;*/
+  /*  -webkit-overflow-scrolling : touch;*/
+  /*}*/
+  /*.action-btn{*/
+  /*  position: absolute !important;*/
+  /*  z-index: 5;*/
+  /*}*/
   .specs-action-box{
     display: flex;
     flex-direction: row-reverse;
@@ -1530,18 +1543,18 @@
   }
 
   .action-btn{
-    position: fixed;
-    left: 0;
-    z-index: 3;
-    bottom: constant(safe-area-inset-bottom);
-    bottom: env(safe-area-inset-bottom);
+    /*position: fixed;*/
+    /*left: 0;*/
+    /*z-index: 3;*/
+    /*bottom: constant(safe-area-inset-bottom);*/
+    /*bottom: env(safe-area-inset-bottom);*/
   }
   .safearea-box{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    background: #fff;
-    z-index: 3;
+    /*position: fixed;*/
+    /*bottom: 0;*/
+    /*left: 0;*/
+    /*background: #fff;*/
+    /*z-index: 2;*/
   }
 
 
