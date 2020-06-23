@@ -3,6 +3,7 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
     <div class="form">
+      <!--产品类型-->
       <div class="group-cell" @click="openPop('orderType')">
         <div class="cell-item">
           <div class="label">商品类型</div>
@@ -12,10 +13,11 @@
           <div class="right"><icon display="inline" type="iconarrowleft" color="#999"></icon></div>
         </div>
       </div>
-
+      <!--类别、名称、封面图-->
       <div class="group-cell">
         <div class="cell-item" style="display: block;">
-          <div class="label" style="width: 600rpx;">商品图片和名称</div>
+          <!--<span @click="taggleImgEditStatus">编辑图片</span>-->
+          <div class="label" style="width: 100%;">商品图片和名称 </div>
           <div class="content">
             <div class="upload-img flex flex-vertical-center flex-justify-between">
               <div class="img-box">
@@ -26,9 +28,10 @@
                   :key="idx"
                   :style="{backgroundImage:'url('+img+')'}">
                   <!-- <span class="progress" v-if="img.task && img.task.progress<100">{{img.task.progress}}%</span> -->
-                  <image class="icon-delete" src="/static/icon/icon-del-bgwhite.png"></image>
-                  <div class="img-actions">
-
+                  <image @click.stop="bindThumbDel(idx)" class="icon-delete" src="/static/icon/icon-del-bgwhite.png"></image>
+                  <div class="img-actions flex flex-vertical-center flex-justify-between">
+                    <icon @click.stop="bindThumbPre(idx)" :color="idx===0?'#999':'#fff'" size="20" type="iconPrevious"></icon>
+                    <icon @click.stop="bindThumbNext(idx)" :color="idx===imgs.length-1?'#999':'#fff'" size="20" type="iconPrevious-copy"></icon>
                   </div>
                 </div>
                 <div
@@ -41,7 +44,7 @@
               </div>
 
               <div class="flex flex-vertical-center" @click="toEditImgList">
-                <span class="fz-12 c9 p-r-6 ">{{imgs.length}}/{{thumbLimit}}</span>
+                <span class="fz-12 c9 p-r-6 ">{{imgs.length}}/{{thumbLimit}}张</span>
                 <!--<icon display="inline" type="iconarrowleft" color="#999"></icon>-->
               </div>
 
@@ -49,12 +52,8 @@
             <textarea style="width: 100%;height: 90px;line-height: 30px;" placeholder-style="line-height:30px;" class="fz-14" v-model="formData.Products_Name" placeholder="标题示例：[疯抢]应季水果，火龙果500" />
           </div>
         </div>
-
-      </div>
-
-      <div class="group-cell" @click="openPop('systemCatePop')">
-        <div class="cell-item">
-          <div class="label">平台分类</div>
+        <div class="cell-item" @click="openPop('systemCatePop')">
+          <div class="label">平台类目</div>
           <div class="content flex">
             <div class="flex1"></div>
             <div class="text-right fz-14 text-nowrap" style="width: 400rpx;">{{systemCateHasStr}}</div>
@@ -62,7 +61,7 @@
           <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
         </div>
       </div>
-
+      <!--产品利润-->
       <div class="group-cell" v-if="_default.biz_online_finance_type===2">
         <div class="cell-item">
           <div class="label">商品利润</div>
@@ -72,19 +71,31 @@
           <div class="right">%</div>
         </div>
       </div>
-
+      <!--价格和库存-->
       <div class="group-cell">
         <div class="cell-item">
           <div class="label">商品价格</div>
           <div class="content">
-            <div class="flex flex-justify-center flex-vertical-center">
-              <input class="line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceY" placeholder="请输入商品原价"  />
-              <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceX" placeholder="请输入商品现价"  />
+            <div class="flex">
+              <div class="flex1 flex flex-vertical-center">
+                <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceX" placeholder="请输入价格"  />
+              </div>
+              <div class="flex1 flex flex-vertical-center" style="margin-left: 30rpx">
+                <span style="white-space: nowrap" class="c3 text-centert p-r-10">划线价</span>
+                <input class="line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceY" placeholder="请输入划线价"  />
+              </div>
             </div>
+
+          </div>
+        </div>
+        <div class="cell-item">
+          <div class="label">库存</div>
+          <div class="content">
+            <input class="fz-13" type="number" v-model="formData.Products_Count" placeholder="请输入商品库存" />
           </div>
         </div>
       </div>
-
+      <!--拼团设置-->
       <div class="group-cell" v-if="initConf.pintuan_switch">
         <div class="cell-item">
           <div class="label"></div>
@@ -103,15 +114,7 @@
         </div>
       </div>
 
-      <div class="group-cell">
-        <div class="cell-item">
-          <div class="label">库存</div>
-          <div class="content">
-            <input type="number" v-model="formData.Products_Count" placeholder="请输入商品库存" />
-          </div>
-        </div>
-      </div>
-
+      <!--规格管理-->
       <div class="bgwhite m-b-15 flex flex-vertical-center" v-for="(item,idx) in specs" @click="focusSpecItem(idx)">
         <div class="group-cell flex1" style="margin-bottom: 0" >
           <div class="cell-item" style="border-bottom: none">
@@ -140,55 +143,14 @@
           <icon type="iconminus" color="#F53636"></icon>
         </div>
       </div>
-
       <div class="specs-action-box">
+
         <div class="add-btn" @click="addSpecsRow"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加规格</span></div>
       </div>
-
-      <div class="group-cell" @click="openPop('descModel')">
-        <div class="cell-item">
-          <div class="label">产品简介</div>
-          <div class="content">
-          </div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c6 fz-12" v-if="formData.Products_BriefDescription">已设置</span>
-              <span class="c9 fz-12" v-else>未设置</span>
-              <icon type="iconarrowleft" color="#999"></icon>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="group-cell" v-if="formData.prod_order_type === 0">
-        <div class="cell-item">
-          <div class="label">重量</div>
-          <div class="content">
-            <div class="flex flex-vertical-center">
-              <input type="digit" v-model="formData.Products_Weight" class="line-input" style="width: 210rpx" placeholder="请输入重量" /><span class="c9 fz-12 p-l-8">kg</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="group-cell" @click="openPop('specailAttr')">
-        <div class="cell-item">
-          <div class="label">特殊属性</div>
-          <div class="content"></div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c6 fz-12" v-if="formData.Products_SoldOut||formData.Products_IsNew||formData.Products_IsHot||formData.Products_IsRecommend||formData.one_hour_send">已设置</span>
-              <span class="c9 fz-12" v-else>未设置</span>
-              <icon type="iconarrowleft" color="#999"></icon>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="group-cell" @click="openPop('bizCatePop')">
-        <div class="cell-item">
-          <div class="label">自定义分类</div>
+      <!--商家分类-->
+      <div class="group-cell" >
+        <div class="cell-item" @click="openPop('bizCatePop')">
+          <div class="label">店铺分类</div>
           <div class="content flex">
             <div class="flex1"></div>
             <div class="text-right fz-14 text-nowrap" style="max-width: 350rpx;">{{bizCateHasStr}}</div>
@@ -201,39 +163,8 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="group-cell" v-if="formData.prod_order_type === 0">
-        <div class="cell-item" @click="openPop('fee')">
-          <div class="label">运费</div>
-          <div class="content">
-          </div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span v-if="formData.fee_type===1 || formData.fee_type===0" class="c4 fz-12">{{formData.fee_type===1?'固定运费':'运费模板'}}</span>
-              <span v-else class="c9 fz-12">设置运费</span>
-              <icon type="iconarrowleft" color="#999"></icon></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="group-cell" @click="openPop('promise')">
-        <div class="cell-item">
-          <div class="label">商品承诺</div>
-          <div class="content"></div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c6 fz-12" v-if="promiseList.length>0">已设置</span>
-              <span class="c9 fz-12" v-else>未设置</span>
-              <icon type="iconarrowleft" color="#999"></icon>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="group-cell" @click="openPop('content')">
-        <div class="cell-item">
-          <div class="label">详情</div>
+        <div class="cell-item" @click="openPop('content')">
+          <div class="label">商品详情</div>
           <div class="content"></div>
           <div class="right">
             <div class="flex-vertical-center flex">
@@ -245,95 +176,166 @@
         </div>
       </div>
 
-      <div class="p-20 text-center" v-show="!moreSetting" @click="moreSetting=true">
-        <icon type="iconicon-arrow-down" size="18" color="#00A8FF" />
-        <div class="fz-14 c6">点击打开更多设置</div>
-      </div>
-
-      <div v-show="moreSetting">
-        <div class="group-cell">
-          <div class="cell-item">
-            <div class="label">销量</div>
-            <div class="content">
-              <input type="number" v-model="formData.Products_Sales" placeholder="请输入商品销量" />
-            </div>
-          </div>
-          <div class="cell-item" @click="openPop('limitBuy')">
-            <div class="label">限购</div>
-            <div class="content"></div>
-            <div class="right">
-              <div class="flex-vertical-center flex">
-                <span class="c9 fz-12" v-if="formData.prod_limit.switch">限制</span>
-                <span class="c4 fz-12" v-else>不限制</span>
-                <icon type="iconarrowleft" color="#999"></icon>
-              </div>
-            </div>
-          </div>
-          <div class="cell-item" @click="openPop('couponPop')">
-            <div class="label">优惠券赠送</div>
-            <div class="content">
-            </div>
-            <div class="right">
-              <div class="flex-vertical-center flex">
-                <span v-if="isSendCoupon" class="c4 fz-12">赠送</span>
-                <span v-else class="c4 fz-12">不赠送</span>
-                <icon type="iconarrowleft" color="#999"></icon>
-              </div>
-            </div>
-          </div>
-<!--          <div class="cell-item" @click="openPop('back')">-->
-<!--              <div class="label">退换货</div>-->
-<!--              <div class="content flex"></div>-->
-<!--              <div class="right">-->
-<!--                <div class="flex-vertical-center flex">-->
-<!--                  <span v-if="shopDamageList[shopDamageIdx].Damage_Name" class="c4 fz-12">{{shopDamageList[shopDamageIdx].Damage_Name}}</span>-->
-<!--                  <span v-else class="c9 fz-12">未设置</span>-->
-<!--                  <icon type="iconarrowleft" color="#999"></icon></div>-->
-<!--              </div>-->
-<!--          </div>-->
-
-
-          <div class="cell-item" @click="openOrderTempl">
-            <div class="label">下单模板</div>
-            <div class="content"></div>
-            <div class="right">
-              <div class="flex-vertical-center flex">
-                <span class="c6 fz-12" v-if="formData.order_temp_id">{{order_temp_text||'已设置'}}</span>
-                <span class="c9 fz-12" v-else>未设置</span>
-                <icon type="iconarrowleft" color="#999"></icon>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- <div class="group-cell">
-          <div class="cell-item" @click="openPop('delivery')">
-            <div class="label">支持外卖</div>
-            <div class="content"></div>
-            <div class="right">
-              <div class="flex-vertical-center flex">
-                <span class="c6 fz-12" v-if="formData.is_waimai">支持</span>
-                <span class="c6 fz-12" v-else>不支持</span>
-                <icon type="iconarrowleft" color="#999"></icon>
-              </div>
-            </div>
-          </div>
-        </div> -->
-        <div class="group-cell">
-          <div class="cell-item" @click="openPop('share')">
-            <div class="label">分享有礼</div>
-            <div class="content"></div>
-            <div class="right">
-              <div class="flex-vertical-center flex">
-                <span class="c6 fz-12" v-if="formData.share_commission!==''">{{formData.share_commission}}</span>
-                <span class="c9 fz-12" v-else>未设置</span>
-                <icon type="iconarrowleft" color="#999"></icon>
-              </div>
+      <div class="group-cell">
+        <div class="cell-item" v-if="formData.prod_order_type === 0" @click="$openPop('sendType')">
+          <div class="label">配送方式</div>
+          <div class="content"></div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span v-if="prod_send_type_str" class="c4 fz-12">{{prod_send_type_str}}</span>
+              <span v-else class="c9 fz-12">未设置</span>
+              <icon type="iconarrowleft" color="#999"></icon>
             </div>
           </div>
         </div>
 
+        <div class="cell-item" @click="openPop('feeSetting')" v-if="formData.prod_order_type === 0">
+          <div class="label">运费设置</div>
+          <div class="content">
+          </div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span v-if="formData.fee_type===1 || formData.fee_type===0" class="c4 fz-12">{{formData.fee_type===1?'固定运费':'运费模板'}}</span>
+              <span v-else class="c9 fz-12">设置运费</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="h20"></div>
+
+      <div class="group-cell">
+        <!--特殊属性-->
+        <div class="cell-item" @click="openPop('specailAttr')">
+          <div class="label">特殊属性</div>
+          <div class="content"></div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span class="c6 fz-12" v-if="formData.Products_SoldOut||formData.Products_IsNew||formData.Products_IsHot||formData.Products_IsRecommend||formData.one_hour_send">已设置</span>
+              <span class="c9 fz-12" v-else>未设置</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+
+        <!--商品承诺-->
+        <div class="cell-item" @click="openPop('promise')">
+          <div class="label">商品承诺</div>
+          <div class="content"></div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span class="c6 fz-12" v-if="promiseList.length>0">已设置</span>
+              <span class="c9 fz-12" v-else>未设置</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+
+        <!--分享文案-->
+        <div class="cell-item" @click="openPop('descModel')">
+          <div class="label">分享文案</div>
+          <div class="content">
+          </div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span class="c6 fz-12" v-if="formData.Products_BriefDescription">已设置</span>
+              <span class="c9 fz-12" v-else>未设置</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+
+        <!--分享有礼-->
+        <div class="cell-item" @click="openPop('share')">
+          <div class="label">分享有礼</div>
+          <div class="content"></div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span class="c6 fz-12" v-if="formData.share_commission!==''">{{formData.share_commission}}</span>
+              <span class="c9 fz-12" v-else>未设置</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+
+        <!--销量-->
+        <div class="cell-item">
+          <div class="label">销量</div>
+          <div class="content">
+            <input class="fz-13" type="number" v-model="formData.Products_Sales" placeholder="请输入商品销量" />
+          </div>
+        </div>
+        <!--赠送优惠券-->
+        <div class="cell-item" @click="openPop('couponPop')">
+          <div class="label">赠送优惠券</div>
+          <div class="content">
+          </div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span v-if="isSendCoupon" class="c4 fz-12">赠送</span>
+              <span v-else class="c4 fz-12">不赠送</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+
+        <!--下单模板-->
+        <div class="cell-item" @click="openOrderTempl">
+          <div class="label">下单模板</div>
+          <div class="content"></div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span class="c6 fz-12" v-if="formData.order_temp_id">{{order_temp_text||'已设置'}}</span>
+              <span class="c9 fz-12" v-else>未设置</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+        <!--限购-->
+        <div class="cell-item" @click="openPop('limitBuy')">
+          <div class="label">限购</div>
+          <div class="content"></div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span class="c9 fz-12" v-if="formData.prod_limit.switch">限制</span>
+              <span class="c4 fz-12" v-else>不限制</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="group-cell">
+        <div class="cell-item" @click="openPop('delivery')">
+          <div class="label">支持外卖</div>
+          <div class="content"></div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span class="c6 fz-12" v-if="formData.is_waimai">支持</span>
+              <span class="c6 fz-12" v-else>不支持</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!--          <div class="cell-item" @click="openPop('back')">-->
+      <!--              <div class="label">退换货</div>-->
+      <!--              <div class="content flex"></div>-->
+      <!--              <div class="right">-->
+      <!--                <div class="flex-vertical-center flex">-->
+      <!--                  <span v-if="shopDamageList[shopDamageIdx].Damage_Name" class="c4 fz-12">{{shopDamageList[shopDamageIdx].Damage_Name}}</span>-->
+      <!--                  <span v-else class="c9 fz-12">未设置</span>-->
+      <!--                  <icon type="iconarrowleft" color="#999"></icon></div>-->
+      <!--              </div>-->
+      <!--          </div>-->
+
+
+
+<!--      <div class="p-20 text-center" v-show="!moreSetting" @click="moreSetting=true">-->
+<!--        <icon type="iconicon-arrow-down" size="18" color="#00A8FF" />-->
+<!--        <div class="fz-14 c6">点击打开更多设置</div>-->
+<!--      </div>-->
+<!--      <div v-show="moreSetting">-->
+<!--      </div>-->
+      <div class="h20" style="padding: #f8f8f8;"></div>
     </div>
 
     <modal ref="descModel" positions="top" radius="12rpx"  >
@@ -342,7 +344,8 @@
               class="bor p-10 desc-content"
               bindblur="bindDescAreaBlur"
               :value="formData.Products_BriefDescription"
-              placeholder="请输入描述" />
+              placeholder-style="color:#999"
+              placeholder="请输入分享文案" />
         <div @click="closePop('descModel')" class="desc-btn btn-primary text-center">保存数据</div>
       </div>
     </modal>
@@ -448,7 +451,7 @@
       </picker-view>
     </popup-layer>
 
-    <popup-layer title="运费" ref="fee" >
+    <popup-layer title="运费" ref="feeSetting" >
       <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
         <label class="type-item flex flex-vertical-center">
           <radio color="#00A8FF" value="1" :checked="formData.fee_type === 1"></radio>
@@ -462,14 +465,31 @@
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">物流模板</div>
             <picker @change="bindShippingTmplChange" :value="shippingTmplIdx" range-key="Template_Name"  :range="shippingTmplList">
-              <div style="height: 60rpx;border-radius: 6rpx;padding: 0 30rpx;box-sizing: border-box" class="flex bor flex-vertical-center flex-justify-between text-center">
-                <span style="margin-right: 30rpx" class="c8">{{shippingTmplList[shippingTmplIdx].Template_Name}}</span><icon color="#999" size="12" type="icondown"></icon>
+              <div
+                style="height: 60rpx;border-radius: 6rpx;padding: 0 30rpx;box-sizing: border-box"
+                class="flex bor flex-vertical-center flex-justify-between text-center">
+                <span style="margin-right: 30rpx" class="c8">{{shippingTmplList[shippingTmplIdx].Template_Name||'请设置物流模板'}}</span>
+                <icon color="#999" size="12" type="icondown"></icon>
               </div>
             </picker>
           </div>
         </label>
       </radio-group>
-      <button class="btn btn-primary m-t-35" @click="closePop('fee')">确认</button>
+      <!--只有选择物流模板的情况下，才需要设置重量-->
+      <div class="p-l-50 p-r-10 flex flex-vertical-center m-t-15" v-if="formData.prod_order_type === 0 && formData.fee_type === 2">
+        <div style="" class="m-r-15 fz-16 c0">商品重量</div>
+        <div class="content text-left">
+          <div class="flex flex-vertical-center">
+            <input type="digit"
+                   v-model="formData.Products_Weight"
+                   class="line-input"
+                   style="border: 1px solid #DADADA;height: 60rpx;line-height: 60rpx;padding-left:30rpx;border-radius: 6rpx;font-size: 14px;"
+                   placeholder="请输入重量" />
+            <span class="c9 fz-12 p-l-8">kg</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="bindFeeSave">确认</button>
     </popup-layer>
 
     <popup-layer title="商品承诺" ref="promise" >
@@ -522,6 +542,36 @@
         </div>
       </div>
         <button  class="btn btn-primary m-t-35" @click="closePop('limitBuy')">确定</button>
+    </popup-layer>
+
+    <popup-layer title="配送方式" ref="sendType" >
+      <checkbox-group class="type-list p-l-10 p-r-10"  @change="setSendType">
+        <label class="type-item flex flex-vertical-center bor-b">
+          <!--快递-->
+          <checkbox style="transform: scale(.8)" color="#00A8FF" value="0" :checked="prod_send_type_list[0].checked"></checkbox>
+          <div class="label p-10">
+            <div class="title m-b-4">{{prod_send_type_list[0].title}}</div>
+            <div class="desc fz-12 c9">{{prod_send_type_list[0].desc}}</div>
+          </div>
+        </label>
+        <!--到店自提-->
+        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.arrive_get">
+          <checkbox style="transform: scale(.8)" color="#00A8FF" value="1" :checked="prod_send_type_list[1].checked"></checkbox>
+          <div class="label p-10">
+            <div class="title m-b-4">{{prod_send_type_list[1].title}}</div>
+            <div class="desc fz-12 c9">{{prod_send_type_list[1].desc}}</div>
+          </div>
+        </label>
+        <!--同城配送-->
+        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.one_hour_send_switch">
+          <checkbox style="transform: scale(.8)" color="#00A8FF" value="2" :checked="prod_send_type_list[2].checked"></checkbox>
+          <div class="label p-10">
+            <div class="title m-b-4">{{prod_send_type_list[2].title}}</div>
+            <div class="desc fz-12 c9">{{prod_send_type_list[2].desc}}</div>
+          </div>
+        </label>
+      </checkbox-group>
+      <button class="btn btn-primary m-t-35" @click="closePop('sendType')">确认</button>
     </popup-layer>
 
     <popup-layer title="订单类型" ref="orderType" >
@@ -651,7 +701,7 @@
   import {
     checkIsLogin,
     chooseImageByPromise,
-    confirm, createUpTaskArr,
+    confirm, createUpTaskArr, findArrayIdx,
     getArrColumn,
     getDomain, objTranslate,
     uploadImages,
@@ -730,8 +780,15 @@
         {title: '虚拟订单', desc: '买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成'},
         {title: '其他', desc: '买家下单-买家付款-订单完成'}
       ],
+      prod_send_type_str: '',
+      prod_send_type_list: [
+        {name: 'express', title: '快递发货', checked: false, desc: '需在"物流管理-普通物流"中进行相关配置'},
+        {name: 'city_express', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
+        {name: 'self_get', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
+      ],
       order_temp_text: '', //
       formData: {
+
         Products_Index: 1,
         Products_Name: '',
         Products_Category: '', // 系统商品分类
@@ -747,7 +804,7 @@
         Product_backup: null,
         Products_Type: '', // 产品属性类型，和规格有关。如果specs再编辑模式下被全部删除，则需手动置为''
         // 运费
-        fee_type: 1,
+        fee_type: '',
         fix_fee: '',
         Products_Description: '',
         shipping_temp: null,
@@ -782,10 +839,9 @@
         deep: true,
         handler(newVal) {
           const upDoneTotal = newVal.filter(row => row.task_progress === 100).length
-          if(upDoneTotal<newVal.length){
+          if (upDoneTotal < newVal.length) {
             this.$refs.uploadLoading.setMsg('正在上传图片' + (upDoneTotal + 1) + '/' + newVal.length)
           }
-
         }
       }
       // formData: {
@@ -796,6 +852,29 @@
       // }
     },
     methods: {
+      bindFeeSave() {
+        if (this.formData.fee_type === 2 && !this.formData.Products_Weight) {
+          error('勾选物流模板必须设置商品重量')
+          return
+        }
+        this.closePop('feeSetting')
+      },
+      // 更新选择结果
+      setSendType(e) {
+        const vals = e.$wx.detail.value
+        for (var idx in this.prod_send_type_list) {
+          console.log(vals, idx, vals.includes(idx))
+          this.$set(this.prod_send_type_list[idx], 'checked', vals.includes(idx))
+        }
+
+        const checkList = this.prod_send_type_list.filter(row => row.checked)
+
+        if (checkList.length > 0) {
+          this.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
+        } else {
+          this.prod_send_type_str = ''
+        }
+      },
       openOrderTempl() {
         this.$linkTo('/pages/order/OrderTmplList?mode=goodsForm&select=' + this.formData.order_temp_id)
       },
@@ -961,11 +1040,15 @@
                 if (row.prod_order_type === 0) {
                   return floatNumber.test(val) && parseFloat(val) > 0
                 }
+                if (row.fee_type === 2 && !val) {
+                  return false
+                }
                 return true
               }
+
             },
             message: {
-              limit: '实物订单必须设置重量'
+              limit: '必须设置商品重量'
             }
           },
           is_waimai: {
@@ -996,12 +1079,27 @@
 
         const {mobile_prod_attr_name} = this._default
 
+        var delivery_method = {
+          express: 0, // (快递发货)
+          city_express: 0, // (同城配送)
+          self_get: 0// (到店自提)
+        }
+        for (var key in delivery_method) {
+          const idx = findArrayIdx(this.prod_send_type_list, {name: key})
+          if (idx !== false) {
+            delivery_method[key] = this.prod_send_type_list[idx].checked ? 1 : 0
+          }
+        }
+
+        console.log(delivery_method)
+
         let productInfo = {
           ...this.formData,
           Products_Category,
           Products_BizCategory,
           Products_JSON,
           prod_limit,
+          delivery_method: JSON.stringify(delivery_method),
           Products_Promise: JSON.stringify(Products_Promise),
           coupon_present
         }
@@ -1131,7 +1229,7 @@
           this.shipping_temp = null
         }
         if (feeType === 2) {
-          this.formData.fix_fee = 0
+          this.formData.fix_fee = ''
         }
       },
       bindShopDamageChange() {
@@ -1202,9 +1300,37 @@
       toEditImgList() {
         this.$store.commit('productImgList', this.imgs)
       },
+      bindThumbDel(idx) {
+        confirm({
+          title: '操作提醒',
+          content: '是否移除该图片，该操作无法撤回'
+        }).then(() => {
+          this.imgs.splice(idx, 1)
+        }).catch(() => {
+
+        })
+      },
+      bindThumbPre(idx) {
+        if (idx === 0) return
+        const currentPath = this.imgs[idx]
+        const tempPath = this.imgs[idx - 1]
+        this.$set(this.imgs, idx - 1, currentPath)
+        this.$set(this.imgs, idx, tempPath)
+      },
+      bindThumbNext(idx) {
+        if (idx === this.imgs.length - 1) return
+        const currentPath = this.imgs[idx]
+        const tempPath = this.imgs[idx + 1]
+        this.$set(this.imgs, idx + 1, currentPath)
+        this.$set(this.imgs, idx, tempPath)
+      },
+      taggleImgEditStatus() {
+
+      },
       bindThumbClick(idx, img) {
         wx.showActionSheet({
-          itemList: ['预览图片', '移除图片'],
+          //, '移除图片'
+          itemList: ['预览图片'],
           success: (res) => {
             const {tapIndex} = res
 
@@ -1311,6 +1437,24 @@
           if (this.Products_ID) {
             const productData = await getProductDetail({prod_id: this.Products_ID}, {onlyData: true}).catch(() => { throw Error('获取商品信息失败') })
             console.log('productData is', productData)
+
+            const delivery_method = Object.assign({
+              express: 0, // (快递发货)
+              city_express: 0, // (同城配送)
+              self_get: 0// (到店自提)
+            }, productData.delivery_method)
+
+            for (var idx in this.prod_send_type_list) {
+              this.$set(this.prod_send_type_list[idx], 'checked', !!delivery_method[this.prod_send_type_list[idx].name])
+            }
+
+            const checkList = this.prod_send_type_list.filter(row => row.checked)
+
+            if (checkList.length > 0) {
+              this.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
+            } else {
+              this.prod_send_type_str = ''
+            }
 
             // prod_limit: {switch: 0, limit: {type: 0, type_name: "", num: 0}}
             // limit: {type: 0, type_name: "", num: 0}
@@ -1525,6 +1669,12 @@
       margin-right: 20rpx;
       position: relative;
       background-size: 100% 100%;
+      .img-actions{
+        width: 100rpx;
+        position: absolute;
+        bottom: 20rpx;
+        left: 15rpx;
+      }
       .icon-delete{
         position: absolute;
         width: 16px;
@@ -1567,12 +1717,14 @@
     /*font-size: 16px;*/
     .group-cell{
       background: white;
+      padding-right: 20rpx;
+      margin-bottom: 20rpx;
       .cell-item{
         .label{
           font-size: 15px;
         }
         .content{
-          padding-right : 20rpx;
+          /*padding-right : 20rpx;*/
           text-align: left;
           .line-input{
             border:1px solid #eee;
@@ -1581,6 +1733,9 @@
             text-align: center;
             font-size: 14px;
           }
+        }
+        .right{
+          margin-right: 0;
         }
       }
     }
