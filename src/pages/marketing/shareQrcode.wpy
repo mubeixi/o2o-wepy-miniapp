@@ -28,7 +28,7 @@
         </div>
         <div class="control">
           <button @click="backSetting" class="action-btn-sure ">取消</button>
-          <button open-type='openSetting' bindopensetting="openSetting" class="btn-sub action-btn-sure">确定</button>
+          <button open-type="openSetting" bindopensetting="openSetting" class="btn-sub action-btn-sure">确定</button>
         </div>
       </div>
     </wzw-dialog>
@@ -170,6 +170,7 @@
           const wrapHeight = 1500
           const wrapWidth = 1100
           const ctx = canvasInstance
+
 
           const userInfo = {
             avatar: getDomain(this.bizInfo.biz_logo),
@@ -387,6 +388,7 @@
 </style>
 <config>
   {
+    "navigationBarTitleText": "店铺海报",
     "usingComponents": {
       "wzw-dialog": "~@/components/ModelComponents",
       "wzw-im-tip": "~@/components/wzw-im-tip",

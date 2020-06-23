@@ -4,7 +4,12 @@
 }
 </style>
 <template>
-  <picker class="picker-mbx" mode="multiSelector" value="{{dateTime}}" bindchange="changeDateTime" bindcolumnchange="changeDateTimeColumn" range="{{dateTimeArray}}">
+  <picker class="picker-mbx"
+          mode="multiSelector"
+          value="{{dateTime}}"
+          bindchange="changeDateTime"
+          bindcolumnchange="changeDateTimeColumn"
+          range="{{dateTimeArray}}">
     <view class="text">
       <div v-if="selected">{{strTime}}</div>
       <div v-else><slot></slot></div>
@@ -100,15 +105,18 @@
         // }
         // this.dateTimeArray = dateArr
         // this.dateTime = arr
+        if (this.mode !== 'time') {
           // 月份更改 对应的天数 日  也更改
-        const {column, value} = e.$wx.detail
-        this.$set(this.dateTime, column, value)
-        let dateArr = this.dateTimeArray
-        if ([1, 0].includes(column)) {
-          const newDayList = getMonthDay(dateArr[0][this.dateTime[0]], dateArr[1][this.dateTime[1]])
-          this.$set(this.dateTimeArray, 2, newDayList)
-          if (!newDayList.hasOwnProperty(this.dateTime[2])) this.$set(this.dateTime, 2, 0)
+          const {column, value} = e.$wx.detail
+          this.$set(this.dateTime, column, value)
+          let dateArr = this.dateTimeArray
+          if ([1, 0].includes(column)) {
+            const newDayList = getMonthDay(dateArr[0][this.dateTime[0]], dateArr[1][this.dateTime[1]])
+            this.$set(this.dateTimeArray, 2, newDayList)
+            if (!newDayList.hasOwnProperty(this.dateTime[2])) this.$set(this.dateTime, 2, 0)
+          }
         }
+
 
       }
     }

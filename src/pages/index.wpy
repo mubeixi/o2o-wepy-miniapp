@@ -2,16 +2,23 @@
   <div class="page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="head" >
-      <div class="base" @click.stop="$linkTo('/pages/store/StoreSetting')"  v-if="AccessToken">
-        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"></image>
-        <span class="store-title">{{info.biz_shop_name}}</span>
+      <div class="base"   v-if="AccessToken">
+        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"  @click.stop="$linkTo('/pages/store/StoreSetting')"></image>
+        <block v-if="info.biz_shop_name">
+          <span class="store-title" @click.stop="$linkTo('/pages/store/StoreSetting')">{{info.biz_shop_name}}</span>
+        </block>
+        <block v-else>
+          <span class="store-title store-setting-name" @click.stop="$linkTo('/pages/store/StoreInfo')">设置店名 <icon type="iconarrowleft" color="#fdad58"  class="iconarrowleft"></icon></span>
+
+        </block>
+
       </div>
       <div class="base" @click.stop="$linkTo('/pages/user/login')"  v-else>
           <div class="login-main">
             登录/注册
           </div>
       </div>
-      <template v-if="AccessToken && info.apply_switch">
+      <div class="flex flex-vertical-center" v-if="AccessToken && info.apply_switch">
         <div class="action"  v-if="status==2" @click.stop="goBusiness">
           <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
@@ -20,7 +27,7 @@
           <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
         </div>
-      </template>
+      </div>
     </div>
 
     <div class="finance-box" >
@@ -81,7 +88,8 @@
           <div class="grid-item" @click="goOrder">
             <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
-              订单管理<span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>
+              订单管理
+<!--              <span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>-->
 <!--              <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)">-->
 <!--                 -->
 <!--              </div>-->
@@ -110,6 +118,21 @@
             </div>
           </div>
         </div>
+        <div class="grid-row"  v-if="AccessToken&&info.live_flag===1">
+
+          <div class="grid-item" @click="goLive">
+            <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
+            <div class="grid-item-title">直播申请</div>
+          </div>
+
+          <div class="grid-item">
+
+          </div>
+
+          <div class="grid-item">
+
+          </div>
+        </div>
       </div>
 
     </div>
@@ -118,7 +141,7 @@
       <copyright></copyright>
     </div>
 
-
+<!--    <fun-tabbar></fun-tabbar>-->
   </div>
 </template>
 
@@ -131,12 +154,13 @@
   import { bizLogin, initInfo } from '../api/system'
   import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
-  import { get_order_num, getBackOrderNum } from '../api/order'
-  import { checkIsLogin, checkIsSettle, confirm, ls } from '../common/helper'
+  import { getOrderNum, getBackOrderNum } from '../api/order'
+  import { checkIsLogin, checkIsSettle, confirm, findArrayIdx, getArrColumn, ls } from '../common/helper'
   import IM from '../common/Im/Im'
   import { Exception } from '../common/Exception'
   import eventHub from '../common/eventHub'
   import { getAccessToken } from '../common/request'
+  import { getLiveApplyStatus } from '@/api/live'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -144,6 +168,7 @@
       storeInfo: {
         volidate: false
       },
+      liveInfo: {},
       orderBackNum: {
         orderSum: 0,
         waitprocess: 0,
@@ -161,6 +186,14 @@
       }
     },
     methods: {
+      goLive() {
+        if (!checkIsLogin(1, 1)) return
+        if (this.liveInfo.id) {
+          linkTo('/pages/live/room')
+        } else {
+          linkTo('/pages/live/apply')
+        }
+      },
       goStoreSetting() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreSetting')
@@ -256,11 +289,22 @@
 
         })
       },
+      async refreshTabTag() {
+        if (!eventHub.imInstance) return
+        const count = await eventHub.imInstance.getNoReadMsgCount()
+        if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+          console.log('更新IM下标数量' + count)
+          this.$wx.getTabBar().setData({
+            tags: [0, count]
+          })
+        }
+      },
       async getInit() {
         try {
         // 初始化商户信息
           await initInfo().then(res => {
             this.info = res.data
+            this.info.live_flag = Number(this.info.live_flag)
             // 利用开关控制是否提示入驻
             if (this.info.apply_switch && !this.info.entry_process) {
               confirm({ title: '提示', content: '你还未入驻成功，即将前往入驻页面' }).then(() => {
@@ -269,21 +313,26 @@
             }
           }).catch(err => { throw Error(err.msg) })
 
-          let arr = await getBizInfo({}, {onlyData: true, tip: 'loading'}).catch(e => { throw Error(e.msg) })
+          let arr = await getBizInfo({}, {onlyData: true}).catch(e => { throw Error(e.msg) })
           this.infoData = arr[0]
           // 每次刷新请求接口 是否入驻
-          if (this.infoData.status) {
-            this.status = this.infoData.status
-            ls.set('status', this.infoData.status)
+          if (this.infoData.real_status) {
+            this.status = this.infoData.real_status
+            ls.set('status', this.infoData.real_status)
           }
 
           this.$store.commit('SET_BIZ_INFO', this.infoData)
 
           // 订单角标
-          this.orderNum = await get_order_num({}).then(res => res.data).catch(err => {})
+          this.orderNum = await getOrderNum({}).then(res => res.data).catch(err => {})
           this.orderBackNum = await getBackOrderNum({}).then(res => res.data).catch(err => {})
-
           this.orderBackNum.orderSum = this.orderBackNum.waitprocess * 1 + this.orderBackNum.waitconfirm * 1
+
+          // 直播的事情
+          const live = await getLiveApplyStatus().then(res => res.data).catch(err => { throw Error(err.msg) })
+          if (live) {
+            this.liveInfo = live
+          }
 
           if (!ls.get('listenStatus')) {
             // IM全局
@@ -293,18 +342,26 @@
             await imInstance.start() // 等拿token
 
             imInstance.openListen()
-
             eventHub.imInstance = imInstance // 全局用一个句柄
           }
+
+          this.refreshTabTag()
         } catch (e) {
           Exception.handle(e)
         }
       }
     },
-    onload() {
+    onLoad() {
 
     },
     onShow() {
+      if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+        console.log('初始化？？？')
+        this.$wx.getTabBar().setData({
+          selected: 0
+        })
+      }
+
       this.AccessToken = getAccessToken()
       if (this.AccessToken) {
         this.getInit()
@@ -312,7 +369,6 @@
       this.status = ls.get('status')
     },
     created() {
-
     }
 
   })
@@ -321,7 +377,9 @@
 <style lang="scss">
   @import "../assets/variables.scss";
   @import "../assets/mixins.scss";
-
+  .page-wrap{
+    padding-bottom: 50px;
+  }
   .order-tag{
     color:#fff;
     display: block;
@@ -497,6 +555,13 @@
     font-size: 18px;
     padding: 10rpx;
     font-weight: bold;
+  }
+  .store-setting-name{
+    display: flex;
+    align-items: center;
+    color: #fdad58 !important;
+    height: 40rpx;
+    line-height: 40rpx;
   }
 
 

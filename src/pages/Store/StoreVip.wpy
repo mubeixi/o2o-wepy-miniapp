@@ -16,7 +16,7 @@
         价格
       </div>
       <div class="store-titles">
-        <input type="number" class="price-input" placeholder="请输入价格" v-model="price"/>
+        <input type="digit" class="price-input" placeholder="请输入价格" v-model="price"/>
         元
       </div>
     </div>

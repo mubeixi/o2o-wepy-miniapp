@@ -4,27 +4,31 @@
       <div class="order-tab flex flex-vertical-center fz14 c3 p-t-10">
           <div class="order-item" :class="{'active':status==-1}" @click="changeTab(-1)">
             全部
+<!--            <span  class="order-tag" v-if="orderNumber.sumNumber>0">{{orderNumber.sumNumber>99?'n':orderNumber.sumNumber}}</span>-->
           </div>
           <div class="order-item" :class="{'active':status==1}"   @click="changeTab(1)">
             待付款
+            <span  class="order-tag" v-if="orderNumber.waitpay>0">{{orderNumber.waitpay>99?'n':orderNumber.waitpay}}</span>
           </div>
           <div class="order-item"  :class="{'active':status==2}"   @click="changeTab(2)">
             待发货
+            <span  class="order-tag" v-if="orderNumber.waitsend>0">{{orderNumber.waitsend>99?'n':orderNumber.waitsend}}</span>
           </div>
           <div class="order-item"  :class="{'active':status==0}"  @click="changeTab(0)">
             待确认
+            <span  class="order-tag" v-if="orderNumber.waitconfirm>0">{{orderNumber.waitconfirm>99?'n':orderNumber.waitconfirm}}</span>
           </div>
           <div class="order-item"  :class="{'active':status==4}"   @click="changeTab(4)">
             已完成
           </div>
       </div>
-      <div class="m-t-15 m-l-10 order-search flex flex-vertical-center">
+      <div class="m-t-15 m-l-10 m-r-10 order-search flex flex-vertical-center">
         <input type="text" bindconfirm="searchList"  v-model="prod_name" placeholder="请输入商品关键字" confirm-type="search" class="input-search"  placeholder-class="_place"/>
         <icon  type="iconsearch1" size="16"  color="#999" class="icon-search"></icon>
-        <div class="erweima m-l-15" @click="$linkTo('/pages/order/CheckChannel')">
-          <icon  type="iconsaoma" size="20"  color="#00A8FF" ></icon>
-          <div>核销</div>
-        </div>
+<!--        <div class="erweima m-l-15" @click="$linkTo('/pages/order/CheckChannel')">-->
+<!--          <icon  type="iconsaoma" size="20"  color="#00A8FF" ></icon>-->
+<!--          <div>核销</div>-->
+<!--        </div>-->
       </div>
 
       <div class="list-item p-b-13" v-for="(item,index) of list" :key="index">
@@ -42,7 +46,7 @@
                 </div>
             </div>
             <div class="item-center p-t-10  p-l-7 p-r-12 flex " v-for="(pro,ind) of item.prod_list" :key="ind"  @click="sendOrder(item.Order_ID)">
-              <fun-img class="thumb m-r-14" :src="pro.prod_img"></fun-img>
+              <image class="thumb m-r-14" :src="pro.prod_img"></image>
               <div class="flex1" >
                   <div class="fz-14 c3 item-title m-b-10">
                     {{pro.prod_name}}
@@ -60,6 +64,17 @@
                   <div class="item-price">
                     ¥ <span class="fz-15">{{pro.prod_price}}</span>
                   </div>
+              </div>
+            </div>
+
+            <div
+              class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between"
+              v-if="item.isLocal">
+              <div v-if="item.Order_Status==3" class="item-btn c6 danger-btn m-r-10" @click="cancelLocalSend(item.Order_ID)">
+                取消配送
+              </div>
+              <div v-if="item.dadaFail" class="item-btn c6 danger-btn" @click="bindLocalSendFail(item)">
+                投递异常
               </div>
             </div>
             <div class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between" v-if="item.Order_Status==2">
@@ -98,6 +113,20 @@
       </div>
     </div>
 
+    <popup-layer ref="localSendCancelPopup">
+      <div class="local-cancel-wrap">
+        <div class="title">
+          <div class="text">选择取消原因</div>
+          <div @click="subReasonFn" class="sub-btn">确认</div>
+        </div>
+        <picker-view indicator-style="height: 30px;" style="width: 100%; height: 150px;" @change="bindCancelReasonChange">
+          <picker-view-column >
+            <view style="line-height: 30px; text-align: center;" class="fz-14" v-for="(item,index) in cancel_reason_list" :key="item.id">{{item.reason}}</view>
+          </picker-view-column>
+        </picker-view>
+      </div>
+    </popup-layer>
+
   </div>
 </template>
 
@@ -105,14 +134,28 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getOrder, systemRejectOrder } from '../../api/order'
-  import { error, toast } from '../../common/fun'
+  import {
+    cityExpressCancelReason,
+    cityExpressOrderReject,
+    dadaExceptionOrderReceive,
+    getOrder,
+    getOrderNum,
+    systemRejectOrder
+  } from '../../api/order'
+  import { error, hideLoading, showLoading, toast } from '../../common/fun'
+  import {confirm} from '../../common/helper'
+  import { Exception } from '../../common/Exception'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      orderNumber: {
+      }, // 角标对象
+      cancel_reason_list: [],
+      current_handle_order: '',
       show: false,
+      reasonId: '',
       prod_name: '',
       page: 1,
       pageSize: 4,
@@ -166,8 +209,15 @@
     onShow() {
       this.page = 1
       this.getOrder(1)
+      this.getOrderIndex()
     },
     methods: {
+      async getOrderIndex() {
+        let arr = await getOrderNum({}, {onlyData: true}).catch(e => {
+          error(e.msg || '获取订单角标错误')
+        })
+        this.orderNumber = arr.type_data[this.Order_Type]
+      },
       sendOrder(id) {
         let data = '/pages/order/OrderRetailSend?order_id=' + id
         this.$linkTo(data)
@@ -186,6 +236,68 @@
           toast('拒单成功')
           this.getOrder(1)
         }).catch(e => {})
+      },
+      async bindLocalSendFail(orderInfo) {
+        try {
+          const {Order_ID} = orderInfo
+
+          await confirm({
+            title: '操作提醒',
+            content: '该操作将取消同城配送订单，您需要重新发货才能继续为客户配送该订单。且该操作无法撤回,是否确认?'
+          }).catch(res => { throw Error('nocare') })
+          showLoading()
+          await dadaExceptionOrderReceive({Order_ID}).catch(err => { throw Error(err.msg) })
+
+          this.page = 1
+          this.getOrder(1)
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
+      },
+      bindCancelReasonChange(e) {
+        console.log(e.$wx)
+        const val = e.$wx.detail.value
+        this.reasonId = this.cancel_reason_list[val[0]].id
+      },
+      async subReasonFn() {
+        try {
+          showLoading('操作中')
+          cityExpressOrderReject({reason_id: this.reasonId, Order_ID: this.current_handle_order}).catch(err => Exception.handle(Error(err.msg)))
+          toast('操作成功')
+          this.$closePop('localSendCancelPopup')
+          this.page = 1
+          this.getOrder(1)
+        } catch (e) {
+
+        } finally {
+          hideLoading()
+        }
+      },
+      async cancelLocalSend(Order_ID) {
+        try {
+          await confirm({
+            title: '操作提醒',
+            content: '该操作将取消同城配送订单，您需要重新发货才能继续为客户配送该订单。且该操作无法撤回,是否确认?'
+          }).catch(res => { throw Error('nocare') })
+
+          showLoading()
+          const {can_cancel = 0, cancel_reason_list = []} = await cityExpressCancelReason({Order_ID}).then(res => res.data).catch(err => {
+            Exception.handle(Error(err.msg))
+          })
+          if (can_cancel) {
+            this.current_handle_order = Order_ID
+            this.cancel_reason_list = cancel_reason_list
+            this.$openPop('localSendCancelPopup')
+          } else {
+            error('该订单无法取消')
+          }
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
       },
       rejectOrder(id) {
         this.orderId = id
@@ -216,16 +328,32 @@
         if (this.status >= 0) {
           data.Order_Status = this.status
         }
-        let arr = await getOrder(data, {tip: '加载中'}).catch(e => { throw error('获取列表错误') })
+        let reqData = await getOrder(data, {tip: '加载中'}).then(res => res.data).catch(e => { throw error('获取列表错误') })
 
-        if (order == 1) {
-          this.list = arr.data
+        let arr = []
+
+        arr = reqData.map(row => {
+          row.dadaFail = false
+          if (Array.isArray(row.city_express_order) && row.city_express_order.length > 0 && row.city_express_order[0].order_status === 9) {
+            row.dadaFail = true
+          }
+          if(row.Order_Shipping && typeof row.Order_Shipping === 'string'){
+            row.Order_Shipping = JSON.parse(row.Order_Shipping)
+          }
+
+          row.isLocal = row.Order_Shipping.Express === '同城配送'
+
+          return row
+        })
+
+        if (order === 1) {
+          this.list = arr
         } else {
-          arr.data.map(item => {
+          arr.map(item => {
             this.list.push(item)
           })
         }
-        this.totalCount = arr.totalCount
+        this.totalCount = reqData.totalCount
 
         for (let item of this.list) {
           for (let it of item['prod_list']) {
@@ -249,6 +377,28 @@
 <style lang="scss">
   @import "../../assets/variables.scss";
   @import "../../assets/mixins.scss";
+  .local-cancel-wrap{
+    .title{
+      padding: 20px 15px ;
+      position: relative;
+      .text{
+
+        text-align: center;
+      }
+      .sub-btn{
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: $fun-primary-color;
+        font-size: 14px;
+        padding:6px 12px;
+        border-radius: 2px;
+        color: #fff;
+        text-align: center;
+      }
+    }
+  }
 
   .order-tab{
     width: 710rpx;
@@ -258,6 +408,7 @@
     .order-item{
       flex: 1;
       text-align: center;
+      position: relative;
     }
     .active{
       color: #00A8FF;
@@ -272,11 +423,15 @@
   .icon-search{
     position: absolute;
     top:20rpx ;
-    left:540rpx ;
+    right:30rpx ;
   }
-  .order-search{position: relative}
+  .order-search{
+    position: relative;
+  }
   .input-search{
-    width: 600rpx;
+    display: block;
+    box-sizing: border-box;
+    flex: 1;
     height:70rpx;
     line-height: 70rpx;
     box-sizing: border-box;
@@ -335,6 +490,7 @@
     display: flex;
     justify-content: flex-end;
   }
+
   .item-btn{
     height: 60rpx;
     line-height: 60rpx;
@@ -342,6 +498,10 @@
     text-align: center;
     border-radius: 6rpx;
     background-color:#EEEEEE;
+  }
+  .danger-btn{
+    background-color: $fun-red-color;
+    color: #fff;
   }
   .item-btn-active{
     background-color: #00A8FF !important;
@@ -387,15 +547,32 @@
       }
     }
   }
+  .order-tag{
+    color:#fff;
+    display: block;
+    width: 14px;
+    height:14px;
+    font-size:12px;
+    text-align: center;
+    line-height: 14px;
+    border-radius: 50%;
+    padding: 2px;
+    background: red;
+    margin-left: 4px;
+    position: absolute;
+    top: 0rpx;
+    right: -10rpx;
+  }
 
 
 </style>
 <config>
   {
   "usingComponents": {
-  "wzw-im-tip": "~@/components/wzw-im-tip",
-  "icon": "~@/components/icon",
-  "fun-img": "~@/components/fun-img"
+    "wzw-im-tip": "~@/components/wzw-im-tip",
+    "popup-layer": "~@/components/popup-layer",
+    "icon": "~@/components/icon",
+    "fun-img": "~@/components/fun-img"
   }
   }
 </config>

@@ -329,7 +329,7 @@
   import { error, hideLoading, modal, showLoading } from '../../common/fun'
   import { getNewOldTradeStatistic, getTradeStatistic, systemProdSales } from '../../api/store'
   import { createF2Chart } from '../../mixins/f2'
-  import { ls, objTranslate } from '../../common/helper'
+  import { getCharCount, ls, objTranslate } from '../../common/helper'
   const moment = require('moment')
   /**
    * 求某个对象组成数组中，某个对象的值占百分比。方便配合f2-chart做饼图
@@ -517,14 +517,47 @@
           this.tabData = tabData
           this.titles = titles
           if (ls.get('today')) {
-            this.time_list = time_list.map(item => {
+            this.time_list = time_list.map(key => {
               // console.log(item)
-              return moment(`${item}:00:00`).format('YYYY-MM-DD HH:mm:ss')
+              // 补齐时间，避免格式问题
+              var timeStr = ''
+              if (getCharCount(key, ':') === 0) {
+                // 需要补时分秒的
+                if (getCharCount(key, ' ') === 0) {
+                  timeStr = `${key} 00:00:00`
+                } else {
+                  // 已经有小时了
+                  timeStr = `${key}:00:00`
+                }
+              }
+              if (getCharCount(key, ':') === 1) {
+                timeStr = `${key}:00`
+              }
+              if (getCharCount(key, ':') === 2) {
+                timeStr = `${key}`
+              }
+              return moment(timeStr).format('YYYY-MM-DD HH:mm:ss')
             })
           } else {
-            this.time_list = time_list.map(item => {
-              console.log(item)
-              return moment(`${item} 00:00:00`).format('YYYY-MM-DD HH:mm:ss')
+            this.time_list = time_list.map(key => {
+              // 补齐时间，避免格式问题
+              var timeStr = ''
+              if (getCharCount(key, ':') === 0) {
+                // 需要补时分秒的
+                if (getCharCount(key, ' ') === 0) {
+                  timeStr = `${key} 00:00:00`
+                } else {
+                  // 已经有小时了
+                  timeStr = `${key}:00:00`
+                }
+              }
+              if (getCharCount(key, ':') === 1) {
+                timeStr = `${key}:00`
+              }
+              if (getCharCount(key, ':') === 2) {
+                timeStr = `${key}`
+              }
+              return moment(timeStr).format('YYYY-MM-DD HH:mm:ss')
             })
           }
 

@@ -10,6 +10,8 @@ import wepy from '@wepy/core'
 import vuex from '@wepy/x'
 import { FunError } from './mixins'
 import { ls } from './common/helper'
+// import IM from '@/common/Im/Im'
+// import eventHub from '@/common/eventHub'
 
 wepy.use(vuex)
 
@@ -33,12 +35,32 @@ wepy.app({
   },
 
   onLaunch() {
+    var obj = wx.getLaunchOptionsSync()
+    if (obj.query.users_id) {
+      ls.set('users_id', obj.query.users_id)
+    }
+
     // this.testAsync()
     // eventHub.$on('app-launch', (...args) => {
     //   console.log('app-launch event emitted, the params are:')
     //   console.log(args)
     // })
     ls.remove('listenStatus')
+  },
+  onShow() {
+
+    // 如果有的
+    // if (eventHub.imInstance) {
+    //   // IM全局
+    //   const imInstance = new IM()
+    //   // 设置本地用户信息
+    //   imInstance.setSendInfo({ type: 'biz', id: this.infoData.id, name: this.infoData.biz_shop_name, avatar: this.infoData.biz_logo })
+    //   await imInstance.start() // 等拿token
+
+    //   imInstance.openListen()
+    //   eventHub.imInstance = imInstance // 全局用一个句柄
+    // }
+
   },
 
   methods: {
@@ -100,11 +122,14 @@ wepy.app({
       "pages/product/ProductManager",
       "pages/product/DiyCate",
       "pages/product/form",
+      "pages/product/imgs",
       "pages/user/login",
       "pages/statistics/dashboard",
       "pages/statistics/SeckillData",
       "pages/marketing/Seckill",
       "pages/marketing/SeckillAdd",
+      "pages/marketing/Group",
+      "pages/marketing/GroupForm",
       "pages/marketing/SeckillAddSelect",
       "pages/marketing/FlashSale",
       "pages/marketing/FlashSaleForm",
@@ -112,6 +137,7 @@ wepy.app({
       "pages/marketing/GiveAdd",
       "pages/marketing/GiveAddSelect",
       "pages/marketing/FullReduce",
+      "pages/store/OfflinePay",
       "pages/order/OrderRetail",
       "pages/order/OrderRefund",
       "pages/order/OrderRefundDetail",
@@ -128,6 +154,8 @@ wepy.app({
       "pages/marketing/shareQrcode",
       "pages/support/ImList",
       "pages/support/Im",
+      "pages/live/apply",
+      "pages/live/room",
       "pages/demo"
 
     ],
@@ -138,23 +166,24 @@ wepy.app({
         navigationBarTextStyle: "black"
     },
     tabBar: {
-      borderStyle: "black",
-      color: "#999999",
-      selectedColor: "#26C78D",
-      list: [
-        {
-          pagePath: "pages/index",
-          iconPath: "/static/tabbar/find.png",
-          selectedIconPath: "/static/tabbar/find-a.png",
-          text: "首页"
-        },
-        {
-          pagePath: "pages/support/ImList",
-          iconPath: "/static/tabbar/notify.png",
-          selectedIconPath: "/static/tabbar/notify-a.png",
-          text: "消息"
-        }
-      ]
+        "custom": true,
+        borderStyle: "black",
+        color: "#999999",
+        selectedColor: "#26C78D",
+        list: [
+            {
+                pagePath: "pages/index",
+                iconPath: "/static/tabbar/find.png",
+                selectedIconPath: "/static/tabbar/find-a.png",
+                text: "首页"
+            },
+            {
+                pagePath: "pages/support/ImList",
+                iconPath: "/static/tabbar/notify.png",
+                selectedIconPath: "/static/tabbar/notify-a.png",
+                text: "消息"
+            }
+        ]
     }
 }
 </config>

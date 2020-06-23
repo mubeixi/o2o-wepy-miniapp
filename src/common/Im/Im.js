@@ -1,11 +1,12 @@
 import { IM_APPID, IM_APPSECRET, IM_WSS_URL } from '../env'
-import { bindUid, getAccessToken, sendMsg, getMsgList } from './Fetch'
+import { bindUid, getAccessToken, sendMsg, getMsgList, getNoReadMsg, checkOnline } from './Fetch'
 import moment from 'moment'
 import Promisify from '../promisify'
 import { ls as Storage, createUpTaskArr, uploadImages, getDomain } from '../helper'
 import { modal } from '../fun'
 import {Exception} from '../Exception'
 import eventHub from '../eventHub'
+import store from '@/store'
 
 // 消息类,就先不用继承了吧
 /**
@@ -217,6 +218,7 @@ class IM {
    * @param ext
    */
   setSendInfo ({ type, id, ...ext }) {
+    console.log(type, id)
     // 获取发送人的信息要用的
     this.setIdentity({ type, id })
 
@@ -315,11 +317,30 @@ class IM {
     this.intervalInstance = setInterval(this._holdHeartBeat.bind(this), this.heartBeatTimout)
   }
 
+  // 清空之前的聊天记录
+  clearHistory() {
+    this.chatList = [] // 清空记录
+    this.page = 1 // 重置页码
+  }
+
   close () {
     // this.task.close()
     wx.closeSocket()
     this.clearIntervalFn()
     // this.task = null
+  }
+
+  /**
+   * 获取未读消息总数
+   */
+  async getNoReadMsgCount() {
+    const total = await getNoReadMsg({out_uid: this.getOutUid()}).then(res => res.totalCount).catch(err => {
+      console.log(err.msg || '获取未读记录失败')
+      return 0
+    })
+    console.log(total)
+    store.commit('SET_TABBAR_TAG', {idx: 1, num: total})
+    return total
   }
 
   /**
@@ -335,6 +356,17 @@ class IM {
     eventHub.$emit('IM_EVENT', 'im listern stop')
     this.listenStatus = 0 // 开启监听
     Storage.set('listenStatus', 0, 1)
+  }
+
+  /**
+   * check是否在线
+   * @returns {Promise<boolean>}
+   */
+  async checkIsOnline() {
+    await checkOnline({ out_uid: this.getOutUid() }).catch(() => {
+      return false
+    })
+    return true
   }
 
   /**
@@ -356,9 +388,8 @@ class IM {
         break
     }
 
-    //不然本地发送的会没有头像
-    Object.assign(message,{nickname:this.sendName,headimg:this.sendAvatar})
-
+    // 不然本地发送的会没有头像
+    Object.assign(message, {nickname: this.sendName, avatar: this.sendAvatar})
 
     if (type === 'image') {
       await message.getImgInfo()
@@ -374,6 +405,8 @@ class IM {
       // 为了预防有需要异步上传的情况
       const content = await message.getContent(chatIdx, this.chatList)
 
+      // checkOnline({ out_uid: this.getOutUid() })
+
       sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }).then(res => {
         console.log('发送成功', res)
         this.chatList[chatIdx].sendStatus = 1 // 标记成功
@@ -381,6 +414,18 @@ class IM {
       }).catch(err => {
         console.log('消息发送失败')
         this.chatList[chatIdx].sendStatus = -1 // 标记失败
+        // 重连啊
+        if (err.errorCode === 66000) {
+          this._getAccessToken().then(res => {
+            sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }).then(res => {
+              console.log('发送成功', res)
+              this.chatList[chatIdx].sendStatus = 1 // 标记成功
+              return res.data
+            }).catch(() => {
+              console.log('消息重发失败')
+            })
+          }).catch(() => {})
+        }
         Exception.handle(Error(err.msg))
       })
     } else {
@@ -437,7 +482,11 @@ class IM {
 
     // 只允许限定的类别
     if (this.allowMsgType.includes(type)) {
-      this.chatList.push({ ...messageObj, direction: 'from' })
+      // 只有IM详情页才需要
+      if (this.receiveIdentity && this.receiveId && messageObj.from_uid === this.getToUid()) {
+        this.chatList.push({ ...messageObj, direction: 'from' })
+      }
+
       eventHub.$emit('getMsg', {...messageObj})
       if (this.listenStatus) {
         eventHub.$emit('IM_TAKE_MSG', {...messageObj})

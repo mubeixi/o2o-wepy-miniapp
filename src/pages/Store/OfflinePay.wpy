@@ -1,0 +1,226 @@
+<template>
+  <view class="page-wrap ">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="preview-box" >
+      <image v-if="current_url" class="preview" @click="preFn" :src="current_url" mode="widthFix" />
+    </div>
+
+
+    <div class="handle-box">
+      <div class="share-btn" @click="saveImg">保存收款码</div>
+    </div>
+
+    <wzw-dialog ref="permissionModal" :autoClose="false" positions="center">
+      <div class="refuseApplyDialog">
+        <div class="c3 fz-14 modal-title">
+          是否开启相册权限
+        </div>
+        <div class="fz-12 m-b-20 m-t-10 c9">
+          很抱歉，该功能您需开启相册授权才能保存
+        </div>
+        <div class="control">
+          <button @click="backSetting" class="action-btn-sure ">取消</button>
+          <button open-type="openSetting" bindopensetting="openSetting" class="btn-sub action-btn-sure">确定</button>
+        </div>
+      </div>
+    </wzw-dialog>
+
+  </view>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { bizPaySign } from '../../api/store'
+  import { error, hideLoading, showLoading, toast } from '../../common/fun'
+  import { getDomain, saveImageToDisk } from '../../common/helper'
+  import { Exception } from '@/common/Exception'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      qrcode: '',
+      drawPosterDone: false,
+      type: '',
+      again: '',
+      current_url: '',
+      current_poster: null,
+      currentIdx: 0,
+      is_build: false,
+      qrimg: '',
+      poster_list: [],
+      // userInfo:{},
+      disInfo: {},
+      info: {
+        dis_config: {},
+        total_sales: '',
+        total_income: '',
+        balance: ''
+      }//
+    },
+    created () {
+      this.initFunc(this.type, this.again)
+    },
+    onShow () {
+      this.$refs.permissionModal.close()
+    },
+    onLoad () {
+
+    },
+    methods: {
+      getDomain,
+      backSetting () {
+        this.$refs.permissionModal.close()
+      },
+      openSetting () {
+        const _self = this
+        wx.authorize({
+          scope: 'scope.writePhotosAlbum',
+          success () {
+            _self.saveFn()
+          },
+          fail () {
+            _self.$refs.permissionModal.show()
+            error('拒绝相册授权,保存失败')
+          }
+        })
+      },
+      saveImg () {
+        const _self = this
+        wx.getSetting({
+          success: (res) => {
+            if (!res.authSetting['scope.writePhotosAlbum']) {
+              // this.$refs.permissionModal.show()
+              this.openSetting()
+            } else { // 用户已经授权过了
+              _self.saveFn()
+            }
+          }
+        })
+      },
+      async saveFn () {
+        showLoading('保存中')
+        const handleRT = await saveImageToDisk({
+          fileUrl: this.current_url,
+          type: 'online'
+        })
+        hideLoading()
+        if (handleRT === false) {
+          error('保存失败')
+          return
+        }
+        toast('保存成功')
+      },
+      preFn () {
+        if (!this.current_url) {
+          error('请选择模板')
+          return
+        }
+        wx.previewImage({
+          urls: [this.current_url]
+        })
+      },
+      async initFunc () {
+        try {
+          showLoading('获取中')
+          this.current_url = await bizPaySign().then(res => res.data.img_url).catch((err) => { throw Error(err.msg) })
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
+      },
+      goBack () {
+        this.$back()
+      }
+    }
+  })
+</script>
+<style lang="scss" scoped>
+  @import "../../assets/variables.scss";
+
+  .page-wrap{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .preview-box{
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .preview {
+    height: auto;
+    margin: 0 auto;
+    max-width: 550rpx;
+  }
+
+  .handle-box {
+    width: 750rpx;
+    height: 90rpx;
+    padding-bottom:constant(safe-area-inset-bottom);
+    padding-bottom:env(safe-area-inset-bottom);
+    background: white;
+    .share-btn {
+      width: 750rpx;
+      text-align: center;
+      height: 90rpx;
+      line-height: 90rpx;
+      background: $fun-primary-color;
+      color: white;
+    }
+
+  }
+  .control{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    .action-btn-sure{
+      flex: 1;
+      text-align: center;
+      height: 80rpx;
+      line-height: 80rpx;
+      font-size: 16px;
+      background-color: #FFFFFF;
+      border: 0px;
+    }
+    button::after{
+      width: 0;
+      height: 0;
+    }
+  }
+
+  .refuseApplyDialog{
+    width: 560rpx;
+    box-sizing: border-box;
+    padding-left: 40rpx;
+    padding-right: 40rpx;
+    .modal-title{
+      height: 80rpx;
+      line-height: 80rpx;
+      text-align: center;
+      font-weight: bold;
+    }
+    .btn-sub{
+      color: #1aac19;
+    }
+
+  }
+
+  .page-wrap {
+
+  }
+</style>
+<config>
+{
+  "navigationBarTitleText": "商家收款码",
+  "usingComponents": {
+    "wzw-dialog": "~@/components/ModelComponents",
+    "wzw-im-tip": "~@/components/wzw-im-tip",
+    "copyright": "~@/components/copyright",
+    "icon": "~@/components/icon"
+  }
+}
+</config>

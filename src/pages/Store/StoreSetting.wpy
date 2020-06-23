@@ -53,27 +53,35 @@
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between">
         <div class="store-title">
-          外卖营业时间
+          营业时间
         </div>
         <div class="store-titles flex flex-vertical-center">
           <time class="time-select" @uptime="upStartTime" mode="time" :val="start_time">
-            <span class="fz-14" v-if="start_time">{{start_time}}</span>
-            <span class="fz-14 c9" v-else>请选择开始时间</span>
+
+            <span class="fz-14 c9">{{start_time||'请选择开始时间'}}</span>
           </time>
           <span class="m-l-10 m-r-10">-</span>
           <time class="time-select" @uptime="upEndTime" mode="time" :val="end_time">
-            <span class="fz-14" v-if="end_time">{{end_time}}</span>
-            <span class="fz-14 c9" v-else>请选择结束时间</span>
+            <span class="fz-14 c9">{{end_time||'请选择结束时间'}}</span>
           </time>
           <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
         </div>
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('business_status_popup')">
         <div class="store-title">
-          外卖营业状态
+          营业状态
         </div>
         <div class="store-titles">
           {{business_status==1?'开启':'关闭'}}
+          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        </div>
+      </div>
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('out_time_popup')">
+        <div class="store-title">
+          非营业状态是否允许下单
+        </div>
+        <div class="store-titles">
+          {{out_business_time_order==1?'开启':'关闭'}}
           <icon  type="iconarrowleft" size="16"  color="#999"></icon>
         </div>
       </div>
@@ -120,9 +128,73 @@
             <switch :checked="print_config.auto==1" bindchange="switch1ChangeM" style="transform: scale(.8)"></switch>
           </div>
         </div>
-        <div class="wzw-info">
-          开启此开关后，消费者付款完成后会自动打印小票
+        <div class="wzw-info" style="margin-bottom: 30rpx">
+          开启此开关后，消费者付款完成会自动打印下方开启的订单类型小票
         </div>
+
+        <block v-if="print_config.auto==1">
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              商城订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.shop==1" bindchange="switch1ChangeOrder($event,1)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              外卖订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.waimai==1" bindchange="switch1ChangeOrder($event,2)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              拼团订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.pintuan==1" bindchange="switch1ChangeOrder($event,3)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              赠品订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.gift==1" bindchange="switch1ChangeOrder($event,4)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              秒杀订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.flashsale==1" bindchange="switch1ChangeOrder($event,5)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              限时抢购订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.spike==1" bindchange="switch1ChangeOrder($event,6)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+
+          <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
+            <div class="fz-14">
+              线下到店支付订单
+            </div>
+            <div>
+              <switch :checked="print_config.order_type_list.offline==1" bindchange="switch1ChangeOrder($event,7)" style="transform: scale(.7)"></switch>
+            </div>
+          </div>
+
+        </block>
+
+
 
         <div class="submit-mbx" @click="saveMbx">
           保存
@@ -146,9 +218,26 @@
       </div>
     </model>
 
+    <model ref="out_time_popup">
+        <div class="wzw-title">
+          非营业时间是否允许下单
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content">
+          <div>
+            开启
+          </div>
+          <div>
+            <switch :checked="out_business_time_order==1" bindchange="outTimeChanges" style="transform: scale(.8)"></switch>
+          </div>
+        </div>
+        <div class="wzw-info">
+          店铺的营业状态，关闭后消费者在前台看到的店铺营业状态为已打样
+        </div>
+    </model>
+
       <model ref="business_status_popup">
         <div class="wzw-title">
-          外卖营业状态
+          营业状态
         </div>
         <div class="flex flex-vertical-center flex-justify-between wzw-content">
           <div>
@@ -159,7 +248,7 @@
           </div>
         </div>
         <div class="wzw-info">
-          外卖的营业状态，关闭后消费者在前台看到店铺外卖营业状态是已打样
+          店铺的营业状态，关闭后消费者在前台看到的店铺营业状态为已打样
         </div>
       </model>
 
@@ -209,6 +298,7 @@
     data: {
       formCheckResult: '',
       infoData: {},
+      out_business_time_order:0,//非营业时间是否允许下单
       arrive_get: 0,
       start_time: '',
       end_time: '',
@@ -218,7 +308,16 @@
         sn: '',
         secret: '',
         count: '',
-        auto: ''
+        auto: '',
+        order_type_list: {
+          shop: '',
+          waimai: '',
+          pintuan: '',
+          gift: '',
+          flashsale: '',
+          spike: '',
+          offline: ''
+        }
       }
     },
     onShow() {
@@ -277,10 +376,15 @@
           this.print_config.secret = this.infoData.print_config.secret
           this.print_config.count = this.infoData.print_config.count
           this.print_config.auto = this.infoData.print_config.auto
+          this.out_business_time_order = this.infoData.out_business_time_order
+          if (this.infoData.print_config.order_type_list) {
+            this.print_config.order_type_list = this.infoData.print_config.order_type_list
+          }
           this.business_status = this.infoData.business_status
         })
       },
       upStartTime(e) {
+        console.log(e)
         this.start_time = e
         let data = {
           business_start: this.start_time
@@ -314,6 +418,24 @@
           hideLoading()
         })
       },
+      async outTimeChanges(e){
+        showLoading()
+        let boo = e.$wx.detail.value
+        let data = {}
+        if (boo) {
+          data.out_business_time_order = 1
+        } else {
+          data.out_business_time_order = 0
+        }
+        await opBizInfo(data).then(res => {
+          if (boo) {
+            this.out_business_time_order = 1
+          } else {
+            this.out_business_time_order = 0
+          }
+        }).catch(e => {})
+        hideLoading()
+      },
       async switchStatusChanges(e) {
         showLoading()
         let boo = e.$wx.detail.value
@@ -338,6 +460,58 @@
           this.print_config.auto = 1
         } else {
           this.print_config.auto = 0
+        }
+      },
+      switch1ChangeOrder(e, index) {
+        let boo = e.$wx.detail.value
+        if (boo) {
+          switch (index) {
+            case 1:
+              this.print_config.order_type_list.shop = 1
+              break
+            case 2:
+              this.print_config.order_type_list.waimai = 1
+              break
+            case 3:
+              this.print_config.order_type_list.pintuan = 1
+              break
+            case 4:
+              this.print_config.order_type_list.gift = 1
+              break
+            case 5:
+              this.print_config.order_type_list.flashsale = 1
+              break
+            case 6:
+              this.print_config.order_type_list.spike = 1
+              break
+            case 7:
+              this.print_config.order_type_list.offline = 1
+              break
+          }
+        } else {
+          switch (index) {
+            case 1:
+              this.print_config.order_type_list.shop = 0
+              break
+            case 2:
+              this.print_config.order_type_list.waimai = 0
+              break
+            case 3:
+              this.print_config.order_type_list.pintuan = 0
+              break
+            case 4:
+              this.print_config.order_type_list.gift = 0
+              break
+            case 5:
+              this.print_config.order_type_list.flashsale = 0
+              break
+            case 6:
+              this.print_config.order_type_list.spike = 0
+              break
+            case 7:
+              this.print_config.order_type_list.offline = 0
+              break
+          }
         }
       },
       switch1Changes(e) {

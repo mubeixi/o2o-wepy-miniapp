@@ -1,5 +1,5 @@
 <template>
-  <div class="card-item" :id="msgId">
+  <div class="card-item" :id="msgId" @click="emitClick">
     <div class="time"></div>
 
     <div class="goods-tip-box flex" v-if="message.type==='prod' && message.isTip">
@@ -8,7 +8,7 @@
         <div class="goods-title fz-14 c4">{{message.content.Products_Name}}</div>
         <div class="flex flex-justify-between flex-vertical-c">
           <div class="fz-14 price-selling"><span class="fz-12">￥</span>{{message.content.Products_PriceX}}</div>
-          <div @click="bindProductSend" class="action-btn fz-14">发给商家</div>
+          <div @click.stop="bindProductSend" class="action-btn fz-14">发给商家</div>
         </div>
 
       </div>
@@ -43,10 +43,10 @@
 
         <div v-if="message.type==='image'" class="content-img-wrap">
           <block v-if="message.tempPath">
-            <image @click="previewImg" :style="{width:message.styleObj.width+'px',height:message.styleObj.height+'px'}"  class="content-img" :src="message.tempPath||message.content" ></image>
+            <image @click.stop="previewImg" :style="{width:message.styleObj.width+'px',height:message.styleObj.height+'px'}"  class="content-img" :src="message.tempPath||message.content" ></image>
           </block>
           <block v-else>
-            <image mode="widthFix" @click="previewImg" class="content-img" :src="message.content" ></image>
+            <image mode="widthFix" @click.stop="previewImg" class="content-img" :src="message.content" ></image>
           </block>
 
           <div class="progress-box" v-if="message.taskList[0].progress<100">
@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <div v-if="message.type==='prod' && !message.isTip" class="goods-info-box" @click="toGoods(message.content)">
+        <div v-if="message.type==='prod' && !message.isTip" class="goods-info-box" @click.stop="toGoods(message.content)">
           <div class="cover" :style="{backgroundImage: 'url('+message.content.img+')'}"></div>
           <div class="info">
             <div class="fz-16 price-selling"><span class="fz-14">￥</span>{{message.content.price}}</div>
@@ -92,16 +92,22 @@
       }
     },
     methods: {
-
+      emitClick() {
+        this.$emit('itemClick')
+      },
       toGoods (content) {
         error('暂时无法查看产品')
-        //if (content.hasOwnProperty('url'))linkToEasy(content.url)
+        // if (content.hasOwnProperty('url'))linkToEasy(content.url)
       },
       bindProductSend () {
         // 还是不要有任何关联的好
         this.$emit('bindProductSend', objTranslate(this.message.content))
       },
       previewImg () {
+        // if (this.message.content.indexOf('.gif') !== -1) {
+        //   error('gif暂不支持全屏预览')
+        //   return
+        // }
         const urls = [this.message.content]
         wx.previewImage({
           urls: urls

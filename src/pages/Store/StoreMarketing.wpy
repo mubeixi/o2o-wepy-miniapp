@@ -3,6 +3,10 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="feature-list">
       <div class="feature-row">
+        <div class="feature-item" @click="goGruop" v-if="!initConf.pintuan_switch">
+          <image src="/static/marketing/group.png" class="img"></image>
+          <div class="title">团购</div>
+        </div>
         <div class="feature-item" @click="goFlashSale">
           <image src="/static/marketing/discount.png" class="img"></image>
           <div class="title">限时折扣</div>
@@ -15,8 +19,6 @@
           <image src="/static/marketing/coupon.png" class="img"></image>
           <div class="title">优惠券</div>
         </div>
-      </div>
-      <div class="feature-row">
           <div class="feature-item"  @click="goFullReduce">
             <image src="/static/marketing/deduct.png" class="img"></image>
             <div class="title">满减</div>
@@ -25,9 +27,13 @@
             <image src="/static/marketing/vip.png" class="img"></image>
             <div class="title">店铺会员</div>
           </div>
-          <div class="feature-item"  @click="goGive">
+        <div class="feature-item"  @click="goGive">
           <image src="/static/marketing/give.png" class="img"></image>
           <div class="title">赠品</div>
+        </div>
+        <div class="feature-item"  @click="goOfflinePay">
+          <image src="/static/marketing/pay.png" class="img"></image>
+          <div class="title">收款码</div>
         </div>
       </div>
     </div>
@@ -44,17 +50,29 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {checkIsLogin} from '../../common/helper'
+  import { checkIsLogin, confirm } from '../../common/helper'
   import { linkTo } from '../../common/fun'
+  import { initInfo } from '@/api/system'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      initConf: {
+        pintuan_switch: 1
+      },
       storeInfo: {
         volidate: false
       }
     },
     methods: {
+      goOfflinePay(){
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/OfflinePay')
+      },
+      goGruop() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/marketing/Group')
+      },
       goFlashSale() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/marketing/FlashSale')
@@ -78,9 +96,16 @@
       goGive() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/marketing/Give')
+      },
+      async _init_func() {
+        this.initConf = await initInfo().then(res => res.data).catch(err => { throw Error(err.msg) })
       }
     },
+    onShow() {
+      this._init_func()
+    },
     created() {
+
       // getSystemInfo({
       //
       // }).then(res => {
@@ -108,11 +133,13 @@
     }
     &-row{
       display: flex;
+      flex-wrap: wrap;
       padding: 40rpx 0;
     }
     &-item{
-      flex: 1;
+      width: 250rpx;
       text-align: center;
+      margin-bottom: 40rpx;
       .img{
         width: 100rpx;
         height: 100rpx;

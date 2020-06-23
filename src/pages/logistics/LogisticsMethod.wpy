@@ -29,7 +29,7 @@
           首重
         </div>
         <div class="input-div">
-          <input type="digit"  class="input-my" v-model="item.express_start"/>  kg
+          <input type="digit"  class="input-my" v-model="item.express_start"/>  {{index===0?'kg':'件'}}
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -45,7 +45,7 @@
           续重
         </div>
         <div class="input-div">
-          <input type="digit"  class="input-my"  v-model="item.express_plus"/>  kg
+          <input type="digit"  class="input-my"  v-model="item.express_plus"/>  {{index===0?'kg':'件'}}
         </div>
       </div>
       <div class="mail-item-bottom flex" style="border-bottom: 0px">

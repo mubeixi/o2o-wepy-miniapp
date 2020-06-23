@@ -66,16 +66,22 @@ export const F2Mixin = {
       }).exec()
     },
     touchStart(e) {
+      this.$emit('touchstartFn', e)
+      return;
       if (this.canvas) {
         this.canvas.emitEvent('touchstart', [e])
       }
     },
     touchMove(e) {
+      this.$emit('touchmoveFn', e)
+      return;
       if (this.canvas) {
         this.canvas.emitEvent('touchmove', [e])
       }
     },
     touchEnd(e) {
+      this.$emit('touchendFn', e)
+      return;
       if (this.canvas) {
         this.canvas.emitEvent('touchend', [e])
       }

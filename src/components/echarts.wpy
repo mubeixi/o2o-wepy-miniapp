@@ -3,17 +3,26 @@
     width: 100%;
     height: 100%;
   }
+  .f2-canvas-wrap{
+    width: 100%;
+    height: 100%;
+  }
 </style>
 <template>
-  <canvas
-    class="f2-canvas"
-    :canvas-id="canvasId"
-    @init="init"
-    @touchstart="touchStart"
-    @touchmove="touchMove"
-    @touchend="touchEnd"
-    @longtap="press">
-  </canvas>
+  <div
+    class="f2-canvas-wrap"
+    @touchstart.stop="touchStart"
+    @touchmove.stop="touchMove"
+    @touchend.stop="touchEnd"
+    @longtap="press"
+  >
+    <canvas
+      class="f2-canvas"
+      :canvas-id="canvasId"
+      @init="init"
+      >
+    </canvas>
+  </div>
 </template>
 <script>
   import wepy from '@wepy/core'

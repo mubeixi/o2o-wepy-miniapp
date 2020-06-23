@@ -11,7 +11,7 @@
                 {{selectValue.Products_Name}}
               </div>
               <div class="fz-13 c6">
-                原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">199.00</span>
+                原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">{{selectValue.Products_PriceX}}</span>
               </div>
             </div>
         </div>
@@ -95,8 +95,8 @@
 
     <popup-layer title="选择商品" ref="product" :autoClose="true">
       <div class="product-list">
-        <div class="product-item" v-for="(product,idx) in proData" :key="idx">
-          <template v-if="product.Products_Status===1">
+        <template v-for="(product,idx) in proData" :key="idx">
+          <div class="product-item" v-if="product.Products_Status===1">
             <div class="info-box" @click="taggleProductCheck(idx)">
               <div class="check"   >
                 <div v-show="!product.disalbed">
@@ -133,8 +133,9 @@
                 </div>
               </div>
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
+
       </div>
       <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
     </popup-layer>

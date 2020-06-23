@@ -1,11 +1,16 @@
 <style lang="scss">
 @import "../assets/app.scss";
+.check-icon{
+  width: 20px;
+  height: 20px;
+}
 </style>
 <template>
   <div :style="{paddingLeft:val.pid === 0 ? 0:indent+'px'}" class="m-t-15 p-r-10">
     <div class="flex" @tap.stop="clickFn(val)">
       <div v-show="(!checkOnlyLeaf || isLeaf)">
-        <icon :type="isCheck?'iconcheckbox-check':'iconcheckbox'" :color="isCheck?'#F53636':'#ccc'"></icon>
+<!--        <icon :type="isCheck?'iconcheckbox-check':'iconcheckbox'" :color="isCheck?'#F53636':'#ccc'"></icon>-->
+        <image class="check-icon" :src="isCheck?'/static/tree/fun-tree-check.png':'/static/tree/fun-tree.png'"></image>
       </div>
       <div class="flex1 p-l-10 fz-14 c6">{{ labelText }}</div>
     </div>

@@ -4,19 +4,67 @@
   .page-wrap{
     min-height: 100vh;
     background: #fff;
+    padding-bottom: 50px;
+  }
+  .chat-item-box{
+    position: relative;
+    height: 140rpx;
+    width: 750rpx;
+    overflow: hidden;
+  }
+  .inner-del{
+    position: absolute;
+    background: $fun-red-color;
+    width: 180rpx;
+    text-align: center;
+    z-index: 2;
+    height: 140rpx;
+    line-height: 140rpx;
+    right: 0;
+    color: #fff
   }
   .chat-item{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
     height: 140rpx;
+    z-index: 3;
+    background: #fff;
+    transition: left 0.2s ease-in-out;
     .left{
       width: 160rpx;
+      position: relative;
       .cover{
         margin: 22rpx 32rpx;
         width: 96rpx;
         height: 96rpx;
-        border-radius: 50%;
-        overflow: hidden;
+        /*border-radius: 50%;*/
+        /*overflow: hidden;*/
         //@include cover-img(cover,0);
       }
+      .item-tag {
+        position: absolute;
+        right: 32rpx;
+        top: 22rpx;
+        transform: translate(50%,-50%);
+        background: #F53636;
+        height: 14px;
+        text-align: center;
+        line-height: 14px;
+        padding: 0 3px;
+        border-radius: 7px;
+        color: #fff;
+        font-size: 10px;
+        &.circle {
+          width: 14px;
+          padding: 0px 0px 0px 0px;
+          border-radius: 50%;
+        }
+      }
+
+
+
     }
     .right{
       width: 590rpx;
@@ -33,6 +81,7 @@
       }
       .msg{
         max-width: 600rpx;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
@@ -54,34 +103,46 @@
 <template>
   <div class="page-wrap">
     <div class="chat-list" v-if="chatList.length>0">
-      <div class="chat-item flex" @click="toRoom(idx)" v-for="(chat,idx) in chatList" :key="idx">
-        <div class="left">
-<!--          <div class="cover" :style="{backgroundImage:'url(\''++'\')'}"></div>-->
-          <image class="cover" :src="chat.avatar"></image>
-        </div>
-        <div class="right">
-          <div class="info flex flex-vertical-c flex-justify-between">
-            <div class="nickname c3 fz-17">{{chat.name}}</div>
-            <div class="time c9 fz-13">{{chat.time}}</div>
+      <div class="chat-item-box"
+           @click="toRoom(idx)"
+           v-for="(chat,idx) in chatList"
+           :key="idx"
+           @touchstart="touchS($event,idx)"
+           @touchmove="touchM($event,idx)"
+           @touchend="touchE($event,idx)">
+        <div class="chat-item flex" style="{{chat.txtStyle}}" >
+          <div class="left">
+            <image class="cover" :src="chat.avatar"></image>
+            <div class="item-tag" :class="{circle:chat.no_read<10}" v-if="chat.no_read>0">{{chat.no_read}}</div>
           </div>
-          <div class="msg c9 fz-13">
-            <block v-if="chat.type==='text'">
-              {{chat.content}}
-            </block>
-            <block v-if="chat.type==='prod'">
-              商品:[{{chat.content.prod_name}}]
-            </block>
-            <block v-if="chat.type==='img'">
-              发送了一张图片
-            </block>
+          <div class="right" >
+            <div class="info flex flex-vertical-c flex-justify-between">
+              <div class="nickname c3 fz-17">{{chat.name}}</div>
+              <div class="time c9 fz-13">{{chat.time}}</div>
+            </div>
+            <div class="msg c9 fz-13">
+              <block v-if="chat.type==='text'">
+                {{chat.content}}
+              </block>
+              <block v-if="chat.type==='prod'">
+                商品:[{{chat.content.prod_name}}]
+              </block>
+              <block v-if="chat.type==='img' || chat.type==='image'">
+                发送了一张图片
+              </block>
+            </div>
           </div>
         </div>
+        <div class="inner-del" @click.stop="delMsgItem(chat,idx)">删除</div>
       </div>
+
     </div>
     <div class="none" v-else>
       <image :src="spaceImg" class="img" />
       <div class="m-t-15"><span>信箱是空的</span></div>
     </div>
+
+<!--    <fun-tabbar></fun-tabbar>-->
   </div>
 </template>
 <script>
@@ -94,14 +155,15 @@
     getArrColumn,
     chooseImageByPromise,
     checkIsLogin,
-    getDomain
+    getDomain, findArrayIdx, objTranslate
   } from '../../common/helper'
   import IM from '../../common/Im/Im'
 
-  import { error, modal } from '../../common/fun'
+  import { error, hideLoading, modal, showLoading } from '../../common/fun'
   import { Exception } from '../../common/Exception'
-  import { getChatList } from '../../common/Im/Fetch'
+  import { delChat, getChatList } from '../../common/Im/Fetch'
   import eventHub from '../../common/eventHub'
+  import moment from 'moment'
 
   let imInstance = null
 
@@ -109,13 +171,14 @@
     store,
     mixins: [pageMixin],
     data: {
+      delBtnWidth: 40,
       imInstance: null,
       out_uid: '',
       chatList: [],
       spaceImg: getDomain('/static/client/box.png'),
       paginate: {
         page: 1,
-        page_size: 20,
+        page_size: 999,
         totalCount: 0
       }
     },
@@ -125,8 +188,78 @@
       }
     },
     methods: {
+      async delMsgItem(chat, idx) {
+        try {
+          // showLoading()
+          // chatItem.to_uid : chatItem.from_uid
+          // uid一定是对方
+          const {uid: to_uid} = chat
+          const out_uid = `biz_${this.bizInfo.id}`
+          await delChat({out_uid, to_uid}).catch(err => {
+            throw Error(err.msg || '删除失败')
+          })
+          this.chatList.splice(idx, 1)
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          // hideLoading()
+        }
+      },
+      touchS(e, idx) {
+        if (e.touches.length === 1) {
+          this.startX = e.touches[0].clientX
+        }
+      },
+      touchM(e, idx) {
+        if (e.touches.length === 1) {
+          // 手指移动时水平方向位置
+          var moveX = e.touches[0].clientX
+        // 手指起始点位置与移动期间的差值
+          var disX = this.startX - moveX
+          var delBtnWidth = this.delBtnWidth
+          var txtStyle = ''
+          if (disX === 0 || disX < 0) { // 如果移动距离小于等于0，说明向右滑动，文本层位置不变
+            txtStyle = 'left:0px'
+          } else if (disX > 0) { // 移动距离大于0，文本层left值等于手指移动距离
+            txtStyle = 'left:-' + disX + 'px'
+            if (disX >= delBtnWidth) {
+              // 控制手指移动距离最大值为删除按钮的宽度
+              txtStyle = 'left:-' + delBtnWidth + 'px'
+            }
+          }
+          // 获取手指触摸的是哪一项
+          this.$set(this.chatList[idx], 'txtStyle', txtStyle)
+        }
+      },
+      touchE(e, idx) {
+        if (e.changedTouches.length === 1) {
+          // 手指移动结束后水平位置
+          var endX = e.changedTouches[0].clientX
+        // 触摸开始与结束，手指移动的距离
+          var disX = this.startX - endX
+          var delBtnWidth = this.delBtnWidth
+        // 如果距离小于删除按钮的1/2，不显示删除按钮
+          var txtStyle = disX > delBtnWidth / 2 ? 'left:-' + delBtnWidth + 'px' : 'left:0px'
+        // 获取手指触摸的是哪一项
+          this.$set(this.chatList[idx], 'txtStyle', txtStyle)
+        }
+      },
+      // 获取元素自适应后的实际宽度
+      getEleWidth: function (w) {
+        var real = 0
+        try {
+          var res = wx.getSystemInfoSync().windowWidth
+          var scale = (750 / 2) / (w / 2)// 以宽度750px设计稿做宽度的自适应
+          real = Math.floor(res / scale)
+          return real
+        } catch (e) {
+          return 90
+        // Do something when catch error
+        }
+      },
       toRoom (idx) {
         const chatItem = this.chatList[idx]
+        chatItem.no_read = 0
         // 商家得找客户聊
         const str = chatItem.to_uid.indexOf('user') !== -1 ? chatItem.to_uid : chatItem.from_uid
 
@@ -137,18 +270,32 @@
         }
         const type = str.substr(0, breakStrIdx)
         const id = str.substr(breakStrIdx + 1)
-        console.log(type, id, `/pages/support/Im?type=${type}tid=${id}`)
+        console.log(type, id, `/pages/support/Im?type=${type}tid=${id}&room_title=${chatItem.name}`)
         if (!type || !id) {
           modal('聊天室参数错误')
           return
         }
-        this.$linkTo(`/pages/support/Im?type=${type}&tid=${id}`)
+        this.$linkTo(`/pages/support/Im?type=${type}&tid=${id}&room_title=${chatItem.name}`)
+      },
+      async refreshTabTag() {
+        if (!imInstance) return
+        const count = await imInstance.getNoReadMsgCount()
+        if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+          console.log('更新IM下标数量' + count)
+          this.$wx.getTabBar().setData({
+            tags: [0, count]
+          })
+        }
       },
       async _init_func () {
         await imInstance._getAccessToken() // 等拿token
         const chatList = await getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
           this.paginate.totalCount = res.totalCount
-          return res.data
+          const list = res.data.map(row => {
+            return {...row, txtStyle: ''}
+          })
+          console.log(list)
+          return list
           // const _list = res.data.map(chat => {
           //   chat.timeText = uni.$moment(chat.created_at * 1000).startOf('day').fromNow()
           //   return chat
@@ -158,25 +305,72 @@
           modal(err.msg || '获取消息列表失败')
         })
         console.log(chatList)
-        this.paginate.page++
-        this.chatList = this.chatList.concat(chatList)
+        // this.paginate.page++
+        this.chatList = chatList //this.chatList.concat()
+
+        await this.refreshTabTag()
       }
     },
     onReachBottom () {
-      if (this.chatList.length < this.totalCount) {
-        getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
-          this.paginate.page++
-          this.chatList = this.chatList.concat(res.data)
-          this.paginate.totalCount = res.totalCount
-        }).catch(err => {
-          modal(err.msg || '获取消息列表失败')
-        })
-      }
+      // if (this.chatList.length < this.totalCount) {
+      //   getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
+      //     this.paginate.page++
+      //     this.chatList = this.chatList.concat(res.data)
+      //     this.paginate.totalCount = res.totalCount
+      //   }).catch(err => {
+      //     modal(err.msg || '获取消息列表失败')
+      //   })
+      // }
     },
     onReady() {
+      this.delBtnWidth = this.getEleWidth(180)
 
+      // 给单个的行记录也累加数量
+      eventHub.$on('IM_TAKE_MSG', async (res) => {
+        // 只有当前页面响应
+
+        console.log(objTranslate(res))
+
+        if (eventHub.imInstance) {
+          const chatList = await getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
+            this.paginate.totalCount = res.totalCount
+            const list = res.data.map(row => {
+              return {...row, txtStyle: ''}
+            })
+            console.log(list)
+            return list
+            // const _list = res.data.map(chat => {
+            //   chat.timeText = uni.$moment(chat.created_at * 1000).startOf('day').fromNow()
+            //   return chat
+            // })
+            // return _list
+          }).catch(err => {
+            modal(err.msg || '获取消息列表失败')
+          })
+          console.log(chatList)
+          // this.paginate.page++
+          this.chatList = chatList // this.chatList.concat()
+
+          await this.refreshTabTag()
+          // const idx = findArrayIdx(this.chatList, {uid: res.from_uid})
+          // console.log(idx)
+          // if (idx !== false) {
+          //   const tempNoReadCount = this.chatList[idx].no_read
+          //   // 得自己拼接，不容易啊
+          //   res.no_read = tempNoReadCount + 1
+          //   res.uid = res.from_uid
+          //   res.to_uid = this.out_uid
+          //   res.time = moment().format('YYYY-MM-DD hh:mm')
+          //   this.$set(this.chatList, idx, res)
+          // }
+        }
+      })
     },
     onLoad(options) {
+      
+    },
+    onShow() {
+
       if (!checkIsLogin(1, 0)) return
       if (eventHub.imInstance) {
         this.imInstance = imInstance = eventHub.imInstance
@@ -187,7 +381,17 @@
       imInstance.setSendInfo({ type: 'biz', id: ls.get('biz_id') })
       this.out_uid = imInstance.getOutUid()
 
-      this._init_func(options)
+      this._init_func()
+
+      
+      if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+        console.log('初始化？？？')
+        this.$wx.getTabBar().setData({
+          selected: 1
+        })
+      }
+
+      this.refreshTabTag()
     },
     created() {
 

@@ -51,4 +51,16 @@ export const opBizSettle = (param, options) => fetch({act: 'opBizSettle', param,
 export const dealBizSettle = (param, options) => fetch({act: 'dealBizSettle', param, options})
 
 // 订单状态角标数
-export const get_order_num = (param, options) => fetch({act: 'get_order_num', param, options})
+
+export const getOrderNum = (param, options) => fetch({act: 'get_order_num', param, options})
+
+
+
+// 查询同城订单是否可取消、取消原因列表
+export const cityExpressCancelReason = (param, options) => fetch({act: 'cityExpressCancelReason', param, options})
+
+// 接收达达投递异常返回的订单产品
+export const dadaExceptionOrderReceive = (param, options) => fetch({act: 'dadaExceptionOrderReceive', param, options})
+
+// 商家主动取消订单
+export const cityExpressOrderReject = (param, options) => fetch({act: 'cityExpressOrderReject', param, options})

@@ -4,6 +4,7 @@ import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
 import wxPromisify from './promisify'
+import F2 from '@/lib/f2-canvas/f2'
 
 export const objTranslate = (obj) => JSON.parse(JSON.stringify(obj))
 
@@ -133,7 +134,13 @@ export const compareObj = (obj1, obj2) => {
 export const createUpTaskArr = (len = 1) => {
   const arr = []
   for (var i = 0; i < len; i++) {
-    arr[i] = { }
+    arr[i] = {
+      task: {
+        totalBytesSent: 0,
+        totalBytesExpectedToSend: 0
+      },
+      task_progress: 0
+    }
   }
   return arr.concat([])
 }
@@ -195,7 +202,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  * @param data 业务参数:{}
  * @returns {Promise<unknown>}
  */
-export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj}) => {
+export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj,handlerPressFn}) => {
   let taskList = []
   // console.log(imgs, 'ssss')
   for (let i = 0; i < imgs.length; i++) {
@@ -205,6 +212,7 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmo
       name,
       vmobj,
       progressList,
+      handlerPressFn,
       formData: data
     })
     taskList.push(taskItem)
@@ -327,7 +335,7 @@ export const confirm = (options) => {
  * @param redirect
  * @return {boolean}
  */
-export const checkIsLogin = (redirect = 1, tip = 0,errCall) => {
+export const checkIsLogin = (redirect = 1, tip = 0, errCall) => {
   let access_token = getAccessToken()
 
   if (!access_token) {
@@ -371,6 +379,47 @@ export function sleep (fn, par, time = 3000) {
 
 export const setNavigationBarTitle = (title) => wx.setNavigationBarTitle({title})
 
+export const formatNumber = n => {
+  n = n.toString()
+  return n[1] ? n : '0' + n
+}
+
+export const getCountdownFunc = ({ start_timeStamp, end_timeStamp, current = (new Date()).getTime() } = {}) => {
+  let { d = 0, h = 0, m = 0, s = 0 } = {}
+
+  // 时间戳格式转换
+  current = parseInt(current / 1000)
+  console.log(start_timeStamp, current)
+  console.log(start_timeStamp - current)
+  let countTime = 0
+  let is_start = false
+  let is_end = false
+
+  // 还没开始
+  if (start_timeStamp > current) {
+    countTime = start_timeStamp - current
+  } else if (start_timeStamp < current) {
+    // 还在进行中
+    is_start = true
+    countTime = 0
+    return false
+  }
+
+  d = parseInt(countTime / (60 * 60 * 24))
+  h = parseInt((countTime) / (60 * 60))
+  m = parseInt((countTime - d * 60 * 60 * 24 - h * 60 * 60) / 60)
+  s = countTime - d * 60 * 60 * 24 - h * 60 * 60 - m * 60
+
+  return {
+    d,
+    h: formatNumber(h),
+    m: formatNumber(m),
+    s: formatNumber(s),
+    is_start,
+    is_end
+  }
+}
+
 /**
  * 检查是否入驻
  */
@@ -396,4 +445,103 @@ export const checkIsSettle = (redirect = 1, tip = 0) => {
   }
 
   return false
+}
+
+/**
+ * 传入俩个数组对象和对比参数
+ * @param
+ * @param 返回 去重后的数组
+ * @returns
+ */
+export const MergeArray = (oldArr = [], newArr = [], param) => {
+  if (!Array.isArray(oldArr) || !Array.isArray(oldArr)) return []
+  let ArrKey = {}
+  for (let item of oldArr) {
+    let objKey = item[param]
+    ArrKey[objKey] = 1
+  }
+  for (let item of newArr) {
+    let objKey = item[param]
+    if (!ArrKey[objKey]) {
+      oldArr.push(item)
+    }
+  }
+  return oldArr
+}
+
+export function getCharCount(str, char) {
+  var regex = new RegExp(char, 'g') // 使用g表示整个字符串都要匹配
+  var result = str.match(regex)          // match方法可在字符串内检索指定的值，或找到一个或多个正则表达式的匹配。
+  var count = !result ? 0 : result.length
+  return count
+}
+
+/**
+ * 获取滑动事件的参数
+ * @param event
+ * @returns {{x: number, y: number, type: *}}
+ */
+export function getTouchEventInfo(event) {
+  const type = event.type
+  let x = 0
+  let y = 0
+  const touches = event.changedTouches
+
+  if (touches && touches.length > 0) {
+    x = touches[0].clientX
+    y = touches[0].clientY
+  }
+
+  return {
+    type,
+    x,
+    y
+  }
+}
+
+/**
+ * 模拟惯性滑动
+ * @param nowScrollTop
+ * @param evalScrollTop
+ * @param duration
+ */
+export function pageScrollToFn(nowScrollTop, evalScrollTop, duration = 100) {
+  wx.pageScrollTo({
+    scrollTop: evalScrollTop,
+    duration
+  })
+  /**
+   * 缓动代码
+   */
+  // var startTime = Date.now()
+  //
+  // var v = (evalScrollTop - nowScrollTop) / duration // 最后一段时间手指划动速度
+  // if (v === 0) return
+  // var dir = v > 0 ? -1 : 1 // 加速度方向
+  // var deceleration = dir * 0.0006 // 加速度大小，单位px/ms*ms
+  // // var durationVal = v / deceleration // 速度消减至0所需时间(ms)
+  // // var dist = v * durationVal / 2 // 最终移动多少
+  // console.log(v, dir)
+  //
+  // function inertiaMove() {
+  //   // if (stopInertiaMove) return
+  //   var nowTime = Date.now()
+  //   var t = nowTime - startTime
+  //   var nowV = v + t * deceleration
+  //   console.log(nowV)
+  //   // 速度方向变化表示速度达到0了
+  //   if (dir * nowV > 0) {
+  //     return
+  //   }
+  //   if (nowV > 20) {
+  //     return
+  //   }
+  //   var moveY = (v + nowV) / 2 * t
+  //   wx.pageScrollTo({
+  //     scrollTop: nowScrollTop + moveY,
+  //     duration: 10
+  //   })
+  //   setTimeout(inertiaMove, 10)
+  // }
+  // inertiaMove()
 }
