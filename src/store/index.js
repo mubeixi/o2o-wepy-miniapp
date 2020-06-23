@@ -8,11 +8,15 @@ export default new Vuex.Store({
     tabTags: [0, 0, 0, 0, 0, 0],
     userInfo: null,
     bizInfo: null,
-    treeData: []
+    treeData: [],
+    productImgList:[]
   },
   mutations: {
     SET_CURRENT_TABBAR (state, idx) {
       state.tabbarCurrentIndex = idx
+    },
+    SET_PRODUCT_IMG_LIST(state,data){
+      state.productImgList = data
     },
     SET_TABBAR_TAG(state, {idx, num}) {
       // state.tabTags[idx] = num

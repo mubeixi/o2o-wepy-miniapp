@@ -26,10 +26,6 @@
                   :key="idx"
                   :style="{backgroundImage:'url('+img+')'}">
                   <!-- <span class="progress" v-if="img.task && img.task.progress<100">{{img.task.progress}}%</span> -->
-                  <image class="icon-delete" src="/static/icon/icon-del-bgwhite.png"></image>
-                  <div class="img-actions">
-
-                  </div>
                 </div>
                 <div
                   class="img-item add"
@@ -40,9 +36,9 @@
                 </div>
               </div>
 
-              <div class="flex flex-vertical-center" @click="toEditImgList">
-                <span class="fz-12 c9 p-r-6 ">{{imgs.length}}/{{thumbLimit}}</span>
-                <!--<icon display="inline" type="iconarrowleft" color="#999"></icon>-->
+              <div class="flex flex-vertical-center">
+                <span class="fz-12 c9 p-r-6 ">{{imgs.length}}张</span>
+                <icon display="inline" type="iconarrowleft" color="#999"></icon>
               </div>
 
             </div>
@@ -638,9 +634,6 @@
 
     <div class="safearea-box"></div>
     <div @click="subFn" class="btn action-btn btn-primary">保存数据</div>
-
-    <fun-upload-loading ref="uploadLoading" ></fun-upload-loading>
-
   </div>
 </template>
 <script>
@@ -651,9 +644,9 @@
   import {
     checkIsLogin,
     chooseImageByPromise,
-    confirm, createUpTaskArr,
+    confirm,
     getArrColumn,
-    getDomain, objTranslate,
+    getDomain,
     uploadImages,
     validateFun
   } from '../../common/helper'
@@ -713,10 +706,10 @@
       },
       placeholderCotnent: '请输入文字介绍...',
       editorInstance: null,
-      thumbLimit: 15,
+      thumbLimit: 5,
       formCheckResult: false,
       _click: false,
-      imgTaskList: [],
+      imgTempList: [],
       cate_ids: '',
       imgs: [],
       activeSpecIdx: 0,
@@ -778,16 +771,6 @@
       }
     },
     watch: {
-      imgTaskList: {
-        deep: true,
-        handler(newVal) {
-          const upDoneTotal = newVal.filter(row => row.task_progress === 100).length
-          if(upDoneTotal<newVal.length){
-            this.$refs.uploadLoading.setMsg('正在上传图片' + (upDoneTotal + 1) + '/' + newVal.length)
-          }
-
-        }
-      }
       // formData: {
       //   deep: true,
       //   handler(newVal) {
@@ -1199,9 +1182,6 @@
           name: ''
         })
       },
-      toEditImgList() {
-        this.$store.commit('productImgList', this.imgs)
-      },
       bindThumbClick(idx, img) {
         wx.showActionSheet({
           itemList: ['预览图片', '移除图片'],
@@ -1214,7 +1194,7 @@
               })
             }
             if (tapIndex === 1) {
-              // this.imgTaskList.splice(idx, 1)
+              // this.imgTempList.splice(idx, 1)
               this.imgs.splice(idx, 1)
             }
           },
@@ -1245,16 +1225,7 @@
           hideLoading()
         }
       },
-      handlerPressFunc(res, idx, vm) {
-        const {progress, totalBytesSent, totalBytesExpectedToSend} = res
-        console.log(`下标${idx}上传进度${progress}`)
-        // console.log(`下标${idx}已经上传的数据长度${totalBytesSent}`)
-        // console.log(`下标${idx}预期需要上传的数据总长度${totalBytesExpectedToSend}`)
-        // console.log(vm)
-        vm.$set(vm.imgTaskList[idx], 'task_progress', progress)
-      },
       async addImg() {
-        const that = this
         try {
           if (this._click) throw Error('操作过快')
           const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch((err) => { throw Error(err.errMsg) })
@@ -1262,12 +1233,9 @@
             return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
           })
           console.log('upload img arr1 is', arr1)
-
+          // this.imgTempList = this.imgTempList.concat(arr1)
           const imgs = getArrColumn(files, 'path')
-
-          this.imgTaskList = createUpTaskArr(files.length)
-          this.$refs.uploadLoading.show()
-          const ossUrls = await uploadImages({imgs, handlerPressFn: this.handlerPressFunc, vmobj: that}).catch((errMsg) => { throw {message: errMsg, type: 'modal'} })
+          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch((errMsg) => { throw {message: errMsg, type: 'modal'} })
           for (var i = 0; i < ossUrls.length; i++) {
             ossUrls[i] = getDomain(ossUrls[i])
           }
@@ -1275,8 +1243,6 @@
           this._click = false
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
-        } finally {
-          this.$refs.uploadLoading.close()
         }
       },
       _initBizProdCate() {
@@ -1335,7 +1301,7 @@
               ImgPath[key] = getDomain(ImgPath[key])
             }
             this.imgs = ImgPath
-            this.imgTaskList = ImgPath.map(img => {
+            this.imgTempList = ImgPath.map(img => {
               return {path: img}
             })
 
@@ -1516,36 +1482,25 @@
       display: flex;
       flex-wrap: wrap;
       margin: 28rpx 0;
-      width: 590rpx;
+      width: 560rpx;
     }
     &-item{
-      width: 130rpx;
-      height: 130rpx;
+      width: 120rpx;
+      height: 120rpx;
       margin-bottom: 20rpx;
       margin-right: 20rpx;
       position: relative;
       background-size: 100% 100%;
-      .icon-delete{
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        right: 0;
-        top: 0;
-        /*background: #fff;*/
-        border-radius: 50%;
-        overflow: hidden;
-        transform: translate(50%,-50%);
-      }
       .progress{
         position: absolute;
         width: 100%;
         height: 100%;
         text-align: center;
-        line-height: 130rpx;
+        line-height: 120rpx;
         color: white;
         background: rgba(0,0,0,.3);
       }
-      &:nth-child(4n+0){
+      &:nth-child(3n+0){
         margin-right: 0;
       }
     }
@@ -1732,8 +1687,7 @@
     "navigationBarTitleText": "商品详情",
     "navigationBarTextStyle": "black",
     "usingComponents": {
-      "fun-upload-loading":"~@/components/fun-upload-loading",
-      "wzw-im-tip": "~@/components/wzw-im-tip",
+  "wzw-im-tip": "~@/components/wzw-im-tip",
       "err-msg": "~@/components/err-msg",
       "icon": "~@/components/icon",
       "fun-tree": "~@/components/fun-tree",

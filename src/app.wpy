@@ -122,6 +122,7 @@ wepy.app({
       "pages/product/ProductManager",
       "pages/product/DiyCate",
       "pages/product/form",
+      "pages/product/imgs",
       "pages/user/login",
       "pages/statistics/dashboard",
       "pages/statistics/SeckillData",
