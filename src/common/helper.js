@@ -134,7 +134,13 @@ export const compareObj = (obj1, obj2) => {
 export const createUpTaskArr = (len = 1) => {
   const arr = []
   for (var i = 0; i < len; i++) {
-    arr[i] = { }
+    arr[i] = {
+      task: {
+        totalBytesSent: 0,
+        totalBytesExpectedToSend: 0
+      },
+      task_progress: 0
+    }
   }
   return arr.concat([])
 }
@@ -196,7 +202,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  * @param data 业务参数:{}
  * @returns {Promise<unknown>}
  */
-export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj}) => {
+export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj,handlerPressFn}) => {
   let taskList = []
   // console.log(imgs, 'ssss')
   for (let i = 0; i < imgs.length; i++) {
@@ -206,6 +212,7 @@ export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmo
       name,
       vmobj,
       progressList,
+      handlerPressFn,
       formData: data
     })
     taskList.push(taskItem)

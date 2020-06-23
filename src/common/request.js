@@ -87,7 +87,7 @@ class XHR {
 
   static formData = (param) => {
     let _param = {access_token: getAccessToken(), biz_id: getBizId(), env: getEnv(), ...param}
-    if(!_param.hasOwnProperty('biz_id')){
+    if (!_param.hasOwnProperty('biz_id')) {
       _param.biz_id = getBizId()
     }
 
@@ -208,7 +208,7 @@ export const fetch = function ({act, param = {}, options = false, url = '/api/li
   }
 }
 
-export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressList = [],vmobj}) => {
+export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressList = [], vmobj,handlerPressFn}) => {
   let _param = {
     access_token: getAccessToken(),
     Users_ID: getUsersID(),
@@ -229,13 +229,13 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
       name,
       formData,
       success: (res) => {
-        console.log('upload file result', res)
+        // console.log('upload file result', res)
         let {data: body} = res
         if (typeof body === 'string' && body) {
           body = JSON.parse(body)
         }
 
-        console.log('body is', body)
+        // console.log('body is', body)
         if (body.hasOwnProperty('data') && typeof body.data === 'object') {
 
         } else {
@@ -264,11 +264,11 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
       // console.log('上传进度' + res.progress)
       // console.log('已经上传的数据长度' + res.totalBytesSent)
       // console.log('预期需要上传的数据总长度' + res.totalBytesExpectedToSend)
-      console.log(vmobj)
+      handlerPressFn && handlerPressFn(res,idx,vmobj)
+      // console.log(vmobj, progressList, progressList)
       if (vmobj && vmobj.$set && progressList.length > 0 && progressList[idx] && progressList[idx].hasOwnProperty('task')) {
         // progressList[idx].task = objTranslate(res)
-        console.log('upload progress',objTranslate(res))
-
+        console.log('upload progress', objTranslate(res))
 
         vmobj.$set(progressList[idx], 'task_progress', res.progress)
         vmobj.$set(progressList[idx], 'task', objTranslate(res))

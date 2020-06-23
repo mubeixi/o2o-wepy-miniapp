@@ -1,9 +1,10 @@
 <style lang="scss">
 @import "../assets/icon.scss";
+
 </style>
 <template>
   <i class="iconfont {{type}}"
-     :style="{ color: color, 'font-size': size + 'px','font-weight':weight }"
+     :style="{ color: color,backgroundColor:bgColor, 'font-size': size + 'px','font-weight':weight }"
      @click="_onClick"
   ></i>
 </template>
@@ -20,6 +21,10 @@
       weight: {
         type: String,
         default: 'normal'
+      },
+      bgColor: {
+        type: String,
+        default: 'none'
       },
       color: {
         type: String,
