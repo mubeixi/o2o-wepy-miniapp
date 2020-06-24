@@ -1,5 +1,5 @@
 <template>
-  <div class="coupon-all">
+  <div class="coupon-all page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="coupon-item flex flex-justify-between"  v-for="(item,index) of couponList" :key="index">
 <!--      <div class="item-left" @click="change(index)">-->
@@ -23,10 +23,18 @@
         <div class="right-w"  v-else>全场满{{item.Coupon_Condition}}可用 <span class="m-l-8 color-blue">{{item.front_show==1?'可领取':'用于赠送'}}</span></div>
       </div>
     </div>
-    <div class="submits" @click="goAdd">
-      <icon type="iconadd" color="#00A8FF"  size="20"></icon>
+
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center"  @click="goAdd">
+      <icon type="iconadd" color="#fff"  size="20"  class="m-r-9"></icon>
       添加优惠券
     </div>
+
     <div style="height: 80rpx;width: 750rpx"></div>
 <!--    <div class="save">-->
 <!--      确定-->
@@ -92,6 +100,7 @@
   .full-img{width: 100%;height: 100%}
   .coupon-all{
     padding-top: 40rpx;
+    padding-bottom: 44px; //.btn的是44px
     min-height: 100vh;
     box-sizing: border-box;
   }

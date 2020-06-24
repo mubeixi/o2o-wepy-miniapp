@@ -3,6 +3,7 @@
       <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
           <div class="flex flex-vertical-center   items " v-for="(item,index) of infoData"  :key="index">
             满 <input type="digit" v-model="item.reach" class="input-full m-l-5 m-r-5" />元 减 <input type="digit" v-model="item.award"  class="input-full m-l-5 m-r-5" />元
+            <icon size="24"  v-if="index>0" class="iconminus" type="iconminus"  @click="delItem(index)" color="#00A8FF"></icon>
           </div>
 
       <div class="submits" @click="goAdd">
@@ -35,6 +36,11 @@
       infoData: [{reach: '', award: ''}]
     },
     methods: {
+      delItem(index) {
+        if (this.infoData.length > 0) {
+          this.infoData.splice(index, 1)
+        }
+      },
       submit() {
         for (let item of this.infoData) {
           if (!item.reach || !item.award) {
@@ -105,8 +111,11 @@
   }
   .items{
     margin: 0 auto;
-    width: 600rpx;
+    width: 700rpx;
+    padding-left: 40rpx;
     margin-bottom: 20px !important;
+    padding-right: 10rpx;
+    box-sizing: border-box;
   }
   .input-full{
     width: 200rpx;
@@ -128,6 +137,9 @@
     background-color: #00A8FF;
     color: #FFFFFF;
     z-index: 99;
+  }
+  .iconminus{
+    margin-left: auto;
   }
 
 

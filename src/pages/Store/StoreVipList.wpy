@@ -64,6 +64,7 @@
     min-height: 100vh;
     background: white;
     padding-bottom: 90rpx;
+    box-sizing: border-box;
   }
   .group-cell{
     padding-right: 30rpx;
@@ -90,13 +91,14 @@
     position: fixed;
     bottom: constant(safe-area-inset-bottom);
     bottom: env(safe-area-inset-bottom);
+    background-color: #00A8FF;
+    color:#ffffff;
     left: 0;
     width: 750rpx;
     height: 90rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #333;
     box-shadow:0rpx 0rpx 18rpx 0rpx rgba(0, 0, 0, 0.16);
   }
 
