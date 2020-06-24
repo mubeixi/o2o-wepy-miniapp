@@ -50,6 +50,13 @@
             <span class="fz-14">平台佣金：</span>¥{{listData.platform_commi}}
           </div>
           <div>
+            <span class="fz-14">线下订单付款金额：</span>¥{{listData.offline_total_price}}
+          </div>
+          <div>
+            <span class="fz-14">会员卡付款金额：</span>¥{{listData.user_level_price}}
+          </div>
+
+          <div>
             <span class="fz-14">实际结算：</span>¥{{listData.settle_money}}
           </div>
         </div>
