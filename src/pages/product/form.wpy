@@ -27,7 +27,8 @@
                   class="img-item img"
                   v-for="(img,idx) in imgTempList"
                   :key="idx"
-                  :style="{backgroundImage:'url('+img.path+')'}">
+                  >
+                  <image class="img-item-image" :src="img.path"></image>
                   <!-- <span class="progress" v-if="img.task && img.task.progress<100">{{img.task.progress}}%</span> -->
                   <!-- <image @click.stop="bindThumbDel(idx)" class="icon-delete" src="/static/icon/icon-del-bgwhite.png"></image> -->
                   <div class="img-actions-mask"></div>
@@ -1397,8 +1398,10 @@
       },
       async addImg() {
         const that = this
+        var tempIdx = this.imgs.length //缓存长度，方便删除
         try {
           if (this._click) throw Error('操作过快')
+
           const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch((err) => { throw Error(err.errMsg) })
           const arr1 = files.map(file => {
             return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
@@ -1421,7 +1424,13 @@
           this.imgs = this.imgs.concat(ossUrls)
           this._click = false
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel'){
+            Exception.handle(e)
+            //删除本次上传的
+            this.imgs.splice(tempIdx)
+            this.imgTempList.splice(tempIdx)
+          }
+
         } finally {
           this.$refs.uploadLoading.close()
         }
@@ -1690,7 +1699,15 @@
       margin-bottom: 20rpx;
       margin-right: 20rpx;
       position: relative;
-      background-size: 100% 100%;
+
+      .img-item-image{
+        left: 0;
+        top: 0;
+        width: 130rpx;
+        height: 130rpx;
+        position: absolute;
+        z-index: 1;
+      }
       .img-actions-mask{
         left: 0;
         top: 0;
