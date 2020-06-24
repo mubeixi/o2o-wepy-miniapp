@@ -1230,6 +1230,11 @@
         }
         if (feeType === 2) {
           this.formData.fix_fee = ''
+          // 设置默认选择中的
+          if (this.shippingTmplList.length > 0) {
+            this.shippingTmplIdx = 0
+            this.formData.shipping_temp = this.shippingTmplList[0].Template_ID
+          }
         }
       },
       bindShopDamageChange() {
