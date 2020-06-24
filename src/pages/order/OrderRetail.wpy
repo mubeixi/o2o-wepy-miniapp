@@ -185,7 +185,7 @@
           title: '线下订单'
         })
       }
-      if (this.Order_Type === 'offline_qrcode') {
+      if (this.Order_Type === 'offline') {
         wx.setNavigationBarTitle({
           title: '线下支付订单'
         })

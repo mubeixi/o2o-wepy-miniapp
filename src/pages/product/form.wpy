@@ -21,23 +21,33 @@
           <div class="content">
             <div class="upload-img flex flex-vertical-center flex-justify-between">
               <div class="img-box">
+                <!--@click="bindThumbClick(idx,img)"-->
                 <div
-                  @click="bindThumbClick(idx,img)"
+
                   class="img-item img"
-                  v-for="(img,idx) in imgs"
+                  v-for="(img,idx) in imgTempList"
                   :key="idx"
-                  :style="{backgroundImage:'url('+img+')'}">
+                  >
+                  <image class="img-item-image" :src="img.path"></image>
                   <!-- <span class="progress" v-if="img.task && img.task.progress<100">{{img.task.progress}}%</span> -->
-                  <image @click.stop="bindThumbDel(idx)" class="icon-delete" src="/static/icon/icon-del-bgwhite.png"></image>
+                  <!-- <image @click.stop="bindThumbDel(idx)" class="icon-delete" src="/static/icon/icon-del-bgwhite.png"></image> -->
+                  <div class="img-actions-mask"></div>
+                  <div class="img-actions-pre flex flex-vertical-center flex-justify-between">
+
+                    <icon display="inline"  @click.stop="bindThumbShow(img.path)" color="#fff" size="20" type="iconyulan"></icon>
+
+                    <icon display="inline"  @click.stop="bindThumbDel(idx)" color="#fff" size="20" type="icondeleted-"></icon>
+
+                  </div>
                   <div class="img-actions flex flex-vertical-center flex-justify-between">
-                    <icon @click.stop="bindThumbPre(idx)" :color="idx===0?'#999':'#fff'" size="20" type="iconPrevious"></icon>
-                    <icon @click.stop="bindThumbNext(idx)" :color="idx===imgs.length-1?'#999':'#fff'" size="20" type="iconPrevious-copy"></icon>
+                    <icon display="inline"  @click.stop="bindThumbPre(idx)" :color="idx===0?'#999':'#fff'" size="20" type="iconPrevious"></icon>
+                    <icon display="inline"  @click.stop="bindThumbNext(idx)" :color="idx===imgs.length-1?'#999':'#fff'" size="20" type="iconPrevious-copy"></icon>
                   </div>
                 </div>
                 <div
                   class="img-item add"
                   @click="addImg"
-                  v-if="imgs.length<thumbLimit"
+                  v-if="imgTempList.length<thumbLimit"
                 >
                   <icon color="#ddd" size="40" type="iconupload"></icon>
                 </div>
@@ -56,7 +66,10 @@
           <div class="label">平台类目</div>
           <div class="content flex">
             <div class="flex1"></div>
-            <div class="text-right fz-14 text-nowrap" style="width: 400rpx;">{{systemCateHasStr}}</div>
+            <div class="text-right fz-14 text-nowrap" style="width: 400rpx;">
+              <span class="c6 fz-12" v-if="systemCateHasStr">{{systemCateHasStr}}</span>
+              <span class="c9 fz-12" v-else>未设置</span>
+            </div>
           </div>
           <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
         </div>
@@ -203,106 +216,115 @@
         </div>
       </div>
 
-      <div class="group-cell">
-        <!--特殊属性-->
-        <div class="cell-item" @click="openPop('specailAttr')">
-          <div class="label">特殊属性</div>
-          <div class="content"></div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c6 fz-12" v-if="formData.Products_SoldOut||formData.Products_IsNew||formData.Products_IsHot||formData.Products_IsRecommend||formData.one_hour_send">已设置</span>
-              <span class="c9 fz-12" v-else>未设置</span>
-              <icon type="iconarrowleft" color="#999"></icon>
-            </div>
-          </div>
-        </div>
 
-        <!--商品承诺-->
-        <div class="cell-item" @click="openPop('promise')">
-          <div class="label">商品承诺</div>
-          <div class="content"></div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c6 fz-12" v-if="promiseList.length>0">已设置</span>
-              <span class="c9 fz-12" v-else>未设置</span>
-              <icon type="iconarrowleft" color="#999"></icon>
+      <div class="p-20 text-center" v-show="!moreSetting" @click="moreSetting=true">
+        <icon type="iconicon-arrow-down" size="18" color="#00A8FF" />
+        <div class="fz-14 c6">点击打开更多设置</div>
+      </div>
+      <div v-show="moreSetting">
+        <div class="group-cell">
+          <!--特殊属性-->
+          <div class="cell-item" @click="openPop('specailAttr')">
+            <div class="label">特殊属性</div>
+            <div class="content"></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.Products_SoldOut||formData.Products_IsNew||formData.Products_IsHot||formData.Products_IsRecommend||formData.one_hour_send">已设置</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!--分享文案-->
-        <div class="cell-item" @click="openPop('descModel')">
-          <div class="label">分享文案</div>
-          <div class="content">
-          </div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c6 fz-12" v-if="formData.Products_BriefDescription">已设置</span>
-              <span class="c9 fz-12" v-else>未设置</span>
-              <icon type="iconarrowleft" color="#999"></icon>
+          <!--商品承诺-->
+          <div class="cell-item" @click="openPop('promise')">
+            <div class="label">商品承诺</div>
+            <div class="content"></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="promiseList.length>0">已设置</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!--分享有礼-->
-        <div class="cell-item" @click="openPop('share')">
-          <div class="label">分享有礼</div>
-          <div class="content"></div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c6 fz-12" v-if="formData.share_commission!==''">{{formData.share_commission}}</span>
-              <span class="c9 fz-12" v-else>未设置</span>
-              <icon type="iconarrowleft" color="#999"></icon>
+          <!--分享文案-->
+          <div class="cell-item" @click="openPop('descModel')">
+            <div class="label">分享文案</div>
+            <div class="content">
+            </div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.Products_BriefDescription">已设置</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!--销量-->
-        <div class="cell-item">
-          <div class="label">销量</div>
-          <div class="content">
-            <input class="fz-13" type="number" v-model="formData.Products_Sales" placeholder="请输入商品销量" />
-          </div>
-        </div>
-        <!--赠送优惠券-->
-        <div class="cell-item" @click="openPop('couponPop')">
-          <div class="label">赠送优惠券</div>
-          <div class="content">
-          </div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span v-if="isSendCoupon" class="c4 fz-12">赠送</span>
-              <span v-else class="c4 fz-12">不赠送</span>
-              <icon type="iconarrowleft" color="#999"></icon>
+          <!--分享有礼-->
+          <div class="cell-item" @click="openPop('share')">
+            <div class="label">分享有礼</div>
+            <div class="content"></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.share_commission!==''">{{formData.share_commission}}</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!--下单模板-->
-        <div class="cell-item" @click="openOrderTempl">
-          <div class="label">下单模板</div>
-          <div class="content"></div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c6 fz-12" v-if="formData.order_temp_id">{{order_temp_text||'已设置'}}</span>
-              <span class="c9 fz-12" v-else>未设置</span>
-              <icon type="iconarrowleft" color="#999"></icon>
+          <!--销量-->
+          <div class="cell-item">
+            <div class="label">销量</div>
+            <div class="content">
+              <input class="fz-13" type="number" v-model="formData.Products_Sales" placeholder="请输入商品销量" />
             </div>
           </div>
-        </div>
-        <!--限购-->
-        <div class="cell-item" @click="openPop('limitBuy')">
-          <div class="label">限购</div>
-          <div class="content"></div>
-          <div class="right">
-            <div class="flex-vertical-center flex">
-              <span class="c9 fz-12" v-if="formData.prod_limit.switch">限制</span>
-              <span class="c4 fz-12" v-else>不限制</span>
-              <icon type="iconarrowleft" color="#999"></icon>
+          <!--赠送优惠券-->
+          <div class="cell-item" @click="openPop('couponPop')">
+            <div class="label">赠送优惠券</div>
+            <div class="content">
+            </div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span v-if="isSendCoupon" class="c4 fz-12">赠送</span>
+                <span v-else class="c4 fz-12">不赠送</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
+          </div>
+
+          <!--下单模板-->
+          <div class="cell-item" @click="openOrderTempl">
+            <div class="label">下单模板</div>
+            <div class="content"></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c6 fz-12" v-if="formData.order_temp_id">{{order_temp_text||'已设置'}}</span>
+                <span class="c9 fz-12" v-else>未设置</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
+            </div>
+          </div>
+          <!--限购-->
+          <div class="cell-item" @click="openPop('limitBuy')">
+            <div class="label">限购</div>
+            <div class="content"></div>
+            <div class="right">
+              <div class="flex-vertical-center flex">
+                <span class="c9 fz-12" v-if="formData.prod_limit.switch">限制</span>
+                <span class="c4 fz-12" v-else>不限制</span>
+                <icon type="iconarrowleft" color="#999"></icon>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+
       <!-- <div class="group-cell">
         <div class="cell-item" @click="openPop('delivery')">
           <div class="label">支持外卖</div>
@@ -329,12 +351,7 @@
 
 
 
-<!--      <div class="p-20 text-center" v-show="!moreSetting" @click="moreSetting=true">-->
-<!--        <icon type="iconicon-arrow-down" size="18" color="#00A8FF" />-->
-<!--        <div class="fz-14 c6">点击打开更多设置</div>-->
-<!--      </div>-->
-<!--      <div v-show="moreSetting">-->
-<!--      </div>-->
+
       <div class="h20" style="padding: #f8f8f8;"></div>
     </div>
 
@@ -638,7 +655,7 @@
     </popup-layer>
 
     <popup-layer :full="true"  ref="content" >
-      <div class="editor-wrap">
+      <div class="editor-wrap" @click.stop.prevent>
         <div class="editor-container">
           <editor
             placeholder="{{placeholderCotnent}}"
@@ -648,7 +665,7 @@
             @statuschange="onEditorStatusChange"
             :style="{maxHeight:systemInfo.windowHeight-390+'px'}" class="editor-instance" id="editor"></editor>
           <div>
-            <div class="editor-add-btn" @click="addImgByEditor" ><icon color="#ddd" size="40" type="iconupload"></icon></div>
+            <div class="editor-add-btn" @click.stop="addImgByEditor" ><icon color="#ddd" size="40" type="iconupload"></icon></div>
           </div>
         </div>
 
@@ -769,6 +786,7 @@
       imgTaskList: [],
       cate_ids: '',
       imgs: [],
+      imgTempList: [],
       activeSpecIdx: 0,
       specs: [],
       couponList: [],
@@ -1037,7 +1055,7 @@
             use: {
               // 如果前面没有申明prod_order_type这个校验的方法，那么其实row是不会有这个属性的。这个不好说是算bug还是这个类库刻意要求人严谨的
               limit: (val, row) => {
-                if (row.prod_order_type === 0) {
+                if (row.prod_order_type === 0 && row.fee_type === 2) {
                   return floatNumber.test(val) && parseFloat(val) > 0
                 }
                 if (row.fee_type === 2 && !val) {
@@ -1230,6 +1248,11 @@
         }
         if (feeType === 2) {
           this.formData.fix_fee = ''
+          // 设置默认选择中的
+          if (this.shippingTmplList.length > 0) {
+            this.shippingTmplIdx = 0
+            this.formData.shipping_temp = this.shippingTmplList[0].Template_ID
+          }
         }
       },
       bindShopDamageChange() {
@@ -1297,15 +1320,16 @@
           name: ''
         })
       },
-      toEditImgList() {
-        this.$store.commit('productImgList', this.imgs)
-      },
+      // toEditImgList() {
+      //   this.$store.commit('productImgList', this.imgs)
+      // },
       bindThumbDel(idx) {
         confirm({
           title: '操作提醒',
           content: '是否移除该图片，该操作无法撤回'
         }).then(() => {
           this.imgs.splice(idx, 1)
+          this.imgTempList.splice(idx, 1)
         }).catch(() => {
 
         })
@@ -1316,6 +1340,11 @@
         const tempPath = this.imgs[idx - 1]
         this.$set(this.imgs, idx - 1, currentPath)
         this.$set(this.imgs, idx, tempPath)
+
+        const currentPath2 = this.imgTempList[idx]
+        const tempPath2 = this.imgTempList[idx - 1]
+        this.$set(this.imgTempList, idx - 1, currentPath2)
+        this.$set(this.imgTempList, idx, tempPath2)
       },
       bindThumbNext(idx) {
         if (idx === this.imgs.length - 1) return
@@ -1323,30 +1352,18 @@
         const tempPath = this.imgs[idx + 1]
         this.$set(this.imgs, idx + 1, currentPath)
         this.$set(this.imgs, idx, tempPath)
+
+        const currentPath2 = this.imgTempList[idx]
+        const tempPath2 = this.imgTempList[idx + 1]
+        this.$set(this.imgTempList, idx + 1, currentPath2)
+        this.$set(this.imgTempList, idx, tempPath2)
       },
       taggleImgEditStatus() {
 
       },
-      bindThumbClick(idx, img) {
-        wx.showActionSheet({
-          //, '移除图片'
-          itemList: ['预览图片'],
-          success: (res) => {
-            const {tapIndex} = res
-
-            if (tapIndex === 0) {
-              wx.previewImage({
-                urls: [img]
-              })
-            }
-            if (tapIndex === 1) {
-              // this.imgTaskList.splice(idx, 1)
-              this.imgs.splice(idx, 1)
-            }
-          },
-          fail (res) {
-
-          }
+      bindThumbShow(img) {
+        wx.previewImage({
+          urls: [img]
         })
       },
       async addImgByEditor() {
@@ -1381,12 +1398,19 @@
       },
       async addImg() {
         const that = this
+        var tempIdx = this.imgs.length //缓存长度，方便删除
         try {
           if (this._click) throw Error('操作过快')
+
           const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch((err) => { throw Error(err.errMsg) })
           const arr1 = files.map(file => {
             return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
           })
+
+          const tempPathList = arr1.map(file => {
+            return {path: file.path}
+          })
+          this.imgTempList = this.imgTempList.concat(tempPathList)
           console.log('upload img arr1 is', arr1)
 
           const imgs = getArrColumn(files, 'path')
@@ -1400,7 +1424,13 @@
           this.imgs = this.imgs.concat(ossUrls)
           this._click = false
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel'){
+            Exception.handle(e)
+            //删除本次上传的
+            this.imgs.splice(tempIdx)
+            this.imgTempList.splice(tempIdx)
+          }
+
         } finally {
           this.$refs.uploadLoading.close()
         }
@@ -1479,7 +1509,8 @@
               ImgPath[key] = getDomain(ImgPath[key])
             }
             this.imgs = ImgPath
-            this.imgTaskList = ImgPath.map(img => {
+
+            this.imgTempList = ImgPath.map(img => {
               return {path: img}
             })
 
@@ -1668,12 +1699,38 @@
       margin-bottom: 20rpx;
       margin-right: 20rpx;
       position: relative;
-      background-size: 100% 100%;
+
+      .img-item-image{
+        left: 0;
+        top: 0;
+        width: 130rpx;
+        height: 130rpx;
+        position: absolute;
+        z-index: 1;
+      }
+      .img-actions-mask{
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        position: absolute;
+        background-color: rgba(0,0,0,.3);
+        z-index: 3;
+      }
+      .img-actions-pre{
+        width: 100rpx;
+        position: absolute;
+        top: 20rpx;
+        left: 15rpx;
+        z-index: 4;
+      }
       .img-actions{
         width: 100rpx;
         position: absolute;
         bottom: 20rpx;
         left: 15rpx;
+
+        z-index: 4;
       }
       .icon-delete{
         position: absolute;
