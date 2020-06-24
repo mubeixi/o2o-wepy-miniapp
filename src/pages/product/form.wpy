@@ -56,7 +56,10 @@
           <div class="label">平台类目</div>
           <div class="content flex">
             <div class="flex1"></div>
-            <div class="text-right fz-14 text-nowrap" style="width: 400rpx;">{{systemCateHasStr}}</div>
+            <div class="text-right fz-14 text-nowrap" style="width: 400rpx;">
+              <span class="c6 fz-12" v-if="systemCateHasStr">{{systemCateHasStr}}</span>
+              <span class="c9 fz-12" v-else>未设置</span>
+            </div>
           </div>
           <div class="right"><icon type="iconarrowleft" color="#999"></icon></div>
         </div>
@@ -1037,7 +1040,7 @@
             use: {
               // 如果前面没有申明prod_order_type这个校验的方法，那么其实row是不会有这个属性的。这个不好说是算bug还是这个类库刻意要求人严谨的
               limit: (val, row) => {
-                if (row.prod_order_type === 0) {
+                if (row.prod_order_type === 0 && row.fee_type === 2) {
                   return floatNumber.test(val) && parseFloat(val) > 0
                 }
                 if (row.fee_type === 2 && !val) {
