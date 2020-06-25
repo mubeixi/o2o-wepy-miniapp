@@ -36,7 +36,7 @@
                   <div class="price-box">
                     <span class="sign">￥</span>
                     <span>{{product.Products_PriceX}}</span>
-                    <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
+                    <span class="p-l-20 p-r-4 fz-12 color-gray">抢购价:</span>
                     <span class="sign">￥</span>
                     <span>{{product.pintuan_pricex}}</span>
                   </div>
@@ -171,7 +171,7 @@
           ctx.textAlign = 'left'
           ctx.setFontSize(24)
           ctx.setFillStyle('#666666')
-          ctx.fillText('拼购价：', 63, 739)
+          ctx.fillText('抢购价：', 63, 739)
           ctx.setFillStyle('#E41515')
 
           var price = product.Products_PriceX

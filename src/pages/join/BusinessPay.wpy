@@ -195,7 +195,7 @@
               })
             } else {
               toast(res.msg)
-              //ls.set('status', 2)
+              // ls.set('status', 2)
               linkTo('/pages/index')
             }
           }).catch(e => { hideLoading() })
@@ -227,13 +227,15 @@
       },
       getBizConfig() {
         getBizConfig().then(res => {
+          if (res.data.year_fee == '') return
           let arr = JSON.parse(res.data.year_fee)
+
           this.year_fee = arr.map(item => {
             return {...item, check: false}
           })
           this.year_fee[0].check = true
-        }).catch(e=>{
-          error(e.msg||'初始化失败')
+        }).catch(e => {
+          error(e.msg || '初始化失败')
         })
       },
       setSystemCate() {
