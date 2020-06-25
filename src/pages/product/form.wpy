@@ -59,7 +59,7 @@
               </div>
 
             </div>
-            <textarea style="width: 100%;height: 90px;line-height: 30px;" placeholder-style="line-height:30px;" class="fz-14" v-model="formData.Products_Name" placeholder="标题示例：[疯抢]应季水果，火龙果500" />
+            <textarea style="width: 100%;height: 90px;line-height: 30px;" placeholder-style="line-height:30px;" class="fz-14" v-model="formData.Products_Name" placeholder="标题示例：【疯抢】应季水果，火龙果500" />
           </div>
         </div>
         <div class="cell-item" @click="openPop('systemCatePop')">
@@ -800,7 +800,7 @@
       ],
       prod_send_type_str: '',
       prod_send_type_list: [
-        {name: 'express', title: '快递发货', checked: false, desc: '需在"物流管理-普通物流"中进行相关配置'},
+        {name: 'express', title: '快递发货', checked: true, desc: '需在"物流管理-普通物流"中进行相关配置'},
         {name: 'city_express', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
         {name: 'self_get', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
       ],

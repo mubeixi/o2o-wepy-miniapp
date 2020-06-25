@@ -261,6 +261,10 @@
       },
       goBusiness() {
         if (!checkIsLogin(1, 1)) return
+        if (!this.infoData.apply_info) {
+          linkTo('/pages/join/CompanyCertification?action=show&show=1')
+          return
+        }
         const principal_type = this.infoData.apply_info.principal_type
 
         if (principal_type === 1) {
@@ -306,7 +310,7 @@
             this.info = res.data
             this.info.live_flag = Number(this.info.live_flag)
             // 利用开关控制是否提示入驻
-            if (this.info.apply_switch && !this.info.entry_process) {
+            if (this.info.apply_switch && this.info.real_status != 2) {
               confirm({ title: '提示', content: '你还未入驻成功，即将前往入驻页面' }).then(() => {
                 linkTo('/pages/join/BusinessStation')
               }).catch(() => { throw Error('nocare') })
