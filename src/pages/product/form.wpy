@@ -1398,7 +1398,7 @@
       },
       async addImg() {
         const that = this
-        var tempIdx = this.imgs.length //缓存长度，方便删除
+        var tempIdx = this.imgs.length // 缓存长度，方便删除
         try {
           if (this._click) throw Error('操作过快')
 
@@ -1424,13 +1424,12 @@
           this.imgs = this.imgs.concat(ossUrls)
           this._click = false
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel'){
+          if (e.message !== 'chooseImage:fail cancel') {
             Exception.handle(e)
-            //删除本次上传的
+            // 删除本次上传的
             this.imgs.splice(tempIdx)
             this.imgTempList.splice(tempIdx)
           }
-
         } finally {
           this.$refs.uploadLoading.close()
         }
@@ -1479,9 +1478,19 @@
             }
 
             const checkList = this.prod_send_type_list.filter(row => row.checked)
+            const lastCheckList = []
+            for (let item of checkList) {
+              if (item.name === 'express') {
+                lastCheckList.push(item)
+              } else if (item.name === 'city_express' && this._default.arrive_get) {
+                lastCheckList.push(item)
+              } else if (item.name === 'self_get' && this._default.one_hour_send_switch) {
+                lastCheckList.push(item)
+              }
+            }
 
-            if (checkList.length > 0) {
-              this.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
+            if (lastCheckList.length > 0) {
+              this.prod_send_type_str = getArrColumn(lastCheckList, 'title').join(',')
             } else {
               this.prod_send_type_str = ''
             }
