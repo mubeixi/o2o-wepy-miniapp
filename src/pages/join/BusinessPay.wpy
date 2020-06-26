@@ -1,7 +1,7 @@
 <template>
   <div class="business-pay">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')">
+    <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')"  v-if="type!=2">
       <div class="form-cell-item__label">选择分类</div>
       <div class="flex flex-vertical-center ">
         <text class="font12 form-cell-color mbx-item">{{bondName}}</text>
@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="form-cell-item flex  flex-vertical-center" >
+    <div class="form-cell-item flex  flex-vertical-center" v-if="type!=2">
       <div class="form-cell-item__label">保证金</div>
       <div class="form-cell-item__right">
         <input placeholder-class="__placeholder" :value="bondMoneyLast" disabled class="input" />
@@ -25,7 +25,7 @@
           <div class="form-cell-div flex flex-vertical-center" @click="changeIndex(index)">
             <image v-if="item.check" src="/static/icon/checkedIcon.png" class="form-img"></image>
             <div v-else class="unchecked"></div>
-            <text class="form-text">{{item.name}}年</text>
+            <text class="form-text">{{item.name}}天</text>
           </div>
         </block>
 
@@ -51,7 +51,16 @@
 
     <div class="pay-detail">
       <div class="pay-detail-div">
-        小计： 保证金 <text class="color-font">¥{{bondMoneyLast}}、</text> 年费 <text class="color-font">¥{{year_money}}</text>
+        小计：
+        <block v-if="type!=2">
+          保证金 <text class="color-font">¥{{bondMoneyLast}}</text>
+        </block>
+        <block v-if="type!=3&&type!=2">
+          年费 <text class="color-font">¥{{year_money}}</text>
+        </block>
+        <block v-if="type==2">
+          年费 <text class="color-font">¥{{year_fee[ind].value}}</text>
+        </block>
       </div>
     </div>
 
@@ -129,7 +138,7 @@
     },
     methods: {
       async payLast(e) {
-        if (!this.bondMoney) {
+        if (this.type != 2 && !this.bondMoney) {
           error('请先选择分类')
           return
         }
@@ -159,11 +168,13 @@
       },
       async pay(open) {
         let data = {
-          bond_money: this.bondMoney,
           pay_type: this.type
         }
         if (this.type != 3) {
           data.year = this.year_fee[this.ind].name
+        }
+        if (this.type != 2) {
+          data.bond_money = this.bondMoney
         }
         showLoading('提交中')
         await addBizOrder(data).then(res => {

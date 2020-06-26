@@ -19,7 +19,12 @@
           </div>
       </div>
       <div class="flex flex-vertical-center" v-if="AccessToken && info.apply_switch">
-        <div class="action"  v-if="status==2" @click.stop="goBusiness">
+
+        <div class="action"  v-if="biz_expires" @click.stop="goBusiness(1)">
+          <div  class="no-validate"><span class="tip">已过期</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        </div>
+        <div class="action"  v-else-if="status==2" @click.stop="goBusiness">
           <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
         </div>
@@ -161,10 +166,12 @@
   import eventHub from '../common/eventHub'
   import { getAccessToken } from '../common/request'
   import { getLiveApplyStatus } from '@/api/live'
+  const moment = require('moment')
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      biz_expires: false,
       storeInfo: {
         volidate: false
       },
@@ -259,18 +266,26 @@
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/join/BusinessStation')
       },
-      goBusiness() {
+      goBusiness(isShow) {
         if (!checkIsLogin(1, 1)) return
         if (!this.infoData.apply_info) {
+          if (isShow) {
+            linkTo('/pages/join/CompanyCertification?action=show&show=1&expire=1')
+            return
+          }
           linkTo('/pages/join/CompanyCertification?action=show&show=1')
           return
         }
         const principal_type = this.infoData.apply_info.principal_type
 
         if (principal_type === 1) {
-          linkTo('/pages/join/CompanyCertification?action=show&show=1')
+          let url = '/pages/join/CompanyCertification?action=show&show=1'
+          if (isShow) url += '&expire=1'
+          linkTo(url)
         } else {
-          linkTo('/pages/join/PersonalCertification?action=show&show=1')
+          let url = '/pages/join/PersonalCertification?action=show&show=1'
+          if (isShow) url += '&expire=1'
+          linkTo(url)
         }
       },
       toShare() {
@@ -319,6 +334,15 @@
 
           let arr = await getBizInfo({}, {onlyData: true}).catch(e => { throw Error(e.msg) })
           this.infoData = arr[0]
+
+          if (this.infoData.biz_expires != 0) {
+            const biz_expires = this.infoData.biz_expires * 1000
+            const timestamp = new Date().getTime()
+            if (biz_expires <= timestamp) {
+              this.biz_expires = true
+            }
+          }
+
           // 每次刷新请求接口 是否入驻
           if (this.infoData.real_status) {
             this.status = this.infoData.real_status
