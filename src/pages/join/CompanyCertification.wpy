@@ -457,10 +457,11 @@
       }
     },
     onLoad(options) {
+      ls.remove('expireNumber')
       const {action = 'add', expire = 0} = options
-      if (Number(expire) === 1) {
-        this.renew()
-      } else if (expire !== 0) {
+      if (expire == 1) {
+        // this.renew()
+      } else if (expire != 0) {
         ls.set('expireNumber', expire)
       }
       this.action = action
