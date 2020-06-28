@@ -110,6 +110,7 @@ wepy.app({
       "pages/store/AlbumList",
       "pages/store/AddAlbum",
       "pages/store/PhotoList",
+      "pages/store/StoreAvailibleSkin",
       "pages/logistics/LogisticsMain",
       "pages/logistics/LogisticsAdds",
       "pages/logistics/LogisticsAddsMail",

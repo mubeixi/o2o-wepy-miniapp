@@ -20,7 +20,7 @@
       </div>
       <div class="flex flex-vertical-center" v-if="AccessToken && info.apply_switch">
 
-        <div class="action"  v-if="biz_expires" @click.stop="goBusiness(1)">
+        <div class="action"  v-if="biz_expires&&status==2" @click.stop="goBusiness(1)">
           <div  class="no-validate"><span class="tip">已过期</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
         </div>
@@ -30,6 +30,13 @@
         </div>
         <div class="action"  v-else  @click.stop="goBusinessMy">
           <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        </div>
+      </div>
+      <div class="flex flex-vertical-center" v-if="AccessToken && !info.apply_switch">
+
+        <div class="action"  v-if="biz_expires" @click.stop="goBusiness(1)">
+          <div  class="no-validate"><span class="tip">已过期</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
         </div>
       </div>

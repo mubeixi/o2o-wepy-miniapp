@@ -164,3 +164,7 @@ export const opPhoto = (param, options) => fetch({ act: 'opPhoto', param, option
 
 // 获取商家收款码
 export const bizPaySign = (param, options) => fetch({ act: 'bizPaySign', param, options })
+
+
+// 获取商家收款码
+export const getAvailibleSkin = (param, options) => fetch({ act: 'getAvailibleSkin', param, options })
