@@ -561,7 +561,7 @@
         <button  class="btn btn-primary m-t-35" @click="closePop('limitBuy')">确定</button>
     </popup-layer>
 
-    <popup-layer title="配送方式" ref="sendType" >
+    <popup-layer title="配送方式" ref="sendType"  :autoClose="false">
       <checkbox-group class="type-list p-l-10 p-r-10"  @change="setSendType">
         <label class="type-item flex flex-vertical-center bor-b">
           <!--快递-->
@@ -588,7 +588,7 @@
           </div>
         </label>
       </checkbox-group>
-      <button class="btn btn-primary m-t-35" @click="closePop('sendType')">确认</button>
+      <button class="btn btn-primary m-t-35" @click="closeSendType">确认</button>
     </popup-layer>
 
     <popup-layer title="订单类型" ref="orderType" >
@@ -876,6 +876,17 @@
           return
         }
         this.closePop('feeSetting')
+      },
+      closeSendType() {
+        let num=0
+        for(let item of this.prod_send_type_list){
+            if(item.checked) num++
+        }
+        if(num===0){
+          error('至少选择一种配送方式')
+          return
+        }
+        this.closePop('sendType')
       },
       // 更新选择结果
       setSendType(e) {

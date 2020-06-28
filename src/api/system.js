@@ -12,3 +12,5 @@ export const bizLogout = (param, options) => fetch({act: 'bizLogout', param, opt
 
 // 获取三级联动地址
 export const getAreaByPid = (param, options) => fetch({act: 'getAreaByPid', param, options})
+
+export const getUserInfo = (param, options) => fetch({act: 'get_user_info', param, options})
