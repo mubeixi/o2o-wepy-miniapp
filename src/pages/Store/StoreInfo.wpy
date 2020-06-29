@@ -51,6 +51,9 @@
         绑定会员
       </div>
       <div class="store-titles">
+        <block v-if="User_ID">
+          已配置
+        </block>
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
@@ -96,7 +99,10 @@
             <div class="vip-info-text">电话：{{userInfo.User_Mobile}}</div>
           </div>
         </div>
-      <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center"  >
+      <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center"  @click="changeCode"  v-if="User_ID">
+        修改绑定
+      </div>
+      <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center"  @click="bindCode"  v-else>
         确认绑定
       </div>
 
@@ -114,7 +120,7 @@
 
   import { getBizInfo, getCityExpressConfig, opBizInfo, opCityExpressConfig } from '../../api/store'
 
-  import { error, hideLoading, linkTo, showLoading } from '../../common/fun'
+  import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
   import { chooseImageByPromise, uploadImages } from '../../common/helper'
   import { spaceImg } from '../../common/env'
   import { Exception } from '../../common/Exception'
@@ -129,10 +135,24 @@
       info: {},
       business_type: {},
       index: 0,
-      userInfo: {}
+      userInfo: {},
+      User_ID: ''
     },
     methods: {
-      backNext(){
+      changeCode(){
+        this.$refs.vipInfo.close()
+        this.$refs.vipBind.show()
+      },
+      bindCode() {
+        opBizInfo({User_ID: this.userInfo.User_ID}).then(res => {
+          toast('绑定成功')
+          this.User_ID = this.userInfo.User_ID
+          this.$refs.vipInfo.close()
+        }).catch(e => {
+          error(e.msg)
+        })
+      },
+      backNext() {
         this.$refs.vipBind.show()
         this.$refs.vipInfo.close()
       },
@@ -162,7 +182,16 @@
         })
       },
       openVipBind() {
-        this.$refs.vipBind.show()
+        if (this.User_ID) {
+          getUserInfo({User_ID: this.User_ID}).then(res => {
+            this.userInfo = res.data
+            this.$refs.vipInfo.show()
+          }).catch(e => {
+            error(e.msg || '查询会员失败')
+          })
+        } else {
+          this.$refs.vipBind.show()
+        }
       },
       repalceImg() {
         this.info.biz_logo = spaceImg
@@ -206,6 +235,7 @@
         showLoading('加载中')
         await getBizInfo().then(res => {
           this.info = res.data[0]
+          this.User_ID = this.info.User_ID
           if (!this.info.city_express_config) {
             console.log(this.info.city_express_config, 'ssss')
             this.info.city_express_config = {
