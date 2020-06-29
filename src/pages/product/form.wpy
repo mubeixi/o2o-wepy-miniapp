@@ -561,9 +561,10 @@
         <button  class="btn btn-primary m-t-35" @click="closePop('limitBuy')">确定</button>
     </popup-layer>
 
-    <popup-layer title="配送方式" ref="sendType"  :autoClose="false">
+    <popup-layer title="配送方式" ref="sendType"  >
+<!--      :autoClose="false"-->
       <checkbox-group class="type-list p-l-10 p-r-10"  @change="setSendType">
-        <label class="type-item flex flex-vertical-center bor-b">
+        <label class="type-item flex flex-vertical-center bor-b" @click="typeIndex=0">
           <!--快递-->
           <checkbox style="transform: scale(.8)" color="#00A8FF" value="0" :checked="prod_send_type_list[0].checked"></checkbox>
           <div class="label p-10">
@@ -572,7 +573,7 @@
           </div>
         </label>
         <!--到店自提-->
-        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.arrive_get">
+        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.arrive_get" @click="typeIndex=1">
           <checkbox style="transform: scale(.8)" color="#00A8FF" value="1" :checked="prod_send_type_list[1].checked"></checkbox>
           <div class="label p-10">
             <div class="title m-b-4">{{prod_send_type_list[1].title}}</div>
@@ -580,7 +581,7 @@
           </div>
         </label>
         <!--同城配送-->
-        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.one_hour_send_switch">
+        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.one_hour_send_switch" @click="typeIndex=2">
           <checkbox style="transform: scale(.8)" color="#00A8FF" value="2" :checked="prod_send_type_list[2].checked"></checkbox>
           <div class="label p-10">
             <div class="title m-b-4">{{prod_send_type_list[2].title}}</div>
@@ -741,6 +742,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      typeIndex: -1,
       toLogin: false, // 标记为是否去登陆了，为了onShow可以不要瞎响应
       moreSetting: false,
       bizProdCateFormShow: false,
@@ -798,7 +800,7 @@
         {title: '虚拟订单', desc: '买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成'},
         {title: '其他', desc: '买家下单-买家付款-订单完成'}
       ],
-      prod_send_type_str: '',
+      prod_send_type_str: '快递发货',
       prod_send_type_list: [
         {name: 'express', title: '快递发货', checked: true, desc: '需在"物流管理-普通物流"中进行相关配置'},
         {name: 'city_express', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
@@ -878,11 +880,11 @@
         this.closePop('feeSetting')
       },
       closeSendType() {
-        let num=0
-        for(let item of this.prod_send_type_list){
-            if(item.checked) num++
+        let num = 0
+        for (let item of this.prod_send_type_list) {
+          if (item.checked) num++
         }
-        if(num===0){
+        if (num === 0) {
           error('至少选择一种配送方式')
           return
         }
@@ -890,19 +892,26 @@
       },
       // 更新选择结果
       setSendType(e) {
-        const vals = e.$wx.detail.value
-        for (var idx in this.prod_send_type_list) {
-          console.log(vals, idx, vals.includes(idx))
-          this.$set(this.prod_send_type_list[idx], 'checked', vals.includes(idx))
-        }
+        let _self = this
+        setTimeout(function() {
+          const vals = e.$wx.detail.value
+          for (var idx in _self.prod_send_type_list) {
+            console.log(vals, idx, vals.includes(idx))
+            _self.$set(_self.prod_send_type_list[idx], 'checked', vals.includes(idx))
+          }
+          if (vals.length < 1) {
+            error('至少选择一种配送方式')
+            _self.$set(_self.prod_send_type_list[_self.typeIndex], 'checked', true)
+          }
 
-        const checkList = this.prod_send_type_list.filter(row => row.checked)
+          const checkList = _self.prod_send_type_list.filter(row => row.checked)
 
-        if (checkList.length > 0) {
-          this.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
-        } else {
-          this.prod_send_type_str = ''
-        }
+          if (checkList.length > 0) {
+            _self.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
+          } else {
+            _self.prod_send_type_str = ''
+          }
+        }, 100)
       },
       openOrderTempl() {
         this.$linkTo('/pages/order/OrderTmplList?mode=goodsForm&select=' + this.formData.order_temp_id)

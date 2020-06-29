@@ -33,6 +33,9 @@
         opBizInfo({skin_id}).then(res => {
           toast('修改成功')
           this.skin_id = skin_id
+          setTimeout(function() {
+            wx.navigateBack()
+          }, 1000)
         }).catch(e => {
           error(e.msg || '修改失败')
         })
