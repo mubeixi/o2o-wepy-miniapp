@@ -800,11 +800,11 @@
         {title: '虚拟订单', desc: '买家下单-买家付款-系统发送消费券码给买家-商家认证消费-订单完成'},
         {title: '其他', desc: '买家下单-买家付款-订单完成'}
       ],
-      prod_send_type_str: '快递发货',
+      prod_send_type_str: '',
       prod_send_type_list: [
         {name: 'express', title: '快递发货', checked: true, desc: '需在"物流管理-普通物流"中进行相关配置'},
-        {name: 'city_express', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
-        {name: 'self_get', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
+        {name: 'self_get', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
+        {name: 'city_express', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
       ],
       order_temp_text: '', //
       formData: {
@@ -1122,6 +1122,7 @@
           city_express: 0, // (同城配送)
           self_get: 0// (到店自提)
         }
+
         for (var key in delivery_method) {
           const idx = findArrayIdx(this.prod_send_type_list, {name: key})
           if (idx !== false) {
@@ -1130,6 +1131,14 @@
         }
 
         console.log(delivery_method)
+        var checkSendTotal = 0
+        for (let item of this.prod_send_type_list) {
+          if (item.checked) checkSendTotal++
+        }
+        if (checkSendTotal === 0) {
+          this.formCheckResult = ['请至少选择一个配送方式']
+          return
+        }
 
         let productInfo = {
           ...this.formData,
