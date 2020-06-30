@@ -89,6 +89,7 @@ wepy.app({
       "pages/join/PersonalCertification",
       "pages/join/CompanyCertification",
       "pages/join/BusinessPay",
+      "pages/join/ActivationCode",
       "pages/store/StoreSetting",
       "pages/store/StoreSettingConfig",
       "pages/store/StoreSettingAdd",
