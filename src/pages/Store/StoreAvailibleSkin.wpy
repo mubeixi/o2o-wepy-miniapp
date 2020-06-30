@@ -20,6 +20,7 @@
   import pageMixin from '../../mixins'
   import {getAvailibleSkin, getBizInfo, opBizInfo} from '../../api/store'
   import { error, toast } from '../../common/fun'
+  import {confirm} from '../../common/helper'
 
   wepy.page({
     store,
@@ -30,15 +31,18 @@
     },
     methods: {
       checkId(skin_id) {
-        opBizInfo({skin_id}).then(res => {
-          toast('修改成功')
-          this.skin_id = skin_id
-          setTimeout(function() {
-            wx.navigateBack()
-          }, 1000)
-        }).catch(e => {
-          error(e.msg || '修改失败')
-        })
+        confirm({title: '提示', content: '确定要选择该模板吗?', confirmText: '确定', cancelText: '取消'}).then(() => {
+          opBizInfo({skin_id}).then(res => {
+            toast('修改成功')
+            this.skin_id = skin_id
+            setTimeout(function() {
+              wx.navigateBack()
+            }, 1000)
+          }).catch(e => {
+            error(e.msg || '修改失败')
+          })
+        }).catch(() => {})
+
       },
       async init() {
         this.storeData = await getAvailibleSkin({}, { onlyData: true }).catch(e => {
@@ -81,7 +85,7 @@
     border: 0px !important;
   }
   .checked{
-    border: 1px solid  #FF0000;
+    border: 2px solid  #FF0000;
     color: #FF0000;
   }
 

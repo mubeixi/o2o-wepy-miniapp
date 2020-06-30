@@ -15,10 +15,7 @@
         <image class="icon" src="/static/goods/multi.png"></image>
         <div class="title">批量管理</div>
       </div>
-      <div class="item" @click="$linkTo('/pages/store/StoreAvailibleSkin')">
-        <image class="icon" src="/static/goods/sku.png"></image>
-        <div class="title">商家模板</div>
-      </div>
+
     </div>
 
     <div class="product-list">
