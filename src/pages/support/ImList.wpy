@@ -68,14 +68,15 @@
     }
     .right{
       width: 590rpx;
-      padding: 30rpx 30rpx 30rpx 0;
+      padding: 30rpx 10rpx 30rpx 0;
       box-sizing: border-box;
       border-bottom: 1px solid #ECECEC;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       .nickname{
-        max-width: 400rpx;
+        width: 300rpx;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
@@ -116,9 +117,9 @@
             <div class="item-tag" :class="{circle:chat.no_read<10}" v-if="chat.no_read>0">{{chat.no_read}}</div>
           </div>
           <div class="right" >
-            <div class="info flex flex-vertical-c flex-justify-between">
+            <div class="info flex flex-vertical-center flex-justify-between">
               <div class="nickname c3 fz-17">{{chat.name}}</div>
-              <div class="time c9 fz-13">{{chat.time}}</div>
+              <div class="time c9 fz-12">{{chat.time}}</div>
             </div>
             <div class="msg c9 fz-13">
               <block v-if="chat.type==='text'">
@@ -367,7 +368,7 @@
       })
     },
     onLoad(options) {
-      
+
     },
     onShow() {
 
@@ -383,7 +384,7 @@
 
       this._init_func()
 
-      
+
       if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
         console.log('初始化？？？')
         this.$wx.getTabBar().setData({
