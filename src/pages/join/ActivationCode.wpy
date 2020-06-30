@@ -1,0 +1,61 @@
+<template>
+  <div class="page-wrap">
+      <div @click="buyActiveCodeFn">
+        立即购买
+      </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {buyActiveCode} from '../../api/store'
+
+  import { error, toast } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+
+    },
+    methods: {
+      buyActiveCodeFn() {
+        wx.login({
+          success(res) {
+            if (res.code) {
+              let code = res.code
+              buyActiveCode({code:code}).then(res=>{
+
+              }).catch(e=>{
+                error(e.msg)
+              })
+            }
+          },
+          fail() {
+
+          }
+        })
+      }
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "购买激活码",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon"
+  }
+  }
+</config>

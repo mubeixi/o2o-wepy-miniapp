@@ -74,10 +74,10 @@
 
       <div class="grid">
         <div class="grid-row">
-<!--          <div class="grid-item">-->
-<!--            <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>-->
-<!--            <div class="grid-item-title">店铺模板</div>-->
-<!--          </div>-->
+          <div class="grid-item" @click="$linkTo('/pages/store/StoreAvailibleSkin')">
+            <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
+            <div class="grid-item-title">店铺模板</div>
+          </div>
           <div class="grid-item" @click="goPro">
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
@@ -86,12 +86,13 @@
             <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
             <div class="grid-item-title">修改资料</div>
           </div>
+
+        </div>
+        <div class="grid-row">
           <div class="grid-item" @click="goStatistics">
             <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
             <div class="grid-item-title">数据统计</div>
           </div>
-        </div>
-        <div class="grid-row">
 
           <div class="grid-item" @click="goMarketing">
             <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
@@ -107,12 +108,13 @@
 <!--              </div>-->
             </div>
           </div>
+
+        </div>
+        <div class="grid-row">
           <div class="grid-item"  @click="goStoreSetting">
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
-        </div>
-        <div class="grid-row">
 
           <div class="grid-item" @click="goLogistics">
             <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
@@ -123,16 +125,17 @@
             <div class="grid-item-title">结算</div>
           </div>
 
+
+        </div>
+        <div class="grid-row" >
           <div class="grid-item" @click="goOrderRefund">
             <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
               退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
             </div>
           </div>
-        </div>
-        <div class="grid-row"  v-if="AccessToken&&info.live_flag===1">
 
-          <div class="grid-item" @click="goLive">
+          <div class="grid-item" @click="goLive"  v-if="AccessToken&&info.live_flag===1">
             <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
             <div class="grid-item-title">直播申请</div>
           </div>
@@ -141,9 +144,6 @@
 
           </div>
 
-          <div class="grid-item">
-
-          </div>
         </div>
       </div>
 
