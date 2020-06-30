@@ -334,7 +334,7 @@ class IM {
    * 获取未读消息总数
    */
   async getNoReadMsgCount() {
-    const total = await getNoReadMsg({out_uid: this.getOutUid()}).then(res => res.totalCount).catch(err => {
+    const total = await getNoReadMsg({out_uid: this.getOutUid()},{errtip:false}).then(res => res.totalCount).catch(err => {
       console.log(err.msg || '获取未读记录失败')
       return 0
     })
