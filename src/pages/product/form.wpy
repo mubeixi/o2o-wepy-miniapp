@@ -803,8 +803,8 @@
       prod_send_type_str: '',
       prod_send_type_list: [
         {name: 'express', title: '快递发货', checked: true, desc: '需在"物流管理-普通物流"中进行相关配置'},
-        {name: 'city_express', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
-        {name: 'self_get', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
+        {name: 'self_get', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
+        {name: 'city_express', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
       ],
       order_temp_text: '', //
       formData: {
@@ -900,8 +900,8 @@
             _self.$set(_self.prod_send_type_list[idx], 'checked', vals.includes(idx))
           }
           if (vals.length < 1) {
-            // error('至少选择一种配送方式')
-            // _self.$set(_self.prod_send_type_list[_self.typeIndex], 'checked', true)
+            error('至少选择一种配送方式')
+            _self.$set(_self.prod_send_type_list[_self.typeIndex], 'checked', true)
           }
 
           const checkList = _self.prod_send_type_list.filter(row => row.checked)
