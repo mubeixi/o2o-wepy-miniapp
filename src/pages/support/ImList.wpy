@@ -81,7 +81,7 @@
         text-overflow: ellipsis;
       }
       .msg{
-        max-width: 600rpx;
+        width: 580rpx;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -129,7 +129,7 @@
                 商品:[{{chat.content.prod_name}}]
               </block>
               <block v-if="chat.type==='img' || chat.type==='image'">
-                发送了一张图片
+                发送了一张图片发送了一张图片发送了一张图片发送了一张图片
               </block>
             </div>
           </div>
