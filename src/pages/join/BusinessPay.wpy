@@ -1,7 +1,7 @@
 <template>
   <div class="business-pay">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')">
+    <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')"  v-if="type!=2">
       <div class="form-cell-item__label">选择分类</div>
       <div class="flex flex-vertical-center ">
         <text class="font12 form-cell-color mbx-item">{{bondName}}</text>
@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="form-cell-item flex  flex-vertical-center" >
+    <div class="form-cell-item flex  flex-vertical-center" v-if="type!=2">
       <div class="form-cell-item__label">保证金</div>
       <div class="form-cell-item__right">
         <input placeholder-class="__placeholder" :value="bondMoneyLast" disabled class="input" />
@@ -20,12 +20,14 @@
       <div class="form-cell-item__labels">
         选择年限
       </div>
-      <div class="flex">
+      <div class="flex flex-wrap">
         <block v-for="(item,index) of year_fee" :key="index">
           <div class="form-cell-div flex flex-vertical-center" @click="changeIndex(index)">
             <image v-if="item.check" src="/static/icon/checkedIcon.png" class="form-img"></image>
             <div v-else class="unchecked"></div>
-            <text class="form-text">{{item.name}}年</text>
+            <text class="form-text">{{item.name}}天</text>
+            <text v-if="item.name<30&&item.sum>0&&type==2">(合每天{{item.sum}}元)</text>
+            <text v-if="item.name>=30&&item.sum>0&&type==2">(合每月{{item.sum*30}}元)</text>
           </div>
         </block>
 
@@ -51,7 +53,16 @@
 
     <div class="pay-detail">
       <div class="pay-detail-div">
-        小计： 保证金 <text class="color-font">¥{{bondMoneyLast}}、</text> 年费 <text class="color-font">¥{{year_money}}</text>
+        小计：
+        <block v-if="type!=2">
+          保证金 <text class="color-font">¥{{bondMoneyLast}}</text>
+        </block>
+        <block v-if="type!=3&&type!=2">
+          年费 <text class="color-font">¥{{year_money}}</text>
+        </block>
+        <block v-if="type==2">
+          年费 <text class="color-font">¥{{year_fee[ind].value}}</text>
+        </block>
       </div>
     </div>
 
@@ -129,7 +140,7 @@
     },
     methods: {
       async payLast(e) {
-        if (!this.bondMoney) {
+        if (this.type != 2 && !this.bondMoney) {
           error('请先选择分类')
           return
         }
@@ -159,11 +170,13 @@
       },
       async pay(open) {
         let data = {
-          bond_money: this.bondMoney,
           pay_type: this.type
         }
         if (this.type != 3) {
           data.year = this.year_fee[this.ind].name
+        }
+        if (this.type != 2) {
+          data.bond_money = this.bondMoney
         }
         showLoading('提交中')
         await addBizOrder(data).then(res => {
@@ -195,7 +208,7 @@
               })
             } else {
               toast(res.msg)
-              //ls.set('status', 2)
+              // ls.set('status', 2)
               linkTo('/pages/index')
             }
           }).catch(e => { hideLoading() })
@@ -205,10 +218,13 @@
       },
       changeIndex(ind) {
         this.year_fee = this.year_fee.map(item => {
-          return {...item, check: false}
+          return {...item, check: false, sum: (item.value / item.name).toFixed(2)}
         })
         this.ind = ind
         this.year_fee[ind].check = true
+        if (this.type == 2) {
+          this.pay_money = this.year_fee[ind].value
+        }
         if (!this.bondMoney) {
           return
         }
@@ -227,13 +243,21 @@
       },
       getBizConfig() {
         getBizConfig().then(res => {
+          if (res.data.year_fee == '') return
           let arr = JSON.parse(res.data.year_fee)
+
           this.year_fee = arr.map(item => {
-            return {...item, check: false}
+            return {...item, check: false, sum: (item.value / item.name).toFixed(2)}
+          })
+          this.year_fee = this.year_fee.map(item => {
+            return {...item, check: false, sum: (item.value / item.name).toFixed(2)}
           })
           this.year_fee[0].check = true
-        }).catch(e=>{
-          error(e.msg||'初始化失败')
+          if (this.type == 2) {
+            this.pay_money = this.year_fee[0].value
+          }
+        }).catch(e => {
+          error(e.msg || '初始化失败')
         })
       },
       setSystemCate() {
@@ -398,6 +422,9 @@
   text-overflow:ellipsis; //溢出用省略号显示
   white-space:nowrap; //溢出不换行
 }
+  .flex-wrap{
+    flex-wrap: wrap;
+  }
 
 
 

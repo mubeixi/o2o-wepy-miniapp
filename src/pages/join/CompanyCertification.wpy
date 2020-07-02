@@ -112,7 +112,46 @@
       background: #f8f8f8;
     }
   }
+  .zhezhao {
+    left: 0;
+    top: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.3);
+    z-index: 100;
 
+    .input-wrap {
+      background: #fff;
+      color: #000;
+      text-align: center;
+      width: 90%;
+      margin: 400rpx auto;
+      padding: 40rpx 50rpx 30rpx;
+      box-sizing: border-box;
+      font-size: 28rpx;
+      border-radius: 10rpx;
+      .input {
+        margin: 40rpx 0;
+        border: 1px solid #efefef;
+        min-height: 20px;
+        line-height: 20px;
+        padding: 10px 0px;
+        text-align: left;
+        padding-left: 10rpx;
+      }
+
+      .btns {
+        display: flex;
+        justify-content: space-around;
+        height: 60rpx;
+        line-height: 60rpx;
+        .btn {
+          flex: 1;
+        }
+      }
+    }
+  }
 
 </style>
 <template>
@@ -123,6 +162,14 @@
       <div class="div-cell flex flex-justify-between flex-vertical-center p-10" v-if="biz_apply_time">
         <div>认证时间</div>
         <div>{{biz_apply_time}}</div>
+      </div>
+      <div class="h10 bgwhite"></div>
+      <div class="div-cell flex flex-justify-between flex-vertical-center p-10" >
+        <div>过期时间</div>
+        <div class="flex flex-vertical-center">
+          <span>{{biz_expires}}</span>
+          <div class="back-pay-btn color-white fz-12 m-r-10 m-l-10" @click="renew">续费</div>
+        </div>
       </div>
       <div class="h10 bgwhite"></div>
       <div class="div-cell flex flex-justify-between flex-vertical-center p-10">
@@ -183,8 +230,20 @@
     <button @click="sub" v-if="action!='show'" class="btn action-btn btn-primary">{{action==='add'?'提交资料':'修改资料'}}</button>
 
 
-    <select-trade :single="true" :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
+    <select-trade  v-if="AccessToken" :single="true" :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
 
+
+
+    <div class="zhezhao" catchtouchmove="true" v-if="showCode">
+      <div class="input-wrap">
+        <div>请输入激活码</div>
+        <textarea auto-height  class="input" placeholder="请输入激活码" v-model="code_num" style="width: 100%;"></textarea>
+        <div class="btns">
+          <div @click="showCode=false" class="btn">取消</div>
+          <div @click="confirmInput" class="btn">确定</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -192,15 +251,20 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { bizApply, bizIndustryDetail, getBizConfig, getBizInfo } from '../../api/store'
-  import { objTranslate, validateFun } from '../../common/helper'
-  import { modal, toast } from '../../common/fun'
-
+  import { bizApply, bizIndustryDetail, getBizConfig, getBizInfo, codeActive } from '../../api/store'
+  import { objTranslate, validateFun, checkIsLogin, ls } from '../../common/helper'
+  import { modal, toast, error } from '../../common/fun'
+  import { getAccessToken } from '../../common/request'
+  const moment = require('moment')
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      biz_apply_time:'',
+      AccessToken: '',
+      showCode: false,
+      code_num: '',
+      biz_apply_time: '',
+      biz_expires: '',
       showBond: false,
       bond_fee: '',
       action: '',
@@ -235,6 +299,41 @@
       }
     },
     methods: {
+      confirmInput() {
+        if (!this.code_num) {
+          error('请输入激活码')
+          return
+        }
+        codeActive({code_num: this.code_num}).then(res => {
+          toast('激活成功')
+          this.showCode = false
+          this._init_func()
+        }).catch(e => {
+          this.code_num = ''
+          this.showCode = false
+          error(e.msg || '激活失败')
+        })
+      },
+      renew() {
+        if (!checkIsLogin(1, 1)) return
+        let _self = this
+        wx.showActionSheet({
+          itemList: ['直接续费', '使用激活码'],
+          success: (res) => {
+            const {tapIndex} = res
+            console.log(tapIndex)
+            if (tapIndex === 0) {
+              _self.$linkTo('/pages/join/BusinessPay?type=2')
+            }
+            if (tapIndex === 1) {
+              _self.showCode = true
+            }
+          },
+          fail (res) {
+
+          }
+        })
+      },
       upMaterial(data) {
         this.auth_info.material = objTranslate(data)
       },
@@ -338,7 +437,8 @@
           const bizInfo = await getBizInfo().then(res => {
             return res.data[0]
           }).catch(() => {})
-          this.biz_apply_time=bizInfo.biz_apply_time
+          this.biz_apply_time = bizInfo.biz_apply_time
+          this.biz_expires = moment(bizInfo.biz_expires * 1000).format('YYYY/MM/DD hh:mm:ss')
           this.bond_fee = bizInfo.bond_fee
 
           this.materialForms = bizInfo.apply_info.auth_info.material
@@ -358,14 +458,30 @@
       }
     },
     onLoad(options) {
-      const {action = 'add'} = options
+      ls.remove('expireNumber')
+      const {action = 'add', expire = 0} = options
+      if (expire == 1) {
+        // this.renew()
+      } else if (expire != 0) {
+        ls.set('expireNumber', expire)
+      }
       this.action = action
       if (options.show) {
         this.showBond = true
       }
     },
     onShow() {
-      this._init_func()
+      if (!checkIsLogin(1, 1)) return
+      const expireNumber = ls.get('expireNumber')
+      if (expireNumber) {
+        this.code_num = expireNumber
+        this.showCode = true
+      }
+
+      this.AccessToken = getAccessToken()
+      if (this.AccessToken) {
+        this._init_func()
+      }
     },
     created() {
 

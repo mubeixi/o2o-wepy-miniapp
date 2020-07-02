@@ -1,5 +1,5 @@
 import { back, error, linkTo, modal, toast } from '../common/fun'
-import { ls } from '../common/helper'
+import { ls, checkIsLogin } from '../common/helper'
 import eventHub from '../common/eventHub'
 
 /**
@@ -67,6 +67,21 @@ export default {
     // 这个机制还是要onShow 兼容返回的情况
     ls.set('currentPagePath', this.getCurrentPageRoute())// 标记当前的页面，这样就不会每个事件都响应了
     this.currentPagePath = this.getCurrentPageRoute()
+
+    // 全局判断是否登录跳去登录
+    let pathArr = [
+      'pages/join/PersonalCertification',
+      'pages/join/CompanyCertification',
+      'pages/user/login',
+      'pages/index',
+      'pages/support/ImList'
+    ]
+
+    const pathIndex = pathArr.indexOf(this.currentPagePath)
+    console.log(pathIndex,"sss")
+    if (pathIndex === -1) {
+      if (!checkIsLogin(1, 0)) return
+    }
   },
   onReady() {
     eventHub.$on('IM_EVENT', (res) => {

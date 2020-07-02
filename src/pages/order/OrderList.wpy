@@ -26,31 +26,24 @@
           <div class="title">秒杀订单</div>
           <span  class="order-tag" v-if="orderNumber.flashsale&&orderNumber.flashsale.waitsend>0">{{(orderNumber.flashsale.waitsend>99)?'n':orderNumber.flashsale.waitsend}}</span>
         </div>
-        <div class="feature-item" @click="goFlashSale('waimai')">
-          <image src="/static/order/order5.png" class="img"></image>
-          <div class="title">外卖订单</div>
-          <span  class="order-tag" v-if="orderNumber.waimai&&orderNumber.waimai.waitsend>0">{{(orderNumber.waimai.waitsend>99)?'n':orderNumber.waimai.waitsend}}</span>
-        </div>
+<!--        <div class="feature-item" @click="goFlashSale('waimai')">-->
+<!--          <image src="/static/order/order5.png" class="img"></image>-->
+<!--          <div class="title">外卖订单</div>-->
+<!--          <span  class="order-tag" v-if="orderNumber.waimai&&orderNumber.waimai.waitsend>0">{{(orderNumber.waimai.waitsend>99)?'n':orderNumber.waimai.waitsend}}</span>-->
+<!--        </div>-->
         <div class="feature-item" @click="goFlashSale('offline')">
           <image src="/static/order/order6.png" class="img"></image>
-          <div class="title">线下支付订单</div>
+          <div class="title">线下订单</div>
           <span  class="order-tag" v-if="orderNumber.offline&&orderNumber.offline.waitsend>0">{{(orderNumber.offline.waitsend>99)?'n':orderNumber.offline.waitsend}}</span>
         </div>
-      </div>
-
-
-      <div class="feature-row">
         <div class="feature-item" @click="$linkTo('/pages/order/CheckChannel')">
           <image src="/static/order/order7.png" class="img"></image>
-          <div class="title">核销订单</div>
-        </div>
-        <div class="feature-item" >
-
-        </div>
-        <div class="feature-item" >
-
+          <div class="title">订单核销</div>
         </div>
       </div>
+
+
+
 
 
     </div>

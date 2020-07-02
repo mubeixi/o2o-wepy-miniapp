@@ -334,7 +334,7 @@ class IM {
    * 获取未读消息总数
    */
   async getNoReadMsgCount() {
-    const total = await getNoReadMsg({out_uid: this.getOutUid()}).then(res => res.totalCount).catch(err => {
+    const total = await getNoReadMsg({out_uid: this.getOutUid()},{errtip:false}).then(res => res.totalCount).catch(err => {
       console.log(err.msg || '获取未读记录失败')
       return 0
     })
@@ -407,7 +407,8 @@ class IM {
 
       // checkOnline({ out_uid: this.getOutUid() })
 
-      sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }).then(res => {
+      // 不提示token过期
+      sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }, {errtip: false}).then(res => {
         console.log('发送成功', res)
         this.chatList[chatIdx].sendStatus = 1 // 标记成功
         return res.data

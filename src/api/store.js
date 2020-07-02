@@ -1,5 +1,8 @@
 import { fetch } from '../common/request'
 
+
+// 商家激活码续费
+export const codeActive = (param, options) => fetch({act: 'codeActive', param, options})
 // 电子面单合作公司列表和详情
 export const getCoopCompany = (param, options) => fetch({act: 'getCoopCompany', param, options})
 
@@ -161,3 +164,10 @@ export const opPhoto = (param, options) => fetch({ act: 'opPhoto', param, option
 
 // 获取商家收款码
 export const bizPaySign = (param, options) => fetch({ act: 'bizPaySign', param, options })
+
+
+// 获取商家收款码
+export const getAvailibleSkin = (param, options) => fetch({ act: 'getAvailibleSkin', param, options })
+// 商家激活码购买
+export const buyActiveCode = (param, options) => fetch({ act: 'buyActiveCode', param, options })
+

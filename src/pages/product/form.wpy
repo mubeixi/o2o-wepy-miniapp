@@ -2,7 +2,11 @@
   <div class="page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
-    <div class="form">
+    <div class="page-head" :style="{height:diyHeadHeight+'px'}">
+      <page-title :letfFn="true" @clickLeft="bindBackFn" title="商品详情"></page-title>
+    </div>
+
+    <scroll-view scroll-y :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" class="form page-container">
       <!--产品类型-->
       <div class="group-cell" @click="openPop('orderType')">
         <div class="cell-item">
@@ -59,7 +63,7 @@
               </div>
 
             </div>
-            <textarea style="width: 100%;height: 90px;line-height: 30px;" placeholder-style="line-height:30px;" class="fz-14" v-model="formData.Products_Name" placeholder="标题示例：[疯抢]应季水果，火龙果500" />
+            <textarea style="width: 100%;height: 90px;line-height: 30px;" placeholder-style="line-height:30px;" class="fz-14" v-model="formData.Products_Name" placeholder="标题示例：【疯抢】应季水果，火龙果500" />
           </div>
         </div>
         <div class="cell-item" @click="openPop('systemCatePop')">
@@ -176,7 +180,7 @@
             </div>
           </div>
         </div>
-        <div class="cell-item" @click="openPop('content')">
+        <div class="cell-item" @click="openDescriptionPop">
           <div class="label">商品详情</div>
           <div class="content"></div>
           <div class="right">
@@ -216,8 +220,7 @@
         </div>
       </div>
 
-
-      <div class="p-20 text-center" v-show="!moreSetting" @click="moreSetting=true">
+      <div class="p-20 text-center" v-if="!moreSetting" @click="setMoreShow">
         <icon type="iconicon-arrow-down" size="18" color="#00A8FF" />
         <div class="fz-14 c6">点击打开更多设置</div>
       </div>
@@ -353,7 +356,7 @@
 
 
       <div class="h20" style="padding: #f8f8f8;"></div>
-    </div>
+    </scroll-view>
 
     <modal ref="descModel" positions="top" radius="12rpx"  >
       <div class="p-20 desc-wrap">
@@ -366,7 +369,6 @@
         <div @click="closePop('descModel')" class="desc-btn btn-primary text-center">保存数据</div>
       </div>
     </modal>
-
     <popup-layer ref="couponPop" title="选择优惠券" mainBgColor="#F7F4F8" >
       <div class="coupon-wrap" style="overflow-y: scroll;box-sizing: border-box;" :style="{maxHeight: systemInfo.windowHeight-150+'px'}">
         <div class="coupon-item flex flex-justify-between" @click="couponChange(index)"  v-for="(item,index) of couponList" :key="index">
@@ -394,7 +396,6 @@
       </div>
       <button @click="closePop('couponPop')" class="btn btn-primary">确定</button>
     </popup-layer>
-
     <div v-show="bizProdCateFormShow" style="width: 100%;height: 100%;left: 0;top: 0;position: fixed;background: rgba(0,0,0,.3);z-index:101;">
       <div class="posi" style="width: 426rpx;overflow: hidden;background: white;border-radius: 6rpx;box-sizing: border-box;padding: 20rpx;">
         <div class="text-center c3">添加分类</div>
@@ -407,7 +408,6 @@
         </div>
       </div>
     </div>
-
     <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false" >
 
       <div @touchmove.stop.prevent>
@@ -561,9 +561,10 @@
         <button  class="btn btn-primary m-t-35" @click="closePop('limitBuy')">确定</button>
     </popup-layer>
 
-    <popup-layer title="配送方式" ref="sendType" >
+    <popup-layer title="配送方式" ref="sendType"  >
+<!--      :autoClose="false"-->
       <checkbox-group class="type-list p-l-10 p-r-10"  @change="setSendType">
-        <label class="type-item flex flex-vertical-center bor-b">
+        <label class="type-item flex flex-vertical-center bor-b" @click="typeIndex=0">
           <!--快递-->
           <checkbox style="transform: scale(.8)" color="#00A8FF" value="0" :checked="prod_send_type_list[0].checked"></checkbox>
           <div class="label p-10">
@@ -572,7 +573,7 @@
           </div>
         </label>
         <!--到店自提-->
-        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.arrive_get">
+        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.arrive_get" @click="typeIndex=1">
           <checkbox style="transform: scale(.8)" color="#00A8FF" value="1" :checked="prod_send_type_list[1].checked"></checkbox>
           <div class="label p-10">
             <div class="title m-b-4">{{prod_send_type_list[1].title}}</div>
@@ -580,7 +581,7 @@
           </div>
         </label>
         <!--同城配送-->
-        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.one_hour_send_switch">
+        <label class="type-item flex flex-vertical-center bor-b" v-if="_default.one_hour_send_switch" @click="typeIndex=2">
           <checkbox style="transform: scale(.8)" color="#00A8FF" value="2" :checked="prod_send_type_list[2].checked"></checkbox>
           <div class="label p-10">
             <div class="title m-b-4">{{prod_send_type_list[2].title}}</div>
@@ -588,7 +589,7 @@
           </div>
         </label>
       </checkbox-group>
-      <button class="btn btn-primary m-t-35" @click="closePop('sendType')">确认</button>
+      <button class="btn btn-primary m-t-35" @click="closeSendType">确认</button>
     </popup-layer>
 
     <popup-layer title="订单类型" ref="orderType" >
@@ -654,8 +655,8 @@
       <button class="btn btn-primary m-t-35" @click="closePop('specailAttr')">确认</button>
     </popup-layer>
 
-    <popup-layer :full="true"  ref="content" >
-      <div class="editor-wrap" @click.stop.prevent>
+    <popup-layer  ref="content" :auto-close="false" >
+      <div :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" class="editor-wrap" @click.stop.prevent @touchmove.prevent.stop>
         <div class="editor-container">
           <editor
             placeholder="{{placeholderCotnent}}"
@@ -741,6 +742,8 @@
     store,
     mixins: [pageMixin],
     data: {
+      descriptionPopShow: false, // 是否显示富文本编辑
+      typeIndex: -1,
       toLogin: false, // 标记为是否去登陆了，为了onShow可以不要瞎响应
       moreSetting: false,
       bizProdCateFormShow: false,
@@ -800,9 +803,9 @@
       ],
       prod_send_type_str: '',
       prod_send_type_list: [
-        {name: 'express', title: '快递发货', checked: false, desc: '需在"物流管理-普通物流"中进行相关配置'},
-        {name: 'city_express', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
-        {name: 'self_get', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
+        {name: 'express', title: '快递发货', checked: true, desc: '需在"物流管理-普通物流"中进行相关配置'},
+        {name: 'self_get', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
+        {name: 'city_express', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
       ],
       order_temp_text: '', //
       formData: {
@@ -870,6 +873,21 @@
       // }
     },
     methods: {
+      openDescriptionPop() {
+        this.descriptionPopShow = true
+        this.$openPop('content')
+      },
+      // 拦截
+      bindBackFn() {
+        console.log('拦截返回成功了')
+        if (this.descriptionPopShow) {
+          return
+        }
+        this.$back()
+      },
+      setMoreShow() {
+        this.moreSetting = true
+      },
       bindFeeSave() {
         if (this.formData.fee_type === 2 && !this.formData.Products_Weight) {
           error('勾选物流模板必须设置商品重量')
@@ -877,21 +895,39 @@
         }
         this.closePop('feeSetting')
       },
+      closeSendType() {
+        let num = 0
+        for (let item of this.prod_send_type_list) {
+          if (item.checked) num++
+        }
+        if (num === 0) {
+          error('至少选择一种配送方式')
+          return
+        }
+        this.closePop('sendType')
+      },
       // 更新选择结果
       setSendType(e) {
-        const vals = e.$wx.detail.value
-        for (var idx in this.prod_send_type_list) {
-          console.log(vals, idx, vals.includes(idx))
-          this.$set(this.prod_send_type_list[idx], 'checked', vals.includes(idx))
-        }
+        let _self = this
+        setTimeout(function() {
+          const vals = e.$wx.detail.value
+          for (var idx in _self.prod_send_type_list) {
+            console.log(vals, idx, vals.includes(idx))
+            _self.$set(_self.prod_send_type_list[idx], 'checked', vals.includes(idx))
+          }
+          if (vals.length < 1) {
+            error('至少选择一种配送方式')
+            _self.$set(_self.prod_send_type_list[_self.typeIndex], 'checked', true)
+          }
 
-        const checkList = this.prod_send_type_list.filter(row => row.checked)
+          const checkList = _self.prod_send_type_list.filter(row => row.checked)
 
-        if (checkList.length > 0) {
-          this.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
-        } else {
-          this.prod_send_type_str = ''
-        }
+          if (checkList.length > 0) {
+            _self.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
+          } else {
+            _self.prod_send_type_str = ''
+          }
+        }, 100)
       },
       openOrderTempl() {
         this.$linkTo('/pages/order/OrderTmplList?mode=goodsForm&select=' + this.formData.order_temp_id)
@@ -900,6 +936,7 @@
         this.formData.is_waimai = e.$wx.detail.value ? 1 : 0
       },
       editorDone() {
+        this.descriptionPopShow = false
         this.closePop('content')
 
         this.editorInstance.getContents({
@@ -1102,6 +1139,7 @@
           city_express: 0, // (同城配送)
           self_get: 0// (到店自提)
         }
+
         for (var key in delivery_method) {
           const idx = findArrayIdx(this.prod_send_type_list, {name: key})
           if (idx !== false) {
@@ -1110,6 +1148,14 @@
         }
 
         console.log(delivery_method)
+        var checkSendTotal = 0
+        for (let item of this.prod_send_type_list) {
+          if (item.checked) checkSendTotal++
+        }
+        if (checkSendTotal === 0) {
+          this.formCheckResult = ['请至少选择一个配送方式']
+          return
+        }
 
         let productInfo = {
           ...this.formData,
@@ -1398,7 +1444,7 @@
       },
       async addImg() {
         const that = this
-        var tempIdx = this.imgs.length //缓存长度，方便删除
+        var tempIdx = this.imgs.length // 缓存长度，方便删除
         try {
           if (this._click) throw Error('操作过快')
 
@@ -1424,13 +1470,12 @@
           this.imgs = this.imgs.concat(ossUrls)
           this._click = false
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel'){
+          if (e.message !== 'chooseImage:fail cancel') {
             Exception.handle(e)
-            //删除本次上传的
+            // 删除本次上传的
             this.imgs.splice(tempIdx)
             this.imgTempList.splice(tempIdx)
           }
-
         } finally {
           this.$refs.uploadLoading.close()
         }
@@ -1479,9 +1524,19 @@
             }
 
             const checkList = this.prod_send_type_list.filter(row => row.checked)
+            const lastCheckList = []
+            for (let item of checkList) {
+              if (item.name === 'express') {
+                lastCheckList.push(item)
+              } else if (item.name === 'city_express' && this._default.arrive_get) {
+                lastCheckList.push(item)
+              } else if (item.name === 'self_get' && this._default.one_hour_send_switch) {
+                lastCheckList.push(item)
+              }
+            }
 
-            if (checkList.length > 0) {
-              this.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
+            if (lastCheckList.length > 0) {
+              this.prod_send_type_str = getArrColumn(lastCheckList, 'title').join(',')
             } else {
               this.prod_send_type_str = ''
             }
@@ -1768,6 +1823,26 @@
     margin-bottom: 0;
   }
 
+  .page-wrap{
+    height: 100vh;
+  }
+
+  .page-head{
+    position: absolute;
+    width: 750rpx;
+    background: #fff;
+    top: 0;
+    left: 0;
+  }
+
+  .page-container{
+    width: 750rpx;
+    overflow-x: hidden;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+  }
   .form{
     background: #f8f8f8;
     padding-bottom: 80rpx;
@@ -1943,7 +2018,9 @@
   {
     "navigationBarTitleText": "商品详情",
     "navigationBarTextStyle": "black",
+    "navigationStyle": "custom",
     "usingComponents": {
+      "page-title": "~@/components/page-title",
       "fun-upload-loading":"~@/components/fun-upload-loading",
       "wzw-im-tip": "~@/components/wzw-im-tip",
       "err-msg": "~@/components/err-msg",

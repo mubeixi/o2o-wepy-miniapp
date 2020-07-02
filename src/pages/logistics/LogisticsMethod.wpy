@@ -3,12 +3,12 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="first">
       <span class="first-title">默认运费：</span>
-      <input type="digit" class="input-out"  v-model="express_start"/> {{index===0?'kg':'件'}}内，
+      <input type="digit" class="input-out"  v-model="express_start"/> {{indexs===0?'kg':'件'}}内，
       <input type="digit"  class="input-out" v-model="express_postage"/> 元
     </div>
     <div class="second">
       每增加
-      <input type="digit" class="input-out" v-model="express_plus"/> {{index===0?'kg':'件'}}，增加运费
+      <input type="digit" class="input-out" v-model="express_plus"/> {{indexs===0?'kg':'件'}}，增加运费
       <input type="digit"  class="input-out" v-model="express_postageplus"/> 元
     </div>
 
@@ -29,7 +29,7 @@
           首重
         </div>
         <div class="input-div">
-          <input type="digit"  class="input-my" v-model="item.express_start"/>  {{index===0?'kg':'件'}}
+          <input type="digit"  class="input-my" v-model="item.express_start"/>  {{indexs===0?'kg':'件'}}
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -45,7 +45,7 @@
           续重
         </div>
         <div class="input-div">
-          <input type="digit"  class="input-my"  v-model="item.express_plus"/>  {{index===0?'kg':'件'}}
+          <input type="digit"  class="input-my"  v-model="item.express_plus"/>  {{indexs===0?'kg':'件'}}
         </div>
       </div>
       <div class="mail-item-bottom flex" style="border-bottom: 0px">
@@ -91,7 +91,7 @@
     store,
     mixins: [pageMixin],
     data: {
-      index:0,
+      indexs: 0,
       ind: 0,
       temp_id: '',
       editData: {},
@@ -138,6 +138,8 @@
         this.ind = index
         this.hasValue = this.hasAllList.hasOwnProperty(this.ind) ? this.hasAllList[this.ind] : []
 
+
+
         // this.showSelect = true
         this.$refs.cityPopup.open()
       },
@@ -160,7 +162,7 @@
         this.temp_id = options.temp_id
       }
       if (options.ind) {
-        this.index = Number(options.ind)
+        this.indexs = Number(options.ind)
       }
       this.editData = ls.get('Template_Content')
       if (this.editData) {
@@ -202,7 +204,7 @@
   .mail-item{
     width: 710rpx;
     background-color: #FFFFFF;
-    margin: 0 auto 30rpx;
+    margin: 0 auto 20rpx;
     border: 1px solid #E1E1E1;
     position: relative;
   }

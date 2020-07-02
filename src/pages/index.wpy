@@ -19,12 +19,24 @@
           </div>
       </div>
       <div class="flex flex-vertical-center" v-if="AccessToken && info.apply_switch">
-        <div class="action"  v-if="status==2" @click.stop="goBusiness">
+
+        <div class="action"  v-if="biz_expires&&status==2" @click.stop="goBusiness(1)">
+          <div  class="no-validate"><span class="tip">已过期</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        </div>
+        <div class="action"  v-else-if="status==2" @click.stop="goBusiness">
           <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
         </div>
         <div class="action"  v-else  @click.stop="goBusinessMy">
           <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
+          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        </div>
+      </div>
+      <div class="flex flex-vertical-center" v-if="AccessToken && !info.apply_switch">
+
+        <div class="action"  v-if="biz_expires" @click.stop="goBusiness(1)">
+          <div  class="no-validate"><span class="tip">已过期</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
           <icon type="iconarrowleft"  class="iconarrowleft"></icon>
         </div>
       </div>
@@ -62,10 +74,10 @@
 
       <div class="grid">
         <div class="grid-row">
-<!--          <div class="grid-item">-->
-<!--            <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>-->
-<!--            <div class="grid-item-title">店铺模板</div>-->
-<!--          </div>-->
+          <div class="grid-item" @click="$linkTo('/pages/store/StoreAvailibleSkin')">
+            <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
+            <div class="grid-item-title">店铺模板</div>
+          </div>
           <div class="grid-item" @click="goPro">
             <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
             <div class="grid-item-title">商品管理</div>
@@ -74,12 +86,13 @@
             <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
             <div class="grid-item-title">修改资料</div>
           </div>
+
+        </div>
+        <div class="grid-row">
           <div class="grid-item" @click="goStatistics">
             <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
             <div class="grid-item-title">数据统计</div>
           </div>
-        </div>
-        <div class="grid-row">
 
           <div class="grid-item" @click="goMarketing">
             <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
@@ -95,12 +108,13 @@
 <!--              </div>-->
             </div>
           </div>
+
+        </div>
+        <div class="grid-row">
           <div class="grid-item"  @click="goStoreSetting">
             <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
             <div class="grid-item-title">店铺设置</div>
           </div>
-        </div>
-        <div class="grid-row">
 
           <div class="grid-item" @click="goLogistics">
             <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
@@ -111,16 +125,17 @@
             <div class="grid-item-title">结算</div>
           </div>
 
+
+        </div>
+        <div class="grid-row" >
           <div class="grid-item" @click="goOrderRefund">
             <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
             <div class="grid-item-title" style="display: flex;justify-content: center;">
               退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
             </div>
           </div>
-        </div>
-        <div class="grid-row"  v-if="AccessToken&&info.live_flag===1">
 
-          <div class="grid-item" @click="goLive">
+          <div class="grid-item" @click="goLive"  v-if="AccessToken&&info.live_flag===1">
             <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
             <div class="grid-item-title">直播申请</div>
           </div>
@@ -129,9 +144,6 @@
 
           </div>
 
-          <div class="grid-item">
-
-          </div>
         </div>
       </div>
 
@@ -161,10 +173,12 @@
   import eventHub from '../common/eventHub'
   import { getAccessToken } from '../common/request'
   import { getLiveApplyStatus } from '@/api/live'
+  const moment = require('moment')
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      biz_expires: false,
       storeInfo: {
         volidate: false
       },
@@ -259,14 +273,26 @@
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/join/BusinessStation')
       },
-      goBusiness() {
+      goBusiness(isShow) {
         if (!checkIsLogin(1, 1)) return
+        if (!this.infoData.apply_info) {
+          if (isShow) {
+            linkTo('/pages/join/CompanyCertification?action=show&show=1&expire=1')
+            return
+          }
+          linkTo('/pages/join/CompanyCertification?action=show&show=1')
+          return
+        }
         const principal_type = this.infoData.apply_info.principal_type
 
         if (principal_type === 1) {
-          linkTo('/pages/join/CompanyCertification?action=show&show=1')
+          let url = '/pages/join/CompanyCertification?action=show&show=1'
+          if (isShow) url += '&expire=1'
+          linkTo(url)
         } else {
-          linkTo('/pages/join/PersonalCertification?action=show&show=1')
+          let url = '/pages/join/PersonalCertification?action=show&show=1'
+          if (isShow) url += '&expire=1'
+          linkTo(url)
         }
       },
       toShare() {
@@ -306,7 +332,7 @@
             this.info = res.data
             this.info.live_flag = Number(this.info.live_flag)
             // 利用开关控制是否提示入驻
-            if (this.info.apply_switch && !this.info.entry_process) {
+            if (this.info.apply_switch && this.info.real_status != 2) {
               confirm({ title: '提示', content: '你还未入驻成功，即将前往入驻页面' }).then(() => {
                 linkTo('/pages/join/BusinessStation')
               }).catch(() => { throw Error('nocare') })
@@ -315,6 +341,15 @@
 
           let arr = await getBizInfo({}, {onlyData: true}).catch(e => { throw Error(e.msg) })
           this.infoData = arr[0]
+
+          if (this.infoData.biz_expires != 0) {
+            const biz_expires = this.infoData.biz_expires * 1000
+            const timestamp = new Date().getTime()
+            if (biz_expires <= timestamp) {
+              this.biz_expires = true
+            }
+          }
+
           // 每次刷新请求接口 是否入驻
           if (this.infoData.real_status) {
             this.status = this.infoData.real_status

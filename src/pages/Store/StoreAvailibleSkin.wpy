@@ -1,0 +1,101 @@
+<template>
+  <div class="mail-all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+
+    <div  class="store-skin flex flex-justify-between">
+        <div class="w300"  v-for="(item,index) of storeData" :key="index"  @click="checkId(item.id)">
+          <img :src="item.url"   class="store-img" :class="{'checked':skin_id==item.id}"/>
+          <div class="store-text"  :class="{'checked':skin_id==item.id}">
+            {{item.name}}
+          </div>
+        </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {getAvailibleSkin, getBizInfo, opBizInfo} from '../../api/store'
+  import { error, toast } from '../../common/fun'
+  import {confirm} from '../../common/helper'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      storeData: [],
+      skin_id: 0
+    },
+    methods: {
+      checkId(skin_id) {
+        confirm({title: '提示', content: '确定要选择该模板吗?', confirmText: '确定', cancelText: '取消'}).then(() => {
+          opBizInfo({skin_id}).then(res => {
+            toast('修改成功')
+            this.skin_id = skin_id
+            setTimeout(function() {
+              wx.navigateBack()
+            }, 1000)
+          }).catch(e => {
+            error(e.msg || '修改失败')
+          })
+        }).catch(() => {})
+
+      },
+      async init() {
+        this.storeData = await getAvailibleSkin({}, { onlyData: true }).catch(e => {
+          error(e.msg || '获取商家模板列表失败')
+        })
+        const bizInfo = await getBizInfo({}, { onlyData: true }).catch(e => {
+          error(e.msg || '获取商家模板失败')
+        })
+        this.skin_id = bizInfo[0].skin_id
+      }
+    },
+    onShow() {
+      this.init()
+    }
+
+  })
+
+</script>
+<style lang="scss">
+  @import "../../assets/variables.scss";
+  @import "../../assets/mixins.scss";
+  .store-skin{
+      padding:50rpx 50rpx;
+      flex-wrap:wrap;
+  }
+  .store-img{
+    width: 300rpx;
+    height: 480rpx;
+    box-sizing: border-box;
+  }
+  .w300{
+    width: 300rpx;
+  }
+  .store-text{
+    width: 300rpx;
+    height: 40rpx;
+    line-height: 40rpx;
+    text-align: center;
+    margin: 20px 0px;
+    border: 0px !important;
+  }
+  .checked{
+    border: 2px solid  #FF0000;
+    color: #FF0000;
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "商家模板",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon"
+  }
+  }
+</config>

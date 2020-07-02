@@ -128,6 +128,12 @@
       }
     },
     methods: {
+      /**
+       * 手动初始化
+       */
+      initHandler() {
+        this._init_func({refresh: true})
+      },
       // 重新生成
       clearFn({item, nodeKey}) {
         console.log('clearFn', item, nodeKey, this.$refs)
@@ -139,12 +145,16 @@
       getCheckedNodes() {
         return TreeHub.getCHeckList('tree_' + this.eleId)
       },
-      _init_func() {
+      _init_func({refresh = false} = {}) {
         console.log('this.eleId is ', this.eleId)
         this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has, plainArrayList: this.plainArrayList})
         // 用来告诉父组件我好了，可以搞事
         console.log('fun-tree component done')
-        this.$emit('done')
+        if (!refresh) {
+          this.$emit('done')
+        } else {
+          this.$emit('refreshDone')
+        }
       }
     },
     ready() {
