@@ -69,7 +69,17 @@ export default {
     this.currentPagePath = this.getCurrentPageRoute()
 
     // 全局判断是否登录跳去登录
-    if (this.currentPagePath !== 'pages/user/login' && this.currentPagePath !== 'pages/index') {
+    let pathArr = [
+      'pages/join/PersonalCertification',
+      'pages/join/CompanyCertification',
+      'pages/user/login',
+      'pages/index',
+      'pages/support/ImList'
+    ]
+
+    const pathIndex = pathArr.indexOf(this.currentPagePath)
+    console.log(pathIndex,"sss")
+    if (pathIndex === -1) {
       if (!checkIsLogin(1, 0)) return
     }
   },

@@ -174,7 +174,7 @@
         <div>{{biz_apply_time}}</div>
       </div>
       <div class="h10 bgwhite"></div>
-      <div class="div-cell flex flex-justify-between flex-vertical-center p-10" v-if="biz_apply_time">
+      <div class="div-cell flex flex-justify-between flex-vertical-center p-10" >
         <div>过期时间</div>
         <div class="flex flex-vertical-center">
           <span>{{biz_expires}}</span>
@@ -241,12 +241,12 @@
 
     <select-trade v-if="AccessToken" :single="true" :show="showTrade" :has="trade.list" @close="handleTradeSelectClose" @onConfirm="handleTradeSelect"></select-trade>
 
-    <div class="zhezhao" catchtouchmove="true" v-if="show">
+    <div class="zhezhao" catchtouchmove="true" v-if="showCode">
       <div class="input-wrap">
         <div>请输入激活码</div>
         <textarea auto-height  class="input" placeholder="请输入激活码" v-model="code_num" style="width: 100%;"></textarea>
         <div class="btns">
-          <div @click="show=false" class="btn">取消</div>
+          <div @click="showCode=false" class="btn">取消</div>
           <div @click="confirmInput" class="btn">确定</div>
         </div>
       </div>
@@ -268,7 +268,7 @@
     mixins: [pageMixin],
     data: {
       AccessToken: '',
-      show: false,
+      showCode: false,
       code_num: '',
       biz_apply_time: '',
       biz_expires: '',
@@ -314,14 +314,15 @@
         codeActive({code_num: this.code_num}).then(res => {
           toast('激活成功')
           this._init_func()
-          this.show = false
+          this.showCode = false
         }).catch(e => {
           this.code_num = ''
-          this.show = false
+          this.showCode = false
           error(e.msg || '激活失败')
         })
       },
       renew() {
+        if (!checkIsLogin(1, 1)) return
         let _self = this
         wx.showActionSheet({
           itemList: ['直接续费', '使用激活码'],
@@ -331,7 +332,7 @@
               _self.$linkTo('/pages/join/BusinessPay?type=2')
             }
             if (tapIndex === 1) {
-              _self.show = true
+              _self.showCode = true
               console.log(tapIndex)
             }
           },
@@ -467,7 +468,7 @@
       ls.remove('expireNumber')
       const {action = 'add', expire = 0} = options
       if (expire == 1) {
-        //this.renew()
+        // this.renew()
       } else if (expire != 0) {
         ls.set('expireNumber', expire)
       }
@@ -481,7 +482,7 @@
       const expireNumber = ls.get('expireNumber')
       if (expireNumber) {
         this.code_num = expireNumber
-        this.show = true
+        this.showCode = true
       }
 
       this.AccessToken = getAccessToken()
