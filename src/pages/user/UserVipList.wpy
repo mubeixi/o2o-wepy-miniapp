@@ -128,13 +128,19 @@
     &-title{
       width: 210rpx;
       overflow-x: hidden;
+      display: inline-block;
+      white-space: nowrap;
+      text-overflow:ellipsis;
     }
     &-phone{
       font-size: 28rpx;
       font-weight: 500;
       display: inline-block;
       width: 178rpx;
+      overflow-x: hidden;
       margin-left: 12rpx;
+      white-space: nowrap;
+      text-overflow:ellipsis;
     }
   }
   .vip-content{
