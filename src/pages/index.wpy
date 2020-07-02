@@ -143,6 +143,9 @@
             <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
             <div class="grid-item-title">直播申请</div>
           </div>
+          <div class="grid-item" @click="goLive"  v-else>
+
+          </div>
 
 
 
