@@ -7,7 +7,7 @@ export class TreeHub {
   ENV = null
   eid = ''
   constructor({treeData, nodeKey, eid, has = [], childrenName, plainArrayList = false}) {
-
+    console.log(nodeKey,eid)
     if (!nodeKey) {
       throw Error('nodeKey必须设置')
     }
@@ -45,7 +45,10 @@ export class TreeHub {
   static getCHeckList(eid) {
     let nodes = ls.get(eid)
     // let nodes = getApp().globalData[eid]
-    const checkList = nodes.filter(({check}) => check)
+    var checkList = []
+    if (Array.isArray(nodes)) {
+      checkList = nodes.filter(({check}) => check)
+    }
     return checkList
   }
 
