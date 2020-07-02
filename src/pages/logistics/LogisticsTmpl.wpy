@@ -60,6 +60,8 @@
   min-height: 100vh;
   padding-bottom: 90rpx;
   background: white;
+  width: 750rpx;
+  overflow-x: hidden;
 }
 .group-cell{
   padding-right: 30rpx;
@@ -90,7 +92,8 @@
   align-items: center;
   justify-content: center;
   color: #333;
-  box-shadow:0rpx 0rpx 18rpx 0rpx rgba(0, 0, 0, 0.16);
+  box-shadow:0px -12rpx 12rpx 0rpx rgba(0, 0, 0, 0.16);
+  //box-shadow:12rpx 0rpx 18rpx -12rpx rgba(0, 0, 0, 0.16);
 }
 
 
