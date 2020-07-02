@@ -170,4 +170,6 @@ export const bizPaySign = (param, options) => fetch({ act: 'bizPaySign', param, 
 export const getAvailibleSkin = (param, options) => fetch({ act: 'getAvailibleSkin', param, options })
 // 商家激活码购买
 export const buyActiveCode = (param, options) => fetch({ act: 'buyActiveCode', param, options })
+// 获取商家或总后台会员列表
+export const getUserList = (param, options) => fetch({ act: 'getUserList', param, options })
 
