@@ -134,15 +134,17 @@
               退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
             </div>
           </div>
+          <div class="grid-item"   @click="goVip">
+            <icon type="iconMember" class="grid-item-icon" size="28" color="#17ccce"></icon>
+            <div class="grid-item-title">会员管理</div>
+          </div>
 
           <div class="grid-item" @click="goLive"  v-if="AccessToken&&info.live_flag===1">
             <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
             <div class="grid-item-title">直播申请</div>
           </div>
 
-          <div class="grid-item">
 
-          </div>
 
         </div>
       </div>
@@ -200,6 +202,10 @@
       }
     },
     methods: {
+      goVip() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/user/UserVipList')
+      },
       goLive() {
         if (!checkIsLogin(1, 1)) return
         if (this.liveInfo.id) {
