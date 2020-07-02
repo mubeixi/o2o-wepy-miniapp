@@ -138,6 +138,8 @@
         this.ind = index
         this.hasValue = this.hasAllList.hasOwnProperty(this.ind) ? this.hasAllList[this.ind] : []
 
+
+
         // this.showSelect = true
         this.$refs.cityPopup.open()
       },
@@ -202,7 +204,7 @@
   .mail-item{
     width: 710rpx;
     background-color: #FFFFFF;
-    margin: 0 auto 30rpx;
+    margin: 0 auto 20rpx;
     border: 1px solid #E1E1E1;
     position: relative;
   }
