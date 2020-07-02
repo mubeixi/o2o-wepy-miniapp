@@ -12,6 +12,7 @@
           ref="tree"
           :has="has"
           @done="doneFn"
+          @refreshDone="refreshDoneFn"
           :conf="propsConf"
           :tree-data="treeData"
           :plain-array-list="plainArrayList"
@@ -73,7 +74,7 @@
       maskOpacity: 0,
       propsConf: {
         // icon:'iconname',
-        pidKey:'Province_parentid',
+        pidKey: 'Province_parentid',
         children: '_child', // 指定子树为节点对象的某个属性值
         label: 'area_name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled' // 指定节点选择框是否禁用为节点对象的某个属性值
@@ -86,11 +87,11 @@
           !val && this.close()
         }
       },
-      idx(nweVal) {
-        // this.isReady = false
-        // setTimeout(() => {
-        //   this.isReady = true
-        // })
+      idx: {
+        immediate: false,
+        handler() {
+          this.refresh()
+        }
       },
       has: {
         handler(newVal) {
@@ -111,6 +112,9 @@
       this._init_func()
     },
     methods: {
+      refresh() {
+        this.$refs.tree.initHandler()
+      },
       openPluginDrawer () {
         // this.commentDrawerOpen = true
         var animation = wx.createAnimation({
@@ -128,6 +132,9 @@
         })
         animation.translateX(this.systemInfo.windowWidth).step()
         this.animationData = animation.export()
+      },
+      refreshDoneFn() {
+        console.log('城市选择组件刷新ok')
       },
       doneFn() {
         console.log('城市选择组件ok')
