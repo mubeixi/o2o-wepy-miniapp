@@ -189,7 +189,7 @@
           bizOrderPay(datas).then(res => {
             hideLoading()
             let obj = res.data
-            if (obj) {
+            if (obj && obj.hasOwnProperty('paySign')) {
               let {timeStamp, nonceStr, paySign} = obj || {}
               let packages = obj.package
               wx.requestPayment({

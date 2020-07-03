@@ -83,8 +83,8 @@
             <input type="number" v-model="mobile"  maxlength="11" class="vip-bind-input" placeholder="请输入手机号"/>
             <icon  type="iconsearch1" size="26" class="m-l-20"  color="#999" @click="searchPhone"></icon>
           </div>
-          <div class="vip-bind-text">
-            小提示：绑定会员用于新订单和消息的推送，如你还未注册会员，请关注公众号“及贝”会自动为你创建会员，绑定手机号后回到此处进行绑定会员操作，可<span class="code-span" @click="lookCode">点此查看</span>公众号二维码，保存后扫码关注
+          <div class="vip-bind-text" v-if="mp_nickname">
+            小提示：绑定会员用于新订单和消息的推送，如你还未注册会员，请关注公众号{{'"'}}{{mp_nickname}}{{'"'}}会自动为你创建会员，绑定手机号后回到此处进行绑定会员操作，可<span class="code-span" @click="lookCode">点此查看</span>公众号二维码，保存后扫码关注
           </div>
     </popup-layer>
     <popup-layer  ref="vipInfo" >
@@ -132,6 +132,7 @@
     mixins: [pageMixin],
     data: {
       mobile: '',
+      mp_nickname:'',
       mp_qrcode: '',
       info: {},
       business_type: {},
@@ -184,6 +185,7 @@
       },
       async initCode() {
         await initInfo().then(res => {
+          this.mp_nickname=res.data.mp_nickname
           this.mp_qrcode = res.data.mp_qrcode
         }).catch(e => {
           error(e.msg)

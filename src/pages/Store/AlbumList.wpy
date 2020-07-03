@@ -13,7 +13,7 @@
               <block v-for="(item,index) of albumList" :key="index">
                 <div class="AlbumList-item"  @click="$linkTo('/pages/store/PhotoList?id='+item.id)">
                   <image  :src="item.cate_img" class="AlbumList-img"></image>
-                  <icon v-if="showEdit"  type="icondel"  color="#ccc"  size="24" class="del-icon"  @click.stop="delImg(item.id)"></icon>
+                  <icon v-if="showEdit"  type="icondel"  color="#ccc"  size="24" class="del-icon"  @click.stop="delImg(item.id,index)"></icon>
                   <div class="AlbumList-img-rename" v-if="showEdit"  @click.stop="renameMethod(item.id)">
                     重命名
                   </div>
@@ -96,11 +96,12 @@
         this.showRename = true
         this.nameId = id
       },
-      delImg(id) {
+      delImg(id, index) {
         confirm({title: '提示', content: '确定要删除该相册吗?', confirmText: '删除', cancelText: '取消'}).then(() => {
           delAlbum({id: id}).then(res => {
             toast('删除成功')
-            this.init()
+            this.albumList.splice(index, 1)
+            // this.init()
           }).catch(e => {
             error(e.msg || '删除失败')
           })
@@ -113,7 +114,7 @@
         })
 
         this.totalCount = arr.totalCount
-      },
+      }
       // async changeList() {
       //   let arr = await getAlbumList({page: this.page, pageSize: this.pageSize}).catch(e => { error(e.msg || '获取相册列表失败') })
       //   this.totalCount = arr.totalCount
@@ -121,12 +122,12 @@
       // }
     },
     onShow() {
-      this.albumList=[]
-      this.page=1
+      this.albumList = []
+      this.page = 1
       this.init()
-      //this.changeList()
+      // this.changeList()
     },
-    onLoad(){
+    onLoad() {
       // this.init()
     },
     onReachBottom() {

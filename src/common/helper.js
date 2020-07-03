@@ -202,7 +202,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  * @param data 业务参数:{}
  * @returns {Promise<unknown>}
  */
-export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj,handlerPressFn}) => {
+export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj, handlerPressFn}) => {
   let taskList = []
   // console.log(imgs, 'ssss')
   for (let i = 0; i < imgs.length; i++) {
@@ -499,6 +499,16 @@ export function getTouchEventInfo(event) {
   }
 }
 
+export const formatPhone = (value) => {
+  if (value) {
+    var len = value.length
+    var xx = value.substring(3, len - 4)
+    var values = value.replace(xx, '****')
+    return values
+  }
+  return ''
+}
+
 /**
  * 模拟惯性滑动
  * @param nowScrollTop
@@ -544,4 +554,37 @@ export function pageScrollToFn(nowScrollTop, evalScrollTop, duration = 100) {
   //   setTimeout(inertiaMove, 10)
   // }
   // inertiaMove()
+}
+
+/**
+ * 从聊天记录中选择文件
+ * @param count
+ * @param type
+ * @param extension
+ * @returns {Promise<unknown>}
+ */
+export const chooseFileByPromise = ({count = 10, type = 'file', extension = ['doc', 'docx', 'xls', 'xlsx', 'pdf']}) => {
+  console.log( count,
+    type,
+    extension)
+  return new Promise((resolve, reject) => {
+    wx.chooseMessageFile({
+      count,
+      type,
+      extension,
+      success (res) {
+        // tempFilePath可以作为img标签的src属性显示图片
+        const tempFilePaths = res.tempFiles
+        resolve(tempFilePaths)
+      },
+      fail(err) {
+        console.log(err)
+        if (err.errMsg === 'chooseMessageFile:fail cancel') {
+          reject(Error('nocare'))
+        } else {
+          reject(Error(err.errMsg))
+        }
+      }
+    })
+  })
 }
