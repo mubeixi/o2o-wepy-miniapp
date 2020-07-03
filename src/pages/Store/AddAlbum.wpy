@@ -85,7 +85,7 @@
           toast('新增成功')
           setTimeout(function() {
             that.$back()
-          }, 1000)
+          }, 1500)
         }).catch(e => {
           this.showRename = false
           error(e.msg || '修改相册名失败')

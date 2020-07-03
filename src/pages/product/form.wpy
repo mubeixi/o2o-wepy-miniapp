@@ -6,7 +6,7 @@
       <page-title :letfFn="true" @clickLeft="bindBackFn" title="商品详情"></page-title>
     </div>
 
-    <scroll-view scroll-y :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" class="form page-container">
+    <scroll-view :scroll-y="!descriptionPopShow" :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" :class="{noscroll:descriptionPopShow}" class="form page-container">
       <!--产品类型-->
       <div class="group-cell" @click="openPop('orderType')">
         <div class="cell-item">
@@ -655,8 +655,8 @@
       <button class="btn btn-primary m-t-35" @click="closePop('specailAttr')">确认</button>
     </popup-layer>
 
-    <popup-layer  ref="content" :auto-close="false" >
-      <div :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" class="editor-wrap" @click.stop.prevent @touchmove.prevent.stop>
+    <popup-layer  ref="content" :auto-close="false" :show-safe-area="false" >
+      <div :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}"  class="editor-wrap" @click.stop.prevent>
         <div class="editor-container">
           <editor
             placeholder="{{placeholderCotnent}}"
@@ -674,7 +674,6 @@
         <div class="safearea-box"></div>
         <button class="editor-done-btn btn btn-primary" @click="editorDone">编辑完成</button>
       </div>
-
     </popup-layer>
 
     <!-- <popup-layer title="支持外卖"  ref="delivery" >
@@ -1664,48 +1663,46 @@
   .ql-container{
     height: auto;
   }
-  .editor{
-    &-wrap{
-      overflow: hidden;
-      background: #f8f8f8;
-      height: 100%;
-      position: relative;
-      box-sizing: border-box;
-      padding: 20px 10px;
-    }
-    &-instance{
-      min-height: 100px;
-      padding: 10px;
-      /*border: 1px solid #eee;*/
-      line-height: 1.4;
-      overflow-y: scroll;
-      overflow-x: hidden;
-    }
-    &-container{
-      box-sizing: border-box;
-      padding: 15px;
-      background: white;
+  .editor-wrap{
+    overflow: hidden;
+    background: #f8f8f8;
 
-    }
-    &-done-btn{
-      position: absolute;
-      left:0;
-      bottom: constant(safe-area-inset-bottom);
-      bottom: env(safe-area-inset-bottom);
+    position: relative;
+    box-sizing: border-box;
+    padding: 20px 10px 0;
+  }
+  .editor-instance{
+    min-height: 100px;
+    padding: 10px;
+    /*border: 1px solid #eee;*/
+    line-height: 1.4;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .editor-container{
+    box-sizing: border-box;
+    padding: 15px;
+    background: white;
+
+  }
+  .editor-done-btn{
+    position: absolute;
+    left:0;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
 
 
-    }
-    &-add-btn{
-      margin-top: 15px;
-      width: 100rpx;
-      height: 100rpx;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 1px dashed #ccc;
-      box-sizing: border-box;
-    }
+  }
+  .editor-add-btn{
+    margin-top: 15px;
+    width: 100rpx;
+    height: 100rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+    box-sizing: border-box;
   }
 
   /*.page-wrap{*/
@@ -1842,6 +1839,9 @@
     bottom: 0;
     left: 0;
     box-sizing: border-box;
+    &.noscroll{
+      overflow-y: hidden;
+    }
   }
   .form{
     background: #f8f8f8;

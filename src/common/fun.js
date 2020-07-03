@@ -2,7 +2,7 @@
 export const toast = (title, icon, image, duration) => {
   wx.showToast({
     title,
-    duration: duration || 2000,
+    duration: duration || 1500,
     icon,
     image
   })

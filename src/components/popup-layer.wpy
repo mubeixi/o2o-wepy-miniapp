@@ -4,7 +4,7 @@
     <view :animation="animationData" id="wrap" class="popup-wrap"   @tap.stop="noop" :style="{height:full?'100%':'auto','top':topStr?topStr:'auto',backgroundColor:mainBgColor}" >
       <div @touchmove.stop.prevent v-if="title" class="pupup-title">{{title}}</div>
       <slot></slot>
-      <div @touchmove.stop.prevent class="safearea-box2"></div>
+      <div v-if="showSafeArea" @touchmove.stop.prevent class="safearea-box2"></div>
     </view>
   </view>
 </template>
@@ -15,6 +15,10 @@
 
   wepy.component({
     props: {
+      showSafeArea:{
+        type: Boolean,
+        default: true
+      },
       showMask: {
         type: Boolean,
         default: true
