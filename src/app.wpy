@@ -125,6 +125,7 @@ wepy.app({
       "pages/product/form",
       "pages/product/imgs",
       "pages/user/login",
+      "pages/user/UserVipList",
       "pages/statistics/dashboard",
       "pages/statistics/SeckillData",
       "pages/marketing/Seckill",

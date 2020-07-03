@@ -202,7 +202,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  * @param data 业务参数:{}
  * @returns {Promise<unknown>}
  */
-export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj,handlerPressFn}) => {
+export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj, handlerPressFn}) => {
   let taskList = []
   // console.log(imgs, 'ssss')
   for (let i = 0; i < imgs.length; i++) {
@@ -497,6 +497,16 @@ export function getTouchEventInfo(event) {
     x,
     y
   }
+}
+
+export const formatPhone = (value) => {
+  if (value) {
+    var len = value.length
+    var xx = value.substring(3, len - 4)
+    var values = value.replace(xx, '****')
+    return values
+  }
+  return ''
 }
 
 /**
