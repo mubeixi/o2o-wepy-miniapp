@@ -1,0 +1,168 @@
+<style lang="scss">
+  @import "../assets/mixins.scss";
+  @import "../assets/variables.scss";
+
+  .img{
+
+    &-upload-box{
+      display: flex;
+      flex-wrap: wrap;
+      width: 400rpx;
+    }
+    &-item{
+      width: 120rpx;
+      height: 120rpx;
+      margin-bottom: 20rpx;
+      margin-right: 20rpx;
+      position: relative;
+      .progress{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        line-height: 120rpx;
+        color: white;
+        background: rgba(0,0,0,.3);
+      }
+      &:nth-child(3n+0){
+        margin-right: 0;
+      }
+    }
+  }
+  .add{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+    box-sizing: border-box;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+</style>
+<template>
+  <div class="img-upload-box">
+    <div
+      @click="bindItemClick(idx,file)"
+      class="img-item img"
+      v-for="(file,idx) in files"
+      :key="idx">
+      <icon type="iconfiletext" size="40"></icon>
+    </div>
+    <div
+      class="img-item add"
+      @click="addFn"
+      v-if="files.length<limit"
+    >
+      <icon color="#ddd" size="40" type="iconupload"></icon>
+    </div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import { chooseFileByPromise, chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '@/common/helper'
+  import { Exception } from '@/common/Exception'
+
+  wepy.component({
+    props: {
+      extension: {
+        type: Array,
+        default: ['doc', 'docx', 'xls', 'xlsx', 'pdf']
+      },
+      // 额外参数，可以带回去
+      ext: {
+        default: false
+      },
+      limit: {
+        default: 9,
+        type: Number
+      },
+      has: {
+        default: []
+      }
+    },
+    data: {
+      _click: false,
+      tempList: [],
+      cate_ids: '',
+      files: []
+    },
+    watch: {
+      has(newVal) {
+        if (Array.isArray(newVal) && newVal.length > 0) {
+          this.files = newVal.concat([])
+        }
+      }
+    },
+    methods: {
+      bindItemClick(idx, img) {
+        wx.showActionSheet({
+          itemList: ['预览图片', '移除图片'],
+          success: (res) => {
+            const {tapIndex} = res
+
+            if (tapIndex === 0) {
+              wx.previewImage({
+                urls: [img]
+              })
+            }
+            if (tapIndex === 1) {
+              // this.tempList.splice(idx, 1)
+              this.files.splice(idx, 1)
+            }
+          },
+          fail (res) {
+
+          }
+        })
+      },
+      handlerPressFunc(res, idx, vm) {
+        const {progress, totalBytesSent, totalBytesExpectedToSend} = res
+        console.log(`下标${idx}上传进度${progress}`)
+        // console.log(`下标${idx}已经上传的数据长度${totalBytesSent}`)
+        // console.log(`下标${idx}预期需要上传的数据总长度${totalBytesExpectedToSend}`)
+        // console.log(vm)
+        // vm.$set(vm.imgTaskList[idx], 'task_progress', progress)
+      },
+      async addFn() {
+        try {
+          var that = this
+          if (this._click) throw Error('操作过快')
+          // 已经过滤了用户取消选择的情况
+          const localFiles = await chooseFileByPromise({count: this.limit - this.files.length, extension: this.extension}).catch((errObj) => { throw errObj })
+
+          // name: "全景导览.xlsx"
+          // path: "http://tmp/wx3d24c565489e305b.o6zAJs6rxcGwIujkB7cIhatPZD2U.mbw1avdJGbOy46f7e90279a0af397af0f5ab42b5f1b8.xlsx"
+          // size: 13263
+          // time: 1586493337
+          // type: "file"
+          const arr1 = localFiles.map(file => {
+            return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+          })
+          this.tempList = this.tempList.concat(arr1)
+          const files = getArrColumn(localFiles, 'path')
+          console.log(files)
+          const ossUrls = await uploadImages({imgs: files, handlerPressFn: this.handlerPressFunc, vmobj: that}).catch(msg => { throw Error(msg) })
+
+          for (var i = 0; i < ossUrls.length; i++) {
+            ossUrls[i] = getDomain(ossUrls[i])
+          }
+
+          this.files = this.files.concat(ossUrls)
+          this._click = false
+          // 把ext带回去，方便弄一些骚操作。比如下标
+          this.$emit('done', {files: this.files, ext: this.ext})
+        } catch (e) {
+          Exception.handle(e)
+        }
+      }
+    }
+  })
+</script>
+<config>
+  {
+    "usingComponents": {
+      "icon": "~@/components/icon"
+    }
+  }
+</config>

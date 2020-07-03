@@ -107,8 +107,6 @@
       <div v-if="item.type==='input'" class="form-cell-item cell-item" :class="{nobor:idx===formList.length-1}">
         <div class="form-cell-item__label">{{item.label}}</div>
         <div class="form-cell-item__content">
-
-
           <block v-if="action==='show'">
             <div class="show-div-value">{{item.value}}</div>
           </block>
@@ -194,10 +192,19 @@
           <block v-if="action==='edit'">
             <upload-image :key="idx" :has="item.hasImg" :limit="1" :ext="idx" @done="upImgSuccess"></upload-image>
           </block>
-
+        </div>
+    </div>
+    <div v-if="item.type==='file'" class="form-upload-item cell-item" :class="{nobor:idx===formList.length-1}">
+        <div class="form-upload-item__label">{{item.label}}</div>
+        <div class="form-upload-item__content">
+          <block v-if="action==='add'">
+            <upload-file :key="idx" :limit="item.limit" :ext="idx" @done="upFileSuccess"></upload-file>
+          </block>
+          <block v-if="action==='edit'">
+            <upload-file :key="idx" :has="item.has" :limit="item.limit" :ext="idx" @done="upFileSuccess"></upload-file>
+          </block>
         </div>
       </div>
-    </div>
 
   </div>
 </template>
@@ -206,7 +213,6 @@
   import { objTranslate } from '../common/helper'
   import { hideLoading, showLoading } from '../common/fun'
   import {getDomain} from '../common/helper'
-
   wepy.component({
     props: {
       eid: {
@@ -282,6 +288,19 @@
             }
           }
 
+          // 文件
+          if (this.action === 'show' && row.type === 'file') {
+            row.src = getDomain(row.value)
+          }
+
+          if (this.action === 'edit' && row.type === 'file') {
+            row.has = []
+            if (row.value) {
+              row.src = getDomain(row.value)
+              row.has = [getDomain(row.value)]
+            }
+          }
+
           return row
         })
         console.log(this.formList)
@@ -328,6 +347,10 @@
         // const val = e.$wx.detail.value
         this.setVal(Object.values({province, city, area, town}).join(' '))
       },
+      upFileSuccess({files, ext}) {
+        console.log(files, ext)
+        this.setVal(files.join('|'))
+      },
       upImgSuccess({imgs, ext}) {
         console.log(imgs, ext)
         this.setVal(imgs.join('|'))
@@ -340,7 +363,8 @@
     "usingComponents": {
       "icon": "~@/components/icon",
       "address": "~@/components/address",
-      "upload-image": "~@/components/upload-image"
+      "upload-image": "~@/components/upload-image",
+      "upload-file": "~@/components/upload-file"
     }
   }
 </config>

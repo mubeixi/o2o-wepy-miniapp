@@ -555,3 +555,36 @@ export function pageScrollToFn(nowScrollTop, evalScrollTop, duration = 100) {
   // }
   // inertiaMove()
 }
+
+/**
+ * 从聊天记录中选择文件
+ * @param count
+ * @param type
+ * @param extension
+ * @returns {Promise<unknown>}
+ */
+export const chooseFileByPromise = ({count = 10, type = 'file', extension = ['doc', 'docx', 'xls', 'xlsx', 'pdf']}) => {
+  console.log( count,
+    type,
+    extension)
+  return new Promise((resolve, reject) => {
+    wx.chooseMessageFile({
+      count,
+      type,
+      extension,
+      success (res) {
+        // tempFilePath可以作为img标签的src属性显示图片
+        const tempFilePaths = res.tempFiles
+        resolve(tempFilePaths)
+      },
+      fail(err) {
+        console.log(err)
+        if (err.errMsg === 'chooseMessageFile:fail cancel') {
+          reject(Error('nocare'))
+        } else {
+          reject(Error(err.errMsg))
+        }
+      }
+    })
+  })
+}
