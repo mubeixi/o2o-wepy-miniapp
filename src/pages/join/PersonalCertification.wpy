@@ -445,9 +445,10 @@
             return res.data[0]
           }).catch(() => {})
           this.biz_apply_time = bizInfo.biz_apply_time
-          this.biz_expires = moment(bizInfo.biz_expires * 1000).format('YYYY/MM/DD hh:mm:ss')
+          //this.biz_expires = moment(bizInfo.biz_expires * 1000).format('YYYY/MM/DD hh:mm:ss')
+          this.biz_expires = bizInfo.biz_expires>0?moment(bizInfo.biz_expires * 1000).format('YYYY/MM/DD hh:mm:ss'):'未购买'
           this.bond_fee = bizInfo.bond_fee
-
+          if(!this.apply_info)return;
           this.materialForms = bizInfo.apply_info.auth_info.material
           this.permissionsForms = bizInfo.apply_info.auth_info.permissions
 
