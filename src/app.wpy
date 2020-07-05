@@ -8,12 +8,16 @@
 import wepy from '@wepy/core'
 // import eventHub from './common/eventHub'
 import vuex from '@wepy/x'
+
 import { FunError } from './mixins'
 import { ls } from './common/helper'
+import {initInfo} from '@/api/system'
+wepy.use(vuex)
 // import IM from '@/common/Im/Im'
 // import eventHub from '@/common/eventHub'
 
-wepy.use(vuex)
+
+// import store from './store'
 
 wx.$errorHandle = FunError // 全局的错误处理
 
@@ -48,6 +52,10 @@ wepy.app({
     ls.remove('listenStatus')
   },
   onShow() {
+    // 初始化商户信息
+    // initInfo().then(res => {
+    //   store.dispatch('setInitInfo', res.data)
+    // }).catch(err => { throw Error(err.msg) })
 
     // 如果有的
     // if (eventHub.imInstance) {
@@ -60,7 +68,6 @@ wepy.app({
     //   imInstance.openListen()
     //   eventHub.imInstance = imInstance // 全局用一个句柄
     // }
-
   },
 
   methods: {

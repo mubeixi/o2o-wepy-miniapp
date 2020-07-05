@@ -3,7 +3,8 @@ import { modal } from '@/common/fun'
 
 const state = {
   tabbarCurrentIndex: 0,
-  tabTags: [0, 0]
+  tabTags: [0, 0],
+
 }
 
 const mutations = {
@@ -12,7 +13,8 @@ const mutations = {
   },
   SET_TABBAR_TAG(state, {idx, num}) {
     state.tags[idx] = num
-  }
+  },
+
 }
 
 const actions = {
@@ -24,6 +26,9 @@ const actions = {
   },
   tabbarTagClear: ({state, commit}, {idx}) => {
     commit('SET_TABBAR_TAG', {idx, num: 0})
+  },
+  setInitInfo({commit},val){
+    commit('SET_INIT_INFO', val)
   },
   setTabActiveIdx: ({commit}, value) => {
     commit('SET_CURRENT_TABBAR', value)
