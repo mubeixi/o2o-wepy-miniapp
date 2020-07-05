@@ -1,6 +1,7 @@
 import Vuex from '@wepy/x'
-import wepy from '@wepy/core'
+
 import { ls, objTranslate } from '@/common/helper'
+import { initInfo } from '@/api/system'
 
 export default new Vuex.Store({
   state: {
@@ -9,13 +10,14 @@ export default new Vuex.Store({
     userInfo: null,
     bizInfo: null,
     treeData: [],
-    productImgList:[]
+    productImgList: [],
+    initInfo: null
   },
   mutations: {
     SET_CURRENT_TABBAR (state, idx) {
       state.tabbarCurrentIndex = idx
     },
-    SET_PRODUCT_IMG_LIST(state,data){
+    SET_PRODUCT_IMG_LIST(state, data) {
       state.productImgList = data
     },
     SET_TABBAR_TAG(state, {idx, num}) {
@@ -29,6 +31,10 @@ export default new Vuex.Store({
       state.bizInfo = data
       ls.set('bizInfo', data, 1)
     },
+    SET_INIT_INFO(state, val) {
+      state.initInfo = val
+      ls.get('initInfo', val, 1)
+    },
     increment (state) {
       state.counter++
     },
@@ -38,8 +44,10 @@ export default new Vuex.Store({
     decrement (state) {
       state.counter--
     }
+
   },
   getters: {
+
     getTabbarTags: (state) => () => {
       return state.tabTags
     },
@@ -57,6 +65,34 @@ export default new Vuex.Store({
     bizInfo: (state) => state.bizInfo || ls.get('bizInfo')
   },
   actions: {
+    /**
+     *
+     * @param state
+     * @param commit
+     * @param storage 可选值为 local online 分别从本地和线上去
+     * @returns {Promise<void>}
+     */
+    async getInitInfo({state, commit}, conf) {
+      const {storage = 'local'} = conf
+      console.log(conf,storage)
+      var data
+      if (storage === 'local') {
+        data = state.initInfo || ls.get('initInfo')
+        if (!data)data = false
+        return data
+      }
+      if (storage === 'online') {
+        data = await initInfo().then(res => {
+          commit('SET_INIT_INFO', res.data)
+          return res.data
+        }).catch(err => { throw Error(err.msg) })
+        if (!data) return false
+        return data
+      }
+    },
+    setInitInfo({commit}, val) {
+      commit('SET_INIT_INFO', val)
+    },
     tabbarTagAdd: ({state, commit}, {idx, num = 1}) => {
       console.log(idx, num)
       const tempNum = state.tabTags[idx]

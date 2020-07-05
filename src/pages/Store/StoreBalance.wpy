@@ -5,7 +5,7 @@
       <image src="/static/balance.png" class="full-img"></image>
       <div class="balance-store">店内余额</div>
       <div class="fz-18 price-store">¥<span class="m-l-5 fz-25">{{biz_money}}</span></div>
-      <div class="btn-sub  btn-pay fz-14" @click="$linkTo('/pages/store/Recharge')">充值</div>
+      <div v-if="initInfo.charge_flag" class="btn-sub  btn-pay fz-14" @click="$linkTo('/pages/store/Recharge')">充值</div>
       <div class="btn-sub fz-14" @click="$linkTo('/pages/store/StoreWithdrawal')">提现</div>
     </div>
 
@@ -39,10 +39,15 @@
       page: 1,
       pageSize: 20,
       totalCount: 0,
+      initInfo: {},
       balanceList: [],
       biz_money: ''
     },
     methods: {
+      async _init_func() {
+        this.initInfo = await this.$store.dispatch('getInitInfo', {storage: 'online'})
+        console.log(this.initInfo)
+      },
       async bizMoneyRecord(it) {
         let data = {
           page: this.page,
@@ -63,6 +68,7 @@
     onShow() {
       this.page = 1
       this.bizMoneyRecord()
+      this._init_func()
     },
     onReachBottom() {
       if (this.balanceList.length < this.totalCount) {

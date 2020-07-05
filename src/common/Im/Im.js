@@ -336,6 +336,10 @@ class IM {
   async getNoReadMsgCount() {
     const total = await getNoReadMsg({out_uid: this.getOutUid()},{errtip:false}).then(res => res.totalCount).catch(err => {
       console.log(err.msg || '获取未读记录失败')
+      // 处理token错误
+      if (err.errorCode === 66000) {
+        this._getAccessToken()
+      }
       return 0
     })
     console.log(total)
