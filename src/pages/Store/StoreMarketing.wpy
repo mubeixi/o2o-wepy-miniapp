@@ -35,6 +35,10 @@
           <image src="/static/marketing/pay.png" class="img"></image>
           <div class="title">收款码</div>
         </div>
+        <div class="feature-item"  @click="goRechargeSend" v-if="cash_from==2">
+          <image src="/static/marketing/chongzhi.png" class="img"></image>
+          <div class="title">充值送</div>
+        </div>
       </div>
     </div>
 
@@ -50,13 +54,14 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { checkIsLogin, confirm } from '../../common/helper'
+  import { checkIsLogin, confirm, cashFromValue } from '../../common/helper'
   import { linkTo } from '../../common/fun'
   import { initInfo } from '@/api/system'
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      cash_from: 1,
       initConf: {
         pintuan_switch: 1
       },
@@ -65,7 +70,11 @@
       }
     },
     methods: {
-      goOfflinePay(){
+      goRechargeSend() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/marketing/RechargeSend')
+      },
+      goOfflinePay() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/OfflinePay')
       },
@@ -102,6 +111,7 @@
       }
     },
     onShow() {
+      this.cash_from = cashFromValue()
       this._init_func()
     },
     created() {

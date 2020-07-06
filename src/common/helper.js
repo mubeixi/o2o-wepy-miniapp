@@ -564,7 +564,7 @@ export function pageScrollToFn(nowScrollTop, evalScrollTop, duration = 100) {
  * @returns {Promise<unknown>}
  */
 export const chooseFileByPromise = ({count = 10, type = 'file', extension = ['doc', 'docx', 'xls', 'xlsx', 'pdf']}) => {
-  console.log( count,
+  console.log(count,
     type,
     extension)
   return new Promise((resolve, reject) => {
@@ -587,4 +587,9 @@ export const chooseFileByPromise = ({count = 10, type = 'file', extension = ['do
       }
     })
   })
+}
+
+export const cashFromValue = () => {
+  const arr = ls.get('cash_from') ? ls.get('cash_from') : 1
+  return arr
 }

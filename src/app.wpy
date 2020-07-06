@@ -146,6 +146,7 @@ wepy.app({
       "pages/marketing/GiveAdd",
       "pages/marketing/GiveAddSelect",
       "pages/marketing/FullReduce",
+      "pages/marketing/RechargeSend",
       "pages/store/OfflinePay",
       "pages/order/OrderRetail",
       "pages/order/OrderRefund",
