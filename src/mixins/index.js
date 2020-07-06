@@ -48,7 +48,6 @@ export default {
         ls.set('users_id', users_id)
       }
 
-      // 全局获取init  cash_from参数  余额控制参数
       const cash_from = ls.get('cash_from')
       if (!cash_from) {
         initInfo().then(res => {

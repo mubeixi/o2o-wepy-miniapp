@@ -253,7 +253,7 @@
           </div>
 
           <!--分享文案-->
-          <div class="cell-item" @click="openPop('descModel')">
+          <div class="cell-item" @click="openPop('descModel')"  v-if="cash_from!=2">
             <div class="label">分享文案</div>
             <div class="content">
             </div>
@@ -267,7 +267,7 @@
           </div>
 
           <!--分享有礼-->
-          <div class="cell-item" @click="openPop('share')">
+          <div class="cell-item" @click="openPop('share')" v-if="cash_from!=2">
             <div class="label">分享有礼</div>
             <div class="content"></div>
             <div class="right">
@@ -722,7 +722,8 @@
     getArrColumn,
     getDomain, objTranslate,
     uploadImages,
-    validateFun
+    validateFun,
+    cashFromValue
   } from '../../common/helper'
   import { getProductCategory, getProductDetail, getSystemProdConfig, systemOperateProd } from '../../api/product'
   import { addBizProdCate, getBizProdCateList, getCouponList, getShippingTemplate } from '../../api/store'
@@ -741,6 +742,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      cash_from:1,
       descriptionPopShow: false, // 是否显示富文本编辑
       typeIndex: -1,
       toLogin: false, // 标记为是否去登陆了，为了onShow可以不要瞎响应
@@ -1648,6 +1650,7 @@
         this.toLogin = true
         return
       }
+      this.cash_from = cashFromValue()
       console.log('page on show')
       if (this.toLogin) {
         this.toLogin = false
