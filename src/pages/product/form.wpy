@@ -1180,7 +1180,7 @@
           let prod_attrval = JSON.stringify({attrs, values: specAttrValue})
           productInfo.prod_attrval = prod_attrval
         } else {
-          productInfo.Products_Type = ''// 如果是空规格的话，需要手动把商品属性id设置为''
+          productInfo.Products_Type = this.Products_ID ? 0 : ''// 如果是空规格的话，需要手动把商品属性id设置为''
         }
         if (this.Products_ID)productInfo.prod_id = this.Products_ID
 

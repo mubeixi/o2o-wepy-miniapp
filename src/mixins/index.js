@@ -1,6 +1,7 @@
 import { back, error, linkTo, modal, toast } from '../common/fun'
 import { ls, checkIsLogin } from '../common/helper'
 import eventHub from '../common/eventHub'
+import {initInfo} from '../api/system'
 
 /**
  * 自定义处理错误
@@ -46,6 +47,16 @@ export default {
           // 不管ls有没有，都存一次
         ls.set('users_id', users_id)
       }
+
+      // 全局获取init  cash_from参数  余额控制参数
+      const cash_from = ls.get('cash_from')
+      if (!cash_from) {
+        initInfo().then(res => {
+          if (res.data) {
+            ls.set('cash_from', res.data.cash_from)
+          }
+        })
+      }
     },
     mixintap () {
       this.mixin = 'MixinText' + (Math.random() + '').substring(3, 7)
@@ -78,7 +89,7 @@ export default {
     ]
 
     const pathIndex = pathArr.indexOf(this.currentPagePath)
-    console.log(pathIndex,"sss")
+    console.log(pathIndex, 'sss')
     if (pathIndex === -1) {
       if (!checkIsLogin(1, 0)) return
     }
