@@ -16,7 +16,6 @@ wepy.use(vuex)
 // import IM from '@/common/Im/Im'
 // import eventHub from '@/common/eventHub'
 
-
 // import store from './store'
 
 wx.$errorHandle = FunError // 全局的错误处理
@@ -40,6 +39,12 @@ wepy.app({
 
   onLaunch() {
     var obj = wx.getLaunchOptionsSync()
+    //删除cash_from
+    const cash_from = ls.get('cash_from')
+    if (cash_from) {
+      ls.remove('cash_from')
+    }
+
     if (obj.query.users_id) {
       ls.set('users_id', obj.query.users_id)
     }
