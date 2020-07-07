@@ -11,7 +11,7 @@ import vuex from '@wepy/x'
 
 import { FunError } from './mixins'
 import { ls } from './common/helper'
-import {initInfo} from '@/api/system'
+// import {initInfo} from '@/api/system'
 wepy.use(vuex)
 // import IM from '@/common/Im/Im'
 // import eventHub from '@/common/eventHub'

@@ -1,4 +1,7 @@
-import { IM_APPID, IM_APPSECRET, IM_WSS_URL } from '../env'
+import {
+  // IM_APPID,
+  // IM_APPSECRET,
+  IM_WSS_URL } from '../env'
 import { bindUid, getAccessToken, sendMsg, getMsgList, getNoReadMsg, checkOnline } from './Fetch'
 import moment from 'moment'
 import Promisify from '../promisify'
@@ -307,6 +310,8 @@ class IM {
 
   // 启动的
   async start () {
+    await this._getImConfig() // 配置从接口取，真开心
+
     // 获取token时候阻塞一下，问题不大吧。
     await this._getAccessToken()
 
@@ -334,7 +339,7 @@ class IM {
    * 获取未读消息总数
    */
   async getNoReadMsgCount() {
-    const total = await getNoReadMsg({out_uid: this.getOutUid()},{errtip:false}).then(res => res.totalCount).catch(err => {
+    const total = await getNoReadMsg({out_uid: this.getOutUid()}, {errtip: false}).then(res => res.totalCount).catch(err => {
       console.log(err.msg || '获取未读记录失败')
       // 处理token错误
       if (err.errorCode === 66000) {
@@ -560,11 +565,18 @@ class IM {
     Storage.set('IM_ACCESS_TOKEN', tokenRT.token)
     return tokenRT
   }
+
+  async _getImConfig () {
+    const initData = await store.dispatch('getInitInfo', { storage: 'online' })
+    const { im_appid: IM_APPID, im_appsecret: IM_APPSECRET } = initData
+    this.appid = IM_APPID
+    this.appsecret = IM_APPSECRET
+  }
 }
 
 // 还是放到类上面，这样就每个项目用工程文件就好了
-IM.prototype.appid = IM_APPID
-IM.prototype.appsecret = IM_APPSECRET
+// IM.prototype.appid = IM_APPID
+// IM.prototype.appsecret = IM_APPSECRET
 IM.prototype.heartBeatTimout = 30 * 1000 // 心跳保持时间，默认三十秒
 IM.prototype.heartBeatFailMax = 3 // 最大心跳丢失次数，错误3次重新建立socket请求
 IM.prototype.tryRequestMax = 5 // 最大重连次数，重连超过5次不成功，就直接报错提醒用户洗洗睡

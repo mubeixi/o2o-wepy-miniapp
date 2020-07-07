@@ -49,7 +49,7 @@ export default {
       }
 
       const cash_from = ls.get('cash_from')
-      if (!cash_from) {
+      if (checkIsLogin(0, 0) && !cash_from) {
         initInfo().then(res => {
           if (res.data) {
             ls.set('cash_from', res.data.cash_from)
