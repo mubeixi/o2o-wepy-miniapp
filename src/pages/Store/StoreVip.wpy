@@ -91,7 +91,7 @@
       </div>
       <div class="flex flex-vertical-center flex-justify-between wzw-content" style="margin-bottom: 26rpx !important;">
         <div >
-          是否开启
+          存入余额
         </div>
         <div>
           <switch :checked="upgrade_rights.price_back.value==1"  bindchange="switch1ChangeM" style="transform: scale(.8)"></switch>
