@@ -72,9 +72,9 @@ export default new Vuex.Store({
      * @param storage 可选值为 local online 分别从本地和线上去
      * @returns {Promise<void>}
      */
-    async getInitInfo({state, commit}, conf) {
+    async getInitInfo({state, commit}, conf = {}) {
       const {storage = 'local'} = conf
-      console.log(conf,storage)
+      console.log(conf, storage)
       var data
       if (storage === 'local') {
         data = state.initInfo || ls.get('initInfo')
