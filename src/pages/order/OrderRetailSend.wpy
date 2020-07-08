@@ -37,6 +37,10 @@
       </div>
 
       <div class="orderDetailBottom">
+        <div v-if="listData.city_express_appoint_time>0" class="divHeight">
+          预约配送:
+          <span class="fontColor">需{{listData.city_express_appoint_time_desc}}</span>
+        </div>
         <div class="divHeight">
           订单号：<span class="fontColor">{{listData.Order_ID}}</span>
         </div>

@@ -477,11 +477,12 @@
             <input type="digit" v-model="formData.fix_fee" class="bor fz-14 flex1" style="height: 60rpx;box-sizing: border-box;padding-left:30rpx;border-radius: 6rpx;" />
           </div>
         </label>
-        <label class="type-item flex flex-vertical-center">
+        <label class="type-item flex flex-vertical-center" >
           <radio color="#00A8FF" value="2" :checked="formData.fee_type === 2"></radio>
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">物流模板</div>
-            <picker @change="bindShippingTmplChange" :value="shippingTmplIdx" range-key="Template_Name"  :range="shippingTmplList">
+            <div v-if="shippingTmplList.length>0">
+              <picker @change="bindShippingTmplChange" :value="shippingTmplIdx" range-key="Template_Name"  :range="shippingTmplList">
               <div
                 style="height: 60rpx;border-radius: 6rpx;padding: 0 30rpx;box-sizing: border-box"
                 class="flex bor flex-vertical-center flex-justify-between text-center">
@@ -489,6 +490,11 @@
                 <icon color="#999" size="12" type="icondown"></icon>
               </div>
             </picker>
+            </div>
+            <div v-else class="fz-14 c6">
+              暂无可用物流模板
+            </div>
+            
           </div>
         </label>
       </radio-group>
@@ -564,7 +570,7 @@
     <popup-layer title="配送方式" ref="sendType"  >
 <!--      :autoClose="false"-->
       <checkbox-group class="type-list p-l-10 p-r-10"  @change="setSendType">
-        <label class="type-item flex flex-vertical-center bor-b" @click="typeIndex=0">
+        <label class="type-item flex flex-vertical-center bor-b" @click="typeIndex=0" v-if="shippingTmplList.length>0">
           <!--快递-->
           <checkbox style="transform: scale(.8)" color="#00A8FF" value="0" :checked="prod_send_type_list[0].checked"></checkbox>
           <div class="label p-10">
@@ -742,7 +748,7 @@
     store,
     mixins: [pageMixin],
     data: {
-      cash_from:1,
+      cash_from: 1,
       descriptionPopShow: false, // 是否显示富文本编辑
       typeIndex: -1,
       toLogin: false, // 标记为是否去登陆了，为了onShow可以不要瞎响应
@@ -804,7 +810,7 @@
       ],
       prod_send_type_str: '',
       prod_send_type_list: [
-        {name: 'express', title: '快递发货', checked: true, desc: '需在"物流管理-普通物流"中进行相关配置'},
+        {name: 'express', title: '快递发货', checked: false, desc: '需在"物流管理-普通物流"中进行相关配置'},
         {name: 'self_get', title: '到店自提', checked: false, desc: '需在"店铺管理-店铺设置"中开启到店自提功能'},
         {name: 'city_express', title: '同城配送', checked: false, desc: '需在"物流管理-同城配送"中进行相关配置'}
       ],
@@ -1606,6 +1612,41 @@
             }).exec()
 
             hideLoading()
+          } else {
+
+            var vals = []
+            //物流总是有
+            if (this.shippingTmplList.length >= 0) {
+              this.typeIndex = 0
+              vals = ['0']
+
+            }else{
+
+              if(this._default.arrive_get){
+                this.typeIndex = 1
+                vals = ['1']
+
+              }else if(this._default.one_hour_send_switch){
+                this.typeIndex = 2
+                vals = ['2']
+              }
+
+            }
+
+            for (var idx3 in this.prod_send_type_list) {
+              console.log(vals, idx3, vals.includes(idx3))
+              this.$set(this.prod_send_type_list[idx3], 'checked', vals.includes(idx3))
+            }
+
+            const checkList = this.prod_send_type_list.filter(row => row.checked)
+
+            if (checkList.length > 0) {
+              this.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
+            } else {
+              this.prod_send_type_str = ''
+            }
+
+
           }
 
           this.bizCateReady = true
