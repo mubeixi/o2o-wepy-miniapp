@@ -52,13 +52,11 @@ wepy.app({
     ls.remove('listenStatus')
   },
   onShow() {
-    //const cash_from = ls.get('cash_from')
+    // const cash_from = ls.get('cash_from')
     const AccessToken = getAccessToken()
     if (AccessToken) {
       initInfo().then(res => {
-        if (res.data) {
-          ls.set('cash_from', res.data.cash_from)
-        }
+
       })
     }
 

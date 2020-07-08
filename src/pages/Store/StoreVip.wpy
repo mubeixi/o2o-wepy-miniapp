@@ -134,6 +134,10 @@
         price_back: {
           name: '购卡金额是否返赠到余额',
           value: 0	// 0=不赠送，1=赠送
+        },
+        money:{
+          name: '赠送余额',
+          value: 0	// 0=不赠送，1=赠送
         }
       },
       level_name: '', // 名称
@@ -160,11 +164,15 @@
     onUnload() {
       ls.remove('coupon_prod')
       ls.remove('pro_prod')
+      ls.remove('vipMoney')
     },
     onShow() {
       this.upgrade_rights.product.value = ls.get('pro_prod')
       this.upgrade_rights.coupon.value = ls.get('coupon_prod')
+      this.upgrade_rights.money.value = ls.get('vipMoney')
       this.cash_from = ls.get('cash_from')
+
+
     },
     methods: {
       switch1ChangeM(e) {
@@ -187,10 +195,12 @@
           this.basic_rights = this.vipData.basic_rights
           this.upgrade_rights.coupon = this.vipData.upgrade_rights.coupon
           this.upgrade_rights.product = this.vipData.upgrade_rights.product
+          this.upgrade_rights.money = this.vipData.upgrade_rights.money?this.vipData.upgrade_rights.money:this.upgrade_rights.money
           this.upgrade_rights.price_back = this.vipData.upgrade_rights.price_back ? this.vipData.upgrade_rights.price_back : this.upgrade_rights.price_back
 
           ls.set('coupon_prod', this.upgrade_rights.coupon.value)
           ls.set('pro_prod', this.upgrade_rights.product.value)
+          ls.set('vipMoney', this.upgrade_rights.money.value)
         })
       },
       saveVip() {
