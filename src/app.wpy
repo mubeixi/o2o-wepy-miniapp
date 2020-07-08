@@ -16,7 +16,6 @@ wepy.use(vuex)
 // import IM from '@/common/Im/Im'
 // import eventHub from '@/common/eventHub'
 
-
 // import store from './store'
 
 wx.$errorHandle = FunError // 全局的错误处理
