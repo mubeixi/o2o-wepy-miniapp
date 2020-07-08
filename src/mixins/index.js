@@ -1,7 +1,7 @@
 import { back, error, linkTo, modal, toast } from '../common/fun'
 import { ls, checkIsLogin } from '../common/helper'
 import eventHub from '../common/eventHub'
-import {initInfo} from '../api/system'
+
 
 /**
  * 自定义处理错误
@@ -48,14 +48,6 @@ export default {
         ls.set('users_id', users_id)
       }
 
-      const cash_from = ls.get('cash_from')
-      if (checkIsLogin(0, 0) && !cash_from) {
-        initInfo().then(res => {
-          if (res.data) {
-            ls.set('cash_from', res.data.cash_from)
-          }
-        })
-      }
     },
     mixintap () {
       this.mixin = 'MixinText' + (Math.random() + '').substring(3, 7)

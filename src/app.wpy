@@ -11,7 +11,8 @@ import vuex from '@wepy/x'
 
 import { FunError } from './mixins'
 import { ls } from './common/helper'
-// import {initInfo} from '@/api/system'
+import {initInfo} from '@/api/system'
+import {getAccessToken} from './common/request'
 wepy.use(vuex)
 // import IM from '@/common/Im/Im'
 // import eventHub from '@/common/eventHub'
@@ -51,6 +52,14 @@ wepy.app({
     ls.remove('listenStatus')
   },
   onShow() {
+    // const cash_from = ls.get('cash_from')
+    const AccessToken = getAccessToken()
+    if (AccessToken) {
+      initInfo().then(res => {
+
+      })
+    }
+
     // 初始化商户信息
     // initInfo().then(res => {
     //   store.dispatch('setInitInfo', res.data)
