@@ -74,7 +74,7 @@
 
       <div class="grid">
         <div class="grid-row">
-          <div class="grid-item" @click="$linkTo('/pages/store/StoreAvailibleSkin')">
+          <div class="grid-item" @click="goModule">
             <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
             <div class="grid-item-title">店铺模板</div>
           </div>
@@ -205,6 +205,10 @@
       }
     },
     methods: {
+      goModule(){
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreAvailibleSkin')
+      },
       goVip() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/user/UserVipList')
@@ -265,7 +269,8 @@
         linkTo('/pages/order/OrderList')
       },
       goMarketing() {
-        // if (!checkIsSettle(1, 1)) return
+         //if (!checkIsSettle(1, 1)) return
+        if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreMarketing')
       },
       goStatistics() {
