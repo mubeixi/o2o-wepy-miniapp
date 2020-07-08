@@ -47,10 +47,10 @@
             error('请输入金额')
             return
           }
-          if (parseFloat(item.deposit_money) <= parseFloat(item.present_money)) {
-            error('充值送设置有误')
-            return
-          }
+          // if (parseFloat(item.deposit_money) < parseFloat(item.present_money)) {
+          //   error('充值送设置有误')
+          //   return
+          // }
         }
         let data = {
           type: 'chargepresent',
