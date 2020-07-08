@@ -18,6 +18,15 @@
         <icon  type="iconarrowleft" size="16"  color="#999"></icon>
       </div>
     </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" v-if="cash_from==2">
+      <div class="store-title">
+        赠送余额
+      </div>
+      <div class="store-titles  input-div">
+        <input type="digit" v-model="money" placeholder="请输入赠送金额"   class="input" />
+        元
+      </div>
+    </div>
 
     <div class="submit-main" @click="saveData">
       保存
@@ -106,7 +115,12 @@
       proData: [],
       couponList: [],
       pro_prod: '',
-      coupon_prod: ''
+      coupon_prod: '',
+      money: 0,
+      cash_from: 1
+    },
+    onShow() {
+      this.cash_from = ls.get('cash_from')
     },
     onLoad() {
       this.getList()
@@ -114,6 +128,9 @@
     methods: {
       saveData() {
         showLoading()
+        if (this.money >= 0 && this.cash_from == 2) {
+          ls.set('vipMoney', this.money)
+        }
         if (this.pro_prod) {
           ls.set('pro_prod', this.pro_prod)
         } else {
@@ -162,6 +179,7 @@
       getList() {
         this.coupon_prod = ls.get('coupon_prod')
         this.pro_prod = ls.get('pro_prod')
+        this.money = ls.get('vipMoney')
 
         getCouponList({status: 1, front_show: 2}).then(res => {
           this.couponList = res.data.map(item => {
@@ -395,6 +413,18 @@
 
   }
 /*选择优惠券结束*/
+  .input-div{
+    flex: 1;
+    height: 108rpx;
+    line-height: 108rpx;
+    padding-left: 40rpx;
+    .input{
+      color: #333333;
+      width: 100%;
+      height: 108rpx;
+      line-height: 108rpx;
+    }
+  }
 
 </style>
 <config>

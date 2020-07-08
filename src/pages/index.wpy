@@ -205,7 +205,7 @@
       }
     },
     methods: {
-      goModule(){
+      goModule() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreAvailibleSkin')
       },
@@ -269,7 +269,7 @@
         linkTo('/pages/order/OrderList')
       },
       goMarketing() {
-         //if (!checkIsSettle(1, 1)) return
+         // if (!checkIsSettle(1, 1)) return
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreMarketing')
       },
@@ -367,7 +367,7 @@
           const timestamp = new Date().getTime()
           if (biz_expires <= timestamp) {
             this.biz_expires = true
-          }else{
+          } else {
             this.biz_expires = false
           }
 
