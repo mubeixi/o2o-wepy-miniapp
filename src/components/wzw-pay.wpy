@@ -1,0 +1,113 @@
+<template>
+  <view v-if="isShow">
+    <view  @click="ableClose" @touchmove.stop.prevent class="pay-mask">
+    </view>
+<!--    <div class="zhezhao" v-if="password_input">-->
+<!--      <div class="input-wrap">-->
+<!--        <div>请输入余额支付密码</div>-->
+<!--        <input type="password" class="input" placeholder="请输入密码" @input="user_password">-->
+<!--        <div class="btns">-->
+<!--          <div @click="cancelInput" class="btn">取消</div>-->
+<!--          <div @click="confirmInput" class="btn">确定</div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+    <view  class="popup-content"  >
+      <div class="pay-method"  @click.stop="wxPay">
+        <div class="c_method border-b">
+          微信支付
+          <text>￥{{pay_money}}</text>
+        </div>
+      </div>
+      <div class="pay-method" @click.stop="remainderPay">
+        <div class="c_method">
+          余额支付
+          <text>￥{{pay_money}}</text>
+        </div>
+      </div>
+    </view>
+  </view>
+</template>
+
+<script>
+  // 消息卡片组件
+  import wepy from '@wepy/core'
+  import { error, linkTo, modal } from '../common/fun'
+
+  wepy.component({
+    props: {
+      pay_money: {
+        type: Number
+      }
+    },
+    data: {
+      isShow: false
+    },
+    methods: {
+      remainderPay() {
+        this.$emit('remainderPay')
+      },
+      wxPay() {
+        this.$emit('wxPay')
+      },
+      ableClose() {
+        this.close()
+      },
+      close() {
+        this.isShow = false
+      },
+      show() {
+        this.isShow = true
+      }
+
+    }
+  })
+</script>
+<style lang="scss">
+  @import "../assets/app.scss";
+  .pay-mask {
+    position: fixed;
+    z-index: 900000;
+    background: rgba(0, 0, 0, .3);
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .pay-method {
+    text-align: center;
+    padding: 0 20 rpx;
+    font-size: 28 rpx;
+    color: #333;
+  }
+  .c_method {
+    padding: 37rpx 0;
+    color: #F43131;
+
+  }
+
+  .border-b{
+    border-bottom: 2rpx solid #E6E6E6;
+  }
+  .popup-content{
+    position: fixed;
+    z-index: 1000000;
+    background: #FFFFFF;
+    transition: all .3s ease;
+    overflow: hidden;
+    width: 750rpx;
+    bottom: 0rpx;
+    left: 0rpx;
+  }
+
+
+</style>
+<config>
+  {
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
+  }
+</config>
