@@ -17,7 +17,6 @@ export const getBizId = () => ls.get('biz_id')
 export const getEnv = () => 'wx_lp'
 
 export const createToken = function(object) {
-
   object = ObjectToArr(object)
 
   var signString = ObjectToString(object)
@@ -213,7 +212,7 @@ export const fetch = function ({act, param = {}, options = false, url = '/api/li
   }
 }
 
-export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressList = [], vmobj,handlerPressFn}) => {
+export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressList = [], vmobj, handlerPressFn}) => {
   let _param = {
     access_token: getAccessToken(),
     Users_ID: getUsersID(),
@@ -269,7 +268,7 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
       // console.log('上传进度' + res.progress)
       // console.log('已经上传的数据长度' + res.totalBytesSent)
       // console.log('预期需要上传的数据总长度' + res.totalBytesExpectedToSend)
-      handlerPressFn && handlerPressFn(res,idx,vmobj)
+      handlerPressFn && handlerPressFn(res, idx, vmobj)
       // console.log(vmobj, progressList, progressList)
       if (vmobj && vmobj.$set && progressList.length > 0 && progressList[idx] && progressList[idx].hasOwnProperty('task')) {
         // progressList[idx].task = objTranslate(res)
