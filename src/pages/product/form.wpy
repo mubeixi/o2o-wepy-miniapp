@@ -570,7 +570,7 @@
     <popup-layer title="配送方式" ref="sendType"  >
 <!--      :autoClose="false"-->
       <checkbox-group class="type-list p-l-10 p-r-10"  @change="setSendType">
-        <label class="type-item flex flex-vertical-center bor-b" @click="typeIndex=0" v-if="shippingTmplList.length>0">
+        <label class="type-item flex flex-vertical-center bor-b" @click="typeIndex=0">
           <!--快递-->
           <checkbox style="transform: scale(.8)" color="#00A8FF" value="0" :checked="prod_send_type_list[0].checked"></checkbox>
           <div class="label p-10">
@@ -1671,7 +1671,12 @@
       }).exec()
     },
     onLoad(options) {
-      this.Products_ID = options.id
+      if(options.id){
+        this.Products_ID = options.id
+      }else{
+        this.Products_ID = ''
+      }
+      
 
       eventHub.$on('goods-order-tmpl', ({tmpl}) => {
         console.log('flash-order-tmpl event emitted, the params are:')

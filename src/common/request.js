@@ -17,10 +17,10 @@ export const getBizId = () => ls.get('biz_id')
 export const getEnv = () => 'wx_lp'
 
 export const createToken = function(object) {
-  object = emptyObject(object)
-  console.log(object)
   object = ObjectToArr(object)
+
   var signString = ObjectToString(object)
+
   signString = signString.slice(0, -1)
   var timestamp = parseInt(new Date().getTime() / 1000).toString()
   var key = '458f_$#@$*!fdjisdJDFHUk4%%653154%^@#(FSD#$@0-T'
