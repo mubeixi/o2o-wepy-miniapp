@@ -94,6 +94,10 @@
       <button class="btn btn-primary m-t-35" @click="setSystemCate">确认</button>
     </popup-layer>
 
+
+    <wzw-pay ref="payRef" @wxPay="wxPay" @remainderPay="remainderPay" :pay_money="pay_money"></wzw-pay>
+
+
   </div>
 </template>
 
@@ -118,6 +122,7 @@
         label: 'Category_Name', // 指定节点标签为节点对象的某个属性值
         disabled: 'disabled'// 指定节点选择框是否禁用为节点对象的某个属性值
       },
+      pay_method: '',
       mbxData: [],
       bondMoney: '',
       bondName: '',
@@ -139,13 +144,15 @@
       await this.proCate()
     },
     methods: {
-      async payLast(e) {
-        if (this.type != 2 && !this.bondMoney) {
-          error('请先选择分类')
-          return
-        }
+      remainderPay() {
+        this.pay_method = 'remainder_pay'
+        this.pay()
+      },
+      wxPay() {
+        this.pay_method = 'wx_lp'
         let that = this
         showLoading('提交中')
+        this.closePop('payRef')
         wx.login({
           success (res) {
             if (res.code) {
@@ -168,6 +175,14 @@
           }
         })
       },
+      async payLast(e) {
+        if (this.type != 2 && !this.bondMoney) {
+          error('请先选择分类')
+          return
+        }
+        this.openPop('payRef')
+
+      },
       async pay(open) {
         let data = {
           pay_type: this.type
@@ -182,9 +197,11 @@
         await addBizOrder(data).then(res => {
           this.order_id = res.data.order_id
           let datas = {
-            pay_method: 'wx_lp',
-            order_id: this.order_id,
-            open_id: open
+            pay_method: this.pay_method,
+            order_id: this.order_id
+          }
+          if (open) {
+            datas.open_id = open
           }
           bizOrderPay(datas).then(res => {
             hideLoading()
@@ -433,10 +450,12 @@
   {
   "navigationBarTitleText": "付款",
   "usingComponents": {
+  "wzw-pay": "~@/components/wzw-pay",
   "icon": "~@/components/icon",
   "fun-tree": "~@/components/fun-tree",
   "popup-layer": "~@/components/popup-layer",
   "wzw-im-tip": "~@/components/wzw-im-tip"
+
   }
   }
 </config>
