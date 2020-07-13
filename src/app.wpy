@@ -1,9 +1,7 @@
 <style lang="scss">
 @import "/assets/app.scss";
-
-
+@import "/components/fun-rich-text/parse.scss";
 </style>
-
 <script>
 import wepy from '@wepy/core'
 // import eventHub from './common/eventHub'
@@ -173,7 +171,8 @@ wepy.app({
       "pages/support/ImList",
       "pages/support/Im",
       "pages/live/apply",
-      "pages/live/room",
+      "pages/recomment/list",
+      "pages/recomment/form",
       "pages/demo"
 
     ],

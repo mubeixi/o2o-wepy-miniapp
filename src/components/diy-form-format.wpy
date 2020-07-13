@@ -1,5 +1,5 @@
 <style lang="scss">
-  @import "../assets/app.scss";
+  /*@import "../assets/app.scss";*/
 
   .nobor{
     border-bottom: none !important;
@@ -99,6 +99,7 @@
   .show-img{
     width: 120rpx;
     height: 120rpx;
+    margin-right: 20rpx;
   }
 </style>
 <template>
@@ -112,6 +113,18 @@
           </block>
           <block v-else>
             <input placeholder-class="__placeholder" @input="inputChange($event,idx)" :value="item.value" class="input" :placeholder="item.desc" />
+          </block>
+
+        </div>
+      </div>
+      <div v-if="item.type==='textarea'" class="form-cell-item cell-item" style="display: block;border-bottom: none;" :class="{nobor:idx===formList.length-1}">
+        <div class="form-cell-item__label">{{item.label}}</div>
+        <div class="form-cell-item__content" style="height: auto;padding: 10px 0 10px 0;">
+          <block v-if="action==='show'">
+            <div class="show-div-value">{{item.value}}</div>
+          </block>
+          <block v-else>
+            <textarea maxlength="-1" placeholder-class="__placeholder" @input="inputChange($event,idx)" :value="item.value" style="border: 1px solid #eee;padding: 6px;border-radius: 4px;line-height: 1.6;" class="input" :placeholder="item.desc" />
           </block>
 
         </div>
@@ -180,17 +193,17 @@
         </div>
       </div>
       <div v-if="item.type==='img'" class="form-upload-item cell-item" :class="{nobor:idx===formList.length-1}">
-        <div class="form-upload-item__label">{{item.label}}</div>
+        <div class="form-upload-item__label">{{item.label}} <span style="color: #999;font-size: 12px;">限{{item.limit}}张</span></div>
         <div class="form-upload-item__content">
           <block v-if="action==='show'">
-            <image class="show-img" :src="item.value"></image>
+            <image class="show-img" :src="img" v-for="(img,idx3) in item.srcs" @click="previewImg(item.srcs,img)"></image>
           </block>
           <block v-if="action==='add'">
-            <upload-image :key="idx" :limit="1" :ext="idx" @done="upImgSuccess"></upload-image>
+            <upload-image :key="idx" :limit="item.limit||1" :ext="idx" @done="upImgSuccess"></upload-image>
           </block>
 
           <block v-if="action==='edit'">
-            <upload-image :key="idx" :has="item.hasImg" :limit="1" :ext="idx" @done="upImgSuccess"></upload-image>
+            <upload-image :key="idx" :has="item.hasImg" :limit="item.limit||1" :ext="idx" @done="upImgSuccess"></upload-image>
           </block>
         </div>
     </div>
@@ -198,10 +211,10 @@
         <div class="form-upload-item__label">{{item.label}}</div>
         <div class="form-upload-item__content">
           <block v-if="action==='add'">
-            <upload-file :key="idx" :limit="item.limit" :ext="idx" @done="upFileSuccess"></upload-file>
+            <upload-file :key="idx" :limit="item.limit||1" :ext="idx" @done="upFileSuccess"></upload-file>
           </block>
           <block v-if="action==='edit'">
-            <upload-file :key="idx" :has="item.has" :limit="item.limit" :ext="idx" @done="upFileSuccess"></upload-file>
+            <upload-file :key="idx" :has="item.has" :limit="item.limit||1" :ext="idx" @done="upFileSuccess"></upload-file>
           </block>
         </div>
       </div>
@@ -278,7 +291,14 @@
 
           // 编辑和显示模式下图片格式化
           if (this.action === 'show' && row.type === 'img') {
-            row.src = getDomain(row.value)
+            var imgs = []
+            if (row.value) {
+              imgs = row.value.split('|').map(row => {
+                return getDomain(row)
+              })
+            }
+            row.srcs = imgs
+            console.log(row.srcs)
           }
 
           if (this.action === 'edit' && row.type === 'img') {
@@ -308,6 +328,12 @@
       }
     },
     methods: {
+      previewImg(urls, current) {
+        wx.previewImage({
+          urls,
+          current
+        })
+      },
       getDomain,
       openPop(name) {
         this.$refs[name].show()

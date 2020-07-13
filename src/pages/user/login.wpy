@@ -1,5 +1,5 @@
 <style lang="scss">
-  @import "../../assets/variables.scss";
+  /*@import "../../assets/variables.scss";*/
   button{
     line-height: 2.3;
     /*border-radius: 0;*/

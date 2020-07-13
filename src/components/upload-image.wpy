@@ -1,13 +1,13 @@
 <style lang="scss">
-  @import "../assets/mixins.scss";
-  @import "../assets/variables.scss";
+  /*@import "../assets/mixins.scss";*/
+  /*@import "../assets/variables.scss";*/
 
   .img{
     @include cover-img();
     &-upload-box{
       display: flex;
       flex-wrap: wrap;
-      width: 400rpx;
+      /*width: 400rpx;*/
     }
     &-item{
       width: 120rpx;
@@ -24,9 +24,9 @@
         color: white;
         background: rgba(0,0,0,.3);
       }
-      &:nth-child(3n+0){
-        margin-right: 0;
-      }
+      /*&:nth-child(3n+0){*/
+      /*  margin-right: 0;*/
+      /*}*/
     }
   }
   .add{

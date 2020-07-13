@@ -118,7 +118,7 @@
 </script>
 <style lang="scss">
 
-  @import "../assets/app.scss";
+  /*@import "../assets/app.scss";*/
 
   .card-item{
     padding: 20rpx;

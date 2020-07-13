@@ -90,7 +90,7 @@
 })
 </script>
 <style lang="scss">
-  @import "../assets/app.scss";
+  /*@import "../assets/app.scss";*/
   .im-tip-wrap{
     position: fixed;
     z-index: 999;

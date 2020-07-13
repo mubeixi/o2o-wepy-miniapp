@@ -337,8 +337,8 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
   .page-wrap{
     padding-bottom: 44px; //.btn的是44px
   }

@@ -494,7 +494,7 @@
             <div v-else class="fz-14 c6">
               暂无可用物流模板
             </div>
-            
+
           </div>
         </label>
       </radio-group>
@@ -1676,7 +1676,7 @@
       }else{
         this.Products_ID = ''
       }
-      
+
 
       eventHub.$on('goods-order-tmpl', ({tmpl}) => {
         console.log('flash-order-tmpl event emitted, the params are:')
@@ -1706,8 +1706,8 @@
   })
 </script>
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
+  /*@import "../../assets/mixins.scss";*/
+  /*@import "../../assets/variables.scss";*/
 
   .ql-container{
     height: auto;

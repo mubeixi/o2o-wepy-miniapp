@@ -85,8 +85,8 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
   .page-wrap{
     background-color: #F8F8F8 !important;
     min-height: 100vh;

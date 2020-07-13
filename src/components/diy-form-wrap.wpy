@@ -1,6 +1,6 @@
 <style lang="scss">
-  @import "../assets/app.scss";
-  @import "../assets/variables.scss";
+  /*@import "../assets/app.scss";*/
+  /*@import "../assets/variables.scss";*/
   .wrap{
     background: white;
     padding: 20px 10px;

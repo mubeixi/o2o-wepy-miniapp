@@ -65,7 +65,7 @@
   })
 </script>
 <style lang="scss">
-  @import "../assets/app.scss";
+  /*@import "../assets/app.scss";*/
   .pay-mask {
     position: fixed;
     z-index: 900000;
