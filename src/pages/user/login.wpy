@@ -691,6 +691,9 @@
     onReady() {
 
     },
+    onShow(){
+      ls.remove('toLogin')
+    },
     onLoad() {
       this.logoImg = getDomain('/static/images/biz_logo.png')
     }
