@@ -1,6 +1,6 @@
 <style lang="scss">
 @import "/assets/app.scss";
-@import "/components/fun-rich-text/parse.scss";
+/*@import "/components/fun-rich-text/parse.scss";*/
 </style>
 <script>
 import wepy from '@wepy/core'

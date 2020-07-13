@@ -78,8 +78,8 @@
   }
   .pay-method {
     text-align: center;
-    padding: 0 20 rpx;
-    font-size: 28 rpx;
+    padding: 0 20rpx;
+    font-size: 28rpx;
     color: #333;
   }
   .c_method {

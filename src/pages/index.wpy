@@ -42,10 +42,10 @@
       </div>
     </div>
 
-    <div class="message-list" v-if="messageList.length>0">
-      <icon type="icongonggao" color="#333" size="18"></icon>
-      <div class="content">{{messageList[0].title}}</div>
-    </div>
+<!--    <div class="message-list" v-if="messageList.length>0">-->
+<!--      <icon type="icongonggao" color="#333" size="18"></icon>-->
+<!--      <div class="content">{{messageList[0].title}}</div>-->
+<!--    </div>-->
 
     <div class="finance-box" >
       <div class="finance-item"  @click="goBanlance">
