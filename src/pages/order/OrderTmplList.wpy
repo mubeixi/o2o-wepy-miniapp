@@ -1,6 +1,6 @@
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
+  /*@import "../../assets/mixins.scss";*/
+  /*@import "../../assets/variables.scss";*/
   .container{
     padding-bottom: 100rpx;
   }

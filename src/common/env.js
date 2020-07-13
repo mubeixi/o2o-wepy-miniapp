@@ -1,7 +1,7 @@
 // export const apiBaseUrl = 'http://www.newo2osrc.com'
 export const apiBaseUrl = 'https://newo2o.bafangka.com'
 export const staticUrl = 'https://newo2o.bafangka.com'
-export const buildVersion = 100
+export const buildVersion = 101
 // 测试appid   wx3d24c565489e305b https://newo2o.bafangka.com
 // 正式商户id   wxfcabc14aef501fdd   正式域名https://newo2o.netcnnet.net
 

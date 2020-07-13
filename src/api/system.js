@@ -24,3 +24,15 @@ export const bizLogout = (param, options) => fetch({act: 'bizLogout', param, opt
 export const getAreaByPid = (param, options) => fetch({act: 'getAreaByPid', param, options})
 
 export const getUserInfo = (param, options) => fetch({act: 'get_user_info', param, options})
+
+// 反馈或建议列表
+export const feedbackList = (param, options) => fetch({act: 'feedbackList', param, options})
+
+// 反馈或建议详情
+export const feedbackDetail = (param, options) => fetch({act: 'feedbackDetail', param, options})
+
+// 添加反馈或建议
+export const operateFeedback = (param, options) => fetch({act: 'operateFeedback', param, options})
+
+// 公告列表
+export const bizMessageList = (param, options) => fetch({act: 'bizMessageList', param, options})

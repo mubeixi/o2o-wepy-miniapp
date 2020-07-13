@@ -153,8 +153,8 @@
 
 </script>
 <style lang="scss" >
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
   .all{
     background-color: #f8f8f8;
     width: 750rpx;

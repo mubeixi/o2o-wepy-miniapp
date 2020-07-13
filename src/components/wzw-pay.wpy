@@ -65,7 +65,7 @@
   })
 </script>
 <style lang="scss">
-  @import "../assets/app.scss";
+  /*@import "../assets/app.scss";*/
   .pay-mask {
     position: fixed;
     z-index: 900000;
@@ -78,8 +78,8 @@
   }
   .pay-method {
     text-align: center;
-    padding: 0 20 rpx;
-    font-size: 28 rpx;
+    padding: 0 20rpx;
+    font-size: 28rpx;
     color: #333;
   }
   .c_method {

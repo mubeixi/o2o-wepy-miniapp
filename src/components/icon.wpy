@@ -1,6 +1,5 @@
 <style lang="scss">
 @import "../assets/icon.scss";
-
 </style>
 <template>
   <i class="iconfont {{type}}"
