@@ -3,8 +3,8 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
     <block v-if="pro_id">
-      <div  class="flex  product-mbx" @click="openPop('product')">
-<!--        <fun-img class="thumbs" :src="selectValue.ImgPath"></fun-img>-->
+      <div class="flex  product-mbx" @click="openPop('product')">
+        <!--        <fun-img class="thumbs" :src="selectValue.ImgPath"></fun-img>-->
         <div class="thumbs">
           <image :src="selectValue.ImgPath" style="width: 100%;height: 100%;"></image>
         </div>
@@ -21,79 +21,83 @@
     <block v-else>
       <div style="width: 750rpx;height: 50rpx;"></div>
       <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
-        <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
+        <icon type="iconadd" color="#00A8FF" size="20" class="m-r-9"></icon>
         选择商品
       </div>
     </block>
     <block v-if="pro_id&&selectValue.Products_Type!==0">
       <div class="submitq flex flex-vertical-center flex-justify-center" @click="goAdd">
-        <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-2"></icon>
+        <icon type="iconadd" color="#00A8FF" size="20" class="m-r-2"></icon>
         设置商品的型号
       </div>
     </block>
 
 
-    <div class="store-item flex flex-vertical-center" >
-      <div  class="titles">
+    <div class="store-item flex flex-vertical-center">
+      <div class="titles">
         排序
       </div>
-      <div class="flex flex1 fz-13" >
-        <input type="number" v-model="sort"  class="flex flex1 p-l-26" placeholder="请输入1-9999" min="0" max="9999" placeholder-class="place"/>
+      <div class="flex flex1 fz-13">
+        <input type="number" v-model="sort" class="flex flex1 p-l-26" placeholder="请输入1-9999" min="0" max="9999"
+               placeholder-class="place"/>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center" >
-      <div  class="titles">
+    <div class="store-item flex flex-vertical-center">
+      <div class="titles">
         赠品名称
       </div>
-      <div class="flex flex1 fz-13" >
-        <input type="text" v-model="gift_name"  class="flex flex1 p-l-26" placeholder="请输入赠品名称"  placeholder-class="place"/>
+      <div class="flex flex1 fz-13">
+        <input type="text" v-model="gift_name" class="flex flex1 p-l-26" placeholder="请输入赠品名称"
+               placeholder-class="place"/>
       </div>
     </div>
 
     <div class="store-item flex flex-vertical-center">
-      <div  class="titles">
+      <div class="titles">
         领取有效期
       </div>
-      <div class="flex flex1 fz-13" >
-        <input type="number"  v-model="valid_days" class="flex flex1 p-l-26" placeholder="请输入领取有效期"  placeholder-class="place"/>
+      <div class="flex flex1 fz-13">
+        <input type="number" v-model="valid_days" class="flex flex1 p-l-26" placeholder="请输入领取有效期"
+               placeholder-class="place"/>
         天
       </div>
     </div>
     <div class="store-item flex flex-vertical-center">
-      <div  class="titles">
+      <div class="titles">
         限领次数
       </div>
-      <div class="flex flex1 fz-13" >
-        <input type="number"  v-model="limit_times" class="flex flex1 p-l-26" placeholder="请输入限领次数0为不限次"  placeholder-class="place"/>
+      <div class="flex flex1 fz-13">
+        <input type="number" v-model="limit_times" class="flex flex1 p-l-26" placeholder="请输入限领次数0为不限次"
+               placeholder-class="place"/>
         次
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
-      <div  class="titles">
+      <div class="titles">
         需要物流
       </div>
-      <switch :checked="is_shipping==1"  bindchange="switch1Change"/>
+      <switch :checked="is_shipping==1" bindchange="switch1Change"/>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('myModal')"  v-if="is_shipping==1">
-      <div  class="titles"  >
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('myModal')"
+         v-if="is_shipping==1">
+      <div class="titles">
         配送方式
       </div>
       <div class="fz-14 c9">
         {{shipping_type===2?'固定费用':'物流模板'}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
     <div class="store-item flex flex-vertical-center" v-if="shipping_type==1">
-      <div  class="titles">
+      <div class="titles">
         赠品重量
       </div>
-      <div class="flex flex1 fz-13" >
-        <input type="number"  v-model="weight" class="flex flex1 p-l-26" placeholder="请输入赠品重量"  placeholder-class="place"/>
+      <div class="flex flex1 fz-13">
+        <input type="number" v-model="weight" class="flex flex1 p-l-26" placeholder="请输入赠品重量"
+               placeholder-class="place"/>
         kg
       </div>
     </div>
-
-
 
 
     <!--占住底部的位置-->
@@ -101,22 +105,22 @@
     <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
     <!--action-btn全局有样式-->
-    <div class="btn action-btn btn-primary fz-16"  @click="addSeckill">
+    <div class="btn action-btn btn-primary fz-16" @click="addSeckill">
       确定
     </div>
 
     <popup-layer title="配送方式" ref="myModal" :autoClose="true">
-      <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
+      <radio-group class="type-list p-l-10 p-r-10" @change="setFeeType">
         <label class="type-item flex flex-vertical-center fz-14">
-          <radio color="#00A8FF" value="0" :checked="shipping_type === 2" />
+          <radio color="#00A8FF" value="0" :checked="shipping_type === 2"/>
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">固定费用</div>
-            <input type="digit" v-model="shipping_price"  class="input-price fz-12 m-r-5"/>
+            <input type="digit" v-model="shipping_price" class="input-price fz-12 m-r-5"/>
             元
           </div>
         </label>
         <label class="type-item flex flex-vertical-center fz-14">
-          <radio color="#00A8FF" value="1" :checked="shipping_type === 1" />
+          <radio color="#00A8FF" value="1" :checked="shipping_type === 1"/>
           <div class="label p-10 flex flex-vertical-center">
             <div class="title m-r-15">物流模板</div>
             <div class="title m-r-15">{{Template_Name}}</div>
@@ -132,7 +136,7 @@
     <popup-layer title="选择物流模板" ref="give" :autoClose="true">
       <block v-for="(item,index) of emsData" :key="index">
         <div class="give-list flex flex-vertical-center p-l-10 fz-14" @click="changeCheck(index)">
-          <div >
+          <div>
             <icon
               class="check-icon"
               :color="item.check?'#F53636':'#999'"
@@ -154,7 +158,7 @@
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
           <template v-if="product.Products_Status===1">
             <div class="info-box" @click="taggleProductCheck(idx)">
-              <div class="check"   >
+              <div class="check">
                 <div v-show="!product.disalbed">
                   <icon
                     class="check-icon"
@@ -411,7 +415,7 @@
       },
       taggleProductCheck(idx) {
         this.proData = this.proData.map(item => {
-          return {...item, check: false}
+          return { ...item, check: false }
         })
         this.proData[idx].check = true
       },
@@ -423,7 +427,7 @@
       },
       getMbx() {
         showLoading('加载中')
-        getShopGiftInfo({id: this.id }).then(res => {
+        getShopGiftInfo({ id: this.id }).then(res => {
           this.editData = res.data
           for (let item of this.proData) {
             console.log(item, this.editData.product_id, 'ss')
@@ -456,18 +460,22 @@
           }
 
           hideLoading()
-        }).catch(e => { hideLoading() })
+        }).catch(e => {
+          hideLoading()
+        })
       },
       async init() {
         showLoading('加载中')
-        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => {})
+        let reqData = await bizProdList({ page: 1, pageSize: 999 }).catch(() => {
+        })
         this.proData = reqData.data.map(item => {
-          return {...item, check: false}
+          return { ...item, check: false }
         })
 
-        let resData = await getShippingTemplate().catch(() => {})
+        let resData = await getShippingTemplate().catch(() => {
+        })
         this.emsData = resData.data.map(item => {
-          return {...item, check: false}
+          return { ...item, check: false }
         })
         if (this.emsData.length > 0) {
           this.emsData[0].check = true
@@ -491,24 +499,24 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
 
-  .page-wrap{
+  .page-wrap {
     padding-bottom: 44px;
   }
 
-  .picker{
+  .picker {
     height: 110rpx;
     line-height: 110rpx;
     flex: 1;
     text-align: right;
   }
-  .seckill-add{
+
+  .seckill-add {
     height: 100vh;
     background-color: #FFFFFF;
   }
-  .submits{
+
+  .submits {
     margin: 0rpx auto 50rpx;
     width: 320rpx;
     height: 60rpx;
@@ -519,11 +527,13 @@
     font-size: 28rpx;
     line-height: 60rpx;
   }
-  .select-pro{
+
+  .select-pro {
     font-size: 24rpx;
     color: #00A8FF;
   }
-  .submitq{
+
+  .submitq {
     margin: 60rpx auto;
     width: 360rpx;
     height: 60rpx;
@@ -534,41 +544,48 @@
     font-size: 28rpx;
     line-height: 60rpx;
   }
-  .store-item{
+
+  .store-item {
     height: 110rpx;
     width: 710rpx;
     padding: 0rpx 20rpx;
     border-bottom: 1px solid #EBEBEB;
   }
-  .titles{
+
+  .titles {
     font-size: 28rpx;
     color: #333333;
   }
-  .place{
+
+  .place {
     color: #CAC8C8;
   }
-  .store-titles{
+
+  .store-titles {
     display: flex;
     align-items: center;
     color: #999999;
     font-size: 26rpx;
   }
 
-  .product-mbx{
+  .product-mbx {
     width: 750rpx;
     box-sizing: border-box;
     height: 230rpx;
     padding: 40rpx 20rpx;
   }
-  .thumbs{
+
+  .thumbs {
     width: 150rpx;
     height: 150rpx;
     margin-right: 24rpx;
   }
-  .color-my{
+
+  .color-my {
     color: #FF0000;
   }
-  .title-my{
+
+  .title-my {
     color: #333;
     font-size: 14px;
     /*font-weight: bold;*/
@@ -578,45 +595,54 @@
     text-overflow: ellipsis;
     margin-bottom: 38rpx;
   }
-  .content{
+
+  .content {
 
     text-align: left;
     height: 110rpx;
     line-height: 110rpx;
   }
+
   /*商品列表 start*/
-  .product-list{
+  .product-list {
     height: 800rpx;
     overflow: scroll;
   }
-  .product-item{
+
+  .product-item {
     padding: 30rpx 0;
     background: white;
     margin-bottom: 20rpx;
-    .info-box{
+
+    .info-box {
       padding: 0 20rpx;
       display: flex;
       font-size: 14px;
       height: 176rpx;
-      .check{
+
+      .check {
         padding-right: 20rpx;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        .check-icon{
+
+        .check-icon {
 
         }
       }
-      .thumb{
+
+      .thumb {
         width: 176rpx;
         height: 176rpx;
         background: #f2f2f2;
       }
-      .info{
+
+      .info {
         flex: 1;
         padding-left: 20rpx;
-        .title{
+
+        .title {
           color: #333;
           font-size: 14px;
           /*font-weight: bold;*/
@@ -626,22 +652,26 @@
           text-overflow: ellipsis;
           margin-bottom: 8px;
         }
-        .price-box{
+
+        .price-box {
           color: $fun-red-color;
           margin-bottom: 10px;
           font-size: 14px;
         }
-        .stock-box{
+
+        .stock-box {
           font-size: 12px;
           color: #888;
         }
       }
     }
-    .actions{
+
+    .actions {
       margin-top: 30rpx;
       font-size: 12px;
       display: flex;
-      .action{
+
+      .action {
         justify-content: center;
         padding: 0;
         flex: 1;
@@ -649,17 +679,20 @@
         align-items: center;
         color: #888;
         border-right: 1rpx solid #e7e7e7;
-        &:last-child{
+
+        &:last-child {
           border-right: none;
         }
-        .title{
+
+        .title {
           padding-left: 8px;
         }
       }
     }
   }
+
   /*商品列表 end*/
-  .input-price{
+  .input-price {
     width: 440rpx;
     height: 56rpx;
     line-height: 56rpx;
@@ -667,7 +700,8 @@
     box-sizing: border-box;
     border: 1px solid #eeeeee;
   }
-  .give-list{
+
+  .give-list {
     height: 60rpx;
     line-height: 60rpx;
   }
@@ -679,7 +713,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
-    "wzw-im-tip": "~@/components/wzw-im-tip",
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "fun-img": "~@/components/fun-img",
   "err-msg": "~@/components/err-msg",
   "icon": "~@/components/icon",

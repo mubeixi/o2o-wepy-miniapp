@@ -1,0 +1,63 @@
+<template>
+  <!--增加video标签支持，并循环添加-->
+  <div>
+    <!--增加video标签支持，并循环添加-->
+    <!--    :class="node.classStr"-->
+    <!--    :class="node.classStr" :style="node.styleStr"-->
+    <view style="position: relative;z-index: 2;width: 750rpx;height: 375rpx;">
+      <video
+        id="myVideo1"
+        ref="video1"
+        controls
+        show-center-play-btn
+        class="video-video"
+        :src="node.attr.src"
+        style="position: absolute;width: 100%;height: 100%;"
+      ></video>
+    </view>
+
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.component({
+    data: {
+      ifshow: false,
+      showImg: true
+    },
+    mounted() {
+      let _self = this
+
+      this.$nextTick().then(() => {
+        let videoContext = wx.createVideoContext('myVideo1', _self)
+        // 添加到这里
+        getApp().globalData.videoInstance.push(videoContext)
+      })
+    },
+    methods: {
+      ableClose() {
+
+      },
+      showDialog() {
+
+      }
+    }
+  })
+
+</script>
+
+<style scoped lang="scss">
+  .popup-layer {
+    position: fixed;
+    z-index: 199;
+    background-color: rgba(0, 0, 0, .5);
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+</style>

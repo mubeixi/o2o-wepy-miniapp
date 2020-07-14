@@ -19,72 +19,73 @@
     </div>
 
     <div class="product-list">
-        <div class="product-item" v-for="(product,idx) in productList" :key="idx">
-            <div class="info-box" @click="taggleProductCheck(idx)">
-              <div class="check" v-if="showHandle"  >
-                <icon
-                  class="check-icon"
-                  :color="product.check?'#F53636':'#999'"
-                  size="20"
-                  :type="product.check?'iconblchecked':'iconCircle'"
-                ></icon>
-              </div>
-              <image class="thumb" :src="product.ImgPath"></image>
+      <div class="product-item" v-for="(product,idx) in productList" :key="idx">
+        <div class="info-box" @click="taggleProductCheck(idx)">
+          <div class="check" v-if="showHandle">
+            <icon
+              class="check-icon"
+              :color="product.check?'#F53636':'#999'"
+              size="20"
+              :type="product.check?'iconblchecked':'iconCircle'"
+            ></icon>
+          </div>
+          <image class="thumb" :src="product.ImgPath"></image>
 
-              <div class="info">
-                <div>
-                  <div class="title">{{product.Products_Name}}</div>
-                  <div class="price-box">
-                    <span class="sign">￥</span>
-                    <span>{{product.Products_PriceX}}</span>
-                    <span class="p-l-20 p-r-4 fz-12 color-gray">抢购价:</span>
-                    <span class="sign">￥</span>
-                    <span>{{product.pintuan_pricex}}</span>
-                  </div>
-                </div>
-                <div>
-                  <div class="check-status fz-12 color-red " v-if="product.Products_Status===-1" @click="showRejectReasn(product)">
-                    <span>审核未通过</span>
-                    <!-- <span class="m-l-6" style="text-decoration: underline;">查看原因</span> -->
-                  </div>
-                  <div class="check-status color-blue fz-12" v-if="product.Products_Status===0">
-                    <span>审核中</span>
-                  </div>
-                  <div class="check-status color-primary fz-12" v-if="product.Products_Status===1">
-                    <span>审核通过</span>
-                  </div>
-                  <div class="stock-box m-t-6">
-                    <span class="stock">库存:{{product.Products_Count}}</span>
-                    <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
-                  </div>
-                </div>
+          <div class="info">
+            <div>
+              <div class="title">{{product.Products_Name}}</div>
+              <div class="price-box">
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceX}}</span>
+                <span class="p-l-20 p-r-4 fz-12 color-gray">抢购价:</span>
+                <span class="sign">￥</span>
+                <span>{{product.pintuan_pricex}}</span>
               </div>
             </div>
-            <div class="actions">
-              <div class="action" @click="$linkTo('/pages/product/form?id='+product.Products_ID)">
-                <icon type="iconbianji1"></icon>
-                <span class="title">编辑</span>
+            <div>
+              <div class="check-status fz-12 color-red " v-if="product.Products_Status===-1"
+                   @click="showRejectReasn(product)">
+                <span>审核未通过</span>
+                <!-- <span class="m-l-6" style="text-decoration: underline;">查看原因</span> -->
               </div>
-              <div class="action" @click="delProd(product.Products_ID,idx)">
-                <icon size="18" type="iconshanchu"></icon>
-                <span class="title">删除</span>
+              <div class="check-status color-blue fz-12" v-if="product.Products_Status===0">
+                <span>审核中</span>
               </div>
-              <div class="action" @click="taggleProdStatus(product,idx)">
-                <template v-if="!product.Products_SoldOut">
-                  <icon type="iconxiajia"></icon>
-                  <span class="title">下架</span>
-                </template>
-                <template v-else>
-                  <icon type="iconputaway"></icon>
-                  <span class="title">上架</span>
-                </template>
+              <div class="check-status color-primary fz-12" v-if="product.Products_Status===1">
+                <span>审核通过</span>
               </div>
-              <div class="action" @click="bindShare(product)">
-                <icon size="14" type="iconfenxiang1"></icon>
-                <span class="title">分享</span>
+              <div class="stock-box m-t-6">
+                <span class="stock">库存:{{product.Products_Count}}</span>
+                <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
               </div>
             </div>
           </div>
+        </div>
+        <div class="actions">
+          <div class="action" @click="$linkTo('/pages/product/form?id='+product.Products_ID)">
+            <icon type="iconbianji1"></icon>
+            <span class="title">编辑</span>
+          </div>
+          <div class="action" @click="delProd(product.Products_ID,idx)">
+            <icon size="18" type="iconshanchu"></icon>
+            <span class="title">删除</span>
+          </div>
+          <div class="action" @click="taggleProdStatus(product,idx)">
+            <template v-if="!product.Products_SoldOut">
+              <icon type="iconxiajia"></icon>
+              <span class="title">下架</span>
+            </template>
+            <template v-else>
+              <icon type="iconputaway"></icon>
+              <span class="title">上架</span>
+            </template>
+          </div>
+          <div class="action" @click="bindShare(product)">
+            <icon size="14" type="iconfenxiang1"></icon>
+            <span class="title">分享</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="handle-box" v-show="showHandle">
@@ -102,9 +103,9 @@
       </div>
     </div>
 
-<!--    <div class="p-t-50 p-b-50 bgwhite">-->
-<!--      <copyright></copyright>-->
-<!--    </div>-->
+    <!--    <div class="p-t-50 p-b-50 bgwhite">-->
+    <!--      <copyright></copyright>-->
+    <!--    </div>-->
   </div>
 </template>
 
@@ -115,9 +116,10 @@
 
   import { bizProdDel, bizProdDown, bizProdList, bizProdUp, getProductSharePic } from '../../api/product'
   import { error, hideLoading, showLoading } from '../../common/fun'
-  import { confirm, getArrColumn, cutstrFun } from '../../common/helper'
+  import { confirm, cutstrFun, getArrColumn } from '../../common/helper'
   import wxPromisify from '../../common/promisify'
   import { Exception } from '../../common/Exception'
+
   let canvasInstance = null
   wepy.page({
     store,
@@ -141,19 +143,27 @@
       async bindShare(product) {
         try {
           showLoading('生成中')
-          const posterInfo = await getProductSharePic({product_id: product.Products_ID}).then(res=>res.data).catch(err => { throw Error(err.msg || '获取分享海报失败') })
+          const posterInfo = await getProductSharePic({ product_id: product.Products_ID }).then(res => res.data).catch(err => {
+            throw Error(err.msg || '获取分享海报失败')
+          })
           console.log(posterInfo)
 
           const wrapHeight = 1038
           const ctx = canvasInstance
 
-          const thumbTempFile = await wxPromisify('getImageInfo', { src: product.ImgPath }).catch(e => { throw Error(e.errMsg || '缓存商品缩略图失败') })
-          const headimgTempFile = await wxPromisify('getImageInfo', { src: this.bizInfo.biz_logo }).catch(e => { throw Error(e.errMsg || '缓存商家头像失败') })
-          const qrimgTempFile = await wxPromisify('getImageInfo', { src: posterInfo.img_url }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          const thumbTempFile = await wxPromisify('getImageInfo', { src: product.ImgPath }).catch(e => {
+            throw Error(e.errMsg || '缓存商品缩略图失败')
+          })
+          const headimgTempFile = await wxPromisify('getImageInfo', { src: this.bizInfo.biz_logo }).catch(e => {
+            throw Error(e.errMsg || '缓存商家头像失败')
+          })
+          const qrimgTempFile = await wxPromisify('getImageInfo', { src: posterInfo.img_url }).catch(e => {
+            throw Error(e.errMsg || '缓存二维码失败')
+          })
           // const wrapTempFile = await wxPromisify('getImageInfo', { src: this.wrapPath }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
           console.log(thumbTempFile.path)
           // 绘制底部白色
-          // ctx.setFillStyle('#f2f2f2')
+          ctx.setFillStyle('#f2f2f2')
 
           ctx.fillRect(0, 0, 700, wrapHeight)
           ctx.drawImage('/static/share/cover-wrap.png', 0, 0, 700, wrapHeight)
@@ -231,7 +241,7 @@
           ctx.drawImage(qrimgTempFile.path, 520, 883, 110, 110)
 
           await new Promise(resolve => {
-            ctx.draw(false, function () {
+            ctx.draw(false, function() {
               console.log('draw done')
               resolve()
             })
@@ -256,7 +266,7 @@
 
         })
       },
-      bindImgError: function (e) {
+      bindImgError: function(e) {
         console.log(e.$wx)
 
         const idx = e.$wx.currentTarget.dataset.index
@@ -273,13 +283,15 @@
           //   title:'提示',
           //   content:'删除操作不可逆,是否确定删除该商品?',
           // })
-          const {confirm} = await wxPromisify('showModal', {
+          const { confirm } = await wxPromisify('showModal', {
             title: '提示',
             content: '删除操作不可逆,是否确定删除该商品?'
           })
           if (!confirm) return
           const prod_ids = [pro_id]
-          await bizProdDel({ids: JSON.stringify(prod_ids), type: 7}, {tip: 'loading'}).catch(() => { throw Error('删除商品失败') })
+          await bizProdDel({ ids: JSON.stringify(prod_ids), type: 7 }, { tip: 'loading' }).catch(() => {
+            throw Error('删除商品失败')
+          })
           this.productList.splice(idx, 1)
         } catch (e) {
           error(e.message())
@@ -292,7 +304,9 @@
           const prod_ids = getArrColumn(prod_list, 'Products_ID')
           if (prod_ids.length < 1) throw Error('请至少选择一个商品')
 
-          await action({ids: JSON.stringify(prod_ids)}, {tip: '更新中'}).catch(() => { throw Error('更新商品状态失败') })
+          await action({ ids: JSON.stringify(prod_ids) }, { tip: '更新中' }).catch(() => {
+            throw Error('更新商品状态失败')
+          })
           // 更新状态
           for (let pro of this.productList) {
             if (prod_ids.includes(pro.Products_ID)) {
@@ -310,20 +324,21 @@
         console.log(prod.Products_SoldOut)
         const prod_ids = [prod.Products_ID]
 
-        action({ids: JSON.stringify(prod_ids)}, {tip: 'loading'}).then(res => {
+        action({ ids: JSON.stringify(prod_ids) }, { tip: 'loading' }).then(res => {
           this.$set(this.productList[idx], 'Products_SoldOut', !prod.Products_SoldOut)
         }).catch(() => {
 
         })
       },
       async _init_func() {
-        this.productList = await bizProdList({pageSize: 9999}, {onlyData: true}).catch(() => {})
+        this.productList = await bizProdList({ pageSize: 9999 }, { onlyData: true }).catch(() => {
+        })
       },
       taggleAllCheck() {
         const check = !this.allCheck
         this.allCheck = check
         this.productList = this.productList.map(item => {
-          return {...item, check}
+          return { ...item, check }
         })
       },
       taggleProductCheck(idx) {
@@ -334,7 +349,7 @@
       taggleHandleShow() {
         this.showHandle = !this.showHandle
       },
-      checkboxChange: function (e) {
+      checkboxChange: function(e) {
         console.log('checkbox发生change事件，携带value值为：', e.$wx.detail.value)
       }
     },
@@ -358,8 +373,7 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
+
 
   .myCanvas {
     position: fixed;
@@ -371,7 +385,7 @@
   }
 
   /* 底部的操作栏start */
-  .handle-box{
+  .handle-box {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -385,37 +399,41 @@
     padding: 0 20rpx;
     box-sizing: border-box;
     border-top: 1px solid #eee;
-    .btn-list{
+
+    .btn-list {
       display: flex;
       align-items: center;
-      .btn{
+
+      .btn {
         display: block;
-        width:96rpx;
+        width: 96rpx;
         height: 54rpx;
         line-height: 54rpx;
         font-size: 14px;
         text-align: center;
         border-radius: 10rpx;
-        border:1px solid $fun-red-color;
+        border: 1px solid $fun-red-color;
         color: $fun-red-color;
         background: white;
         margin-left: 20rpx;
-        &.btn-up{
+
+        &.btn-up {
           color: white;
           background: $fun-red-color;
         }
       }
     }
   }
+
   /*底部操作栏 end*/
 
-  .page-wrap{
+  .page-wrap {
     padding-top: 200rpx;
   }
 
 
   /** 顶部start **/
-  .head-actions{
+  .head-actions {
     position: fixed;
     top: 0;
     width: 750rpx;
@@ -425,57 +443,68 @@
     box-sizing: border-box;
     z-index: 2;
     background: #f8f8f8;
-    box-shadow: rgba(0,0,0,.06) 0 10px 10px 4px;
-    .item{
-      flex:1;
+    box-shadow: rgba(0, 0, 0, .06) 0 10px 10px 4px;
+
+    .item {
+      flex: 1;
       text-align: center;
-      .icon{
+
+      .icon {
         width: 70rpx;
         height: 70rpx;
         border-radius: 50%;
       }
-      .title{
+
+      .title {
         color: #333;
         font-size: 14px;
       }
     }
   }
+
   /** 顶部end **/
 
   /*商品列表 start*/
-  .product-list{
+  .product-list {
 
   }
-  .product-item{
+
+  .product-item {
     padding: 30rpx 0;
     background: white;
     margin-bottom: 20rpx;
-    .info-box{
+
+    .info-box {
       padding: 20rpx;
       display: flex;
       font-size: 14px;
       height: 196rpx;
-      .check{
+
+      .check {
         padding-right: 20rpx;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        .check-icon{
+
+        .check-icon {
 
         }
       }
-      .thumb{
+
+      .thumb {
         width: 196rpx;
         height: 196rpx;
       }
-      .info{
+
+      .info {
         flex: 1;
         padding-left: 20rpx;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        .title{
+
+        .title {
           color: #333;
           font-size: 14px;
           /*font-weight: bold;*/
@@ -485,24 +514,29 @@
           text-overflow: ellipsis;
           margin-bottom: 6px;
         }
-        .price-box{
+
+        .price-box {
           color: $fun-red-color;
           font-size: 14px;
         }
-        .check-status{
+
+        .check-status {
 
         }
-        .stock-box{
+
+        .stock-box {
           font-size: 12px;
           color: #888;
         }
       }
     }
-    .actions{
+
+    .actions {
       margin-top: 30rpx;
       font-size: 12px;
       display: flex;
-      .action{
+
+      .action {
         justify-content: center;
         padding: 0;
         flex: 1;
@@ -510,31 +544,33 @@
         align-items: center;
         color: #888;
         border-right: 1rpx solid #e7e7e7;
-        &:last-child{
+
+        &:last-child {
           border-right: none;
         }
-        .title{
+
+        .title {
           padding-left: 8px;
         }
       }
     }
   }
-  /*商品列表 end*/
 
+  /*商品列表 end*/
 
 
 </style>
 <config>
   {
-    "navigationBarTitleText": "商品管理",
-    "navigationBarTextStyle": "black",
-    "navigationBarBackgroundColor": "#fff",
-    "usingComponents": {
-      "wzw-im-tip": "~@/components/wzw-im-tip",
-      "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon",
-      "fun-img": "~@/components/fun-img",
-      "ad": "~@/components/ad"
-    }
+  "navigationBarTitleText": "商品管理",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "fun-img": "~@/components/fun-img",
+  "ad": "~@/components/ad"
+  }
   }
 </config>

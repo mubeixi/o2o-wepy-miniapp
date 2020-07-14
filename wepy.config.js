@@ -4,12 +4,14 @@ var prod = process.env.NODE_ENV === 'production'
 // 使用 UglifyJS 对编译后的代码进行打混淆压缩。
 const UglifyPlugin = require('@wepy/plugin-uglifyjs')
 const TypeScriptCompiler = require('@wepy/compiler-typescript')
+const fs = require('fs')
+const prependData = fs.readFileSync('src/assets/variables.scss', 'utf-8').toString() + fs.readFileSync('src/assets/mixins.scss', 'utf-8').toString()
 
 module.exports = {
   wpyExt: '.wpy',
   eslint: true,
   cliLogs: !prod,
-  static: ['static','custom-tab-bar'],
+  static: ['static', 'custom-tab-bar'],
   build: {
   },
   resolve: {
@@ -24,7 +26,8 @@ module.exports = {
       compress: prod
     },
     sass: {
-      outputStyle: 'compressed'
+      outputStyle: 'compressed',
+      data: prependData
     },
     babel: {
       sourceMap: true,

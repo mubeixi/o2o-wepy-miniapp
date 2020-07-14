@@ -1,10 +1,9 @@
-import { staticUrl } from './env'
-import { back, error } from './fun'
+import ENV from './env'
+import { error, linkTo } from './fun'
 import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
 import wxPromisify from './promisify'
-import F2 from '@/lib/f2-canvas/f2'
 
 export const objTranslate = (obj) => JSON.parse(JSON.stringify(obj))
 
@@ -105,7 +104,7 @@ export const findArrayIdx = (arr, keyValArr, full = false) => {
     // 用来比较对象
     if (compareObj(keyValArr, arr[i])) {
       if (!full) return i
-      return {val: arr[i], idx: i}
+      return { val: arr[i], idx: i }
     }
   }
   return false
@@ -177,7 +176,7 @@ export const getArrColumn = (arr, column) => {
  * @param sizeType
  * @returns {Promise<unknown>}
  */
-export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compressed']} = {}) => {
+export const chooseImageByPromise = ({ count = 1, sizeType = ['original', 'compressed'] } = {}) => {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count,
@@ -202,7 +201,7 @@ export const chooseImageByPromise = ({count = 1, sizeType = ['original', 'compre
  * @param data 业务参数:{}
  * @returns {Promise<unknown>}
  */
-export const uploadImages = ({imgs, name = 'image', data, progressList = [], vmobj, handlerPressFn}) => {
+export const uploadImages = ({ imgs, name = 'image', data, progressList = [], vmobj, handlerPressFn }) => {
   let taskList = []
   // console.log(imgs, 'ssss')
   for (let i = 0; i < imgs.length; i++) {
@@ -249,7 +248,9 @@ export const validateFun = (data, rule) => {
  */
 const downLoadFile = async (url) => {
   try {
-    const downRT = await wxPromisify('downloadFile', { url }).catch(e => { throw Error(e.errMsg) })
+    const downRT = await wxPromisify('downloadFile', { url }).catch(e => {
+      throw Error(e.errMsg)
+    })
     const { tempFilePath } = downRT
     if (!tempFilePath) throw Error('图片下载失败')
     return tempFilePath
@@ -267,7 +268,9 @@ const downLoadFile = async (url) => {
 export const saveImageToDisk = async ({ fileUrl, type = 'local' }) => {
   try {
     const fileTempPath = type === 'local' ? fileUrl : await downLoadFile(fileUrl)
-    await wxPromisify('saveImageToPhotosAlbum', { filePath: fileTempPath }).catch(e => { throw Error(e.errMsg) })
+    await wxPromisify('saveImageToPhotosAlbum', { filePath: fileTempPath }).catch(e => {
+      throw Error(e.errMsg)
+    })
     return fileTempPath
   } catch (e) {
     return false
@@ -308,22 +311,22 @@ export const getString = (arr, key, mbx = 99) => {
 
 export const getDomain = (url) => {
   if (!url) return ''
-  if (url.indexOf('http') === -1) return staticUrl + url
+  if (url.indexOf('http') === -1) return ENV.staticUrl + url
   return url
 }
 
 export const confirm = (options) => {
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     wx.showModal({
       ...options,
-      success: function (res) {
+      success: function(res) {
         if (res.confirm) {
           resolve(res)
         } else if (res.cancel) {
           reject(res)
         }
       },
-      fail: function (res) {
+      fail: function(res) {
         reject(res)
       }
     })
@@ -347,7 +350,7 @@ export const checkIsLogin = (redirect = 1, tip = 0, errCall) => {
         return
       }
 
-      confirm({title: '提示', content: '该操作需要登录,请问是否登录?', confirmText: '去登录', cancelText: '暂不登录'}).then(() => {
+      confirm({ title: '提示', content: '该操作需要登录,请问是否登录?', confirmText: '去登录', cancelText: '暂不登录' }).then(() => {
         wx.navigateTo({
           url: '/pages/user/login'
         })
@@ -371,13 +374,13 @@ export const strSplit = (str, separator = /|,|，|;|；|\||-|/) => {
   return str.split(separator)
 }
 
-export function sleep (fn, par, time = 3000) {
+export function sleep(fn, par, time = 3000) {
   return new Promise((resolve) => {
     setTimeout(() => resolve(fn(par)), time)
   })
 }
 
-export const setNavigationBarTitle = (title) => wx.setNavigationBarTitle({title})
+export const setNavigationBarTitle = (title) => wx.setNavigationBarTitle({ title })
 
 export const formatNumber = n => {
   n = n.toString()
@@ -437,11 +440,12 @@ export const checkIsSettle = (redirect = 1, tip = 0) => {
       return
     }
 
-    confirm({title: '提示', content: '该操作需要入驻,请问是否入驻?', confirmText: '去入驻', cancelText: '暂不入驻'}).then(() => {
+    confirm({ title: '提示', content: '该操作需要入驻,请问是否入驻?', confirmText: '去入驻', cancelText: '暂不入驻' }).then(() => {
       wx.navigateTo({
         url: '/pages/join/BusinessStation'
       })
-    }).catch(() => {})
+    }).catch(() => {
+    })
   }
 
   return false
@@ -563,8 +567,8 @@ export function pageScrollToFn(nowScrollTop, evalScrollTop, duration = 100) {
  * @param extension
  * @returns {Promise<unknown>}
  */
-export const chooseFileByPromise = ({count = 10, type = 'file', extension = ['doc', 'docx', 'xls', 'xlsx', 'pdf']}) => {
-  console.log( count,
+export const chooseFileByPromise = ({ count = 10, type = 'file', extension = ['doc', 'docx', 'xls', 'xlsx', 'pdf'] }) => {
+  console.log(count,
     type,
     extension)
   return new Promise((resolve, reject) => {
@@ -572,7 +576,7 @@ export const chooseFileByPromise = ({count = 10, type = 'file', extension = ['do
       count,
       type,
       extension,
-      success (res) {
+      success(res) {
         // tempFilePath可以作为img标签的src属性显示图片
         const tempFilePaths = res.tempFiles
         resolve(tempFilePaths)
@@ -587,4 +591,56 @@ export const chooseFileByPromise = ({count = 10, type = 'file', extension = ['do
       }
     })
   })
+}
+
+export const diyLinkTo = ({ link, linkType, ext = {} } = {}) => {
+  if (!link) {
+    // error('跳转地址为空')
+    return
+  }
+
+  // 跳转到小程序
+  if (linkType === 'mini') {
+    const { url, appid, origin_id } = ext
+    if (appid && link) {
+      wx.navigateToMiniProgram({
+        appId: appid,
+        path: link,
+        success(res) {
+          console.log(res)
+          // 打开成功
+        },
+        fail(err) {
+          const { errMsg = '请联系客服' } = err
+          wx.showModal({
+            title: '跳转小程序错误',
+            content: errMsg
+          })
+          console.log(err)
+        }
+      })
+    } else {
+      error('小程序跳转参数错误')
+    }
+
+    return
+  }
+
+  // 第三方链接
+  if (linkType === 'third' || link.indexOf('http') !== -1) {
+    linkTo('/pages/common/webview?encode=1&url=' + encodeURIComponent(link))
+    return
+  }
+
+  // 系统内页面
+  if (link[0] !== '/') {
+    link = '/' + link
+  }
+  // 除了这些页面之外，其他都走普通跳转
+  linkTo(link)
+}
+
+export const cashFromValue = () => {
+  const arr = ls.get('cash_from') ? ls.get('cash_from') : 1
+  return arr
 }

@@ -1,53 +1,54 @@
 <template>
   <div class="AlbumList page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-        <div class="AlbumList-title">
-          我的相册
-          <div class="AlbumList-manage" @click="showEdit=!showEdit">
-            {{showEdit?'取消':'管理'}}
+    <div class="AlbumList-title">
+      我的相册
+      <div class="AlbumList-manage" @click="showEdit=!showEdit">
+        {{showEdit?'取消':'管理'}}
+      </div>
+    </div>
+    <div style="width: 750rpx;height: 86rpx"></div>
+
+    <div class="AlbumList-list">
+      <block v-for="(item,index) of albumList" :key="index">
+        <div class="AlbumList-item" @click="$linkTo('/pages/store/PhotoList?id='+item.id)">
+          <image :src="item.cate_img" class="AlbumList-img"></image>
+          <icon v-if="showEdit" type="icondel" color="#ccc" size="24" class="del-icon"
+                @click.stop="delImg(item.id,index)"></icon>
+          <div class="AlbumList-img-rename" v-if="showEdit" @click.stop="renameMethod(item.id)">
+            重命名
+          </div>
+          <div class="AlbumList-img-title">
+            {{item.cate_name}}
+          </div>
+          <div class="AlbumList-img-title">
+            {{item.photo_total}}
           </div>
         </div>
-        <div style="width: 750rpx;height: 86rpx"></div>
+      </block>
+    </div>
 
-        <div class="AlbumList-list">
-              <block v-for="(item,index) of albumList" :key="index">
-                <div class="AlbumList-item"  @click="$linkTo('/pages/store/PhotoList?id='+item.id)">
-                  <image  :src="item.cate_img" class="AlbumList-img"></image>
-                  <icon v-if="showEdit"  type="icondel"  color="#ccc"  size="24" class="del-icon"  @click.stop="delImg(item.id,index)"></icon>
-                  <div class="AlbumList-img-rename" v-if="showEdit"  @click.stop="renameMethod(item.id)">
-                    重命名
-                  </div>
-                  <div class="AlbumList-img-title">
-                    {{item.cate_name}}
-                  </div>
-                  <div class="AlbumList-img-title" >
-                      {{item.photo_total}}
-                  </div>
-                </div>
-              </block>
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <div style="width:750rpx;height:86rpx;"></div>
+    <div class="submit" @click="$linkTo('/pages/store/AddAlbum')">
+      新增相册
+    </div>
+
+
+    <div class="zhezhao" catchtouchmove="true" v-if="showRename">
+      <div class="input-wrap">
+        <div>请重新命名相册</div>
+        <textarea auto-height class="input" placeholder="请输入相册名" v-model="cate_name" style="width: 100%;"></textarea>
+        <div class="btns">
+          <div @click="showRename=false" class="btn">取消</div>
+          <div @click="confirmInput" class="btn">确定</div>
         </div>
-
-
-        <!--占住底部的位置-->
-        <div class="safearea-box fixed bgwhite"></div>
-        <!--放置页面底部内容被挡住，额外给的高度-->
-        <div class="safearea-box"></div>
-        <div style="width:750rpx;height:86rpx;"></div>
-        <div class="submit" @click="$linkTo('/pages/store/AddAlbum')">
-          新增相册
-        </div>
-
-
-        <div class="zhezhao" catchtouchmove="true" v-if="showRename">
-          <div class="input-wrap">
-            <div>请重新命名相册</div>
-            <textarea auto-height  class="input" placeholder="请输入相册名" v-model="cate_name" style="width: 100%;"></textarea>
-            <div class="btns">
-              <div @click="showRename=false" class="btn">取消</div>
-              <div @click="confirmInput" class="btn">确定</div>
-            </div>
-          </div>
-        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -55,9 +56,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getAlbumList, delAlbum, opPhotoAlbum} from '../../api/store'
+  import { delAlbum, getAlbumList, opPhotoAlbum } from '../../api/store'
   import { error, toast } from '../../common/fun'
-  import { confirm, MergeArray } from '../../common/helper'
+  import { confirm } from '../../common/helper'
 
   wepy.page({
     store,
@@ -82,7 +83,7 @@
           error('相册名称过长')
           return
         }
-        opPhotoAlbum({id: this.nameId, cate_name: this.cate_name}).then(res => {
+        opPhotoAlbum({ id: this.nameId, cate_name: this.cate_name }).then(res => {
           toast('修改成功')
           this.showRename = false
           this.cate_name = ''
@@ -97,18 +98,21 @@
         this.nameId = id
       },
       delImg(id, index) {
-        confirm({title: '提示', content: '确定要删除该相册吗?', confirmText: '删除', cancelText: '取消'}).then(() => {
-          delAlbum({id: id}).then(res => {
+        confirm({ title: '提示', content: '确定要删除该相册吗?', confirmText: '删除', cancelText: '取消' }).then(() => {
+          delAlbum({ id: id }).then(res => {
             toast('删除成功')
             this.albumList.splice(index, 1)
             // this.init()
           }).catch(e => {
             error(e.msg || '删除失败')
           })
-        }).catch(() => {})
+        }).catch(() => {
+        })
       },
       async init() {
-        let arr = await getAlbumList({page: this.page, pageSize: this.pageSize}).catch(e => { error(e.msg || '获取相册列表失败') })
+        let arr = await getAlbumList({ page: this.page, pageSize: this.pageSize }).catch(e => {
+          error(e.msg || '获取相册列表失败')
+        })
         arr.data.map(item => {
           this.albumList.push(item)
         })
@@ -141,9 +145,8 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .AlbumList-title{
+
+  .AlbumList-title {
     height: 86rpx;
     width: 750rpx;
     line-height: 86rpx;
@@ -156,7 +159,8 @@
     left: 0px;
     z-index: 9;
   }
-  .AlbumList-manage{
+
+  .AlbumList-manage {
     height: 86rpx;
     width: 140rpx;
     text-align: center;
@@ -167,20 +171,23 @@
     top: 0px;
     right: 0px;
   }
-  .AlbumList-list{
+
+  .AlbumList-list {
     width: 750rpx;
-    padding:20px 20rpx;
+    padding: 20px 20rpx;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  .AlbumList-item{
+
+  .AlbumList-item {
     width: 340rpx;
     margin-bottom: 20rpx;
     position: relative;
   }
-  .AlbumList-img-rename{
+
+  .AlbumList-img-rename {
     height: 80rpx;
     line-height: 80rpx;
     width: 340rpx;
@@ -192,11 +199,13 @@
     background-color: #eb5648;
     color: #FFFFff;
   }
-  .AlbumList-img{
+
+  .AlbumList-img {
     width: 340rpx;
     height: 340rpx;
   }
-  .AlbumList-img-title{
+
+  .AlbumList-img-title {
     width: 340rpx;
     height: 40rpx;
     line-height: 40rpx;
@@ -204,18 +213,20 @@
     padding-left: 10rpx;
     font-size: 14px;
   }
-  .del-icon{
+
+  .del-icon {
     position: absolute;
     top: -12rpx;
     right: -12rpx;
   }
+
   .zhezhao {
     left: 0;
     top: 0;
     position: fixed;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,.3);
+    background: rgba(0, 0, 0, .3);
     z-index: 100;
 
     .input-wrap {
@@ -228,6 +239,7 @@
       box-sizing: border-box;
       font-size: 28rpx;
       border-radius: 10rpx;
+
       .input {
         margin: 40rpx 0;
         border: 1px solid #efefef;
@@ -243,13 +255,15 @@
         justify-content: space-around;
         height: 60rpx;
         line-height: 60rpx;
+
         .btn {
           flex: 1;
         }
       }
     }
   }
-  .submit{
+
+  .submit {
     width: 750rpx;
     height: 86rpx;
     line-height: 86rpx;

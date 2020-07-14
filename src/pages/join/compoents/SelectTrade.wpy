@@ -62,7 +62,8 @@
         }]
       }]
     }]
-function formateData(origin_data) {
+
+  function formateData(origin_data) {
     for (var item of origin_data) {
       item.label = item.industry_name
       if (item.child) {
@@ -74,6 +75,7 @@ function formateData(origin_data) {
     }
     return origin_data
   }
+
   /**
    * 对象=>字符串=>对象
    * 一般用于console.log立即显示（有时候虽然在前面打印，但是会由于引用的问题，打印的不是即时结果)
@@ -144,7 +146,7 @@ function formateData(origin_data) {
     },
     async created() {
       bizIndustryList().then(res => {
-      // let ret = res.data
+        // let ret = res.data
         // formateData(ret)
 
         this.treeData = res.data// mockData
@@ -205,7 +207,7 @@ function formateData(origin_data) {
 
 </script>
 <style lang="scss">
-  .mask{
+  .mask {
     position: fixed;
     z-index: 99;
     background: rgb(0, 0, 0);
@@ -217,7 +219,8 @@ function formateData(origin_data) {
     overflow: hidden;
     transition: all 1s ease;
   }
-  .wrap{
+
+  .wrap {
     position: fixed;
     left: 0;
     z-index: 100;
@@ -225,7 +228,8 @@ function formateData(origin_data) {
     transition: all .3s ease;
     overflow: hidden;
   }
-  .btn{
+
+  .btn {
     height: 44px;
     width: 100%;
     background: $wzw-bg-primary;
@@ -237,7 +241,7 @@ function formateData(origin_data) {
 <config>
   {
   "usingComponents": {
-    "fun-tree": "~@/components/funTree"
-    }
+  "fun-tree": "~@/components/funTree"
+  }
   }
 </config>

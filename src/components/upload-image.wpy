@@ -1,35 +1,38 @@
 <style lang="scss">
-  @import "../assets/mixins.scss";
-  @import "../assets/variables.scss";
 
-  .img{
+  .img {
     @include cover-img();
-    &-upload-box{
+
+    &-upload-box {
       display: flex;
       flex-wrap: wrap;
-      width: 400rpx;
+      /*width: 400rpx;*/
     }
-    &-item{
+
+    &-item {
       width: 120rpx;
       height: 120rpx;
       margin-bottom: 20rpx;
       margin-right: 20rpx;
       position: relative;
-      .progress{
+
+      .progress {
         position: absolute;
         width: 100%;
         height: 100%;
         text-align: center;
         line-height: 120rpx;
         color: white;
-        background: rgba(0,0,0,.3);
+        background: rgba(0, 0, 0, .3);
       }
-      &:nth-child(3n+0){
-        margin-right: 0;
-      }
+
+      /*&:nth-child(3n+0){*/
+      /*  margin-right: 0;*/
+      /*}*/
     }
   }
-  .add{
+
+  .add {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,7 +51,7 @@
       v-for="(img,idx) in imgs"
       :key="idx"
       :style="{backgroundImage:'url('+img+')'}">
-<!--      <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>-->
+      <!--      <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>-->
     </div>
     <div
       class="img-item add"
@@ -65,6 +68,9 @@
   import { Exception } from '../common/Exception'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       // 额外参数，可以带回去
       ext: {
@@ -96,7 +102,7 @@
         wx.showActionSheet({
           itemList: ['预览图片', '移除图片'],
           success: (res) => {
-            const {tapIndex} = res
+            const { tapIndex } = res
 
             if (tapIndex === 0) {
               wx.previewImage({
@@ -108,7 +114,7 @@
               this.imgs.splice(idx, 1)
             }
           },
-          fail (res) {
+          fail(res) {
 
           }
         })
@@ -116,14 +122,18 @@
       async addImg() {
         try {
           if (this._click) throw Error('操作过快')
-          const files = await chooseImageByPromise({count: this.limit - this.imgs.length}).catch((err) => { throw Error(err.errMsg) })
+          const files = await chooseImageByPromise({ count: this.limit - this.imgs.length }).catch((err) => {
+            throw Error(err.errMsg)
+          })
 
           const arr1 = files.map(file => {
-            return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+            return { ...file, task: { progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0 } }
           })
           this.imgTempList = this.imgTempList.concat(arr1)
           const imgs = getArrColumn(files, 'path')
-          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch(msg => { throw Error(msg) })
+          const ossUrls = await uploadImages({ imgs, progressList: this.imgTempList }).catch(msg => {
+            throw Error(msg)
+          })
 
           for (var i = 0; i < ossUrls.length; i++) {
             ossUrls[i] = getDomain(ossUrls[i])
@@ -133,9 +143,9 @@
 
           this._click = false
           // 把ext带回去，方便弄一些骚操作。比如下标
-          this.$emit('done', {imgs: this.imgs, ext: this.ext})
+          this.$emit('done', { imgs: this.imgs, ext: this.ext })
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
         }
       }
     }
@@ -143,8 +153,8 @@
 </script>
 <config>
   {
-    "usingComponents": {
-      "icon": "~@/components/icon"
-    }
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
   }
 </config>

@@ -1,176 +1,184 @@
 <template>
-    <div class="all page-wrap">
-      <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-      <div class="counpon-name">
-          <div>
-            优惠券名称
-          </div>
-          <div class="flex1" >
-            <input type="text" v-model="Coupon_Subject" class="input-input" placeholder="请输入优惠券名称"  placeholder-class="place"/>
-          </div>
+  <div class="all page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="counpon-name">
+      <div>
+        优惠券名称
       </div>
-      <div class="line"></div>
-      <div class="coupon-img flex flex-vertical-center">
-        <div class="title">
-          优惠券图片
-        </div>
-<!--        <div-->
-<!--          @click="bindThumbClick(idx,img)"-->
-<!--          class="img-item img"-->
-<!--          v-for="(img,idx) in imgTempList"-->
-<!--          :key="idx"-->
-<!--          :style="{backgroundImage:'url('+img.path+')'}">-->
-<!--          <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>-->
-<!--        </div>-->
-        <block  v-for="(img,idx) in imgTempList">
-          <image class="img-item img" :src="img"  @click="bindThumbClick(idx,img)"></image>
-        </block>
+      <div class="flex1">
+        <input type="text" v-model="Coupon_Subject" class="input-input" placeholder="请输入优惠券名称"
+               placeholder-class="place"/>
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="coupon-img flex flex-vertical-center">
+      <div class="title">
+        优惠券图片
+      </div>
+      <!--        <div-->
+      <!--          @click="bindThumbClick(idx,img)"-->
+      <!--          class="img-item img"-->
+      <!--          v-for="(img,idx) in imgTempList"-->
+      <!--          :key="idx"-->
+      <!--          :style="{backgroundImage:'url('+img.path+')'}">-->
+      <!--          <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>-->
+      <!--        </div>-->
+      <block v-for="(img,idx) in imgTempList">
+        <image class="img-item img" :src="img" @click="bindThumbClick(idx,img)"></image>
+      </block>
 
-        <div  @click="addImg"
-          class="img-item add"
-              v-if="imgTempList.length<1"
-        >
-          <icon color="#ddd" size="40" type="iconupload"></icon>
-        </div>
-
-      </div>
-      <div class="line"></div>
-      <div class="coupon-method flex-vertical-center flex">
-        <div class="title">
-          优惠方式
-        </div>
-        <div class="money">
-          抵现金¥
-        </div>
-        <input type="number"  class="inputs" v-model="Coupon_Cash"/>
-      </div>
-      <div class="line"></div>
-      <div class="coupon-method flex-vertical-center flex">
-        <div class="title">
-          使用条件
-        </div>
-        <div class="money">
-          ¥
-        </div>
-        <input type="number"  class="inputs" v-model="Coupon_Condition"/>
-        <div class="money-last">
-          消费满一定金额才可以使用
-        </div>
+      <div @click="addImg"
+           class="img-item add"
+           v-if="imgTempList.length<1"
+      >
+        <icon color="#ddd" size="40" type="iconupload"></icon>
       </div>
 
-      <div class="line"></div>
-      <div class="store-item flex flex-vertical-center flex-justify-between" >
-        <div class="title">
-          可用次数
-        </div>
-        <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{canUse}}"   range-key="name">
-          {{canUse[index].name}}
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-        </picker>
+    </div>
+    <div class="line"></div>
+    <div class="coupon-method flex-vertical-center flex">
+      <div class="title">
+        优惠方式
       </div>
-      <div class="line"></div>
-      <div class="store-item flex flex-vertical-center flex-justify-between" >
-        <div class="title">
-          等级领取条件
-        </div>
-        <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"   range-key="level_name">
-            {{vipData[ind].level_name}}
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-        </picker>
+      <div class="money">
+        抵现金¥
       </div>
-      <div class="line"></div>
-      <div class="store-item flex flex-vertical-center flex-justify-between" @click="selectUse">
-        <div class="title">
-          指定赠送
-        </div>
-        <div class="store-titles">
-          {{front_show==2?'是':'否'}}
-          <icon  type="iconarrowleft" size="16"  color="#999"  style="margin-left: 10rpx"></icon>
-        </div>
+      <input type="number" class="inputs" v-model="Coupon_Cash"/>
+    </div>
+    <div class="line"></div>
+    <div class="coupon-method flex-vertical-center flex">
+      <div class="title">
+        使用条件
       </div>
-      <div class="line"></div>
-      <div class="store-item flex flex-vertical-center flex-justify-between" @click="openPop('useFan')">
-        <div class="title">
-          适用范围
-        </div>
-        <div class="store-titles">
-          {{useCan==0?'全部商品':'指定商品'}}
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-        </div>
+      <div class="money">
+        ¥
       </div>
-      <div class="line"></div>
-      <div class="store-item flex flex-vertical-center flex-justify-between" >
-        <div class="title">
-          优惠券开始时间
-        </div>
-        <picker class="picker-mbx" mode="multiSelector" value="{{dateTime1}}" bindchange="changeDateTime1" bindcolumnchange="changeDateTimeColumn1" range="{{dateTimeArray1}}">
-          <view class="text">
-            {{startTime.length>0?(dateTimeArray1[0][dateTime1[0]] + '-' + dateTimeArray1[1][dateTime1[1]] + '-' + dateTimeArray1[2][dateTime1[2]] + ' ' + dateTimeArray1[3][dateTime1[3]] + ':' + dateTimeArray1[4][dateTime1[4]]+ ':' + dateTimeArray1[5][dateTime1[5]]):'请选择开始时间'}}
-            <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-          </view>
-        </picker>
+      <input type="number" class="inputs" v-model="Coupon_Condition"/>
+      <div class="money-last">
+        消费满一定金额才可以使用
+      </div>
+    </div>
 
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="title">
+        可用次数
       </div>
-      <div class="line"></div>
-      <div class="store-item flex flex-vertical-center flex-justify-between" >
-        <div class="title">
-          优惠券结束时间
-        </div>
-        <picker class="picker-mbx" mode="multiSelector" value="{{dateTime2}}" bindchange="changeDateTime2" bindcolumnchange="changeDateTimeColumn2" range="{{dateTimeArray2}}">
-          <view class="text">
-            {{endTime.length>0?(dateTimeArray2[0][dateTime2[0]] + '-' + dateTimeArray2[1][dateTime2[1]] + '-' + dateTimeArray2[2][dateTime2[2]] + ' ' + dateTimeArray2[3][dateTime2[3]] + ':' + dateTimeArray2[4][dateTime2[4]]+ ':' + dateTimeArray2[5][dateTime2[5]]):'请选择结束时间'}}
-            <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-          </view>
-        </picker>
-
+      <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{canUse}}" range-key="name">
+        {{canUse[index].name}}
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
+      </picker>
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="title">
+        等级领取条件
       </div>
-      <div class="line"></div>
-
-      <!--占住底部的位置-->
-      <div class="safearea-box fixed bgwhite"></div>
-      <!--放置页面底部内容被挡住，额外给的高度-->
-      <div class="safearea-box"></div>
-      <!--action-btn全局有样式-->
-      <div class="btn action-btn btn-primary" @click="saveCoupon">
-        {{Coupon_ID?'保存':'新增'}}
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{vipData}}"
+              range-key="level_name">
+        {{vipData[ind].level_name}}
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
+      </picker>
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="selectUse">
+      <div class="title">
+        指定赠送
       </div>
+      <div class="store-titles">
+        {{front_show==2?'是':'否'}}
+        <icon type="iconarrowleft" size="16" color="#999" style="margin-left: 10rpx"></icon>
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="openPop('useFan')">
+      <div class="title">
+        适用范围
+      </div>
+      <div class="store-titles">
+        {{useCan==0?'全部商品':'指定商品'}}
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="title">
+        优惠券开始时间
+      </div>
+      <picker class="picker-mbx" mode="multiSelector" value="{{dateTime1}}" bindchange="changeDateTime1"
+              bindcolumnchange="changeDateTimeColumn1" range="{{dateTimeArray1}}">
+        <view class="text">
+          {{startTime.length>0?(dateTimeArray1[0][dateTime1[0]] + '-' + dateTimeArray1[1][dateTime1[1]] + '-' +
+          dateTimeArray1[2][dateTime1[2]] + ' ' + dateTimeArray1[3][dateTime1[3]] + ':' +
+          dateTimeArray1[4][dateTime1[4]]+ ':' + dateTimeArray1[5][dateTime1[5]]):'请选择开始时间'}}
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
+        </view>
+      </picker>
+
+    </div>
+    <div class="line"></div>
+    <div class="store-item flex flex-vertical-center flex-justify-between">
+      <div class="title">
+        优惠券结束时间
+      </div>
+      <picker class="picker-mbx" mode="multiSelector" value="{{dateTime2}}" bindchange="changeDateTime2"
+              bindcolumnchange="changeDateTimeColumn2" range="{{dateTimeArray2}}">
+        <view class="text">
+          {{endTime.length>0?(dateTimeArray2[0][dateTime2[0]] + '-' + dateTimeArray2[1][dateTime2[1]] + '-' +
+          dateTimeArray2[2][dateTime2[2]] + ' ' + dateTimeArray2[3][dateTime2[3]] + ':' +
+          dateTimeArray2[4][dateTime2[4]]+ ':' + dateTimeArray2[5][dateTime2[5]]):'请选择结束时间'}}
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
+        </view>
+      </picker>
+
+    </div>
+    <div class="line"></div>
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary" @click="saveCoupon">
+      {{Coupon_ID?'保存':'新增'}}
+    </div>
 
 
-      <popup-layer title="选择商品" ref="pro" :autoClose="false">
-        <div class="product-list">
-          <div class="product-item" v-for="(product,idx) in proData" :key="idx">
-            <div class="info-box" @click="taggleProductCheck(idx)">
-              <div class="check"   >
-                <icon
-                  class="check-icon"
-                  :color="product.check?'#F53636':'#999'"
-                  size="20"
-                  :type="product.check?'iconblchecked':'iconCircle'"
-                ></icon>
+    <popup-layer title="选择商品" ref="pro" :autoClose="false">
+      <div class="product-list">
+        <div class="product-item" v-for="(product,idx) in proData" :key="idx">
+          <div class="info-box" @click="taggleProductCheck(idx)">
+            <div class="check">
+              <icon
+                class="check-icon"
+                :color="product.check?'#F53636':'#999'"
+                size="20"
+                :type="product.check?'iconblchecked':'iconCircle'"
+              ></icon>
+            </div>
+            <image class="thumb" :src="product.ImgPath"></image>
+            <div class="info">
+              <div class="title">{{product.Products_Name}}</div>
+              <div class="price-box">
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceY}}</span>
+                <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
+                <span class="sign">￥</span>
+                <span>{{product.Products_PriceX}}</span>
               </div>
-              <image class="thumb" :src="product.ImgPath"></image>
-              <div class="info">
-                <div class="title">{{product.Products_Name}}</div>
-                <div class="price-box">
-                  <span class="sign">￥</span>
-                  <span>{{product.Products_PriceY}}</span>
-                  <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>
-                  <span class="sign">￥</span>
-                  <span>{{product.Products_PriceX}}</span>
-                </div>
-                <div class="stock-box">
-                  <span class="stock">库存:{{product.Products_Count}}</span>
-                  <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
-                </div>
+              <div class="stock-box">
+                <span class="stock">库存:{{product.Products_Count}}</span>
+                <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>
               </div>
             </div>
           </div>
         </div>
-        <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
-      </popup-layer>
+      </div>
+      <button class="btn btn-primary m-t-35" @click="surePro">确认</button>
+    </popup-layer>
 
-      <popup-layer title="适用范围" ref="useFan" :autoClose="true">
-      <radio-group class="type-list p-l-10 p-r-10"  @change="setFeeType">
+    <popup-layer title="适用范围" ref="useFan" :autoClose="true">
+      <radio-group class="type-list p-l-10 p-r-10" @change="setFeeType">
         <label class="type-item flex flex-vertical-center">
           <radio color="#00A8FF" value="0" :checked="useCan === 0"></radio>
           <div class="label p-10 flex flex-vertical-center">
@@ -191,25 +199,25 @@
     </popup-layer>
 
 
-      <modal ref="myModal">
-        <div >
-          <div class="wzw-title">
-            指定赠送
+    <modal ref="myModal">
+      <div>
+        <div class="wzw-title">
+          指定赠送
+        </div>
+        <div class="flex flex-vertical-center flex-justify-between wzw-content">
+          <div>
+            开启
           </div>
-          <div class="flex flex-vertical-center flex-justify-between wzw-content">
-            <div>
-              开启
-            </div>
-            <div>
-              <switch :checked="front_show==2" bindchange="switch1Change" style="transform: scale(.8)"></switch>
-            </div>
-          </div>
-          <div class="wzw-info">
-            若选择赠送则只能赠送用户优惠券的时候才会显示，前端将不显示
+          <div>
+            <switch :checked="front_show==2" bindchange="switch1Change" style="transform: scale(.8)"></switch>
           </div>
         </div>
-      </modal>
-    </div>
+        <div class="wzw-info">
+          若选择赠送则只能赠送用户优惠券的时候才会显示，前端将不显示
+        </div>
+      </div>
+    </modal>
+  </div>
 </template>
 
 <script>
@@ -257,7 +265,13 @@
       imgTempList: [],
       imgs: [],
       ind: 0,
-      canUse: [{id: '-1', name: '不限'}, {id: '1', name: '1'}, {id: '2', name: '2'}, {id: '3', name: '3'}, {id: '4', name: '4'}, {id: '5', name: '5'}, {id: '6', name: '6'}, {id: '7', name: '7'}, {id: '8', name: '8'}, {id: '9', name: '9'}, {id: '10', name: '10'}],
+      canUse: [{ id: '-1', name: '不限' }, { id: '1', name: '1' }, { id: '2', name: '2' }, {
+        id: '3',
+        name: '3'
+      }, { id: '4', name: '4' }, { id: '5', name: '5' }, { id: '6', name: '6' }, { id: '7', name: '7' }, {
+        id: '8',
+        name: '8'
+      }, { id: '9', name: '9' }, { id: '10', name: '10' }],
       index: 0,
       front_show: 1,
       Coupon_UserLevel: '',
@@ -316,7 +330,7 @@
       },
       changeDateTimeColumn2(e) {
         console.log(e)
-        const {column, value} = e.$wx.detail
+        const { column, value } = e.$wx.detail
         this.$set(this.dateTime2, column, value)
         let dateArr = this.dateTimeArray2
         if ([1, 0].includes(column)) {
@@ -332,7 +346,7 @@
         this.dateTime1 = e.$wx.detail.value
       },
       changeDateTimeColumn1(e) {
-        const {column, value} = e.$wx.detail
+        const { column, value } = e.$wx.detail
         this.$set(this.dateTime1, column, value)
         let dateArr = this.dateTimeArray1
         if ([1, 0].includes(column)) {
@@ -411,7 +425,9 @@
             })
           }
           hideLoading()
-        }).catch(e => { hideLoading() })
+        }).catch(e => {
+          hideLoading()
+        })
       },
       bindDateChange(e) {
         let boo = e.$wx.detail.value
@@ -432,7 +448,7 @@
         wx.showActionSheet({
           itemList: ['预览图片', '移除图片'],
           success: (res) => {
-            const {tapIndex} = res
+            const { tapIndex } = res
 
             if (tapIndex === 0) {
               wx.previewImage({
@@ -444,7 +460,7 @@
               this.imgs = []
             }
           },
-          fail (res) {
+          fail(res) {
 
           }
         })
@@ -452,21 +468,25 @@
       async addImg() {
         try {
           if (this._click) throw Error('操作过快')
-          const files = await chooseImageByPromise({count: this.thumbLimit - this.imgs.length}).catch((err) => { throw Error(err.errMsg) })
+          const files = await chooseImageByPromise({ count: this.thumbLimit - this.imgs.length }).catch((err) => {
+            throw Error(err.errMsg)
+          })
           const arr1 = files.map(file => {
-            return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+            return { ...file, task: { progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0 } }
           })
           console.log('upload img arr1 is', arr1)
           // this.imgTempList = this.imgTempList.concat(arr1)
           const imgs = getArrColumn(files, 'path')
-          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch((errMsg) => { throw {message: errMsg, type: 'modal'} })
+          const ossUrls = await uploadImages({ imgs, progressList: this.imgTempList }).catch((errMsg) => {
+            throw { message: errMsg, type: 'modal' }
+          })
           for (var i = 0; i < ossUrls.length; i++) {
             ossUrls[i] = getDomain(ossUrls[i])
           }
           this.imgTempList = ossUrls
           this._click = false
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
           wx.$errorHandle(e)
         }
       },
@@ -493,7 +513,7 @@
                 // this.imgs[0] = item.Coupon_PhotoPath
                 this.Coupon_Cash = item.Coupon_Cash
                 this.Coupon_Condition = item.Coupon_Condition
-                const idx = findArrayIdx(this.canUse, {id: item.Coupon_UsedTimes})
+                const idx = findArrayIdx(this.canUse, { id: item.Coupon_UsedTimes })
                 if (idx >= 0) this.index = idx
                 // this.index = String(item.Coupon_UsedTimes)
                 this.Coupon_UserLevel = String(item.Coupon_UserLevel)
@@ -554,7 +574,7 @@
         }
         await getUserLevel().then(res => {
           this.vipData = res.data
-          this.vipData.unshift({id: '-1', level_name: '不限'})
+          this.vipData.unshift({ id: '-1', level_name: '不限' })
           for (let i = 0; i < this.vipData.length; i++) {
             if (this.vipData[i].id == this.Coupon_UserLevel) {
               this.ind = String(i)
@@ -562,9 +582,9 @@
           }
         })
 
-        await bizProdList({page: 1, pageSize: 999}).then(res => {
+        await bizProdList({ page: 1, pageSize: 999 }).then(res => {
           this.proData = res.data.map(item => {
-            return {...item, check: false}
+            return { ...item, check: false }
           })
 
           let arr = this.coupon_prod.split(',')
@@ -586,19 +606,36 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .page-wrap{
+
+  .page-wrap {
     padding-bottom: 44px; //.btn的是44px
   }
-  .all{width: 750rpx;overflow: hidden}
-  .full-img{width: 100%;height: 100%}
-  .flex1{flex: 1}
-  .line{width: 750rpx;height: 20rpx}
-  .title{
-    font-size: 30rpx;color: #333333;
+
+  .all {
+    width: 750rpx;
+    overflow: hidden
   }
-  .counpon-name{
+
+  .full-img {
+    width: 100%;
+    height: 100%
+  }
+
+  .flex1 {
+    flex: 1
+  }
+
+  .line {
+    width: 750rpx;
+    height: 20rpx
+  }
+
+  .title {
+    font-size: 30rpx;
+    color: #333333;
+  }
+
+  .counpon-name {
     width: 710rpx;
     height: 114rpx;
     line-height: 88rpx;
@@ -609,27 +646,32 @@
     color: #333333;
     background-color: #FFFFFF;
   }
-  .place{
+
+  .place {
     font-size: 26rpx;
     color: #CAC8C8;
   }
-  .input-input{
+
+  .input-input {
     width: 100%;
     padding-left: 46rpx;
   }
-  .coupon-img{
+
+  .coupon-img {
     width: 710rpx;
     padding: 20rpx;
     height: 120rpx;
     background-color: #FFFFFF;
   }
-  .coupon-method{
+
+  .coupon-method {
     height: 116rpx;
     width: 710rpx;
     padding: 0rpx 20rpx;
     background-color: #FFFFFF;
   }
-  .picker-mbx{
+
+  .picker-mbx {
     flex: 1;
     text-align: right;
     height: 108rpx;
@@ -637,31 +679,36 @@
     color: #999999;
     font-size: 26rpx;
   }
-  .money{
+
+  .money {
     margin-left: 56rpx;
     font-size: 26rpx;
     margin-right: 12rpx;
     color: #888888;
   }
-  .money-last{
+
+  .money-last {
     font-size: 22rpx;
     margin-left: 16rpx;
     color: #B1B1B1;
   }
-  .inputs{
-    width:190rpx;
-    height:58rpx;
+
+  .inputs {
+    width: 190rpx;
+    height: 58rpx;
     line-height: 58rpx;
     text-align: center;
-    border:1px solid rgba(221,221,221,1);
+    border: 1px solid rgba(221, 221, 221, 1);
   }
-  .store-item{
+
+  .store-item {
     height: 88rpx;
     width: 710rpx;
     padding: 0rpx 20rpx;
     background-color: #FFFFFF;
   }
-  .store-titles{
+
+  .store-titles {
     display: flex;
     align-items: center;
     color: #999999;
@@ -669,7 +716,7 @@
   }
 
 
-  .add{
+  .add {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -679,13 +726,15 @@
     margin-right: 0;
     margin-bottom: 0;
   }
-  .img-item{
+
+  .img-item {
     width: 120rpx;
     height: 120rpx;
     margin-left: 48rpx;
     position: relative;
   }
-  .wzw-title{
+
+  .wzw-title {
     width: 750rpx;
     text-align: center;
     height: 30rpx;
@@ -695,14 +744,16 @@
     padding-top: 30rpx;
     padding-bottom: 90rpx;
   }
-  .wzw-content{
+
+  .wzw-content {
     width: 690rpx;
     margin: 0 auto;
     height: 44rpx;
     line-height: 44rpx;
     margin-bottom: 26rpx;
   }
-  .wzw-info{
+
+  .wzw-info {
     font-size: 22rpx;
     color: #999999;
     width: 690rpx;
@@ -711,62 +762,72 @@
     line-height: 20rpx;
     margin-bottom: 86rpx;
   }
-  .list-item{
+
+  .list-item {
     width: 710rpx;
     margin: 0 auto;
     height: 118rpx;
     border-bottom: 1px solid #E6E6E6;
     box-sizing: border-box;
   }
-  .list-item-q{
+
+  .list-item-q {
     width: 150rpx;
     height: 118rpx;
     line-height: 118rpx;
     font-size: 28rpx;
     color: #333333;
   }
-  .font-wzw{
+
+  .font-wzw {
     font-size: 26rpx;
     color: #777777;
   }
 
-  .select-pro{
+  .select-pro {
     font-size: 24rpx;
     color: #00A8FF;
   }
 
   /*商品列表 start*/
-  .product-list{
-      height: 800rpx;
+  .product-list {
+    height: 800rpx;
     overflow: scroll;
   }
-  .product-item{
+
+  .product-item {
     padding: 30rpx 0;
     background: white;
     margin-bottom: 20rpx;
-    .info-box{
+
+    .info-box {
       padding: 0 20rpx;
       display: flex;
       font-size: 14px;
       height: 176rpx;
-      .check{
+
+      .check {
         padding-right: 20rpx;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        .check-icon{
+
+        .check-icon {
 
         }
       }
-      .thumb{
+
+      .thumb {
         width: 176rpx;
         height: 176rpx;
       }
-      .info{
+
+      .info {
         flex: 1;
         padding-left: 20rpx;
-        .title{
+
+        .title {
           color: #333;
           font-size: 14px;
           /*font-weight: bold;*/
@@ -776,22 +837,26 @@
           text-overflow: ellipsis;
           margin-bottom: 8px;
         }
-        .price-box{
+
+        .price-box {
           color: $fun-red-color;
           margin-bottom: 10px;
           font-size: 14px;
         }
-        .stock-box{
+
+        .stock-box {
           font-size: 12px;
           color: #888;
         }
       }
     }
-    .actions{
+
+    .actions {
       margin-top: 30rpx;
       font-size: 12px;
       display: flex;
-      .action{
+
+      .action {
         justify-content: center;
         padding: 0;
         flex: 1;
@@ -799,15 +864,18 @@
         align-items: center;
         color: #888;
         border-right: 1rpx solid #e7e7e7;
-        &:last-child{
+
+        &:last-child {
           border-right: none;
         }
-        .title{
+
+        .title {
           padding-left: 8px;
         }
       }
     }
   }
+
   /*商品列表 end*/
 </style>
 <config>

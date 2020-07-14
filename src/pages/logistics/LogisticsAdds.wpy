@@ -6,19 +6,20 @@
         模板名称
       </div>
       <div class="store-titles flex1">
-        <input type="text" v-model="Template_Name" placeholder="请输入模板名称" placeholder-class="__placeholder"  class="input-logistics" >
+        <input type="text" v-model="Template_Name" placeholder="请输入模板名称" placeholder-class="__placeholder"
+               class="input-logistics">
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
         计价方式
       </div>
-      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{By_Method}}"   >
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{By_Method}}">
         {{By_Method[ind]}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </picker>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between"   @click="goMethods">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="goMethods">
       <div class="store-title">
         运送方式
       </div>
@@ -26,10 +27,10 @@
         <block v-if="(temp_id&&listData) ||isMehtodSet">
           已配置
         </block>
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between"  @click="goMail">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="goMail">
       <div class="store-title">
         指定包邮条件
       </div>
@@ -37,16 +38,16 @@
         <block v-if="listData.Free_Content.length>0 || isFreeSet">
           已配置
         </block>
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
         状态
       </div>
-      <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{status}}"   >
+      <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{status}}">
         {{status[index]}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </picker>
     </div>
     <!--占住底部的位置-->
@@ -123,9 +124,9 @@
       },
       getDetail() {
         showLoading('加载中')
-        getTemplateDetail({'temp_id': this.temp_id}).then(res => {
+        getTemplateDetail({ 'temp_id': this.temp_id }).then(res => {
           this.listData = res.data
-            // 因为添加和获取的时候  字段不一样  所以 特此循环没得办法
+          // 因为添加和获取的时候  字段不一样  所以 特此循环没得办法
           if (this.listData.Template_Content.express.special_content) {
             for (let item of this.listData.Template_Content.express.special_content) {
               item.express_areas = item.areas
@@ -144,7 +145,9 @@
           this.Template_Name = this.listData.Template_Name
           this.index = String(this.listData.Template_Status)
           this.ind = this.listData.By_Method == '按重量' ? '0' : '1'
-        }).catch(e => { hideLoading() })
+        }).catch(e => {
+          hideLoading()
+        })
       },
       bindPickerChanges(e) {
         this.index = e.$wx.detail.value
@@ -190,7 +193,7 @@
           data.temp_id = this.temp_id
         }
 
-        opShippingTemplate(data, {tip: '加载中'}).then(res => {
+        opShippingTemplate(data, { tip: '加载中' }).then(res => {
           if (this.temp_id) {
             wx.showToast({
               title: '修改成功',
@@ -217,29 +220,32 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .page-wrap{
+  .page-wrap {
     padding-bottom: 44px;
   }
-  .store-all{
+
+  .store-all {
     background-color: #FFFFFF;
     height: 100vh;
-    .store-item{
+
+    .store-item {
       height: 108rpx;
       border-bottom: 1px solid #EBEBEB;
       box-sizing: border-box;
       width: 710rpx;
       margin: 0 auto;
     }
-    .item-last{
+
+    .item-last {
       height: 150rpx;
     }
-    .store-title{
+
+    .store-title {
       color: #333333;
       font-size: 30rpx;
     }
-    .store-titles{
+
+    .store-titles {
       display: flex;
       align-items: center;
       color: #999999;
@@ -247,17 +253,19 @@
     }
   }
 
-  .input-logistics{
+  .input-logistics {
     margin-left: 48rpx;
     width: 100%;
     height: 108rpx;
     font-size: 26rpx;
     color: #333333;
   }
-  .__placeholder{
+
+  .__placeholder {
     color: #CAC8C8;
   }
-  .picker-mbx{
+
+  .picker-mbx {
     flex: 1;
     text-align: right;
     height: 108rpx;
@@ -265,14 +273,15 @@
     color: #999999;
     font-size: 26rpx;
   }
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
+
+  .submit-main {
+    width: 750rpx;
+    height: 86rpx;
     line-height: 86rpx;
     text-align: center;
     color: #FFFFFF;
     font-size: 32rpx;
-    background:rgba(0,168,255,1);
+    background: rgba(0, 168, 255, 1);
     position: fixed;
     bottom: 0rpx;
     left: 0rpx;
@@ -284,7 +293,7 @@
   {
   "navigationBarTitleText": "新增快递模板",
   "usingComponents": {
-    "wzw-im-tip": "~@/components/wzw-im-tip",
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon"
   }
   }

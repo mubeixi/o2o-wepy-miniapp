@@ -1,20 +1,20 @@
 <style lang="scss">
-@import "../assets/app.scss";
-.check-icon{
-  width: 20px;
-  height: 20px;
-}
+
+  .check-icon {
+    width: 20px;
+    height: 20px;
+  }
 </style>
 <template>
   <div :style="{paddingLeft:val.pid === 0 ? 0:indent+'px'}" class="m-t-15 p-r-10">
     <div class="flex" @tap.stop="clickFn(val)">
       <div v-show="(!checkOnlyLeaf || isLeaf)">
-<!--        <icon :type="isCheck?'iconcheckbox-check':'iconcheckbox'" :color="isCheck?'#F53636':'#ccc'"></icon>-->
+        <!--        <icon :type="isCheck?'iconcheckbox-check':'iconcheckbox'" :color="isCheck?'#F53636':'#ccc'"></icon>-->
         <image class="check-icon" :src="isCheck?'/static/tree/fun-tree-check.png':'/static/tree/fun-tree.png'"></image>
       </div>
       <div class="flex1 p-l-10 fz-14 c6">{{ labelText }}</div>
     </div>
-    <div v-if="children.length>0"  :style="{paddingLeft:indent+'px'}">
+    <div v-if="children.length>0" :style="{paddingLeft:indent+'px'}">
       <div v-for="(item, index) in children" :key="index" class="m-t-10">
         <fun-tree-node-child
           :ref="'item-item'+index"
@@ -35,9 +35,14 @@
 <script>
   import wepy from '@wepy/core'
   import { TreeHub } from './TreeHub'
-  import { ls } from '../common/helper'
   import store from '../store'
+  import { componentMixins } from '@/mixins'
+
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
+    mixins: [componentMixins],
     props: {
       checkOnlyLeaf: {
         type: Boolean,
@@ -133,14 +138,14 @@
       }
     },
     methods: {
-      restCheck({item, nodeKey}) {
+      restCheck({ item, nodeKey }) {
         this.isCheck = item[nodeKey] === this.val[nodeKey]
         for (let i in this.$refs) {
-          this.$refs[i].restCheck({item, nodeKey})
+          this.$refs[i].restCheck({ item, nodeKey })
         }
       },
-      bingClearFn({item, nodeKey}) {
-        this.$emit('clear', {item, nodeKey})
+      bingClearFn({ item, nodeKey }) {
+        this.$emit('clear', { item, nodeKey })
       },
       clickFn(item) {
         if (!this.checkOnlyLeaf || this.isLeaf) {
@@ -152,7 +157,7 @@
           if (this.isCheck) {
             // 单选的话，需要先清空其他的
             if (this.single) {
-              this.$emit('clear', {item, nodeKey: this.nodeKey})
+              this.$emit('clear', { item, nodeKey: this.nodeKey })
               TreeHub.removeAllCheck(this.eid, this.nodeKey)
             }
             TreeHub.addCheck(this.eid, item, this.nodeKey)
@@ -172,9 +177,9 @@
 </script>
 <config>
   {
-    "usingComponents": {
-      "icon": "~@/components/icon",
-      "fun-tree-node-child": "~@/components/fun-tree-node"
-    }
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "fun-tree-node-child": "~@/components/fun-tree-node"
+  }
   }
 </config>

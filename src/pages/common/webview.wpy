@@ -1,0 +1,27 @@
+<template>
+  <web-view :src="url" v-if="url"></web-view>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import pageMixin from '@/mixins'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      url: ''
+    },
+    onLoad(options) {
+      if (options.hasOwnProperty('encode') && options.encode) {
+        this.url = decodeURIComponent(options.url)
+      } else {
+        this.url = options.url
+      }
+    }
+  })
+</script>
+
+<style>
+</style>

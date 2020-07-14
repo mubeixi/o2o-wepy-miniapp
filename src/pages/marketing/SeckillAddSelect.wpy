@@ -1,58 +1,61 @@
 <template>
   <div class="seckill-all-add">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-      <div class="flex flex-vertical-center fz-12 c3 flex-justify-between  seckill-top">
-            <div class="seckill-top-div " @click="show(1)">
-              <image src="/static/goods/price.png" class="img-icon m-t-8"></image>
-              <div>批量设置价格</div>
-            </div>
-            <div class="seckill-top-div" @click="show(2)">
-              <image src="/static/goods/sku.png" class="img-icon m-t-8"></image>
-              <div>批量设置库存</div>
-            </div>
+    <div class="flex flex-vertical-center fz-12 c3 flex-justify-between  seckill-top">
+      <div class="seckill-top-div " @click="show(1)">
+        <image src="/static/goods/price.png" class="img-icon m-t-8"></image>
+        <div>批量设置价格</div>
       </div>
+      <div class="seckill-top-div" @click="show(2)">
+        <image src="/static/goods/sku.png" class="img-icon m-t-8"></image>
+        <div>批量设置库存</div>
+      </div>
+    </div>
 
-      <div class="item " v-for="(it,ind) in skuvaljosn" :key="ind">
-            <div class="check fz-16 c3 flex flex-vertical-center m-b-16"  @click="change(ind)">
-              <icon
-                class="check-icon m-r-10"
-                :color="it.check?'#00A8FF':'#999'"
-                size="20"
-                :type="it.check?'iconcheck-box-o':'iconcheckbox'"
-              ></icon>
-              {{it.Attr_Value.mobile_prod_attr_name}}
-            </div>
-            <div class="flex flex-vertical-center seckill-price fz-14 c9 m-b-12">
-              秒杀价格 <input v-model="it.price" type="digit" placeholder="请输入秒杀价格"  placeholder-class="placeholder" class="input-sec m-l-11 m-r-10"/> 元
-            </div>
-            <div class="flex flex-vertical-center seckill-price fz-14 c9 m-b-12">
-              活动库存 <input v-model="it.count" type="number" placeholder="请输入活动库存" placeholder-class="placeholder"  class="input-sec m-l-11 m-r-10"/> 件
-            </div>
+    <div class="item " v-for="(it,ind) in skuvaljosn" :key="ind">
+      <div class="check fz-16 c3 flex flex-vertical-center m-b-16" @click="change(ind)">
+        <icon
+          class="check-icon m-r-10"
+          :color="it.check?'#00A8FF':'#999'"
+          size="20"
+          :type="it.check?'iconcheck-box-o':'iconcheckbox'"
+        ></icon>
+        {{it.Attr_Value.mobile_prod_attr_name}}
       </div>
+      <div class="flex flex-vertical-center seckill-price fz-14 c9 m-b-12">
+        秒杀价格 <input v-model="it.price" type="digit" placeholder="请输入秒杀价格" placeholder-class="placeholder"
+                    class="input-sec m-l-11 m-r-10"/> 元
+      </div>
+      <div class="flex flex-vertical-center seckill-price fz-14 c9 m-b-12">
+        活动库存 <input v-model="it.count" type="number" placeholder="请输入活动库存" placeholder-class="placeholder"
+                    class="input-sec m-l-11 m-r-10"/> 件
+      </div>
+    </div>
 
     <div style="height: 90rpx;width: 750rpx"></div>
-      <div class="last-button flex flex-vertical-center flex-justify-between p-l-10 p-r-10">
-          <div class="fz-14 c6 flex flex-vertical-center" @click="selectAll">
-            <icon
-              class="check-icon m-r-10"
-              :color="allCheck?'#00A8FF':'#999'"
-              size="20"
-              :type="allCheck?'iconblchecked':'iconCircle'"
-            ></icon>
-            全选
-          </div>
-          <div class="buttons" @click="goBack">确定</div>
+    <div class="last-button flex flex-vertical-center flex-justify-between p-l-10 p-r-10">
+      <div class="fz-14 c6 flex flex-vertical-center" @click="selectAll">
+        <icon
+          class="check-icon m-r-10"
+          :color="allCheck?'#00A8FF':'#999'"
+          size="20"
+          :type="allCheck?'iconblchecked':'iconCircle'"
+        ></icon>
+        全选
       </div>
+      <div class="buttons" @click="goBack">确定</div>
+    </div>
 
     <model positions="top-center" ref="myModel" :autoClose="false">
-        <div class="model-seckill">
-            <div class="fz-16 c3 text-center m-b-30">批量设置{{text}}</div>
-            <input type="number" v-model="inputs"  class="input-all p-l-12" :placeholder="'请输入'+text" placeholder-class="placeholder"/>
-            <div class="flex flex-vertical-center flex-justify-between m-t-25 p-l-27 p-r-27">
-              <div class="btn" @click="$closePop('myModel')">取消</div>
-              <div class="btn btn-submit" @click="sureSave">确定</div>
-            </div>
+      <div class="model-seckill">
+        <div class="fz-16 c3 text-center m-b-30">批量设置{{text}}</div>
+        <input type="number" v-model="inputs" class="input-all p-l-12" :placeholder="'请输入'+text"
+               placeholder-class="placeholder"/>
+        <div class="flex flex-vertical-center flex-justify-between m-t-25 p-l-27 p-r-27">
+          <div class="btn" @click="$closePop('myModel')">取消</div>
+          <div class="btn btn-submit" @click="sureSave">确定</div>
         </div>
+      </div>
 
     </model>
 
@@ -171,85 +174,96 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .seckill-all-add{
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
+  .seckill-all-add {
     height: 100vh;
     background-color: #f6f6f6;
   }
-  .seckill-top{
+
+  .seckill-top {
     width: 750rpx;
     padding: 0rpx 144rpx;
     box-sizing: border-box;
   }
-  .seckill-top-div{
+
+  .seckill-top-div {
     width: 150rpx;
     padding-top: 30rpx;
     padding-bottom: 40rpx;
     text-align: center;
   }
-  .img-icon{
+
+  .img-icon {
     width: 64rpx;
     height: 64rpx;
   }
-  .seckill-price{
+
+  .seckill-price {
     height: 60rpx;
   }
-  .placeholder{
+
+  .placeholder {
     font-size: 12px;
-    color:#C2C2C2;
+    color: #C2C2C2;
   }
-  .input-sec{
+
+  .input-sec {
     width: 310rpx;
     height: 60rpx;
-    border: 1px solid  #DDDDDD;
+    border: 1px solid #DDDDDD;
     box-sizing: border-box;
     padding-left: 14rpx;
   }
-  .buttons{
-    width:100rpx;
+
+  .buttons {
+    width: 100rpx;
     line-height: 54rpx;
-    height:54rpx;
+    height: 54rpx;
     color: #FFFFFF;
     font-size: 26rpx;
     text-align: center;
-    background:rgba(0,168,255,1);
-    border-radius:10rpx;
+    background: rgba(0, 168, 255, 1);
+    border-radius: 10rpx;
   }
 
-  .item{
-    width:690rpx;
-    height:278rpx;
-    background:rgba(255,255,255,1);
-    border-radius:10rpx;
+  .item {
+    width: 690rpx;
+    height: 278rpx;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 10rpx;
     margin: 0 auto 30rpx;
     padding: 30rpx;
     box-sizing: border-box;
   }
-  .last-button{
+
+  .last-button {
     box-sizing: border-box;
     width: 750rpx;
     height: 90rpx;
     background-color: #FFFFFF;
-    box-shadow:0px 0px 9px 0px rgba(0, 0, 0, 0.16);
+    box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.16);
     position: fixed;
     bottom: 0px;
     left: 0px;
   }
-  .model-seckill{
+
+  .model-seckill {
     width: 500rpx;
     box-sizing: border-box;
     padding: 30rpx 44rpx;
     border-radius: 10rpx;
   }
-  .input-all{
+
+  .input-all {
     width: 410rpx;
     height: 66rpx;
     line-height: 66rpx;
     border: 1px solid #D6D6D6;
     box-sizing: border-box;
   }
-  .btn{
+
+  .btn {
     width: 130rpx;
     height: 50rpx;
     line-height: 50rpx;
@@ -259,7 +273,8 @@
     background-color: #BEBEBE;
     border-radius: 6rpx;
   }
-  .btn-submit{
+
+  .btn-submit {
     background-color: #00A8FF;
   }
 
@@ -270,7 +285,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
-    "wzw-im-tip": "~@/components/wzw-im-tip",
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "model": "~@/components/ModelComponents",
   }

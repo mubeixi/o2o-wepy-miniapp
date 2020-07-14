@@ -1,43 +1,49 @@
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
-  .container{
+
+  .container {
     padding-bottom: 100rpx;
   }
-  .list{
-    .item{
+
+  .list {
+    .item {
       width: 690rpx;
       padding: 0 20rpx 20rpx;
       margin: 30rpx auto 0;
       background: white;
       border-radius: 10rpx;
-      .title{
+
+      .title {
 
       }
-      .placeholder,.title{
+
+      .placeholder, .title {
         border-bottom: 1px solid #eee;
       }
-      .actions{
+
+      .actions {
         display: flex;
-        .action{
+
+        .action {
           flex: 1;
           display: flex;
           justify-content: center;
           align-items: center;
-          &:first-child{
+
+          &:first-child {
             border-right: 1px solid #EFEFEF;
           }
         }
       }
     }
   }
-  .btnSelect{
+
+  .btnSelect {
     width: 600rpx;
     height: 70rpx;
     line-height: 70rpx;
     border-radius: 20rpx;
     text-align: center;
-    margin:40rpx auto;
+    margin: 40rpx auto;
   }
 
 </style>
@@ -53,13 +59,17 @@
           </div>
           <div class="placeholder c8  fz-14 p-t-10 p-b-10">买家下单时需要填写：{{row.placeholder}}等信息</div>
           <div class="actions p-t-10" @click.stop>
-            <div @click.stop="$linkTo('/pages/order/OrderTmpl?id='+row.id)" class="action"><icon size="18"  color="#444" type="iconbianji1"></icon><span class="fz-14 c8 p-l-8">编辑</span></div>
-            <div @click.stop="delFn(row,idx)" class="action"><icon size="18"  color="#444" type="iconshanchu"></icon><span class="fz-14 c8 p-l-8">删除</span></div>
+            <div @click.stop="$linkTo('/pages/order/OrderTmpl?id='+row.id)" class="action">
+              <icon size="18" color="#444" type="iconbianji1"></icon>
+              <span class="fz-14 c8 p-l-8">编辑</span></div>
+            <div @click.stop="delFn(row,idx)" class="action">
+              <icon size="18" color="#444" type="iconshanchu"></icon>
+              <span class="fz-14 c8 p-l-8">删除</span></div>
           </div>
         </div>
       </div>
 
-      <div @click="noSelect"  class="btnSelect btn-primary">
+      <div @click="noSelect" class="btnSelect btn-primary">
         暂不选择
       </div>
 
@@ -97,19 +107,23 @@
     methods: {
       noSelect() {
         this.select = ''
-        eventHub.$emit('goods-order-tmpl', {tmpl: {id: '', title: ''}})
+        eventHub.$emit('goods-order-tmpl', { tmpl: { id: '', title: '' } })
         this.$back()
       },
       selectFn(row) {
         if (this.mode === 'none') return
         this.select = row.id
-        eventHub.$emit('goods-order-tmpl', {tmpl: row})
+        eventHub.$emit('goods-order-tmpl', { tmpl: row })
         this.$back()
       },
       async delFn(row, idx) {
         try {
-          await confirm({content: '删除后无法恢复，是否确认删除?'}).catch(() => { throw Error('notip') })
-          await delBizOrderTemplate({id: row.id}, {errtip: false}).catch(({msg}) => { throw Error(msg) })
+          await confirm({ content: '删除后无法恢复，是否确认删除?' }).catch(() => {
+            throw Error('notip')
+          })
+          await delBizOrderTemplate({ id: row.id }, { errtip: false }).catch(({ msg }) => {
+            throw Error(msg)
+          })
           this.list.splice(idx, 1)
         } catch (e) {
           e.message !== 'notip' && wx.$errorHandle(e)
@@ -118,12 +132,14 @@
       async _init_func() {
         try {
           // showLoading('loading')
-          const list = await getBizOrderTemplateList({pageSize: 999}, {onlyData: true}).catch((e) => { throw Error(e.msg) })
+          const list = await getBizOrderTemplateList({ pageSize: 999 }, { onlyData: true }).catch((e) => {
+            throw Error(e.msg)
+          })
 
           const temp = []
           for (let row of list) {
             row.temp_info = JSON.parse(row.temp_info)
-            const {title = '', formData = []} = row.temp_info
+            const { title = '', formData = [] } = row.temp_info
             row.title = title
             row.placeholder = getArrColumn(formData, 'label').join(',')
             if (row.title) {
@@ -141,7 +157,7 @@
 
     },
     onLoad(options) {
-      const {select = '', mode = 'none'} = options
+      const { select = '', mode = 'none' } = options
       this.select = select
       this.mode = mode
     },
@@ -152,13 +168,13 @@
 </script>
 <config>
   {
-    "navigationBarTitleText": "下单模板",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
+  "navigationBarTitleText": "下单模板",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
   "wzw-im-tip": "~@/components/wzw-im-tip",
-      "err-msg": "~@/components/err-msg",
-      "icon": "~@/components/icon",
-      "form-wrap": "~@/components/diy-form-wrap"
-    }
+  "err-msg": "~@/components/err-msg",
+  "icon": "~@/components/icon",
+  "form-wrap": "~@/components/diy-form-wrap"
+  }
   }
 </config>

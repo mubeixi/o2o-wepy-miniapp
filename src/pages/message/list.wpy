@@ -1,0 +1,116 @@
+<style lang="scss">
+  .page-wrap {
+    min-height: 100vh;
+    background: #f2f2f2;
+    padding-top: 30rpx;
+  }
+
+  .recomment-item {
+    margin: 0 30rpx 30rpx;
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+
+    .head {
+      padding: 5px 0 5px;
+
+      .title {
+        width: 420rpx;
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+
+  }
+</style>
+<template>
+  <div class="page-wrap">
+    <div class="recomment-item fz-14" v-for="(row,idx) in messageList" :key="idx" @click="toDetail(row.id)">
+      <div class="head flex flex-justify-between flex-vertical-center">
+        <div class="title fz-16 c3">{{row.title}}</div>
+        <div class="c9 fz-12">{{row.created_at}}</div>
+      </div>
+    </div>
+
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import pageMixin from '@/mixins'
+  import { bizMessageList } from '@/api/system'
+  import { Exception } from '@/common/Exception'
+  import moment from 'moment'
+  import { toast } from '@/common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      messageList: [],
+      page: 1,
+      pageSize: 10,
+      totalCount: 0
+    },
+    computed: {},
+    methods: {
+      toDetail(id) {
+        this.$linkTo('/pages/message/detail?id=' + id)
+      },
+      async _init_func(options) {
+        const { totalCount, data: list } = await bizMessageList({
+          pageSize: this.pageSize,
+          page: this.page,
+          biz_id: ''
+        }).catch(err => {
+          Exception.handle(Error(err.msg))
+        })
+        this.page++
+        this.totalCount = totalCount
+
+        this.messageList = list.map(row => {
+          const { created_at, ..._row } = row
+          return { ..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss') }
+        })
+      }
+    },
+    onReady() {
+
+    },
+    async onReachBottom() {
+      if (this.messageList.length >= this.totalCount) {
+        toast('到底了', 'none')
+        return
+      }
+      const { totalCount, data: list } = await bizMessageList({
+        pageSize: this.pageSize,
+        page: this.page
+      }).catch(err => {
+        Exception.handle(Error(err.msg))
+      })
+      this.page++
+      this.totalCount = totalCount
+
+      this.messageList = list.map(row => {
+        const { created_at, ..._row } = row
+        return { ..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss') }
+      })
+    },
+    onLoad() {
+      this._init_func()
+    },
+    created() {
+
+    }
+  })
+</script>
+<config>
+  {
+  "navigationBarTitleText": "公告列表",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
+  }
+</config>

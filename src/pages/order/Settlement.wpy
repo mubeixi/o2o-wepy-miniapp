@@ -2,24 +2,27 @@
   <div class="settlement p-t-20 page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="settlement-time fz-15 c3">
-        <div class="flex flex-vertical-center flex-justify-between p-l-6  settlement-time-item" style="border-bottom: 1px solid #EBEBEB">
-          <div>
-            起始时间
-          </div>
-          <picker class="picker c9" mode="date" value="{{startTime}}" :start="start" end="2050-09-01" bindchange="bindTimeChange">
-              {{startTime?startTime:'请选择开始时间'}}
-              <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-          </picker>
+      <div class="flex flex-vertical-center flex-justify-between p-l-6  settlement-time-item"
+           style="border-bottom: 1px solid #EBEBEB">
+        <div>
+          起始时间
         </div>
-        <div class="flex flex-vertical-center flex-justify-between p-l-6 settlement-time-item">
-          <div>
-            终止时间
-          </div>
-          <picker class="picker c9" mode="date" value="{{endTime}}" :start="start" end="2050-09-01" bindchange="bindTimeChanges">
-            {{endTime?endTime:'请选择结束时间'}}
-            <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-          </picker>
+        <picker class="picker c9" mode="date" value="{{startTime}}" :start="start" end="2050-09-01"
+                bindchange="bindTimeChange">
+          {{startTime?startTime:'请选择开始时间'}}
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
+        </picker>
+      </div>
+      <div class="flex flex-vertical-center flex-justify-between p-l-6 settlement-time-item">
+        <div>
+          终止时间
         </div>
+        <picker class="picker c9" mode="date" value="{{endTime}}" :start="start" end="2050-09-01"
+                bindchange="bindTimeChanges">
+          {{endTime?endTime:'请选择结束时间'}}
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
+        </picker>
+      </div>
     </div>
 
     <div class="settlement-search fz-15" @click="serach">
@@ -30,7 +33,7 @@
         <div class="settlement-data-title fz-16 c3">
           结算数据
         </div>
-        <div class="settlement-data-content c6 fz-13" >
+        <div class="settlement-data-content c6 fz-13">
           <div>
             <span class="fz-14">订单总金额：</span>¥{{listData.total_price}}
           </div>
@@ -111,7 +114,6 @@
     </block>
 
 
-
     <div style="height: 86rpx;width: 750rpx"></div>
     <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
@@ -131,10 +133,10 @@
   import { back, error, toast } from '../../common/fun'
 
   let myDate = new Date()
-const start = myDate.toLocaleDateString()
+  const start = myDate.toLocaleDateString()
 
-const moment = require('moment')
-// let boo = moment(end).isAfter(start)
+  const moment = require('moment')
+  // let boo = moment(end).isAfter(start)
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -177,7 +179,8 @@ const moment = require('moment')
           start_time: this.startTime,
           end_time: this.endTime
         }
-        let arr = await opBizSettle(data, {onlyData: true, tip: '加载中'}).catch(e => {})
+        let arr = await opBizSettle(data, { onlyData: true, tip: '加载中' }).catch(e => {
+        })
         if (arr && item == 1) {
           toast('操作成功')
           setTimeout(function() {
@@ -199,23 +202,24 @@ const moment = require('moment')
   })
 </script>
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
 
-  .settlement-time{
+
+  .settlement-time {
     width: 710rpx;
     height: 220rpx;
     margin: 0 auto 70rpx;
     background-color: #FFFFff;
     border-radius: 10rpx;
-    &-item{
+
+    &-item {
       width: 690rpx;
       margin: 0 auto;
-      height:110rpx;
+      height: 110rpx;
       line-height: 110rpx;
       box-sizing: border-box;
     }
-    .picker{
+
+    .picker {
       height: 110rpx;
       line-height: 110rpx;
       flex: 1;
@@ -223,35 +227,39 @@ const moment = require('moment')
     }
   }
 
-  .settlement-search{
+  .settlement-search {
     width: 690rpx;
     height: 70rpx;
     line-height: 70rpx;
     text-align: center;
-    background:rgba(0,168,255,1);
-    border-radius:8rpx;
+    background: rgba(0, 168, 255, 1);
+    border-radius: 8rpx;
     color: #FFFFff;
     margin: 0 auto 80rpx;
   }
-  .settlement-data{
+
+  .settlement-data {
     width: 710rpx;
     /*height: 390rpx;*/
     line-height: 390rpx;
     margin: 0 auto 20rpx;
     border-radius: 10rpx;
     background-color: #FFFFff;
-    &-title{
-      height:76rpx;
+
+    &-title {
+      height: 76rpx;
       line-height: 76rpx;
       text-align: center;
       background-color: #DFF4FF;
     }
-    &-content{
+
+    &-content {
       padding: 30rpx 30rpx 40rpx 60rpx;
       line-height: 54rpx;
     }
   }
-  .settlement-title{
+
+  .settlement-title {
     width: 750rpx;
     text-align: center;
     height: 30rpx;
@@ -259,35 +267,42 @@ const moment = require('moment')
     margin: 30rpx 0rpx;
   }
 
-  .settlement-table{
+  .settlement-table {
     width: 710rpx;
     margin: 0 auto 20px;
     border-radius: 10rpx;
     border: 1px solid #e7e7e7;
-    .settlement-th{
-      background-color:#F0F0F0;
-      .settlement-tr{
+
+    .settlement-th {
+      background-color: #F0F0F0;
+
+      .settlement-tr {
         height: 80rpx;
         line-height: 80rpx;
         border-right: 1px solid #E7E7E7;
         border-bottom: 1px solid #E7E7E7;
         text-align: center;
-        &:last-child{
+
+        &:last-child {
           border-right: 0px;
         }
       }
     }
-    .settlement-td{
+
+    .settlement-td {
       border-bottom: 1px solid #E7E7E7;
-      &:last-child{
+
+      &:last-child {
         border-bottom: 0px;
       }
-      .settlement-tr{
+
+      .settlement-tr {
         height: 80rpx;
         line-height: 80rpx;
         border-right: 1px solid #E7E7E7;
         text-align: center;
-        &:last-child{
+
+        &:last-child {
           border-right: 0px;
         }
       }
@@ -295,7 +310,7 @@ const moment = require('moment')
 
   }
 
-  .submit{
+  .submit {
     width: 750rpx;
     height: 86rpx;
     line-height: 86rpx;
@@ -307,7 +322,6 @@ const moment = require('moment')
     left: 0rpx;
     text-align: center;
   }
-
 
 
 </style>

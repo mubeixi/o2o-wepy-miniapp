@@ -1,50 +1,55 @@
 <style lang="scss">
-@import "../assets/variables.scss";
-@import "../assets/mixins.scss";
-.wrap{
-  position: relative;
-  .swiper{
 
-    &-item{
-      position: relative;
-      &-img{
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%,-50%);
-      }
-      &-cover{
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%,-50%);
-        @include cover-img()
+  .wrap {
+    position: relative;
+
+    .swiper {
+
+      &-item {
+        position: relative;
+
+        &-img {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        }
+
+        &-cover {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          @include cover-img()
+        }
+
       }
 
     }
 
-  }
-  .dot-list{
-    display: flex;
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    .dot-item{
-      width: 30rpx;
-      height: 4rpx;
-      margin-right: 6rpx;
+    .dot-list {
+      display: flex;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
 
-      &:last-child{
-        margin-right: 0;
+      .dot-item {
+        width: 30rpx;
+        height: 4rpx;
+        margin-right: 6rpx;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        &.active {
+          //background: $fun-primary-color;
+        }
       }
-      &.active{
-        //background: $fun-primary-color;
-      }
+
     }
-
   }
-}
 
 </style>
 <template>
@@ -58,25 +63,32 @@
       :circular="circular"
       :interval="interval"
       :duration="duration">
-      <block v-for="(img,idx) in imgs" >
+      <block v-for="(img,idx) in imgs">
         <swiper-item class="swiper-item" :key="idx">
-<!--          <image mode="widthFix" class="swiper-item-img" :src="img"></image>-->
-          <div class="swiper-item-cover" :style="{width:itemwidth,height:itemheight,backgroundImage:'url('+img+')'}" ></div>
+          <!--          <image mode="widthFix" class="swiper-item-img" :src="img"></image>-->
+          <div class="swiper-item-cover"
+               :style="{width:itemwidth,height:itemheight,backgroundImage:'url('+img+')'}"></div>
         </swiper-item>
 
       </block>
     </swiper>
     <div class="dot-list" v-if="indicatorDots==='line'">
-      <block v-for="(img,idx) in imgs" >
-        <span class="dot-item {{current===idx?'active':''}}" :style="{backgroundColor:current===idx?dotsActiveColor:dotsColor}" ></span>
+      <block v-for="(img,idx) in imgs">
+        <span class="dot-item {{current===idx?'active':''}}"
+              :style="{backgroundColor:current===idx?dotsActiveColor:dotsColor}"></span>
       </block>
     </div>
   </div>
 </template>
 <script>
   import wepy from '@wepy/core'
+  import { componentMixins } from '@/mixins'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
+    mixins: [componentMixins],
     props: {
       imgs: {
         type: Array,
@@ -131,7 +143,7 @@
     methods: {
       indexChangeEvent(event) {
         console.log(event)
-        const {current, source} = event.$wx.detail
+        const { current, source } = event.$wx.detail
         console.log(current)
         this.current = current
       }

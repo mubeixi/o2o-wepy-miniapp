@@ -1,0 +1,172 @@
+<template>
+  <div class="alls page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="flex flex-vertical-center   items " v-for="(item,index) of infoData"  :key="index">
+      充 <input type="digit" v-model="item.deposit_money" class="input-full m-l-5 m-r-5" />元 送 <input type="digit" v-model="item.present_money"  class="input-full m-l-5 m-r-5" />元
+      <icon size="24"  v-if="index>0" class="iconminus" type="iconminus"  @click="delItem(index)" color="#00A8FF"></icon>
+    </div>
+
+    <div class="submits" @click="goAdd">
+      <icon type="iconadd" color="#00A8FF" size="20"></icon>
+      添加充值送
+    </div>
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <!--action-btn全局有样式-->
+    <div class="btn action-btn btn-primary" @click="submit">
+      保存
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { getActiveInfo, opActive } from '../../api/product'
+  import { back, error, hideLoading, showLoading } from '../../common/fun'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      infoData: [{ deposit_money: '', present_money: '' }]
+    },
+    methods: {
+      delItem(index) {
+        if (this.infoData.length > 0) {
+          this.infoData.splice(index, 1)
+        }
+      },
+      submit() {
+        for (let item of this.infoData) {
+          if (!item.deposit_money || !item.present_money) {
+            error('请输入金额')
+            return
+          }
+        }
+        if (this.infoData.length >= 2) {
+          for (let i = 0; i < this.infoData.length; i++) {
+            for (let j = i + 1; j < this.infoData.length; j++) {
+              if (this.infoData[i].deposit_money == this.infoData[j].deposit_money) {
+                error('不能设置相同金额')
+                return
+              }
+            }
+          }
+        }
+
+        let data = {
+          type: 'chargepresent',
+          start_time: 0,
+          end_time: 0,
+          active_info: JSON.stringify(this.infoData)
+        }
+        showLoading('保存中')
+        opActive(data).then(res => {
+          back()
+          hideLoading()
+        }).catch(e => {
+        })
+      },
+      goAdd() {
+        this.infoData.push({ deposit_money: '', present_money: '' })
+      },
+      async init() {
+        let arr = await getActiveInfo({ type: 'chargepresent' }, { onlyData: true, tip: '加载中' }).catch(e => {
+          error('获取列表失败')
+        })
+        console.log(arr, 'ss')
+        if (arr.active_info.length > 0) {
+          this.infoData = arr.active_info
+        }
+      }
+    },
+    onShow() {
+      this.init()
+    },
+    onLoad() {
+
+    }
+
+  })
+
+</script>
+<style lang="scss">
+
+  .page-wrap {
+    padding-bottom: 44px; //.btn的是44px
+  }
+
+  .alls {
+    height: 100vh;
+    background-color: #FFFFFF;
+    padding-top: 40rpx;
+  }
+
+  .submits {
+    width: 276rpx;
+    height: 70rpx;
+    display: flex;
+    font-size: 28rpx;
+    color: #00A8FF;
+    margin: 60rpx auto;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 168, 255, 1);
+    border-radius: 6rpx;
+    margin-bottom: 80rpx;
+  }
+
+  .items {
+    margin: 0 auto;
+    width: 700rpx;
+    padding-left: 40rpx;
+    margin-bottom: 20px !important;
+    padding-right: 10rpx;
+    box-sizing: border-box;
+  }
+
+  .input-full {
+    width: 200rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    box-sizing: border-box;
+    border: 1px solid #eeeeee;
+    padding-left: 10px;
+    text-align: center;
+  }
+
+  .submit {
+    width: 750rpx;
+    height: 86rpx;
+    line-height: 86rpx;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #00A8FF;
+    color: #FFFFFF;
+    z-index: 99;
+  }
+
+  .iconminus {
+    margin-left: auto;
+  }
+
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "充值送",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon"
+  }
+  }
+</config>

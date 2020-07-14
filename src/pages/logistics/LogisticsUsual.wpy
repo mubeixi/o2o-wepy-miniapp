@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="group-cell" >
+    <div class="group-cell">
       <div class="cell-item" @click="$openPop('computedType')">
         <div class="label">运费计算方式</div>
         <div class="content"></div>
@@ -14,8 +14,8 @@
       </div>
     </div>
 
-    <popup-layer title="计算方式" ref="computedType" >
-      <radio-group class="p-l-10 p-r-10"  @change="setComputedType">
+    <popup-layer title="计算方式" ref="computedType">
+      <radio-group class="p-l-10 p-r-10" @change="setComputedType">
         <label class="flex flex-vertical-center m-b-10">
           <radio style="transform: scale(0.8)" color="#00A8FF" value="0" :checked="computedType === 0"></radio>
           <div class="label p-10">
@@ -41,8 +41,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getBizInfo, opBizInfo} from '../../api/store'
+  import { getBizInfo, opBizInfo } from '../../api/store'
   import { error, toast } from '../../common/fun'
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -51,7 +52,7 @@
     },
     methods: {
       saveData() {
-        opBizInfo({express_fee_type: this.computedType}).then(res => {
+        opBizInfo({ express_fee_type: this.computedType }).then(res => {
           toast('保存成功')
         }).catch(e => {
           error(e.msg || '保存失败')
@@ -59,10 +60,12 @@
         this.$closePop('computedType')
       },
       setComputedType(e) {
-        this.computedType = Number(e.$wx.detail.value )
+        this.computedType = Number(e.$wx.detail.value)
       },
       async init() {
-        let arr = await getBizInfo({}, {onlyData: true}).catch(e => { error(e.msg || '获取商户信息失败') })
+        let arr = await getBizInfo({}, { onlyData: true }).catch(e => {
+          error(e.msg || '获取商户信息失败')
+        })
         this.computedType = Number(arr[0].express_fee_type)
       }
     },
@@ -75,33 +78,36 @@
 </script>
 <style lang="scss">
 
-.page-wrap{
-  height: 100vh;
-  background: white;
-}
-.group-cell{
-  padding-right: 30rpx;
-  padding-left: 30rpx;
-}
-.label{
-  color: #333 !important;
-  padding: 20rpx 0;
-}
-.right{
-  margin-right: 0;
-}
+  .page-wrap {
+    height: 100vh;
+    background: white;
+  }
+
+  .group-cell {
+    padding-right: 30rpx;
+    padding-left: 30rpx;
+  }
+
+  .label {
+    color: #333 !important;
+    padding: 20rpx 0;
+  }
+
+  .right {
+    margin-right: 0;
+  }
 
 </style>
 <config>
   {
-    "navigationBarTitleText": "普通物流",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "wzw-im-tip": "~@/components/wzw-im-tip",
-      "popup-layer": "~@/components/popup-layer",
-      "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon",
-      "ad": "~@/components/ad"
-    }
+  "navigationBarTitleText": "普通物流",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "popup-layer": "~@/components/popup-layer",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
   }
 </config>

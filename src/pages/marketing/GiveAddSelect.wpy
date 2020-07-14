@@ -1,10 +1,10 @@
 <template>
   <div class="seckill-all-add">
-<wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
 
-    <div class="item " >
+    <div class="item ">
       <block v-for="(it,ind) in skuvaljosn" :key="ind">
-        <div class="check fz-16 c3 flex flex-vertical-center m-b-16"  @click="change(ind)">
+        <div class="check fz-16 c3 flex flex-vertical-center m-b-16" @click="change(ind)">
           <icon
             class="check-icon m-r-10"
             :color="it.check?'#00A8FF':'#999'"
@@ -20,8 +20,6 @@
     <div style="height: 90rpx;width: 750rpx"></div>
 
     <div class="buttons" @click="goBack">确定</div>
-
-
 
 
   </div>
@@ -78,42 +76,48 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .seckill-all-add{
+
+  .seckill-all-add {
     height: 100vh;
     background-color: #f6f6f6;
   }
-  .seckill-top{
+
+  .seckill-top {
     width: 750rpx;
     padding: 0rpx 144rpx;
     box-sizing: border-box;
   }
-  .seckill-top-div{
+
+  .seckill-top-div {
     width: 150rpx;
     padding-top: 30rpx;
     padding-bottom: 40rpx;
     text-align: center;
   }
-  .img-icon{
+
+  .img-icon {
     width: 64rpx;
     height: 64rpx;
   }
-  .seckill-price{
+
+  .seckill-price {
     height: 60rpx;
   }
-  .placeholder{
+
+  .placeholder {
     font-size: 12px;
-    color:#C2C2C2;
+    color: #C2C2C2;
   }
-  .input-sec{
+
+  .input-sec {
     width: 310rpx;
     height: 60rpx;
-    border: 1px solid  #DDDDDD;
+    border: 1px solid #DDDDDD;
     box-sizing: border-box;
     padding-left: 14rpx;
   }
-  .buttons{
+
+  .buttons {
     width: 750rpx;
     height: 86rpx;
     line-height: 86rpx;
@@ -125,39 +129,43 @@
     color: #FFFFFF;
   }
 
-  .item{
+  .item {
 
-    width:690rpx;
-    background:rgba(255,255,255,1);
-    border-radius:10rpx;
+    width: 690rpx;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 10rpx;
     margin: 30rpx auto 30rpx;
     padding: 30rpx;
     box-sizing: border-box;
   }
-  .last-button{
+
+  .last-button {
     box-sizing: border-box;
     width: 750rpx;
     height: 90rpx;
     background-color: #FFFFFF;
-    box-shadow:0px 0px 9px 0px rgba(0, 0, 0, 0.16);
+    box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.16);
     position: fixed;
     bottom: 0px;
     left: 0px;
   }
-  .model-seckill{
+
+  .model-seckill {
     width: 500rpx;
     box-sizing: border-box;
     padding: 30rpx 44rpx;
     border-radius: 10rpx;
   }
-  .input-all{
+
+  .input-all {
     width: 410rpx;
     height: 66rpx;
     line-height: 66rpx;
     border: 1px solid #D6D6D6;
     box-sizing: border-box;
   }
-  .btn{
+
+  .btn {
     width: 130rpx;
     height: 50rpx;
     line-height: 50rpx;
@@ -167,7 +175,8 @@
     background-color: #BEBEBE;
     border-radius: 6rpx;
   }
-  .btn-submit{
+
+  .btn-submit {
     background-color: #00A8FF;
   }
 
@@ -178,7 +187,7 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
-    "wzw-im-tip": "~@/components/wzw-im-tip",
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "icon": "~@/components/icon",
   "model": "~@/components/ModelComponents",
   }

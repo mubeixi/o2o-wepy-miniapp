@@ -2,40 +2,38 @@
   <div class="seckill-add page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <err-msg :errs="formCheckResult"></err-msg>
-      <block v-if="selectProductList.length>0">
-        <div @click="openPop('product')">
-          <div  class="flex  product-mbx"  v-for="(product,idx) in selectProductList" :key="idx">
-            <div class="thumbs" :style="{backgroundImage:'url('+product.ImgPath+')'}">
+    <block v-if="selectProductList.length>0">
+      <div @click="openPop('product')">
+        <div class="flex  product-mbx" v-for="(product,idx) in selectProductList" :key="idx">
+          <div class="thumbs" :style="{backgroundImage:'url('+product.ImgPath+')'}">
+          </div>
+          <div class="info">
+            <div class="title-my">
+              {{product.Products_Name}}
             </div>
-            <div class="info">
-              <div class="title-my">
-                {{product.Products_Name}}
-              </div>
-              <div class="fz-13 c6">
-                原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">{{product.Products_PriceX}}</span>
-              </div>
+            <div class="fz-13 c6">
+              原价：<span class="color-my m-r-4">¥</span> <span class="color-my fz-16">{{product.Products_PriceX}}</span>
             </div>
           </div>
         </div>
-        <div style="width: 750rpx;height: 50rpx;"></div>
-        <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
-          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
-          编辑商品
-        </div>
+      </div>
+      <div style="width: 750rpx;height: 50rpx;"></div>
+      <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
+        <icon type="iconadd" color="#00A8FF" size="20" class="m-r-9"></icon>
+        编辑商品
+      </div>
 
-      </block>
-      <block v-else>
-        <div style="width: 750rpx;height: 50rpx;"></div>
-        <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
-          <icon type="iconadd" color="#00A8FF"  size="20"  class="m-r-9"></icon>
-          选择商品
-        </div>
-      </block>
+    </block>
+    <block v-else>
+      <div style="width: 750rpx;height: 50rpx;"></div>
+      <div class="submits flex flex-vertical-center flex-justify-center" @click="openPop('product')">
+        <icon type="iconadd" color="#00A8FF" size="20" class="m-r-9"></icon>
+        选择商品
+      </div>
+    </block>
 
 
-
-
-    <div class="store-item flex flex-vertical-center flex-justify-between" >
+    <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="titles">
         开始时间
       </div>
@@ -47,7 +45,7 @@
         <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between" >
+    <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="titles">
         结束时间
       </div>
@@ -56,33 +54,33 @@
           <span class="fz-14 c3" v-if="end_time">{{end_time}}</span>
           <span class="fz-14 c9" v-else>直播时长最少半小时，最长12小时</span>
         </time>
-        <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
+        <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
       </div>
     </div>
 
     <div class="store-item flex flex-vertical-center">
-      <div  class="titles">
+      <div class="titles">
         活动名称
       </div>
-      <div class="flex1 fz-13" >
-        <input v-model="live_name" class="p-l-26 text-right" placeholder="活动名称"  placeholder-class="place"/>
+      <div class="flex1 fz-13">
+        <input v-model="live_name" class="p-l-26 text-right" placeholder="活动名称" placeholder-class="place"/>
       </div>
     </div>
     <div class="store-item flex flex-vertical-center">
-      <div  class="titles">
+      <div class="titles">
         主播昵称
       </div>
-      <div class="flex1 fz-13" >
-        <input v-model="anchor_name" class="p-l-26 text-right" placeholder="直播间主播昵称"  placeholder-class="place"/>
+      <div class="flex1 fz-13">
+        <input v-model="anchor_name" class="p-l-26 text-right" placeholder="直播间主播昵称" placeholder-class="place"/>
       </div>
     </div>
 
     <div class="store-item flex flex-vertical-center">
-      <div  class="titles">
+      <div class="titles">
         主播微信号
       </div>
-      <div class="flex1 fz-13" >
-        <input v-model="anchor_wechat" class="p-l-26 text-right" placeholder="必须是已认证过的微信号"  placeholder-class="place"/>
+      <div class="flex1 fz-13">
+        <input v-model="anchor_wechat" class="p-l-26 text-right" placeholder="必须是已认证过的微信号" placeholder-class="place"/>
       </div>
     </div>
     <div class="fz-12 c9 p-10 text-right">
@@ -95,7 +93,7 @@
     <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
     <!--action-btn全局有样式-->
-    <div class="fz-16 btn action-btn btn-primary"  @click="addLive">
+    <div class="fz-16 btn action-btn btn-primary" @click="addLive">
       确定
     </div>
 
@@ -105,7 +103,7 @@
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
           <template v-if="product.Products_Status===1">
             <div class="info-box" @click="taggleProductCheck(idx)">
-              <div class="check"   >
+              <div class="check">
                 <div v-show="!product.disalbed">
                   <icon
                     class="check-icon"
@@ -153,10 +151,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { confirm, findArrayIdx, getArrColumn, ls, objTranslate, validateFun } from '../../common/helper'
+  import { confirm, findArrayIdx, getArrColumn, objTranslate, validateFun } from '../../common/helper'
   import { bizProdList } from '../../api/product'
   import { applyLive, getLiveApplyStatus } from '@/api/live'
-  import { back, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { hideLoading, linkTo, showLoading } from '../../common/fun'
   import { Exception } from '@/common/Exception'
 
   const moment = require('moment')
@@ -196,7 +194,7 @@
           start_time: this.start_time,
           end_time: this.end_time,
           anchor_name: this.anchor_name,
-          live_name:this.live_name,
+          live_name: this.live_name,
           anchor_wechat: this.anchor_wechat,
           goods_ids: this.goods_ids
         }
@@ -243,9 +241,10 @@
         applyLive(data).then(res => {
           // toast('操作成功')
 
-          confirm({showCancel: false, title: '提示', content: res.msg}).then(() => {
+          confirm({ showCancel: false, title: '提示', content: res.msg }).then(() => {
             linkTo('/pages/live/room')
-          }).catch(() => {})
+          }).catch(() => {
+          })
 
         }).catch(e => {
 
@@ -297,9 +296,10 @@
 
       async init() {
         showLoading('加载中')
-        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => {})
+        let reqData = await bizProdList({ page: 1, pageSize: 999 }).catch(() => {
+        })
         const proData = reqData.data.map(item => {
-          return {...item, check: false}
+          return { ...item, check: false }
         })
 
         const vo = await getLiveApplyStatus().then(res => res.data).catch(err => Exception.handle(Error(err.msg)))
@@ -313,7 +313,7 @@
           this.live_id = vo.id
           if (Array.isArray(vo.live_goods) && vo.live_goods.length > 0) {
             for (const goods of vo.live_goods) {
-              const idx = findArrayIdx(proData, {Products_ID: goods.Products_ID})
+              const idx = findArrayIdx(proData, { Products_ID: goods.Products_ID })
               if (idx !== false) {
                 this.selectProductList.push(proData[idx])
                 proData[idx].check = true
@@ -337,27 +337,30 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .page-wrap{
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
+  .page-wrap {
     padding-bottom: 44px; //.btn的是44px
   }
-  .seckill-add{
+
+  .seckill-add {
     min-height: 100vh;
     background-color: #FFFFFF;
   }
-  .submits{
-     margin: 0rpx auto 50rpx;
-     width: 320rpx;
-     height: 60rpx;
-     background-color: #FFFFFF;
-     border: 1px solid #00A8FF;
-     border-radius: 6rpx;
-     color: #00A8FF;
-     font-size: 28rpx;
-     line-height: 60rpx;
-   }
-  .submitq{
+
+  .submits {
+    margin: 0rpx auto 50rpx;
+    width: 320rpx;
+    height: 60rpx;
+    background-color: #FFFFFF;
+    border: 1px solid #00A8FF;
+    border-radius: 6rpx;
+    color: #00A8FF;
+    font-size: 28rpx;
+    line-height: 60rpx;
+  }
+
+  .submitq {
     margin: 60rpx auto;
     width: 360rpx;
     height: 60rpx;
@@ -368,42 +371,49 @@
     font-size: 28rpx;
     line-height: 60rpx;
   }
-  .store-item{
+
+  .store-item {
     height: 110rpx;
     width: 710rpx;
     padding: 0rpx 20rpx;
     border-bottom: 1px solid #EBEBEB;
   }
-  .titles{
+
+  .titles {
     font-size: 28rpx;
     color: #333333;
   }
-  .place{
+
+  .place {
     color: #999;
   }
-  .store-titles{
+
+  .store-titles {
     display: flex;
     align-items: center;
     color: #999999;
     font-size: 26rpx;
   }
 
-  .product-mbx{
+  .product-mbx {
     width: 750rpx;
     box-sizing: border-box;
     height: 230rpx;
     padding: 40rpx 20rpx;
   }
-  .thumbs{
+
+  .thumbs {
     width: 150rpx;
     height: 150rpx;
     margin-right: 24rpx;
     @include cover-img();
   }
-  .color-my{
+
+  .color-my {
     color: #FF0000;
   }
-  .title-my{
+
+  .title-my {
     color: #333;
     font-size: 14px;
     /*font-weight: bold;*/
@@ -413,45 +423,54 @@
     text-overflow: ellipsis;
     margin-bottom: 38rpx;
   }
-  .content{
+
+  .content {
 
     text-align: left;
     height: 110rpx;
     line-height: 110rpx;
   }
+
   /*商品列表 start*/
-  .product-list{
+  .product-list {
     height: 800rpx;
     overflow: scroll;
   }
-  .product-item{
+
+  .product-item {
     padding: 30rpx 0;
     background: white;
     margin-bottom: 20rpx;
-    .info-box{
+
+    .info-box {
       padding: 0 20rpx;
       display: flex;
       font-size: 14px;
       height: 176rpx;
-      .check{
+
+      .check {
         padding-right: 20rpx;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        .check-icon{
+
+        .check-icon {
 
         }
       }
-      .thumb{
+
+      .thumb {
         width: 176rpx;
         height: 176rpx;
         background: #f2f2f2;
       }
-      .info{
+
+      .info {
         flex: 1;
         padding-left: 20rpx;
-        .title{
+
+        .title {
           color: #333;
           font-size: 14px;
           /*font-weight: bold;*/
@@ -461,22 +480,26 @@
           text-overflow: ellipsis;
           margin-bottom: 8px;
         }
-        .price-box{
+
+        .price-box {
           color: $fun-red-color;
           margin-bottom: 10px;
           font-size: 14px;
         }
-        .stock-box{
+
+        .stock-box {
           font-size: 12px;
           color: #888;
         }
       }
     }
-    .actions{
+
+    .actions {
       margin-top: 30rpx;
       font-size: 12px;
       display: flex;
-      .action{
+
+      .action {
         justify-content: center;
         padding: 0;
         flex: 1;
@@ -484,15 +507,18 @@
         align-items: center;
         color: #888;
         border-right: 1rpx solid #e7e7e7;
-        &:last-child{
+
+        &:last-child {
           border-right: none;
         }
-        .title{
+
+        .title {
           padding-left: 8px;
         }
       }
     }
   }
+
   /*商品列表 end*/
 
 
@@ -503,11 +529,11 @@
   "navigationBarTextStyle": "black",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
-    "wzw-im-tip": "~@/components/wzw-im-tip",
+  "wzw-im-tip": "~@/components/wzw-im-tip",
   "err-msg": "~@/components/err-msg",
-    "icon": "~@/components/icon",
-    "popup-layer": "~@/components/popup-layer",
-    "time": "~@/components/time",
+  "icon": "~@/components/icon",
+  "popup-layer": "~@/components/popup-layer",
+  "time": "~@/components/time",
   }
   }
 </config>

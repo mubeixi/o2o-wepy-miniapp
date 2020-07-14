@@ -1,21 +1,21 @@
 <template>
   <div class="all page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-<!--        <textarea-->
-<!--          class="edit"-->
-<!--          :value="info" disabled-->
-<!--          auto-height="true"-->
-<!--          contenteditable="true"-->
-<!--          maxlength="-1" placeholder="入驻协议" placeholder-style="place" >-->
-<!--        </textarea>-->
+    <!--        <textarea-->
+    <!--          class="edit"-->
+    <!--          :value="info" disabled-->
+    <!--          auto-height="true"-->
+    <!--          contenteditable="true"-->
+    <!--          maxlength="-1" placeholder="入驻协议" placeholder-style="place" >-->
+    <!--        </textarea>-->
     <div class="entry-agreement">
       <rich-text style="background: #f8f8f8" :nodes="info"></rich-text>
     </div>
 
-    <div class="checks flex flex-vertical-center" >
-      <checkbox-group  bindchange="checkboxChange">
+    <div class="checks flex flex-vertical-center">
+      <checkbox-group bindchange="checkboxChange">
         <label class="flex flex-vertical-center">
-          <checkbox style="transform: scale(0.8)" value="1"  :disabled="agree==1" :checked="agree==1"></checkbox>
+          <checkbox style="transform: scale(0.8)" value="1" :disabled="agree==1" :checked="agree==1"></checkbox>
           <span class="fz-12">我已阅读、同意并接受《入驻协议》</span>
         </label>
       </checkbox-group>
@@ -59,10 +59,12 @@
           return
         }
         showLoading()
-        opBizInfo({'is_agree': 1}).then(res => {
+        opBizInfo({ 'is_agree': 1 }).then(res => {
           back()
           hideLoading()
-        }).catch(e => { hideLoading() })
+        }).catch(e => {
+          hideLoading()
+        })
       },
       checkboxChange(e) {
         this.show = e.$wx.detail.value
@@ -78,24 +80,30 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .entry-agreement{
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
+  .entry-agreement {
     background: #fff;
     padding: 10px;
     font-size: 14px;
     line-height: 1.5;
   }
-  .page-wrap{
+
+  .page-wrap {
     padding: 10px 10px 30px;
   }
-  .all{min-height: 100vh;overflow-x: hidden;}
-  .edit{
+
+  .all {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .edit {
     box-sizing: border-box;
     width: 710rpx;
     min-height: 430rpx;
-    border:1px solid rgba(233,233,233,1);
-    border-radius:10px;
+    border: 1px solid rgba(233, 233, 233, 1);
+    border-radius: 10px;
     margin: 0 auto;
     margin-top: 20rpx;
     padding-top: 23rpx;
@@ -106,18 +114,20 @@
     color: #333333;
     background-color: #FFFFFF;
   }
-  .checks{
+
+  .checks {
     margin-left: 10px;
     margin-top: 10px;
     font-size: 9px;
     color: #606266;
   }
-  .submit{
-    width:620rpx;
-    height:80rpx;
+
+  .submit {
+    width: 620rpx;
+    height: 80rpx;
     line-height: 80rpx;
     background-color: #00A8FF;
-    border-radius:5px;
+    border-radius: 5px;
     color: #FFFFFF;
     font-size: 17px;
     text-align: center;
@@ -129,7 +139,7 @@
   {
   "navigationBarTitleText": "签署协议",
   "usingComponents": {
-      "wzw-im-tip": "~@/components/wzw-im-tip"
-    }
+  "wzw-im-tip": "~@/components/wzw-im-tip"
+  }
   }
 </config>

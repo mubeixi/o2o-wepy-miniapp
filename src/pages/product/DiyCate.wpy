@@ -1,38 +1,42 @@
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
-  .container{
+
+  .container {
     padding-bottom: 100rpx;
   }
-  .cate-item{
+
+  .cate-item {
     margin-bottom: 10px;
     background: white;
     padding-left: 15px;
     box-sizing: border-box;
-    .cate-item-row{
+
+    .cate-item-row {
       padding: 15px 0;
       display: flex;
       align-items: center;
       border-bottom: 1px solid #eee;
 
-      &.first{
-        .content{
+      &.first {
+        .content {
           color: #000;
         }
       }
 
-      .content{
+      .content {
         flex: 1;
         padding-right: 10px;
         color: #999;
       }
-      .actions{
+
+      .actions {
         display: flex;
         align-items: center;
         padding-right: 10px;
-        .icon{
+
+        .icon {
           margin-right: 10px;
-          &:last-child{
+
+          &:last-child {
             margin-right: 0;
           }
         }
@@ -40,35 +44,43 @@
       }
     }
   }
-  .form-wrap{
+
+  .form-wrap {
     width: 550rpx;
     padding: 20px;
     box-sizing: border-box;
     background: white;
-    .title{
+
+    .title {
       text-align: center;
     }
-    .form{
+
+    .form {
       font-size: 14px;
       padding: 20px 0;
-      .form-cell{
-        .input{
+
+      .form-cell {
+        .input {
           border: 1px solid #eee;
           padding: 6px;
         }
       }
     }
-    .actions{
+
+    .actions {
       display: flex;
       justify-content: center;
       align-items: center;
-      .btn-item{
+
+      .btn-item {
 
       }
-      .cancel{
+
+      .cancel {
         margin-right: 15px;
       }
-      .confirm{
+
+      .confirm {
         background: $fun-blue-color;
         color: #fff;
 
@@ -89,7 +101,7 @@
           </div>
         </div>
         <template v-if="item.child && item.child.length>0">
-          <div class="cate-item-row" v-for="(child,idx) in item.child" :key="idx2" >
+          <div class="cate-item-row" v-for="(child,idx) in item.child" :key="idx2">
             <div class="content">{{child.cate_name}}</div>
             <div class="actions">
               <icon @click="openEdit(child)" size="20" color="#999" class="icon" type="iconbianji1"></icon>
@@ -98,7 +110,9 @@
           </div>
         </template>
         <div class="cate-item-row" style="border-bottom: none" @click="openAdd(item.id)">
-          <div class="actions"><icon type="iconupload" weight="bold" color="#00A8FF"></icon><span class="p-l-10 fz-14 color-blue">添加子分类</span></div>
+          <div class="actions">
+            <icon type="iconupload" weight="bold" color="#00A8FF"></icon>
+            <span class="p-l-10 fz-14 color-blue">添加子分类</span></div>
         </div>
       </div>
 
@@ -107,7 +121,7 @@
           <div class="title">新增分类</div>
           <div class="form">
             <div class="form-cell">
-              <input class="input" v-model="tempCateName" placeholder="请输入分类名称" />
+              <input class="input" v-model="tempCateName" placeholder="请输入分类名称"/>
             </div>
           </div>
           <div class="actions">
@@ -122,7 +136,7 @@
           <div class="title">编辑</div>
           <div class="form">
             <div class="form-cell">
-              <input class="input" v-model="_edit.cate_name" placeholder="请输入分类名称" />
+              <input class="input" v-model="_edit.cate_name" placeholder="请输入分类名称"/>
             </div>
           </div>
           <div class="actions">
@@ -139,7 +153,7 @@
       </div>
     </div>
 
-    <div class="safearea-box fixed bgwhite"> </div>
+    <div class="safearea-box fixed bgwhite"></div>
   </div>
 </template>
 <script>
@@ -157,19 +171,21 @@
     data: {
       tempCateName: '',
       pid: 0,
-      _edit: {cate_name: '', id: null},
+      _edit: { cate_name: '', id: null },
       list: []
     },
-    computed: {
-
-    },
+    computed: {},
     methods: {
 
       // 自己handle错误
       async delCate(id) {
         try {
-          await confirm({content: '删除后无法恢复，是否确认删除?'}).catch(() => { throw Error('nocare') })
-          await delBizProdCate({cate_id: id}, {errtip: false}).catch(({msg}) => { throw Error(msg) })
+          await confirm({ content: '删除后无法恢复，是否确认删除?' }).catch(() => {
+            throw Error('nocare')
+          })
+          await delBizProdCate({ cate_id: id }, { errtip: false }).catch(({ msg }) => {
+            throw Error(msg)
+          })
           this.cancelEdit()
           this._init_func()
         } catch (e) {
@@ -178,7 +194,13 @@
       },
       async confirmEdit() {
         try {
-          await editBizProdCate({cate_name: this._edit.cate_name, cate_id: this._edit.id, pid: this._edit.pid}).catch((msg) => { throw Error(msg) })
+          await editBizProdCate({
+            cate_name: this._edit.cate_name,
+            cate_id: this._edit.id,
+            pid: this._edit.pid
+          }).catch((msg) => {
+            throw Error(msg)
+          })
           this.cancelEdit()
           this._init_func()
         } catch (e) {
@@ -186,7 +208,7 @@
         }
       },
       cancelEdit() {
-        this.edit = {cate_name: '', id: null}
+        this.edit = { cate_name: '', id: null }
         this.$closePop('edit')
       },
       openEdit(cate) {
@@ -204,7 +226,9 @@
       },
       async confirmAdd() {
         try {
-          await addBizProdCate({cate_name: this.tempCateName, pid: this.pid}).catch(({msg}) => { throw Error(msg) })
+          await addBizProdCate({ cate_name: this.tempCateName, pid: this.pid }).catch(({ msg }) => {
+            throw Error(msg)
+          })
           this.cancelAdd()
           this._init_func()
         } catch (e) {
@@ -215,7 +239,9 @@
 
       },
       async _init_func() {
-        this.list = await getBizProdCateList({}, {onlyData: true}).catch(() => { throw Error('获取分类失败') })
+        this.list = await getBizProdCateList({}, { onlyData: true }).catch(() => {
+          throw Error('获取分类失败')
+        })
       }
     },
     onShow() {
@@ -225,13 +251,13 @@
 </script>
 <config>
   {
-    "navigationBarTitleText": "自定义分类",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
+  "navigationBarTitleText": "自定义分类",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
   "wzw-im-tip": "~@/components/wzw-im-tip",
-      "err-msg": "~@/components/err-msg",
-      "icon": "~@/components/icon",
-      "modal": "~@/components/ModelComponents"
-    }
+  "err-msg": "~@/components/err-msg",
+  "icon": "~@/components/icon",
+  "modal": "~@/components/ModelComponents"
+  }
   }
 </config>

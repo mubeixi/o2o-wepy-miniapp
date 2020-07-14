@@ -19,28 +19,32 @@
           <image src="/static/marketing/coupon.png" class="img"></image>
           <div class="title">优惠券</div>
         </div>
-          <div class="feature-item"  @click="goFullReduce">
-            <image src="/static/marketing/deduct.png" class="img"></image>
-            <div class="title">满减</div>
-          </div>
-          <div class="feature-item" @click="goStoreVipList">
-            <image src="/static/marketing/vip.png" class="img"></image>
-            <div class="title">店铺会员</div>
-          </div>
-        <div class="feature-item"  @click="goGive">
+        <div class="feature-item" @click="goFullReduce">
+          <image src="/static/marketing/deduct.png" class="img"></image>
+          <div class="title">满减</div>
+        </div>
+        <div class="feature-item" @click="goStoreVipList">
+          <image src="/static/marketing/vip.png" class="img"></image>
+          <div class="title">店铺会员</div>
+        </div>
+        <div class="feature-item" @click="goGive">
           <image src="/static/marketing/give.png" class="img"></image>
           <div class="title">赠品</div>
         </div>
-        <div class="feature-item"  @click="goOfflinePay">
+        <div class="feature-item" @click="goOfflinePay">
           <image src="/static/marketing/pay.png" class="img"></image>
           <div class="title">收款码</div>
+        </div>
+        <div class="feature-item" @click="goRechargeSend" v-if="cash_from==2">
+          <image src="/static/marketing/chongzhi.png" class="img"></image>
+          <div class="title">充值送</div>
         </div>
       </div>
     </div>
 
-<!--    <div class="p-t-50 p-b-50 bgwhite">-->
-<!--      <copyright></copyright>-->
-<!--    </div>-->
+    <!--    <div class="p-t-50 p-b-50 bgwhite">-->
+    <!--      <copyright></copyright>-->
+    <!--    </div>-->
 
 
   </div>
@@ -50,13 +54,15 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { checkIsLogin, confirm } from '../../common/helper'
+  import { cashFromValue, checkIsLogin } from '../../common/helper'
   import { linkTo } from '../../common/fun'
   import { initInfo } from '@/api/system'
+
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      cash_from: 1,
       initConf: {
         pintuan_switch: 1
       },
@@ -65,7 +71,11 @@
       }
     },
     methods: {
-      goOfflinePay(){
+      goRechargeSend() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/marketing/RechargeSend')
+      },
+      goOfflinePay() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/OfflinePay')
       },
@@ -98,10 +108,13 @@
         linkTo('/pages/marketing/Give')
       },
       async _init_func() {
-        this.initConf = await initInfo().then(res => res.data).catch(err => { throw Error(err.msg) })
+        this.initConf = await initInfo().then(res => res.data).catch(err => {
+          throw Error(err.msg)
+        })
       }
     },
     onShow() {
+      this.cash_from = cashFromValue()
       this._init_func()
     },
     created() {
@@ -121,30 +134,34 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .page-wrap{
+
+  .page-wrap {
     height: 100vh;
     background: white;
   }
-  .feature{
-    &-list{
+
+  .feature {
+    &-list {
       padding: 40rpx 0;
     }
-    &-row{
+
+    &-row {
       display: flex;
       flex-wrap: wrap;
       padding: 40rpx 0;
     }
-    &-item{
+
+    &-item {
       width: 250rpx;
       text-align: center;
       margin-bottom: 40rpx;
-      .img{
+
+      .img {
         width: 100rpx;
         height: 100rpx;
       }
-      .title{
+
+      .title {
         margin-top: 16rpx;
         color: #333;
         font-size: 14px;
@@ -155,13 +172,13 @@
 </style>
 <config>
   {
-    "navigationBarTitleText": "营销推广",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
+  "navigationBarTitleText": "营销推广",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
   "wzw-im-tip": "~@/components/wzw-im-tip",
-      "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon",
-      "ad": "~@/components/ad"
-    }
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
   }
 </config>

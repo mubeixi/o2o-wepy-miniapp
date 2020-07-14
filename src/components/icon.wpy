@@ -1,6 +1,5 @@
 <style lang="scss">
-@import "../assets/icon.scss";
-
+  @import "../assets/icon.scss";
 </style>
 <template>
   <i class="iconfont {{type}}"
@@ -12,6 +11,9 @@
   import wepy from '@wepy/core'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       type: {
         require: true,
@@ -36,7 +38,7 @@
       }
     },
     methods: {
-      _onClick () {
+      _onClick() {
         this.$emit('click')
       }
     }

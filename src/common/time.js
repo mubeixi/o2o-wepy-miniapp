@@ -1,7 +1,9 @@
 const moment = require('moment')
+
 function withData(param) {
   return param < 10 ? '0' + param : '' + param
 }
+
 function getLoopArray(start, end, unit = '') {
   var _start = start || 0
   var _end = end || 1
@@ -11,6 +13,7 @@ function getLoopArray(start, end, unit = '') {
   }
   return array
 }
+
 function getMonthDay(year, month) {
   let flag = year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0)
   let array = null
@@ -50,6 +53,7 @@ function getMonthDay(year, month) {
   }
   return array
 }
+
 function getNewDateArry(currentTime) {
   // 当前时间的处理
   var newDate = null
@@ -85,6 +89,7 @@ function getNewDateArryByStr(dateObj) {
 
   return [year, mont, date, hour, minu, seco]
 }
+
 const cutTimeStr = (str) => str.substring(0, str.length - 1)
 
 function dateTimePicker(startYear, endYear, date) {
@@ -115,6 +120,7 @@ function dateTimePicker(startYear, endYear, date) {
     dateTime: dateTime
   }
 }
+
 module.exports = {
   withData,
   getNewDateArryByStr,

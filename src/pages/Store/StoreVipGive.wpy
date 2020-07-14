@@ -6,7 +6,7 @@
         赠送优惠券
       </div>
       <div class="store-titles">
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
 
@@ -15,7 +15,16 @@
         赠送商品
       </div>
       <div class="store-titles">
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
+      </div>
+    </div>
+    <div class="store-item flex flex-vertical-center flex-justify-between" v-if="cash_from==2">
+      <div class="store-title">
+        赠送余额
+      </div>
+      <div class="store-titles  input-div">
+        <input type="digit" v-model="money" placeholder="请输入赠送金额" class="input"/>
+        元
       </div>
     </div>
 
@@ -28,7 +37,7 @@
       <div class="product-list" v-if="proData.length>0">
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
           <div class="info-box" @click="taggleProductCheck(idx)">
-            <div class="check"   >
+            <div class="check">
               <icon
                 class="check-icon"
                 :color="product.check?'#F53636':'#999'"
@@ -40,15 +49,15 @@
             <div class="info">
               <div class="title">{{product.Products_Name}}</div>
               <div class="price-box">
-<!--                <span class="sign">￥</span>-->
-<!--                <span>{{product.Products_PriceY}}</span>-->
-<!--                <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>-->
-<!--                <span class="sign">￥</span>-->
-<!--                <span>{{product.Products_PriceX}}</span>-->
+                <!--                <span class="sign">￥</span>-->
+                <!--                <span>{{product.Products_PriceY}}</span>-->
+                <!--                <span class="p-l-20 p-r-4 fz-12 color-gray">拼购价:</span>-->
+                <!--                <span class="sign">￥</span>-->
+                <!--                <span>{{product.Products_PriceX}}</span>-->
               </div>
               <div class="stock-box" v-if="product.Products_Count">
                 <span class="stock">库存:{{product.Products_Count}}</span>
-<!--                <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>-->
+                <!--                <span class="sale p-l-40">销量:{{product.Products_Sales}}</span>-->
               </div>
             </div>
           </div>
@@ -58,11 +67,12 @@
     </popup-layer>
 
 
-
-    <popup-layer ref="couponPop" title="选择优惠券" mainBgColor="#F7F4F8" >
-      <div class="coupon-wrap" style="overflow-y: scroll;box-sizing: border-box;" :style="{maxHeight: systemInfo.windowHeight-150+'px'}">
-        <div class="coupon-item flex flex-justify-between" @click="couponChange(index)"  v-for="(item,index) of couponList" :key="index">
-          <div class="item-left" >
+    <popup-layer ref="couponPop" title="选择优惠券" mainBgColor="#F7F4F8">
+      <div class="coupon-wrap" style="overflow-y: scroll;box-sizing: border-box;"
+           :style="{maxHeight: systemInfo.windowHeight-150+'px'}">
+        <div class="coupon-item flex flex-justify-between" @click="couponChange(index)"
+             v-for="(item,index) of couponList" :key="index">
+          <div class="item-left">
             <icon
               class="check-icon"
               :color="item.check?'#F53636':'#999'"
@@ -70,7 +80,7 @@
               :type="item.check?'iconblchecked':'iconCircle'"
             ></icon>
           </div>
-          <div class="item-right" >
+          <div class="item-right">
             <image src="/static/coupon.png" class="full-img"></image>
             <div class="time">有效限：{{item.Coupon_StartTime}}至{{item.Coupon_EndTime}}</div>
             <div class="price flex">
@@ -84,7 +94,7 @@
         </div>
         <div style="height: 100rpx;"></div>
       </div>
-      <button @click="sureCoupon" class="btn btn-primary" >确定</button>
+      <button @click="sureCoupon" class="btn btn-primary">确定</button>
     </popup-layer>
   </div>
 </template>
@@ -106,7 +116,12 @@
       proData: [],
       couponList: [],
       pro_prod: '',
-      coupon_prod: ''
+      coupon_prod: '',
+      money: 0,
+      cash_from: 1
+    },
+    onShow() {
+      this.cash_from = ls.get('cash_from')
     },
     onLoad() {
       this.getList()
@@ -114,6 +129,9 @@
     methods: {
       saveData() {
         showLoading()
+        if (this.money >= 0 && this.cash_from == 2) {
+          ls.set('vipMoney', this.money)
+        }
         if (this.pro_prod) {
           ls.set('pro_prod', this.pro_prod)
         } else {
@@ -162,10 +180,11 @@
       getList() {
         this.coupon_prod = ls.get('coupon_prod')
         this.pro_prod = ls.get('pro_prod')
+        this.money = ls.get('vipMoney')
 
-        getCouponList({status: 1, front_show: 2}).then(res => {
+        getCouponList({ status: 1, front_show: 2 }).then(res => {
           this.couponList = res.data.map(item => {
-            return {...item, check: false}
+            return { ...item, check: false }
           })
 
           let arrs = this.coupon_prod.split(',')
@@ -178,9 +197,9 @@
             }
           })
         })
-        getShopGiftList({page: 1, pageSize: 999}).then(res => {
+        getShopGiftList({ page: 1, pageSize: 999 }).then(res => {
           this.proData = res.data.map(item => {
-            return {...item, check: false}
+            return { ...item, check: false }
           })
 
           let arr = this.pro_prod.split(',')
@@ -200,47 +219,52 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
+  .submit-main {
+    width: 750rpx;
+    height: 86rpx;
     line-height: 86rpx;
     text-align: center;
     color: #FFFFFF;
     font-size: 32rpx;
-    background:rgba(0,168,255,1);
+    background: rgba(0, 168, 255, 1);
     position: fixed;
     bottom: 0rpx;
-    left: 0rp7x;
+    left: 0 rp7x;
     z-index: 9;
   }
 
-  .store-all{
+  .store-all {
     background-color: #FFFFFF;
     height: 100vh;
-    .store-item{
+
+    .store-item {
       height: 108rpx;
       border-bottom: 1px solid #EBEBEB;
       box-sizing: border-box;
       width: 710rpx;
       margin: 0 auto;
     }
-    .item-last{
+
+    .item-last {
       height: 150rpx;
     }
-    .store-title{
+
+    .store-title {
       color: #333333;
       font-size: 30rpx;
     }
-    .store-titles{
+
+    .store-titles {
       display: flex;
       align-items: center;
       color: #999999;
       font-size: 26rpx;
     }
   }
-  .picker-mbx{
+
+  .picker-mbx {
     flex: 1;
     text-align: right;
     height: 108rpx;
@@ -248,38 +272,46 @@
     color: #999999;
     font-size: 26rpx;
   }
+
   /*商品列表 start*/
-  .product-list{
+  .product-list {
     height: 800rpx;
     overflow: scroll;
   }
-  .product-item{
+
+  .product-item {
     padding: 30rpx 0;
     background: white;
     margin-bottom: 20rpx;
-    .info-box{
+
+    .info-box {
       padding: 0 20rpx;
       display: flex;
       font-size: 14px;
       height: 176rpx;
-      .check{
+
+      .check {
         padding-right: 20rpx;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        .check-icon{
+
+        .check-icon {
 
         }
       }
-      .thumb{
+
+      .thumb {
         width: 176rpx;
         height: 176rpx;
       }
-      .info{
+
+      .info {
         flex: 1;
         padding-left: 20rpx;
-        .title{
+
+        .title {
           color: #333;
           font-size: 14px;
           /*font-weight: bold;*/
@@ -289,22 +321,26 @@
           text-overflow: ellipsis;
           margin-bottom: 8px;
         }
-        .price-box{
+
+        .price-box {
           color: $fun-red-color;
           margin-bottom: 10px;
           font-size: 14px;
         }
-        .stock-box{
+
+        .stock-box {
           font-size: 12px;
           color: #888;
         }
       }
     }
-    .actions{
+
+    .actions {
       margin-top: 30rpx;
       font-size: 12px;
       display: flex;
-      .action{
+
+      .action {
         justify-content: center;
         padding: 0;
         flex: 1;
@@ -312,62 +348,76 @@
         align-items: center;
         color: #888;
         border-right: 1rpx solid #e7e7e7;
-        &:last-child{
+
+        &:last-child {
           border-right: none;
         }
-        .title{
+
+        .title {
           padding-left: 8px;
         }
       }
     }
   }
+
   /*商品列表 end*/
 
   /*选择优惠券start*/
-  .coupon-wrap{
-    .full-img{width: 100%;height: 100%}
-    .coupon-item{
+  .coupon-wrap {
+    .full-img {
+      width: 100%;
+      height: 100%
+    }
+
+    .coupon-item {
       height: 216rpx;
       margin-bottom: 30rpx;
       padding-right: 26rpx;
     }
-    .item-left{
+
+    .item-left {
       width: 90rpx;
       height: 216rpx;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-    .item-right{
+
+    .item-right {
       position: relative;
       width: 634rpx;
       height: 216rpx;
-      .time{
-        position:absolute;
+
+      .time {
+        position: absolute;
         left: 48rpx;
         bottom: 24rpx;
         font-size: 24rpx;
         color: #999999;
       }
     }
-    .font-32{
+
+    .font-32 {
       font-size: 32rpx;
       color: #FF0042;
     }
-    .font-70{
+
+    .font-70 {
       font-size: 70rpx;
       color: #FF0042;
       line-height: 56rpx;
       margin-left: 14rpx;
     }
-    .price{
+
+    .price {
       position: absolute;
       align-items: flex-end;
       height: 56rpx;
       left: 48rpx;
       bottom: 100rpx;
     }
-    .newuser{
+
+    .newuser {
       font-size: 18rpx;
       color: #FFA27A;
       width: 124rpx;
@@ -378,14 +428,16 @@
       margin-left: 24rpx;
       margin-bottom: 20rpx;
     }
-    .right-q{
+
+    .right-q {
       font-size: 30rpx;
       color: #1D1D1D;
       position: absolute;
       top: 52rpx;
       right: 38rpx;
     }
-    .right-w{
+
+    .right-w {
       font-size: 24rpx;
       color: #999999;
       position: absolute;
@@ -394,7 +446,21 @@
     }
 
   }
-/*选择优惠券结束*/
+
+  /*选择优惠券结束*/
+  .input-div {
+    flex: 1;
+    height: 108rpx;
+    line-height: 108rpx;
+    padding-left: 40rpx;
+
+    .input {
+      color: #333333;
+      width: 100%;
+      height: 108rpx;
+      line-height: 108rpx;
+    }
+  }
 
 </style>
 <config>

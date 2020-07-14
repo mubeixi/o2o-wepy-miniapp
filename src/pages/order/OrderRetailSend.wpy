@@ -6,7 +6,7 @@
         <div class="imgDiv">
           <fun-img class="imgHund" :src="item.prod_img"></fun-img>
         </div>
-        <div class="textRight" >
+        <div class="textRight">
           <div class="productName">
             {{item.prod_name}}
           </div>
@@ -37,23 +37,36 @@
       </div>
 
       <div class="orderDetailBottom">
+        <div v-if="listData.city_express_appoint_time>0" class="divHeight">
+          预约配送:
+          <span class="fontColor">需{{listData.city_express_appoint_time_desc}}</span>
+        </div>
         <div class="divHeight">
           订单号：<span class="fontColor">{{listData.Order_ID}}</span>
         </div>
-        <div class="divHeight">
+        <div class="divHeight" v-if="listData.free_money>0">
           免单金额：<span class="fontColor">{{listData.free_money}}</span>
         </div>
         <div class="divHeight">
           商品总价： ¥<span class="fontColor">{{listData.Order_TotalAmount}}</span>
         </div>
-        <div class="divHeight">
-          平台优惠： ¥<span class="fontColor">{{listData.users_coupon_money}}</span>
+        <div class="divHeight" v-if="listData.users_coupon_money>0">
+          平台优惠劵： ¥<span class="fontColor">{{listData.users_coupon_money}}</span>
         </div>
-        <div class="divHeight">
-          商家优惠： ¥<span class="fontColor">{{listData.Coupon_Money}}</span>
+        <div class="divHeight" v-if="listData.Coupon_Money>0">
+          商家优惠劵： ¥<span class="fontColor">{{listData.Coupon_Money}}</span>
         </div>
-        <div class="divHeight">
+        <div class="divHeight" v-if="listData.share_commission>0">
           分享赚佣金： ¥<span class="fontColor">{{listData.share_commission}}</span>
+        </div>
+        <div class="divHeight" v-if="listData.user_curagio_money>0">
+          商家折扣金额： ¥<span class="fontColor">{{listData.user_curagio_money}}</span>
+        </div>
+        <div class="divHeight" v-if="listData.Manjian_Cash>0">
+          商家满减金额： ¥<span class="fontColor">{{listData.Manjian_Cash}}</span>
+        </div>
+        <div class="divHeight" v-if="listData.Integral_Money>0">
+          积分抵扣金额： ¥<span class="fontColor">{{listData.Integral_Money}}</span>
         </div>
         <div class="divHeight">
           运费： ¥<span class="fontColor">{{listData.Order_Shipping && listData.Order_Shipping.Price || 0}}</span>
@@ -77,7 +90,8 @@
           快递单号：{{listData.Order_ShippingID }}
         </div>
         <div class="divHeight">
-          收货信息： {{listData.Address_Name}} {{listData.Address_Province_name}} {{listData.Address_City_name}} {{listData.Address_Area_name}} {{listData.Address_Town_name}} {{listData.Address_Detailed_name}}
+          收货信息： {{listData.Address_Name}} {{listData.Address_Province_name}} {{listData.Address_City_name}}
+          {{listData.Address_Area_name}} {{listData.Address_Town_name}} {{listData.Address_Detailed_name}}
         </div>
 
 
@@ -93,7 +107,8 @@
       </div>
 
       <div class="orderDetailOther">
-          <diy-form :action="action" :isshow="'true'"    eid="material" ref="material" :forms="listData.order_temp"></diy-form>
+        <diy-form :action="action" :isshow="'true'" eid="material" ref="material"
+                  :forms="listData.order_temp"></diy-form>
       </div>
     </div>
 
@@ -133,7 +148,7 @@
 
         </div>
         <block v-if="listData.Order_Shipping.Express!='同城配送'">
-          <div class="inputView" >
+          <div class="inputView">
             <div style="width: 180rpx;">
               快递单号
             </div>
@@ -156,7 +171,7 @@
           </div>
           <picker @change="bindPickerChange" :value="index" :range="arr" class="picker ">
             {{arr[index]}}
-            <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+            <icon type="iconarrowleft" size="16" color="#999"></icon>
           </picker>
 
         </div>
@@ -183,8 +198,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getAvailableCityExpress, getOrderDetail, systemSendOrder} from '../../api/order'
+  import { getAvailableCityExpress, getOrderDetail, systemSendOrder } from '../../api/order'
   import { back, error, toast } from '../../common/fun'
+
   const moment = require('moment')
   wepy.page({
     store,
@@ -237,10 +253,14 @@
         this.index = e.$wx.detail.value
       },
       async getOrderDetailFn() {
-        let orderInfo = await getOrderDetail({Order_ID: this.order_id}, {onlyData: true, tip: 'loading'}).catch(e => {})
+        let orderInfo = await getOrderDetail({ Order_ID: this.order_id }, {
+          onlyData: true,
+          tip: 'loading'
+        }).catch(e => {
+        })
         this.listData = orderInfo
 
-        const {Address_Mobile, Address_Name} = orderInfo
+        const { Address_Mobile, Address_Name } = orderInfo
         this.mobile = Address_Mobile
         this.nameValue = Address_Name
         this.listData.Order_CreateTime = moment(orderInfo.Order_CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
@@ -269,13 +289,14 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
 
-  .page-wrap{
+  .page-wrap {
     padding-bottom: 65px;
   }
-  .marginAuto{
+
+  .marginAuto {
     width: 710rpx;
     margin: 0 auto;
     margin-top: 26rpx;
@@ -285,27 +306,32 @@
     padding: 0rpx 0rpx 18rpx 0rpx;
     border-radius: 10rpx;
   }
-  .blockDiv{
+
+  .blockDiv {
     width: 664rpx;
     height: 220rpx;
     display: flex;
     padding-left: 14rpx;
     padding-top: 20rpx;
   }
-  .imgDiv{
+
+  .imgDiv {
     width: 220rpx;
     height: 220rpx;
   }
+
   .textRight {
     padding-left: 20rpx;
     width: 440rpx;
   }
-  .imgHund{
+
+  .imgHund {
     width: 100%;
     height: 100%;
   }
-  .productName{
-    width:100%;
+
+  .productName {
+    width: 100%;
     height: 60rpx;
     line-height: 30rpx;
     overflow: hidden;
@@ -315,19 +341,22 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
-  .skuMy{
+
+  .skuMy {
     color: #666666;
     font-size: 12px;
     margin-top: 28rpx;
   }
-  .bottomDiv{
+
+  .bottomDiv {
     margin-top: 26rpx;
     height: 50rpx;
     display: flex;
     align-content: center;
     justify-content: space-between;
   }
-  .skuCount{
+
+  .skuCount {
     // width: 150rpx;
     height: 50rpx;
     background-color: #EDF9FF;
@@ -338,59 +367,69 @@
     padding-left: 8px;
     padding-right: 8px;
   }
-  .allPrice{
+
+  .allPrice {
     font-size: 30rpx;
     color: #333333;
     height: 50rpx;
     line-height: 50rpx;
   }
-  .span1{
+
+  .span1 {
     color: #F43131;
   }
-  .span2{
+
+  .span2 {
     color: #F43131;
     font-size: 28rpx;
     margin-left: 4rpx;
   }
-  .mbxa{
+
+  .mbxa {
     display: flex;
     align-items: center;
     margin-right: 10rpx;
-    .imgs{
+
+    .imgs {
       width: 34rpx;
       height: 34rpx;
     }
   }
-  .buttonLast{
+
+  .buttonLast {
     margin-top: 24rpx;
     display: flex;
     justify-content: space-between;
     height: 45rpx;
-    .divFont{
+
+    .divFont {
       font-size: 24rpx;
       color: #F43131;
     }
-    .spanFont{
+
+    .spanFont {
       font-size: 30rpx;
       color: #F43131;
       margin-left: 3px;
     }
-    .spanJu{
-      width:80rpx;
-      height:45rpx;
-      background:#EEEEEE;
-      border-radius:5px;
+
+    .spanJu {
+      width: 80rpx;
+      height: 45rpx;
+      background: #EEEEEE;
+      border-radius: 5px;
       font-size: 24rpx;
       color: #666666;
       display: inline-block;
       line-height: 45rpx;
       text-align: center;
     }
-    .spanFa{
-      width:95rpx;
-      height:45rpx;
-      background:#F43131;
-      border-radius:5px;
+
+    .spanFa {
+      width: 95rpx;
+      height: 45rpx;
+      background: #F43131;
+      border-radius: 5px;
       font-size: 24rpx;
       line-height: 45rpx;
       text-align: center;
@@ -399,13 +438,15 @@
       margin-left: 24rpx;
     }
   }
-  .orderDetail{
+
+  .orderDetail {
     width: 710rpx;
     margin: 0 auto;
     margin-top: 30rpx;
     background-color: #FFFFFF;
     border-radius: 10rpx;
-    .orderDetailTop{
+
+    .orderDetailTop {
       width: 100%;
       box-sizing: border-box;
       height: 70rpx;
@@ -418,24 +459,28 @@
       border-bottom: 1px solid #E6E6E6;
 
     }
-    .orderDetailBottom{
+
+    .orderDetailBottom {
       padding: 26rpx 0rpx 40rpx 21rpx;
       font-size: 13px;
       color: #333333;
-      .divHeight{
+
+      .divHeight {
         height: 48rpx;
         line-height: 48rpx;
       }
 
     }
-    .orderDetailOther{
+
+    .orderDetailOther {
       padding-left: 20rpx;
       padding-right: 20rpx;
       width: 670rpx;
       box-sizing: border-box;
       font-size: 28rpx;
       color: #333333;
-      .inputView{
+
+      .inputView {
         height: 100rpx;
         width: 670rpx;
         box-sizing: border-box;
@@ -443,11 +488,13 @@
         display: flex;
         align-items: center;
         padding: 0px 10px;
-        &:last-child{
+
+        &:last-child {
           border-bottom: none;
         }
       }
-      .picker{
+
+      .picker {
         flex: 1;
         height: 100rpx;
         line-height: 100rpx;
@@ -459,24 +506,26 @@
   }
 
 
-  .leftDiv{
+  .leftDiv {
     background-color: #00A8FF;
     width: 3px;
     height: 15px;
     margin-right: 15rpx;
     border-radius: 15rpx;
   }
-  .fontColor{
+
+  .fontColor {
     color: #777777;
     margin-left: 2px;
   }
-  .fontColorRed{
+
+  .fontColorRed {
     color: #F43131 !important;
   }
 
-  .submit{
-    width:750rpx;
-    height:85rpx;
+  .submit {
+    width: 750rpx;
+    height: 85rpx;
     background-color: #00A8FF;
     line-height: 85rpx;
     text-align: center;
