@@ -120,7 +120,7 @@
     margin-right: 10px;
   }
 
-  .wrap {
+  .page-wrap {
     text-align: center;
     height: 100vh;
     color: #333;
@@ -257,7 +257,7 @@
 
 </style>
 <template>
-  <div class="wrap">
+  <div class="page-wrap">
     <page-title :letfFn="true" @clickLeft="bindBackFn" :title="pageTitle"></page-title>
     <err-msg :topStr="menuButtonInfo.height+menuButtonInfo.top+10+'px'" :errs="formCheckResult"></err-msg>
 
