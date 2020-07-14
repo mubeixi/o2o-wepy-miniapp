@@ -123,8 +123,7 @@ export default {
 }
 
 export const componentMixins = {
-  // https://github.com/Tencent/wepy/issues/2507
-  // https://developers.weixin.qq.com/miniprogram/dev/framework/custom-component/wxml-wxss.html
+
   data: {
     menuButtonInfo: {},
     systemInfo: { statusBarHeight: 0 },
