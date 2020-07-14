@@ -1,10 +1,9 @@
-import { staticUrl } from './env'
-import { back, error, linkTo } from './fun'
+import ENV from './env'
+import { error, linkTo } from './fun'
 import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
 import wxPromisify from './promisify'
-import F2 from '@/lib/f2-canvas/f2'
 
 export const objTranslate = (obj) => JSON.parse(JSON.stringify(obj))
 
@@ -308,7 +307,7 @@ export const getString = (arr, key, mbx = 99) => {
 
 export const getDomain = (url) => {
   if (!url) return ''
-  if (url.indexOf('http') === -1) return staticUrl + url
+  if (url.indexOf('http') === -1) return ENV.staticUrl + url
   return url
 }
 
