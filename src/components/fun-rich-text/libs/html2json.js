@@ -15,7 +15,7 @@
 import wxDiscode from './wxDiscode'
 import HTMLParser from './htmlparser'
 
-function makeMap (str) {
+function makeMap(str) {
   const obj = {}
   const items = str.split(',')
   for (let i = 0; i < items.length; i += 1) obj[items[i]] = true
@@ -32,12 +32,12 @@ const inline = makeMap('a,abbr,acronym,applet,b,basefont,bdo,big,button,cite,del
 // (and which close themselves)
 const closeSelf = makeMap('colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr')
 
-function removeDOCTYPE (html) {
+function removeDOCTYPE(html) {
   const isDocument = /<body.*>([^]*)<\/body>/.test(html)
   return isDocument ? RegExp.$1 : html
 }
 
-function trimHtml (html) {
+function trimHtml(html) {
   return html
     .replace(/<!--.*?-->/gi, '')
     .replace(/\/\*.*?\*\//gi, '')
@@ -46,7 +46,7 @@ function trimHtml (html) {
     .replace(/<style[^]*<\/style>/gi, '')
 }
 
-function getScreenInfo () {
+function getScreenInfo() {
   const screen = {}
   wx.getSystemInfo({
     success: (res) => {
@@ -57,7 +57,7 @@ function getScreenInfo () {
   return screen
 }
 
-function html2json (html, customHandler, imageProp, host) {
+function html2json(html, customHandler, imageProp, host) {
   // 处理字符串
   html = removeDOCTYPE(html)
   html = trimHtml(html)
@@ -70,7 +70,8 @@ function html2json (html, customHandler, imageProp, host) {
   }
 
   const screen = getScreenInfo()
-  function Node (tag) {
+
+  function Node(tag) {
     this.node = 'element'
     this.tag = tag
 
@@ -78,7 +79,7 @@ function html2json (html, customHandler, imageProp, host) {
   }
 
   HTMLParser(html, {
-    start (tag, attrs, unary) {
+    start(tag, attrs, unary) {
       // node for this element
       const node = new Node(tag)
 
@@ -204,7 +205,7 @@ function html2json (html, customHandler, imageProp, host) {
         bufArray.unshift(node)
       }
     },
-    end (tag) {
+    end(tag) {
       // merge into parent tag
       const node = bufArray.shift()
       if (node.tag !== tag) {
@@ -231,7 +232,7 @@ function html2json (html, customHandler, imageProp, host) {
         parent.nodes.push(node)
       }
     },
-    chars (text) {
+    chars(text) {
       // if (!text.trim()){
       // 	return;
       // }

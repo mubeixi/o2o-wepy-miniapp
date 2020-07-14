@@ -1,6 +1,6 @@
 <style lang="scss">
 
-  .err-msg{
+  .err-msg {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,18 +13,23 @@
     box-sizing: border-box;
     text-align: left;
   }
-  .item{
+
+  .item {
     margin-bottom: 10px;
-    &:last-child{
+
+    &:last-child {
       margin-bottom: 0;
     }
-    .label{
+
+    .label {
 
     }
-    .content{
-      .row{
+
+    .content {
+      .row {
         margin-top: 6px;
-        &:last-child{
+
+        &:last-child {
           margin-top: 0;
         }
       }
@@ -32,16 +37,16 @@
   }
 </style>
 <template>
-    <div class="err-msg" :style="{top:topStr}" v-if="show && errs && errs.length>0" @click="hide">
-<!--    <div v-for="(row,idx) in errs" class="item" :key="idx">-->
-<!--      <div class="label">{{idx}}:</div>-->
-<!--      <div class="content">-->
-<!--        <div class="row" v-for="(msg,idx2) in row" :key="idx2"><span class="p-r-4">*</span><span>{{msg}}</span></div>-->
-<!--      </div>-->
-<!--    </div>-->
+  <div class="err-msg" :style="{top:topStr}" v-if="show && errs && errs.length>0" @click="hide">
+    <!--    <div v-for="(row,idx) in errs" class="item" :key="idx">-->
+    <!--      <div class="label">{{idx}}:</div>-->
+    <!--      <div class="content">-->
+    <!--        <div class="row" v-for="(msg,idx2) in row" :key="idx2"><span class="p-r-4">*</span><span>{{msg}}</span></div>-->
+    <!--      </div>-->
+    <!--    </div>-->
     <div v-for="(row,idx) in errs" class="item" :key="idx">
 
-        <div class="row" ><span class="p-r-4">*</span><span>{{row.message || row}}</span></div>
+      <div class="row"><span class="p-r-4">*</span><span>{{row.message || row}}</span></div>
 
     </div>
   </div>
@@ -50,6 +55,9 @@
   import wepy from '@wepy/core'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       topStr: {
         type: String,

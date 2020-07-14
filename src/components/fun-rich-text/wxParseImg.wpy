@@ -1,19 +1,19 @@
 <template>
-	<view>
-<!--    :class="node.classStr"-->
-<!--    :style="newStyleStr || node.styleStr"-->
-		<image class="wx-parse-img"
-		       :mode="node.attr.mode"
-		       :lazy-load="node.attr.lazyLoad"
-		       :data-src="node.attr.src"
-		       :src="node.attr.src"
-		       @click="wxParseImgTap"
-		       @load="wxParseImgLoad"
-		>
+  <view>
+    <!--    :class="node.classStr"-->
+    <!--    :style="newStyleStr || node.styleStr"-->
+    <image class="wx-parse-img"
+           :mode="node.attr.mode"
+           :lazy-load="node.attr.lazyLoad"
+           :data-src="node.attr.src"
+           :src="node.attr.src"
+           @click="wxParseImgTap"
+           @load="wxParseImgLoad"
+    >
     </image>
 
 
-	</view>
+  </view>
 </template>
 
 <script>
@@ -25,12 +25,12 @@
     props: {
       node: {
         type: Object,
-        default () {
+        default() {
           return {}
         }
       }
     },
-    watch:{
+    watch: {
       // node:{
       //   immediate:true,
       //   deep:true,
@@ -49,11 +49,11 @@
       preview: true
     },
 
-    ready () {
+    ready() {
 
     },
     methods: {
-      _init_func(){
+      _init_func() {
         console.log(objTranslate(this.node))
         wx.downloadFile({
           url: this.node.attr.src, // 仅为示例，并非真实的资源
@@ -94,7 +94,7 @@
         const imageHeightStyle = mode === 'widthFix' ? '' : `height: ${imageheight}px;`
 
         //this.newStyleStr = `${styleStr}; ${imageHeightStyle}; width: ${imageWidth}px; padding: 0 ${+padding}px;`// 删除padding
-        this.newStyleStr = `${styleStr}; ${imageHeightStyle}; width: ${imageWidth}px;`;
+        this.newStyleStr = `${styleStr}; ${imageHeightStyle}; width: ${imageWidth}px;`
       },
       // 计算视觉优先的图片宽高
       wxAutoImageCal(originalWidth, originalHeight) {
@@ -131,10 +131,10 @@
 </script>
 <style scoped lang="scss">
 
-.wx-parse-img{
-  will-change: transform;
-  width: 100%;
-  max-width: 750rpx;
-  vertical-align: top;
-}
+  .wx-parse-img {
+    will-change: transform;
+    width: 100%;
+    max-width: 750rpx;
+    vertical-align: top;
+  }
 </style>

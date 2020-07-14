@@ -1,21 +1,21 @@
 <template>
-    <div>
-      <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-      <div class="items p-t-10">
-        <image @click="scanFn"  class="scan" src="/static/order/saoma.png" />
-        <div>
-          扫码核销
-        </div>
+  <div>
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="items p-t-10">
+      <image @click="scanFn" class="scan" src="/static/order/saoma.png"/>
+      <div>
+        扫码核销
       </div>
-      <div class="items p-t-10" style="margin-top: 70rpx !important;" @click="goOrderCode">
-        <image @click="toCode" class="scan"  src="/static/order/juanma.png" />
-        <div>
-          劵码核销
-        </div>
-      </div>
-
-
     </div>
+    <div class="items p-t-10" style="margin-top: 70rpx !important;" @click="goOrderCode">
+      <image @click="toCode" class="scan" src="/static/order/juanma.png"/>
+      <div>
+        劵码核销
+      </div>
+    </div>
+
+
+  </div>
 </template>
 <script>
   import wepy from '@wepy/core'
@@ -26,11 +26,9 @@
   wepy.page({
     store,
     mixins: [pageMixin],
-    data: {
-
-    },
+    data: {},
     methods: {
-      translateQrData (origin) {
+      translateQrData(origin) {
         if (!origin) {
           error('信息为空')
           return
@@ -58,7 +56,7 @@
         let _self = this
         wx.scanCode({
           scanType: 'qrCode',
-          success: function (res) {
+          success: function(res) {
             const rt = _self.translateQrData(res.result)
             const { act = '', params = {} } = rt
 
@@ -68,7 +66,7 @@
               error('参数有误')
             }
           },
-          fail: function (err) {
+          fail: function(err) {
 
           }
         })
@@ -81,20 +79,19 @@
 </script>
 <style lang="scss">
 
-  .items{
-      width: 640rpx;
-      height: 300rpx;
-      margin: 120rpx auto 0rpx;
-      border-radius:20px;
-      background-color: #FFFFff;
+  .items {
+    width: 640rpx;
+    height: 300rpx;
+    margin: 120rpx auto 0rpx;
+    border-radius: 20px;
+    background-color: #FFFFff;
     text-align: center;
-    .scan{
+
+    .scan {
       width: 180rpx;
       height: 200rpx;
     }
   }
-
-
 
 
 </style>

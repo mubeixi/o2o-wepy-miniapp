@@ -1,22 +1,23 @@
 <template>
   <div class="business-pay">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')"  v-if="type!=2">
+    <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')"
+         v-if="type!=2">
       <div class="form-cell-item__label">选择分类</div>
       <div class="flex flex-vertical-center ">
         <text class="font12 form-cell-color mbx-item">{{bondName}}</text>
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
 
     <div class="form-cell-item flex  flex-vertical-center" v-if="type!=2">
       <div class="form-cell-item__label">保证金</div>
       <div class="form-cell-item__right">
-        <input placeholder-class="__placeholder" :value="bondMoneyLast" disabled class="input" />
+        <input placeholder-class="__placeholder" :value="bondMoneyLast" disabled class="input"/>
       </div>
     </div>
 
-    <div class="form-cell-items"  v-if="type!=3">
+    <div class="form-cell-items" v-if="type!=3">
       <div class="form-cell-item__labels">
         选择年限
       </div>
@@ -34,34 +35,37 @@
       </div>
     </div>
 
-<!--    <div class="form-cell-items">-->
-<!--      <div class="form-cell-item__labels">-->
-<!--        选择支付方式-->
-<!--      </div>-->
-<!--      <div class="flex">-->
-<!--        <div class="form-cell-div flex flex-vertical-center">-->
-<!--          <image src="/static/icon/checkedIcon.png" class="form-img"></image>-->
-<!--          <text class="form-text">支付宝</text>-->
-<!--        </div>-->
-<!--        <div class="form-cell-div flex flex-vertical-center">-->
-<!--          <div class="unchecked"></div>-->
-<!--          <text class="form-text">微信</text>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    <div class="form-cell-items">-->
+    <!--      <div class="form-cell-item__labels">-->
+    <!--        选择支付方式-->
+    <!--      </div>-->
+    <!--      <div class="flex">-->
+    <!--        <div class="form-cell-div flex flex-vertical-center">-->
+    <!--          <image src="/static/icon/checkedIcon.png" class="form-img"></image>-->
+    <!--          <text class="form-text">支付宝</text>-->
+    <!--        </div>-->
+    <!--        <div class="form-cell-div flex flex-vertical-center">-->
+    <!--          <div class="unchecked"></div>-->
+    <!--          <text class="form-text">微信</text>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
 
 
     <div class="pay-detail">
       <div class="pay-detail-div">
         小计：
         <block v-if="type!=2">
-          保证金 <text class="color-font">¥{{bondMoneyLast}}</text>
+          保证金
+          <text class="color-font">¥{{bondMoneyLast}}</text>
         </block>
         <block v-if="type!=3&&type!=2">
-          年费 <text class="color-font">¥{{year_money}}</text>
+          年费
+          <text class="color-font">¥{{year_money}}</text>
         </block>
         <block v-if="type==2">
-          年费 <text class="color-font">¥{{year_fee[ind].value}}</text>
+          年费
+          <text class="color-font">¥{{year_fee[ind].value}}</text>
         </block>
       </div>
     </div>
@@ -69,17 +73,19 @@
 
     <div class="pay-bottom flex flex-vertical-center flex-between">
       <div class="pay-bottom-monery ">
-        总计： <text class="color-font font13 pay-bottom-text">¥</text><text class="color-font font15 pay-bottom-text">{{pay_money}}</text>
+        总计：
+        <text class="color-font font13 pay-bottom-text">¥</text>
+        <text class="color-font font15 pay-bottom-text">{{pay_money}}</text>
       </div>
 
-      <div class="pay-button"  @click="payLast">
+      <div class="pay-button" @click="payLast">
         {{submitName}}
       </div>
-<!--      <button class="pay-button"  open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="payLast">{{submitName}}</button>-->
+      <!--      <button class="pay-button"  open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="payLast">{{submitName}}</button>-->
     </div>
 
-    <popup-layer ref="systemCate" title="选择分类"  >
-      <div v-if="bizList.length>0" :style="{maxHeight:(systemInfo.windowHeight)*0.5+'px'}"  style="overflow: scroll;">
+    <popup-layer ref="systemCate" title="选择分类">
+      <div v-if="bizList.length>0" :style="{maxHeight:(systemInfo.windowHeight)*0.5+'px'}" style="overflow: scroll;">
         <fun-tree
           ele-id="prodSystem"
           ref="systemCateTree"
@@ -154,10 +160,10 @@
         showLoading('提交中')
         this.closePop('payRef')
         wx.login({
-          success (res) {
+          success(res) {
             if (res.code) {
               let code = res.code
-              code2Session({code: code}).then(res => {
+              code2Session({ code: code }).then(res => {
                 hideLoading()
                 if (!res.data.openid) {
                   error('获取支付信息失败')
@@ -207,7 +213,7 @@
             hideLoading()
             let obj = res.data
             if (obj && obj.hasOwnProperty('paySign')) {
-              let {timeStamp, nonceStr, paySign} = obj || {}
+              let { timeStamp, nonceStr, paySign } = obj || {}
               let packages = obj.package
               wx.requestPayment({
                 timeStamp: timeStamp,
@@ -215,11 +221,11 @@
                 package: packages,
                 signType: 'MD5',
                 paySign: paySign,
-                success (res) {
+                success(res) {
                   ls.set('status', 2)
                   linkTo('/pages/index')
                 },
-                fail (res) {
+                fail(res) {
                   console.log(res, 'ss')
                 }
               })
@@ -228,14 +234,16 @@
               // ls.set('status', 2)
               linkTo('/pages/index')
             }
-          }).catch(e => { hideLoading() })
+          }).catch(e => {
+            hideLoading()
+          })
         }).catch(e => {
           hideLoading()
         })
       },
       changeIndex(ind) {
         this.year_fee = this.year_fee.map(item => {
-          return {...item, check: false, sum: (item.value / item.name).toFixed(2)}
+          return { ...item, check: false, sum: (item.value / item.name).toFixed(2) }
         })
         this.ind = ind
         this.year_fee[ind].check = true
@@ -256,7 +264,8 @@
           this.pay_money = res.data.pay_money
           this.year_money = res.data.year_money
           this.bondMoneyLast = res.data.bond_money
-        }).catch(e => {})
+        }).catch(e => {
+        })
       },
       getBizConfig() {
         getBizConfig().then(res => {
@@ -264,10 +273,10 @@
           let arr = JSON.parse(res.data.year_fee)
 
           this.year_fee = arr.map(item => {
-            return {...item, check: false, sum: (item.value / item.name).toFixed(2)}
+            return { ...item, check: false, sum: (item.value / item.name).toFixed(2) }
           })
           this.year_fee = this.year_fee.map(item => {
-            return {...item, check: false, sum: (item.value / item.name).toFixed(2)}
+            return { ...item, check: false, sum: (item.value / item.name).toFixed(2) }
           })
           this.year_fee[0].check = true
           if (this.type == 2) {
@@ -324,14 +333,15 @@
 <style lang="scss">
   /*@import "../../assets/variables.scss";*/
   /*@import "../../assets/mixins.scss";*/
-  .business-pay{
+  .business-pay {
     padding-top: 15px;
     padding-bottom: 98rpx;
     background-color: #ffffff;
     min-height: 100vh;
     box-sizing: border-box;
   }
-  .form-cell-item{
+
+  .form-cell-item {
     height: 49px;
     width: 710rpx;
     margin: 0 auto;
@@ -340,7 +350,8 @@
     box-sizing: border-box;
     border-bottom: 1px solid #EBEBEB;
   }
-  .form-cell-items{
+
+  .form-cell-items {
     width: 710rpx;
     margin: 0 auto;
     font-size: 14px;
@@ -348,64 +359,86 @@
     box-sizing: border-box;
     border-bottom: 1px solid #EBEBEB;
   }
-  .form-cell-color{color: #666666}
-  .form-cell-item__labels{
+
+  .form-cell-color {
+    color: #666666
+  }
+
+  .form-cell-item__labels {
     height: 49px;
     line-height: 49px;
   }
-  .__placeholder{
+
+  .__placeholder {
     color: #CAC8C8;
   }
-  .form-img{
+
+  .form-img {
     width: 20px;
     height: 20px;
   }
-  .form-cell-div{
-    margin-bottom: 18px;height: 20px;font-size: 12px;color: #666666;margin-right: 20px;
+
+  .form-cell-div {
+    margin-bottom: 18px;
+    height: 20px;
+    font-size: 12px;
+    color: #666666;
+    margin-right: 20px;
   }
-  .form-text{
+
+  .form-text {
     margin-left: 10px;
   }
-  .form-cell-item__right{
+
+  .form-cell-item__right {
     flex: 1;
     padding-left: 19px;
     height: 49px;
     line-height: 49px;
     font-size: 13px;
-    .input{
+
+    .input {
       height: 49px;
       line-height: 49px;
       font-size: 13px;
     }
   }
-  .unchecked{
+
+  .unchecked {
     width: 20px;
     height: 20px;
     border: 1px solid #eeeeee;
     box-sizing: border-box;
   }
-  .pay-detail{
+
+  .pay-detail {
     margin-top: 20px;
     height: 12px;
     font-size: 12px;
     color: #333333;
   }
-  .color-font{color: #E41515}
-  .pay-detail-div{
+
+  .color-font {
+    color: #E41515
+  }
+
+  .pay-detail-div {
     height: 12px;
     line-height: 12px;
     float: right;
     margin-right: 10px;
   }
-  .pay-bottom{
+
+  .pay-bottom {
     width: 750rpx;
     height: 98rpx;
     position: fixed;
     bottom: 0px;
     left: 0px;
-    box-shadow:0px 0px 9px 0px rgba(182,182,182,0.43);
+    box-shadow: 0px 0px 9px 0px rgba(182, 182, 182, 0.43);
   }
-  .pay-button{
+
+  .pay-button {
     height: 80rpx;
     width: 276rpx;
     line-height: 80rpx;
@@ -416,7 +449,8 @@
     background-color: #00A8FF;
     border-radius: 20px;
   }
-  .pay-bottom-monery{
+
+  .pay-bottom-monery {
     height: 13px;
     line-height: 13px;
     flex: 1;
@@ -425,24 +459,26 @@
     font-size: 12px;
     color: #333333;
   }
-  .pay-bottom-text{
+
+  .pay-bottom-text {
     height: 13px;
     line-height: 13px;
   }
-.mbx-item{
-  width: 400rpx;
-  height: 49px;
-  line-height: 49px;
-  overflow: hidden;
-  display: inline-block;
-  text-align: right;
-  text-overflow:ellipsis; //溢出用省略号显示
-  white-space:nowrap; //溢出不换行
-}
-  .flex-wrap{
-    flex-wrap: wrap;
+
+  .mbx-item {
+    width: 400rpx;
+    height: 49px;
+    line-height: 49px;
+    overflow: hidden;
+    display: inline-block;
+    text-align: right;
+    text-overflow: ellipsis; //溢出用省略号显示
+    white-space: nowrap; //溢出不换行
   }
 
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
 
 
 </style>

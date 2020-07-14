@@ -26,12 +26,13 @@
 <script>
   // 消息卡片组件
   import wepy from '@wepy/core'
-  import { error, linkTo, modal } from '../common/fun'
+  import { linkTo, modal } from '../common/fun'
 
   wepy.component({
-    props: {
-
+    options: {
+      addGlobalClass: true
     },
+    props: {},
     data: {
       ifshow: false,
       chat: {
@@ -51,7 +52,7 @@
       }
     },
     methods: {
-      toRoom () {
+      toRoom() {
         const chatItem = this.chat
         // 商家得找客户聊
         const str = chatItem.from_uid
@@ -87,11 +88,11 @@
         this.ifshow = false
       }
     }
-})
+  })
 </script>
 <style lang="scss">
   /*@import "../assets/app.scss";*/
-  .im-tip-wrap{
+  .im-tip-wrap {
     position: fixed;
     z-index: 999;
     width: 700rpx;
@@ -101,25 +102,29 @@
     background: #fff;
     border-radius: 20rpx;
     overflow: hidden;
-    box-shadow: rgba(0,0,0,.4) 0 0 10px;
+    box-shadow: rgba(0, 0, 0, .4) 0 0 10px;
     display: flex;
-    .left{
+
+    .left {
       width: 160rpx;
       text-align: center;
       line-height: 140rpx;
     }
-    .right{
+
+    .right {
       width: 540rpx;
       padding: 30rpx 30rpx 30rpx 0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      .nickname{
+
+      .nickname {
         max-width: 400rpx;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .msg{
+
+      .msg {
         max-width: 600rpx;
         white-space: nowrap;
         overflow: hidden;
@@ -130,8 +135,8 @@
 </style>
 <config>
   {
-    "usingComponents": {
-      "icon": "~@/components/icon"
-    }
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
   }
 </config>

@@ -1,7 +1,8 @@
 <style lang="scss">
   @import "../../assets/app.scss";
   @import "../../assets/mixins.scss";
-  .page-wrap{
+
+  .page-wrap {
     padding-bottom: 44px; //.btn的是44px
   }
 
@@ -14,30 +15,34 @@
     height: 1334px;
   }
 
-  .safearea-bottom-btn{
+  .safearea-bottom-btn {
 
   }
 
   //底部距离全局有了
-  .action-btn{
+  .action-btn {
     position: fixed;
     left: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .list{
+
+  .list {
     width: 710rpx;
     margin: 30rpx 20rpx;
     font-size: 14px;
-    .item{
+
+    .item {
       background: white;
       margin-bottom: 30rpx;
       padding: 20rpx;
-      &:last-child{
+
+      &:last-child {
         margin-bottom: 0;
       }
-      .title{
+
+      .title {
         height: 76rpx;
         line-height: 76rpx;
         padding-left: 24rpx;
@@ -50,15 +55,16 @@
     }
   }
 
-  .goods-list{
-    .goods-item{
+  .goods-list {
+    .goods-item {
       padding: 10px;
       border-bottom: 1px solid #DADADA;
-      &:last-child{
+
+      &:last-child {
         border-bottom: none;
       }
 
-      .goods-thumb{
+      .goods-thumb {
         width: 150rpx;
         height: 150rpx;
         background: #f2f2f2;
@@ -66,8 +72,8 @@
       }
     }
 
-    .goods-info{
-      .goods-title{
+    .goods-info {
+      .goods-title {
         margin-bottom: 10px;
         line-height: 20px;
         height: 40px;
@@ -78,10 +84,11 @@
     }
   }
 
-  .actions{
+  .actions {
     margin-top: 15px;
     display: flex;
-    .action{
+
+    .action {
       flex: 1;
       display: flex;
       justify-content: center;
@@ -97,17 +104,19 @@
     <canvas class="myCanvas" id="myCanvas" canvas-id="myCanvas"/>
     <div class="container">
       <div class="list">
-        <div class="item" v-for="(item,idx) in list" :key="idx" >
+        <div class="item" v-for="(item,idx) in list" :key="idx">
           <div class="title">{{item.name}}</div>
-          <div class="goods-list"  @click.stop="$linkTo('/pages/marketing/FlashSaleForm?spike_id='+item.id)">
+          <div class="goods-list" @click.stop="$linkTo('/pages/marketing/FlashSaleForm?spike_id='+item.id)">
             <div class="goods-item flex flex-vertical-center">
-<!--              <div class="goods-thumb" :style="{backgroundImage:'url('+item.spike_goods[0].ImgPath+')'}"></div>-->
+              <!--              <div class="goods-thumb" :style="{backgroundImage:'url('+item.spike_goods[0].ImgPath+')'}"></div>-->
               <image class="goods-thumb" :src="item.spike_goods[0].ImgPath"></image>
               <div class="goods-info flex1">
                 <div class="goods-title">{{item.spike_goods[0].Products_Name}}</div>
                 <div class="price-box flex">
-                  <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{item.spike_goods[0].Products_PriceX}}</span></div>
-                  <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{item.spike_goods[0].Products_PriceY}}</span></div>
+                  <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{item.spike_goods[0].Products_PriceX}}</span>
+                  </div>
+                  <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{item.spike_goods[0].Products_PriceY}}</span>
+                  </div>
                 </div>
               </div>
               <icon type="iconarrowleft" size="14" color="#999"></icon>
@@ -115,16 +124,20 @@
           </div>
           <div class="actions">
             <div class="action" @click.stop="$linkTo('/pages/marketing/FlashSaleForm?spike_id='+item.id)">
-              <icon type="iconbianji1" size="20" color="#999"></icon><span class="m-l-4">编辑</span>
+              <icon type="iconbianji1" size="20" color="#999"></icon>
+              <span class="m-l-4">编辑</span>
             </div>
             <div class="action" v-if="item.status==1" @click.stop="update(item.id,2,idx)">
-              <icon type="iconIcon-jinyong" size="16" color="#666"></icon><span class="m-l-4">禁用</span>
+              <icon type="iconIcon-jinyong" size="16" color="#666"></icon>
+              <span class="m-l-4">禁用</span>
             </div>
             <div class="action" v-else @click.stop="update(item.id,1,idx)">
-              <icon type="iconqiyongzhanghao" size="16" color="#666"></icon><span class="m-l-4">启用</span>
+              <icon type="iconqiyongzhanghao" size="16" color="#666"></icon>
+              <span class="m-l-4">启用</span>
             </div>
             <div class="action" @click="bindShare(item.id)">
-              <icon type="iconfenxiang1" size="16" color="#666"></icon><span class="m-l-4">分享</span>
+              <icon type="iconfenxiang1" size="16" color="#666"></icon>
+              <span class="m-l-4">分享</span>
             </div>
           </div>
         </div>
@@ -151,6 +164,7 @@
   import { getDomain } from '../../common/helper'
   import wxPromisify from '../../common/promisify'
   import { Exception } from '../../common/Exception'
+
   let canvasInstance = null
 
   wepy.page({
@@ -163,7 +177,9 @@
       async bindShare(id) {
         try {
           showLoading('生成中')
-          const posterInfo = await spikeShare({spike_id: id}).then(res => res.data).catch((err) => { throw Error(err.msg || '获取分享海报错误') })
+          const posterInfo = await spikeShare({ spike_id: id }).then(res => res.data).catch((err) => {
+            throw Error(err.msg || '获取分享海报错误')
+          })
           console.log(posterInfo)
 
           if (!posterInfo) throw Error('模板信息有误')
@@ -188,13 +204,19 @@
 
           ctx.fillRect(wrapWidth, wrapHeight, 0, 0)
 
-          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(posterInfo.bg_img) }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
+          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(posterInfo.bg_img) }).catch(e => {
+            throw Error(e.errMsg || '缓存海报背景失败')
+          })
           ctx.drawImage(wrapTempFile.path, 0, 0, wrapWidth, wrapHeight)
 
-          const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => {
+            throw Error(e.errMsg || '缓存二维码失败')
+          })
           ctx.drawImage(qrcodeTempFile.path, 468, 1020, 164, 164)
 
-          const avatarTempFile = await wxPromisify('getImageInfo', { src: userInfo.avatar }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          const avatarTempFile = await wxPromisify('getImageInfo', { src: userInfo.avatar }).catch(e => {
+            throw Error(e.errMsg || '缓存二维码失败')
+          })
           ctx.drawImage(avatarTempFile.path, 120, 1056, 100, 100)
 
           ctx.setFontSize(26)
@@ -202,7 +224,7 @@
           ctx.fillText(userInfo.nickname, 235, 1115) //1086
 
           await new Promise(resolve => {
-            ctx.draw(false, function () {
+            ctx.draw(false, function() {
               console.log('draw done')
               resolve()
             })
@@ -227,21 +249,22 @@
           spike_id: id,
           status: status
         }
-        bizSpikeStatus(data, {tip: '修改中', mask: true}).then(res => {
+        bizSpikeStatus(data, { tip: '修改中', mask: true }).then(res => {
           this._init_func()
         }).catch(e => {
 
         })
       },
       async _init_func() {
-        const {data: flashSaleList} = await bizSpikeList({size: 999}).catch(() => {})
+        const { data: flashSaleList } = await bizSpikeList({ size: 999 }).catch(() => {
+        })
         this.list = flashSaleList
       }
     },
     onShow() {
       this._init_func()
     },
-    onReady () {
+    onReady() {
       canvasInstance = wx.createCanvasContext('myCanvas')
     },
     onLoad() {
@@ -251,12 +274,12 @@
 </script>
 <config>
   {
-    "navigationBarTitleText": "限时抢购",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "wzw-im-tip": "~@/components/wzw-im-tip",
-      "icon": "~@/components/icon",
-      "popup-layer": "~@/components/popup-layer"
-    }
+  "navigationBarTitleText": "限时抢购",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon",
+  "popup-layer": "~@/components/popup-layer"
+  }
   }
 </config>

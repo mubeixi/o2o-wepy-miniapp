@@ -1,55 +1,62 @@
 <template>
   <div class="page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="head" >
-      <div class="base"   v-if="AccessToken">
-        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"  @click.stop="$linkTo('/pages/store/StoreSetting')"></image>
+    <div class="head">
+      <div class="base" v-if="AccessToken">
+        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"
+               @click.stop="$linkTo('/pages/store/StoreSetting')"></image>
         <block v-if="info.biz_shop_name">
           <span class="store-title" @click.stop="$linkTo('/pages/store/StoreSetting')">{{info.biz_shop_name}}</span>
         </block>
         <block v-else>
-          <span class="store-title store-setting-name" @click.stop="$linkTo('/pages/store/StoreInfo')">设置店名 <icon type="iconarrowleft" color="#fdad58"  class="iconarrowleft"></icon></span>
+          <span class="store-title store-setting-name" @click.stop="$linkTo('/pages/store/StoreInfo')">设置店名 <icon
+            type="iconarrowleft" color="#fdad58" class="iconarrowleft"></icon></span>
 
         </block>
 
       </div>
-      <div class="base" @click.stop="$linkTo('/pages/user/login')"  v-else>
-          <div class="login-main">
-            登录/注册
-          </div>
+      <div class="base" @click.stop="$linkTo('/pages/user/login')" v-else>
+        <div class="login-main">
+          登录/注册
+        </div>
       </div>
       <div class="flex flex-vertical-center" v-if="AccessToken && info.apply_switch">
 
-        <div class="action"  v-if="biz_expires&&status==2" @click.stop="goBusiness(1)">
-          <div  class="no-validate"><span class="tip">已过期</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
-          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        <div class="action" v-if="biz_expires&&status==2" @click.stop="goBusiness(1)">
+          <div class="no-validate"><span class="tip">已过期</span>
+            <icon class="iconrenzheng" type="iconrenzheng"></icon>
+          </div>
+          <icon type="iconarrowleft" class="iconarrowleft"></icon>
         </div>
-        <div class="action"  v-else-if="status==2" @click.stop="goBusiness">
-          <div  class="validate"><span class="tip">已认证</span><icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon></div>
-          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        <div class="action" v-else-if="status==2" @click.stop="goBusiness">
+          <div class="validate"><span class="tip">已认证</span>
+            <icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon>
+          </div>
+          <icon type="iconarrowleft" class="iconarrowleft"></icon>
         </div>
-        <div class="action"  v-else  @click.stop="goBusinessMy">
-          <div  class="no-validate" ><span class="tip">未认证</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
-          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        <div class="action" v-else @click.stop="goBusinessMy">
+          <div class="no-validate"><span class="tip">未认证</span>
+            <icon class="iconrenzheng" type="iconrenzheng"></icon>
+          </div>
+          <icon type="iconarrowleft" class="iconarrowleft"></icon>
         </div>
       </div>
       <div class="flex flex-vertical-center" v-if="AccessToken && !info.apply_switch">
 
-        <div class="action"  v-if="biz_expires" @click.stop="goBusiness(1)">
-          <div  class="no-validate"><span class="tip">已过期</span><icon  class="iconrenzheng" type="iconrenzheng"></icon></div>
-          <icon type="iconarrowleft"  class="iconarrowleft"></icon>
+        <div class="action" v-if="biz_expires" @click.stop="goBusiness(1)">
+          <div class="no-validate"><span class="tip">已过期</span>
+            <icon class="iconrenzheng" type="iconrenzheng"></icon>
+          </div>
+          <icon type="iconarrowleft" class="iconarrowleft"></icon>
         </div>
       </div>
     </div>
 
-    <div class="message-list" v-if="messageList.length>0">
-      <icon type="icongonggao" color="#333" size="18"></icon>
-      <div class="content">{{messageList[0].title}}</div>
-    </div>
 
-    <div class="finance-box" >
-      <div class="finance-item"  @click="goBanlance">
-        <div><span class="fz-12" v-if="AccessToken">￥</span><span class="fz-18">{{AccessToken?info.biz_money:'-'}}</span></div>
+    <div class="finance-box">
+      <div class="finance-item" @click="goBanlance">
+        <div><span class="fz-12" v-if="AccessToken">￥</span><span
+          class="fz-18">{{AccessToken?info.biz_money:'-'}}</span></div>
         <span class="title">店铺余额</span>
       </div>
       <div class="space-line"></div>
@@ -59,20 +66,38 @@
       </div>
       <div class="space-line"></div>
       <div class="finance-item" @click="toShare">
-        <icon  type="iconfenxiang" size="22" weight="bold" color="#333"></icon>
+        <icon type="iconfenxiang" size="22" weight="bold" color="#333"></icon>
         <span class="title">分享</span>
       </div>
     </div>
 
+    <div class="message-list" v-if="messageList.length>0" @click="toMessageDetail(messageList[0])">
+      <icon type="icongonggao" color="#FF3E00" size="18"></icon>
+      <div style="flex: 1;" class="content fz-12 c7 p-l-10">{{messageList[0].title}}</div>
+      <div class="flex flex-vertical-center m-l-10">
+        <span class="fz-12" style="color:#FF3D00">详情</span>
+        <icon display="inline" color="#FF3D00" size="14" type="iconarrowleft"></icon>
+      </div>
+    </div>
+
+
     <div class="container">
       <div class="count-box">
         <div class="count-item" @click="goTodayOrder">
-          <div class="val"><icon class="icon" type="iconyuanhuan" color="#FA9981"></icon><div class="fz-16 c333 text-center">{{AccessToken?info.today_order_count:'-'}}</div></div>
+          <div class="val">
+            <icon class="icon" type="iconyuanhuan" color="#FA9981"></icon>
+            <div class="fz-16 c333 text-center">{{AccessToken?info.today_order_count:'-'}}</div>
+          </div>
           <span class="title">今日订单</span>
         </div>
         <div style="width: 50rpx;"></div>
-        <div class="count-item"  @click="goTodayOrderMoney">
-          <div class="val"><icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon><div class="fz-12 c333 text-center"><block v-if="AccessToken">￥</block><span class="fz-16">{{AccessToken?info.today_order_money:'-'}}</span></div></div>
+        <div class="count-item" @click="goTodayOrderMoney">
+          <div class="val">
+            <icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon>
+            <div class="fz-12 c333 text-center">
+              <block v-if="AccessToken">￥</block>
+              <span class="fz-16">{{AccessToken?info.today_order_money:'-'}}</span></div>
+          </div>
           <span class="title">今日订单金额</span>
         </div>
       </div>
@@ -87,7 +112,7 @@
           <div class="grid-item-title">商品管理</div>
         </div>
         <div class="grid-item" @click="goStoreInfo">
-          <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
+          <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"></icon>
           <div class="grid-item-title">修改资料</div>
         </div>
         <div class="grid-item" @click="goStatistics">
@@ -109,7 +134,7 @@
             <!--              </div>-->
           </div>
         </div>
-        <div class="grid-item"  @click="goStoreSetting">
+        <div class="grid-item" @click="goStoreSetting">
           <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
           <div class="grid-item-title">店铺设置</div>
         </div>
@@ -128,26 +153,26 @@
             退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
           </div>
         </div>
-        <div class="grid-item"   @click="goVip">
+        <div class="grid-item" @click="goVip">
           <icon type="iconMember" class="grid-item-icon" size="28" color="#17ccce"></icon>
           <div class="grid-item-title">会员管理</div>
         </div>
-        <div class="grid-item" @click="goLive"  v-if="AccessToken&&info.live_flag===1">
+        <div class="grid-item" @click="goLive" v-if="AccessToken&&info.live_flag===1">
           <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
           <div class="grid-item-title">直播申请</div>
         </div>
-        <div class="grid-item" @click="goRecommend"  v-if="cash_from===2">
+        <div class="grid-item" @click="goRecommend" v-if="cash_from===2">
           <icon type="iconfankui" class="grid-item-icon" size="28" color="#f54012"></icon>
           <div class="grid-item-title">反馈建议</div>
         </div>
-<!--        <div class="grid-row">-->
-<!--        </div>-->
-<!--        <div class="grid-row">-->
-<!--        </div>-->
-<!--        <div class="grid-row">-->
-<!--        </div>-->
-<!--        <div class="grid-row" >-->
-<!--        </div>-->
+        <!--        <div class="grid-row">-->
+        <!--        </div>-->
+        <!--        <div class="grid-row">-->
+        <!--        </div>-->
+        <!--        <div class="grid-row">-->
+        <!--        </div>-->
+        <!--        <div class="grid-row" >-->
+        <!--        </div>-->
       </div>
 
     </div>
@@ -156,7 +181,7 @@
       <copyright></copyright>
     </div>
 
-<!--    <fun-tabbar></fun-tabbar>-->
+    <!--    <fun-tabbar></fun-tabbar>-->
   </div>
 </template>
 
@@ -164,19 +189,19 @@
   import wepy from '@wepy/core'
   import store from '../store'
   import pageMixin from '../mixins'
-  import { spaceImg } from '../common/env'
+  import ENV from '@/common/env'
 
-  import { bizLogin, bizMessageList, initInfo } from '../api/system'
-  import { getBizInfo } from '../api/store'
-  import { linkTo } from '../common/fun'
-  import { getOrderNum, getBackOrderNum } from '../api/order'
-  import { checkIsLogin, checkIsSettle, confirm, findArrayIdx, getArrColumn, ls } from '../common/helper'
+  import { bizLogin, bizMessageList, initInfo } from '@/api/system'
+  import { getBizInfo } from '@/api/store'
+  import { linkTo } from '@/common/fun'
+  import { getBackOrderNum, getOrderNum } from '@/api/order'
+  import { checkIsLogin, checkIsSettle, confirm, ls } from '@/common/helper'
   import IM from '../common/Im/Im'
-  import { Exception } from '../common/Exception'
+  import { Exception } from '@/common/Exception'
   import eventHub from '../common/eventHub'
-  import { getAccessToken } from '../common/request'
+  import { getAccessToken } from '@/common/request'
   import { getLiveApplyStatus } from '@/api/live'
-  const moment = require('moment')
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -192,7 +217,7 @@
         waitprocess: 0,
         waitconfirm: 0
       },
-      orderNum: {waitsend: 0},
+      orderNum: { waitsend: 0 },
       info: {},
       status: 1,
       cash_from: 1,
@@ -205,6 +230,9 @@
       }
     },
     methods: {
+      toMessageDetail(message) {
+        this.$linkTo('/pages/message/detail?id=' + message.id)
+      },
       goModule() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreAvailibleSkin')
@@ -244,7 +272,7 @@
       },
       goTodayOrderMoney() {
         if (!checkIsLogin(1, 1)) return
-       // if (!checkIsSettle(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/statistics/dashboard?tabActiveIdx=2&today=1')
       },
       goTodayOrder() {
@@ -269,11 +297,11 @@
       },
       goOrder() {
         if (!checkIsLogin(1, 1)) return
-       // if (!checkIsSettle(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         linkTo('/pages/order/OrderList')
       },
       goMarketing() {
-         // if (!checkIsSettle(1, 1)) return
+        // if (!checkIsSettle(1, 1)) return
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreMarketing')
       },
@@ -322,7 +350,7 @@
         if (checkIsLogin(false, false)) this.$linkTo('/pages/store/StoreInfo')
       },
       repalceImg() {
-        this.info.biz_logo = spaceImg
+        this.info.biz_logo = ENV.spaceImg
       },
       login() {
         let data = {
@@ -344,11 +372,13 @@
         }
       },
       async _init_func() {
-        this.messageList = await bizMessageList({home_show: 1, biz_id: ''}).then(res => res.data).catch(err => { console.log('获取首页公告失败：', err) })
+        this.messageList = await bizMessageList({ home_show: 1, biz_id: '' }).then(res => res.data).catch(err => {
+          console.log('获取首页公告失败：', err)
+        })
       },
       async getInit() {
         try {
-        // 初始化商户信息
+          // 初始化商户信息
           await initInfo().then(res => {
             this.info = res.data
             this.info.live_flag = Number(this.info.live_flag)
@@ -356,11 +386,17 @@
             if (this.info.apply_switch && this.info.real_status != 2) {
               confirm({ title: '提示', content: '你还未入驻成功，即将前往入驻页面' }).then(() => {
                 linkTo('/pages/join/BusinessStation')
-              }).catch(() => { throw Error('nocare') })
+              }).catch(() => {
+                throw Error('nocare')
+              })
             }
-          }).catch(err => { throw Error(err.msg) })
+          }).catch(err => {
+            throw Error(err.msg)
+          })
 
-          let arr = await getBizInfo({}, {onlyData: true}).catch(e => { throw Error(e.msg) })
+          let arr = await getBizInfo({}, { onlyData: true }).catch(e => {
+            throw Error(e.msg)
+          })
           this.infoData = arr[0]
 
           // if (this.infoData.biz_expires != 0) {
@@ -387,12 +423,16 @@
           this.$store.commit('SET_BIZ_INFO', this.infoData)
 
           // 订单角标
-          this.orderNum = await getOrderNum({}).then(res => res.data).catch(err => {})
-          this.orderBackNum = await getBackOrderNum({}).then(res => res.data).catch(err => {})
+          this.orderNum = await getOrderNum({}).then(res => res.data).catch(err => {
+          })
+          this.orderBackNum = await getBackOrderNum({}).then(res => res.data).catch(err => {
+          })
           this.orderBackNum.orderSum = this.orderBackNum.waitprocess * 1 + this.orderBackNum.waitconfirm * 1
 
           // 直播的事情
-          const live = await getLiveApplyStatus().then(res => res.data).catch(err => { throw Error(err.msg) })
+          const live = await getLiveApplyStatus().then(res => res.data).catch(err => {
+            throw Error(err.msg)
+          })
           if (live) {
             this.liveInfo = live
           }
@@ -401,7 +441,12 @@
             // IM全局
             const imInstance = new IM()
             // 设置本地用户信息
-            imInstance.setSendInfo({ type: 'biz', id: this.infoData.id, name: this.infoData.biz_shop_name, avatar: this.infoData.biz_logo })
+            imInstance.setSendInfo({
+              type: 'biz',
+              id: this.infoData.id,
+              name: this.infoData.biz_shop_name,
+              avatar: this.infoData.biz_logo
+            })
             await imInstance.start() // 等拿token
 
             imInstance.openListen()
@@ -447,24 +492,32 @@
   /*@import "../assets/variables.scss";*/
   /*@import "../assets/mixins.scss";*/
 
-  .message-list{
+  .message-list {
+    margin: 30rpx 0rpx 0;
+    background: #FFF3F0;
+    padding: 20rpx;
     display: flex;
-    .content{
-      width: 400rpx;
+    align-items: center;
+    color: #fff;
+
+    .content {
+
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
     }
   }
-  .page-wrap{
+
+  .page-wrap {
     padding-bottom: 50px;
   }
-  .order-tag{
-    color:#fff;
+
+  .order-tag {
+    color: #fff;
     display: block;
     width: 10px;
-    height:10px;
-    font-size:10px;
+    height: 10px;
+    font-size: 10px;
     text-align: center;
     line-height: 10px;
     border-radius: 50%;
@@ -472,86 +525,100 @@
     background: red;
     margin-left: 4px;
   }
+
   /** 顶部start **/
-  .head{
+  .head {
     display: flex;
     //align-items: center;
     justify-content: space-between;
 
-    .base{
-      flex:1;
+    .base {
+      flex: 1;
       padding: 10px 0;
       display: flex;
       align-items: center;
-      .store-logo{
+
+      .store-logo {
         margin: 0 10px;
         width: 90rpx;
         height: 90rpx;
         overflow: hidden;
         border-radius: 50%;
       }
-      .store-title{
+
+      .store-title {
         color: #333;
         font-weight: bold;
       }
     }
-    .action{
+
+    .action {
       padding: 10px 0;
       display: flex;
       align-items: center;
-      .validate{
+
+      .validate {
         display: flex;
         align-items: center;
-        .tip{
+
+        .tip {
           color: $fun-primary-color;
           font-size: 12px;
           padding-right: 4px;
         }
-        .iconrenzheng{
+
+        .iconrenzheng {
           color: $fun-primary-color;
           font-size: 14px;
         }
       }
 
-      .no-validate{
+      .no-validate {
         display: flex;
         align-items: center;
-        .tip{
+
+        .tip {
           color: #999;
           font-size: 12px;
           padding-right: 4px;
         }
-        .iconrenzheng{
+
+        .iconrenzheng {
           color: #999;
           font-size: 14px;
         }
       }
-      .iconarrowleft{
+
+      .iconarrowleft {
         font-size: 18px;
         padding: 0 10px;
         color: #666;
       }
     }
   }
+
   /** 顶部end **/
 
   /** 数据汇总 start **/
-  .finance-box{
+  .finance-box {
     margin: 30rpx;
     display: flex;
     width: 690rpx;
     height: 165rpx;
     background: #fff;
     align-items: center;
-    .space-line{
+
+    .space-line {
       height: 68rpx;
       width: 2rpx;
       background: #e3e3e3;
     }
-    .finance-item{
+
+    .finance-item {
       flex: 1;
       text-align: center;
-      .title{
+
+      .title {
         padding: 6px 0;
         display: block;
         font-size: 14px;
@@ -559,36 +626,42 @@
       }
     }
   }
+
   /** 数据汇总 end **/
 
   /** 正文 **/
-  .container{
+  .container {
     background: #fff;
   }
+
   /** 订单数据汇总start **/
-  .count-box{
+  .count-box {
     width: 600rpx;
     padding: 40rpx 65rpx;
     color: #4A4A4A;
     font-size: 14px;
     display: flex;
     text-align: center;
-    .count-item{
+
+    .count-item {
       width: 286rpx;
       height: 92rpx;
       padding: 25rpx 0;
       background: #F5F6FF;
       border-radius: 10rpx;
-      .val{
+
+      .val {
         position: relative;
-        .icon{
+
+        .icon {
           position: absolute;
           left: 30rpx;
           top: 50%;
           transform: translateY(-50%);
         }
       }
-      .title{
+
+      .title {
         margin-top: 16rpx;
         display: block;
         color: #999;
@@ -596,10 +669,11 @@
       }
     }
   }
+
   /** 订单数据汇总end **/
 
   /*九宫格 start*/
-  .grid{
+  .grid {
     border-top: 1rpx solid #e7e7e7;
     display: flex;
     flex-wrap: wrap;
@@ -609,7 +683,7 @@
     /*  box-sizing: border-box;*/
     /*  border-bottom: 1rpx solid #e7e7e7;*/
     /*}*/
-    &-item{
+    &-item {
       border-right: 1px solid #e7e7e7;
       border-bottom: 1px solid #e7e7e7;
       box-sizing: border-box;
@@ -620,24 +694,27 @@
       justify-content: center;
       flex-direction: column;
 
-      &-title{
+      &-title {
         padding-top: 20rpx;
         font-size: 12px;
         color: #8D8D8D;
       }
-      &-icon{
+
+      &-icon {
 
       }
     }
   }
+
   /*九宫格 end*/
-  .login-main{
+  .login-main {
     margin: 0 auto;
     font-size: 18px;
     padding: 10rpx;
     font-weight: bold;
   }
-  .store-setting-name{
+
+  .store-setting-name {
     display: flex;
     align-items: center;
     color: #fdad58 !important;
@@ -649,13 +726,13 @@
 </style>
 <config>
   {
-    "navigationBarTitleText": "店铺管理",
-    "navigationBarTextStyle": "black",
-    "navigationBarBackgroundColor": "#f8f8f8",
-    "usingComponents": {
-      "wzw-im-tip": "~@/components/wzw-im-tip",
-      "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon"
-    }
+  "navigationBarTitleText": "店铺管理",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#f8f8f8",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon"
+  }
   }
 </config>

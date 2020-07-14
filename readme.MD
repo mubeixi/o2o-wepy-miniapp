@@ -57,6 +57,19 @@ WePY (发音: /'wepi/) 项目启动于 2016 年 11 月份， 是小程序最早�
 ##### 跨页面触发事件
 参见本项目的src/common/eventHub.js文件
 
+##### 组件中要继承app.scss中的样式
+```javascript
+  // https://github.com/Tencent/wepy/issues/2507
+  // https://developers.weixin.qq.com/miniprogram/dev/framework/custom-component/wxml-wxss.html
+  import wepy from '@wepy/core'
+
+  wepy.component({
+    options: {
+      addGlobalClass: true
+    }
+  })
+```
+
 ## 项目文件目录
 #### 组件和页面命名
 1.不推荐使用单个单词组成文件/组件名

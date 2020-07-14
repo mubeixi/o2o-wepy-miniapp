@@ -11,11 +11,13 @@
 
     <div class="AlbumList-list">
       <block v-for="(item,index) of albumList" :key="index">
-        <div class="AlbumList-item preview"  v-if="item.temp">
+        <div class="AlbumList-item preview" v-if="item.temp">
           <image :src="item.photo_img" class="AlbumList-img" @click="bindThumbClick(index,item.photo_img)"></image>
           <div class="pre-mask"></div>
-          <div class="AlbumList-img-progress" v-if="imgTempList[index].task_progress &&  imgTempList[index].task_progress<100">
-            <progress :percent="imgTempList[index].task_progress" font-size="12" show-info activeColor="#fff" duration="50" stroke-width="3" />
+          <div class="AlbumList-img-progress"
+               v-if="imgTempList[index].task_progress &&  imgTempList[index].task_progress<100">
+            <progress :percent="imgTempList[index].task_progress" font-size="12" show-info activeColor="#fff"
+                      duration="50" stroke-width="3"/>
           </div>
           <icon v-if="showEdit&&item.checked" type="iconcheckbox-check" color="#eb5648" size="24" class="del-icon"
           ></icon>
@@ -25,25 +27,25 @@
         <div class="AlbumList-item" v-if="!item.temp">
           <image :src="item.photo_img" class="AlbumList-img" @click="bindThumbClick(index,item.photo_img)"></image>
           <icon v-if="showEdit&&item.checked" type="iconcheckbox-check" color="#eb5648" size="24" class="del-icon"
-                ></icon>
+          ></icon>
           <icon v-if="showEdit" type="iconcheckbox" color="#eb5648" size="24" class="del-icon"
-               ></icon>
-<!--          <div class="AlbumList-img-title">-->
-<!--            {{item.desc}}-->
-<!--          </div>-->
+          ></icon>
+          <!--          <div class="AlbumList-img-title">-->
+          <!--            {{item.desc}}-->
+          <!--          </div>-->
         </div>
       </block>
 
 
-<!--      <block v-for="(item,index) of albumList" :key="index">-->
-<!--        <div class="AlbumList-item preview"  v-if="item.temp">-->
-<!--          <image :src="item.photo_img" class="AlbumList-img" @click="bindThumbClick(index,item.photo_img)"></image>-->
-<!--          <div class="pre-mask"></div>-->
-<!--          <div class="AlbumList-img-progress" v-if="imgTempList[index].task_progress &&  imgTempList[index].task_progress<100">-->
-<!--            <progress :percent="imgTempList[index].task_progress" font-size="12" show-info activeColor="#fff" duration="50" stroke-width="3" />-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </block>-->
+      <!--      <block v-for="(item,index) of albumList" :key="index">-->
+      <!--        <div class="AlbumList-item preview"  v-if="item.temp">-->
+      <!--          <image :src="item.photo_img" class="AlbumList-img" @click="bindThumbClick(index,item.photo_img)"></image>-->
+      <!--          <div class="pre-mask"></div>-->
+      <!--          <div class="AlbumList-img-progress" v-if="imgTempList[index].task_progress &&  imgTempList[index].task_progress<100">-->
+      <!--            <progress :percent="imgTempList[index].task_progress" font-size="12" show-info activeColor="#fff" duration="50" stroke-width="3" />-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </block>-->
 
     </div>
 
@@ -81,7 +83,14 @@
   import pageMixin from '../../mixins'
   import { delPhoto, getAlbumList, getPhotoList, movePhoto, opPhoto } from '../../api/store'
   import { error, hideLoading, showLoading, toast } from '../../common/fun'
-  import { chooseImageByPromise, confirm, getArrColumn, getDomain, uploadImages, createUpTaskArr } from '../../common/helper'
+  import {
+    chooseImageByPromise,
+    confirm,
+    createUpTaskArr,
+    getArrColumn,
+    getDomain,
+    uploadImages
+  } from '../../common/helper'
   import { Exception } from '../../common/Exception'
 
   wepy.page({
@@ -119,7 +128,9 @@
 
           this.$set(this, 'imgTempList', imgTempListTemp.concat(arr1))
 
-          const tempArr = arr1.map(item => { return {photo_img: item.path, temp: 1,checked:false} })
+          const tempArr = arr1.map(item => {
+            return { photo_img: item.path, temp: 1, checked: false }
+          })
           // for (var img of tempArr) {
           //   this.albumList.push(img)
           // }
@@ -135,7 +146,9 @@
             // this.$set(this.albumList[i + tempLen], 'photo_img', getDomain(ossUrls[i]))
           }
 
-          await opPhoto({photo_img: ossUrls.join(','), cate_id: this.cate_id}).catch(err => { throw Error(err.msg) })
+          await opPhoto({ photo_img: ossUrls.join(','), cate_id: this.cate_id }).catch(err => {
+            throw Error(err.msg)
+          })
           // this.albumList = this.albumList.concat(ossUrls)
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
@@ -324,15 +337,15 @@
     position: relative;
     margin-right: 6rpx;
 
-    .preview{
-      .pre-mask{
+    .preview {
+      .pre-mask {
         position: absolute;
         left: 0;
         top: 0;
         right: 0;
         bottom: 0;
         z-index: 3;
-        background: rgba(0,0,0,.7);
+        background: rgba(0, 0, 0, .7);
       }
     }
   }
@@ -364,7 +377,7 @@
     font-size: 14px;
   }
 
-  .AlbumList-img-progress{
+  .AlbumList-img-progress {
     position: absolute;
     top: 50%;
     left: 0;

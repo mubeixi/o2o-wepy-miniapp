@@ -2,25 +2,25 @@
 
 </style>
 <template>
-<div class="page-wrap">
-  <template v-if="forms.length>0">
-    <diy-form  @update="upForm"  eid="xxxxx" ref="formdemo" :forms="forms"></diy-form>
-  </template>
-</div>
+  <div class="page-wrap">
+    <template v-if="forms.length>0">
+      <diy-form @update="upForm" eid="xxxxx" ref="formdemo" :forms="forms"></diy-form>
+    </template>
+  </div>
 </template>
 <script>
   import wepy from '@wepy/core'
   import store from '../store'
   import pageMixin from '../mixins'
-  import {objTranslate, findArrayIdx} from '@/common/helper'
+  import { objTranslate } from '@/common/helper'
 
   const infoTmpl = [
     { label: '企业名称', name: 'company', required: true, type: 'input', value: '', desc: '', autoDesc: true },
     { label: '地址', name: 'address', required: true, type: 'input', value: '', desc: '', autoDesc: true },
-    { label: '邮编', name: 'postal_code', required: true, type: 'input', value: '', desc: '', autoDesc: true},
+    { label: '邮编', name: 'postal_code', required: true, type: 'input', value: '', desc: '', autoDesc: true },
     { label: '联系人', name: 'linkname', required: true, type: 'input', value: '', desc: '', autoDesc: true },
     { label: '电话', name: 'link', required: true, type: 'input', value: '', desc: '', autoDesc: true },
-    { label: '邮箱', name: 'email', required: true, type: 'input', value: '', desc: '', autoDesc: true},
+    { label: '邮箱', name: 'email', required: true, type: 'input', value: '', desc: '', autoDesc: true },
     { label: '企业简介', name: 'description', required: true, type: 'file', limit: 3, count: 0, value: '', desc: '' }
   ]
 
@@ -31,19 +31,17 @@
       forms: [],
       postData: {}
     },
-    computed: {
-
-    },
+    computed: {},
     methods: {
       upForm(data) {
         const _data = objTranslate(data)
         this.postData = _data
       },
-      async _init_func (options) {
+      async _init_func(options) {
         const _infoTmpl = objTranslate(infoTmpl)
         // 自动加desc
         for (const row of _infoTmpl) {
-          if (row.type === 'input' && !row.desc && row.autoDesc)row.desc = `请输入${row.label}`
+          if (row.type === 'input' && !row.desc && row.autoDesc) row.desc = `请输入${row.label}`
         }
 
         this.$set(this, 'forms', objTranslate(_infoTmpl))
@@ -62,10 +60,10 @@
 </script>
 <config>
   {
-    "navigationBarTitleText": "demo",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "diy-form": "~@/components/diy-form-format"
-    }
+  "navigationBarTitleText": "demo",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "diy-form": "~@/components/diy-form-format"
+  }
   }
 </config>

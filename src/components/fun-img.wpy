@@ -1,24 +1,27 @@
 <style lang="scss">
-.fun-img{
-  overflow: hidden;
-}
+  .fun-img {
+    overflow: hidden;
+  }
 </style>
 <template>
   <image
-  class="fun-img"
-  :src="url"
-  :mode="mode"
-  :lazy-load="lazyLoad"
-  :webp="webp"
-  binderror="bindImgError"
-  @click="_onClick"
-  :style="{width:width,height:height,borderRadius:borderRadius}"
+    class="fun-img"
+    :src="url"
+    :mode="mode"
+    :lazy-load="lazyLoad"
+    :webp="webp"
+    binderror="bindImgError"
+    @click="_onClick"
+    :style="{width:width,height:height,borderRadius:borderRadius}"
   ></image>
 </template>
 <script>
   import wepy from '@wepy/core'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       src: {
         type: String,
@@ -56,11 +59,11 @@
       this.url = this.src
     },
     methods: {
-      bindImgError: function (e) {
+      bindImgError: function(e) {
         // 可以考虑上报图片资源加载失败的情况
         this.url = '/static/placehold.jpg'
       },
-      _onClick () {
+      _onClick() {
         this.$emit('click')
       }
     }

@@ -6,7 +6,7 @@
         <div class="imgDiv">
           <fun-img class="imgHund" :src="item.prod_img"></fun-img>
         </div>
-        <div class="textRight" >
+        <div class="textRight">
           <div class="productName">
             {{item.prod_name}}
           </div>
@@ -92,11 +92,11 @@
     <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
     <!--action-btn全局有样式-->
-    <div class="submit"  v-if="listData.Back_Status==2"  @click="sureOrder">
+    <div class="submit" v-if="listData.Back_Status==2" @click="sureOrder">
       确认收货
     </div>
-    <div class="submit-button"  v-if="listData.Back_Status==0">
-      <div class="button-sub" style="background-color: #cccccc"  @click="refundOrder">
+    <div class="submit-button" v-if="listData.Back_Status==0">
+      <div class="button-sub" style="background-color: #cccccc" @click="refundOrder">
         拒绝退款
       </div>
       <div class="button-sub" @click="confirmOrder">
@@ -107,7 +107,7 @@
     <div class="zhezhao" catchtouchmove="true" v-if="show">
       <div class="input-wrap">
         <div>请输入拒绝原因</div>
-        <textarea auto-height  class="input" placeholder="请输入原因" v-model="reason" style="width: 100%;"></textarea>
+        <textarea auto-height class="input" placeholder="请输入原因" v-model="reason" style="width: 100%;"></textarea>
         <div class="btns">
           <div @click="show=false" class="btn">取消</div>
           <div @click="confirmInput" class="btn">确定</div>
@@ -118,8 +118,8 @@
     <div class="zhezhao" catchtouchmove="true" v-if="showSure">
       <div class="input-wrap">
         <div>确认收货</div>
-        <input   type="digit" class="input"  placeholder="请输入退款金额" v-model="Amount" style="width: 100%;" />
-        <textarea auto-height   class="input" placeholder="请输入原因" v-model="reasonSure" style="width: 100%;"></textarea>
+        <input type="digit" class="input" placeholder="请输入退款金额" v-model="Amount" style="width: 100%;"/>
+        <textarea auto-height class="input" placeholder="请输入原因" v-model="reasonSure" style="width: 100%;"></textarea>
         <div class="btns">
           <div @click="showSure=false" class="btn">取消</div>
           <div @click="confirmSure" class="btn">确定</div>
@@ -135,8 +135,15 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getBackOrderDetail, systemSendOrder, systemRefuseApply, systemConfirmApply, systemReceiptRefundProd } from '../../api/order'
+  import {
+    getBackOrderDetail,
+    systemConfirmApply,
+    systemReceiptRefundProd,
+    systemRefuseApply,
+    systemSendOrder
+  } from '../../api/order'
   import { back, error, toast } from '../../common/fun'
+
   const moment = require('moment')
   wepy.page({
     store,
@@ -183,14 +190,14 @@
           Amount: this.Amount
         }
         let that = this
-        systemReceiptRefundProd(data, {tip: 'loading', mask: true}).then(res => {
+        systemReceiptRefundProd(data, { tip: 'loading', mask: true }).then(res => {
           toast('退款成功')
           this.showSure = false
           setTimeout(function() {
             that.$back()
           }, 1000)
         }).catch(e => {
-          error(e.msg||'收货失败')
+          error(e.msg || '收货失败')
           this.showSure = false
         })
       },
@@ -203,7 +210,7 @@
           reason: this.reason
         }
         let that = this
-        systemConfirmApply(data, {tip: 'loading', mask: true}).then(res => {
+        systemConfirmApply(data, { tip: 'loading', mask: true }).then(res => {
           toast('接受退款成功')
 
           setTimeout(function() {
@@ -224,7 +231,7 @@
           reason: this.reason
         }
         let that = this
-        systemRefuseApply(data, {tip: 'loading', mask: true}).then(res => {
+        systemRefuseApply(data, { tip: 'loading', mask: true }).then(res => {
           toast('拒绝退款成功')
 
           setTimeout(function() {
@@ -268,7 +275,9 @@
         this.index = e.$wx.detail.value
       },
       async getOrderDetail() {
-        let arr = await getBackOrderDetail({Back_ID: this.order_id}, {onlyData: true, tip: 'loading'}).catch(e => { error(e.msg)})
+        let arr = await getBackOrderDetail({ Back_ID: this.order_id }, { onlyData: true, tip: 'loading' }).catch(e => {
+          error(e.msg)
+        })
         this.listData = arr
 
         this.listData.Order_CreateTime = moment(arr.Order_CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
@@ -301,7 +310,7 @@
 </script>
 <style lang="scss">
 
-  .marginAuto{
+  .marginAuto {
     width: 710rpx;
     margin: 0 auto;
     margin-top: 26rpx;
@@ -311,27 +320,32 @@
     padding: 0rpx 0rpx 18rpx 0rpx;
     border-radius: 10rpx;
   }
-  .blockDiv{
+
+  .blockDiv {
     width: 664rpx;
     height: 220rpx;
     display: flex;
     padding-left: 14rpx;
     padding-top: 20rpx;
   }
-  .imgDiv{
+
+  .imgDiv {
     width: 220rpx;
     height: 220rpx;
   }
+
   .textRight {
     padding-left: 20rpx;
     width: 440rpx;
   }
-  .imgHund{
+
+  .imgHund {
     width: 100%;
     height: 100%;
   }
-  .productName{
-    width:100%;
+
+  .productName {
+    width: 100%;
     height: 60rpx;
     line-height: 30rpx;
     overflow: hidden;
@@ -341,19 +355,22 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
-  .skuMy{
+
+  .skuMy {
     color: #666666;
     font-size: 12px;
     margin-top: 28rpx;
   }
-  .bottomDiv{
+
+  .bottomDiv {
     margin-top: 26rpx;
     height: 50rpx;
     display: flex;
     align-content: center;
     justify-content: space-between;
   }
-  .skuCount{
+
+  .skuCount {
     // width: 150rpx;
     height: 50rpx;
     background-color: #EDF9FF;
@@ -364,59 +381,69 @@
     padding-left: 8px;
     padding-right: 8px;
   }
-  .allPrice{
+
+  .allPrice {
     font-size: 30rpx;
     color: #333333;
     height: 50rpx;
     line-height: 50rpx;
   }
-  .span1{
+
+  .span1 {
     color: #F43131;
   }
-  .span2{
+
+  .span2 {
     color: #F43131;
     font-size: 28rpx;
     margin-left: 4rpx;
   }
-  .mbxa{
+
+  .mbxa {
     display: flex;
     align-items: center;
     margin-right: 10rpx;
-    .imgs{
+
+    .imgs {
       width: 34rpx;
       height: 34rpx;
     }
   }
-  .buttonLast{
+
+  .buttonLast {
     margin-top: 24rpx;
     display: flex;
     justify-content: space-between;
     height: 45rpx;
-    .divFont{
+
+    .divFont {
       font-size: 24rpx;
       color: #F43131;
     }
-    .spanFont{
+
+    .spanFont {
       font-size: 30rpx;
       color: #F43131;
       margin-left: 3px;
     }
-    .spanJu{
-      width:80rpx;
-      height:45rpx;
-      background:#EEEEEE;
-      border-radius:5px;
+
+    .spanJu {
+      width: 80rpx;
+      height: 45rpx;
+      background: #EEEEEE;
+      border-radius: 5px;
       font-size: 24rpx;
       color: #666666;
       display: inline-block;
       line-height: 45rpx;
       text-align: center;
     }
-    .spanFa{
-      width:95rpx;
-      height:45rpx;
-      background:#F43131;
-      border-radius:5px;
+
+    .spanFa {
+      width: 95rpx;
+      height: 45rpx;
+      background: #F43131;
+      border-radius: 5px;
       font-size: 24rpx;
       line-height: 45rpx;
       text-align: center;
@@ -425,13 +452,15 @@
       margin-left: 24rpx;
     }
   }
-  .orderDetail{
+
+  .orderDetail {
     width: 710rpx;
     margin: 0 auto;
     margin-top: 30rpx;
     background-color: #FFFFFF;
     border-radius: 10rpx;
-    .orderDetailTop{
+
+    .orderDetailTop {
       width: 100%;
       height: 70rpx;
       line-height: 70rpx;
@@ -443,34 +472,40 @@
       border-bottom: 1px solid #E6E6E6;
 
     }
-    .orderDetailBottom{
+
+    .orderDetailBottom {
       padding: 26rpx 0rpx 40rpx 20rpx;
       font-size: 13px;
       color: #333333;
-      .divHeight{
+
+      .divHeight {
         height: 48rpx;
         line-height: 48rpx;
       }
-      .divHeight-list{
+
+      .divHeight-list {
         line-height: 48rpx;
       }
 
     }
-    .orderDetailOther{
+
+    .orderDetailOther {
       padding-left: 20rpx;
       padding-right: 20rpx;
       width: 670rpx;
       box-sizing: border-box;
       font-size: 28rpx;
       color: #333333;
-      .inputView{
+
+      .inputView {
         height: 100rpx;
         width: 670rpx;
         border-bottom: 1px solid #EBEBEB;
         display: flex;
         align-items: center;
       }
-      .picker{
+
+      .picker {
         flex: 1;
         height: 100rpx;
         line-height: 100rpx;
@@ -482,24 +517,26 @@
   }
 
 
-  .leftDiv{
+  .leftDiv {
     background-color: #00A8FF;
     width: 3px;
     height: 15px;
     margin-right: 15rpx;
     border-radius: 15rpx;
   }
-  .fontColor{
+
+  .fontColor {
     color: #777777;
     margin-left: 2px;
   }
-  .fontColorRed{
+
+  .fontColorRed {
     color: #F43131 !important;
   }
 
-  .submit{
-    width:750rpx;
-    height:86rpx;
+  .submit {
+    width: 750rpx;
+    height: 86rpx;
     background-color: #00A8FF;
     line-height: 85rpx;
     text-align: center;
@@ -509,9 +546,10 @@
     bottom: 0rpx;
     z-index: 9;
   }
-  .submit-button{
-    width:750rpx;
-    height:86rpx;
+
+  .submit-button {
+    width: 750rpx;
+    height: 86rpx;
     background-color: #00A8FF;
     line-height: 85rpx;
     font-size: 32rpx;
@@ -522,53 +560,56 @@
     display: flex;
     align-items: center;
   }
-  .button-sub{
+
+  .button-sub {
     height: 86rpx;
     flex: 1;
     text-align: center;
     line-height: 86rpx;
   }
+
   .zhezhao {
-     left: 0;
-     top: 0;
-     position: fixed;
-     width: 100%;
-     height: 100%;
-     background: rgba(0,0,0,.3);
-     z-index: 100;
+    left: 0;
+    top: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .3);
+    z-index: 100;
 
-     .input-wrap {
-       background: #fff;
-       color: #000;
-       text-align: center;
-       width: 90%;
-       margin: 400rpx auto;
-       padding: 40rpx 50rpx 30rpx;
-       box-sizing: border-box;
-       font-size: 28rpx;
-       border-radius: 10rpx;
-       .input {
-         margin: 40rpx 0;
-         border: 1px solid #efefef;
-         min-height: 20px;
-         line-height: 20px;
-         padding: 10px 0px;
-         text-align: left;
-         padding-left: 10rpx;
-       }
+    .input-wrap {
+      background: #fff;
+      color: #000;
+      text-align: center;
+      width: 90%;
+      margin: 400rpx auto;
+      padding: 40rpx 50rpx 30rpx;
+      box-sizing: border-box;
+      font-size: 28rpx;
+      border-radius: 10rpx;
 
-       .btns {
-         display: flex;
-         justify-content: space-around;
-         height: 60rpx;
-         line-height: 60rpx;
-         .btn {
-           flex: 1;
-         }
-       }
-     }
-   }
+      .input {
+        margin: 40rpx 0;
+        border: 1px solid #efefef;
+        min-height: 20px;
+        line-height: 20px;
+        padding: 10px 0px;
+        text-align: left;
+        padding-left: 10rpx;
+      }
 
+      .btns {
+        display: flex;
+        justify-content: space-around;
+        height: 60rpx;
+        line-height: 60rpx;
+
+        .btn {
+          flex: 1;
+        }
+      }
+    }
+  }
 
 
 </style>

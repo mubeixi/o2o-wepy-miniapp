@@ -32,9 +32,7 @@ export const createF2Chart = (opts) => new F2.Chart(opts)
 
 export const F2Mixin = {
 
-  data: {
-
-  },
+  data: {},
   methods: {
 
     init(callback, isRefresh = false) {
@@ -56,8 +54,8 @@ export const F2Mixin = {
 
       const query = wx.createSelectorQuery().in(this.$wx)
       query.select('.f2-canvas').boundingClientRect(res => {
-        let {width, height} = res
-        const config = {width, height, ...this.conf}
+        let { width, height } = res
+        const config = { width, height, ...this.conf }
         if (typeof callback === 'function') {
           this.chart = callback(el, config, this.propData)
         } else if (this.onInit) {
@@ -67,21 +65,21 @@ export const F2Mixin = {
     },
     touchStart(e) {
       this.$emit('touchstartFn', e)
-      return;
+      return
       if (this.canvas) {
         this.canvas.emitEvent('touchstart', [e])
       }
     },
     touchMove(e) {
       this.$emit('touchmoveFn', e)
-      return;
+      return
       if (this.canvas) {
         this.canvas.emitEvent('touchmove', [e])
       }
     },
     touchEnd(e) {
       this.$emit('touchendFn', e)
-      return;
+      return
       if (this.canvas) {
         this.canvas.emitEvent('touchend', [e])
       }

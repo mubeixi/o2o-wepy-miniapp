@@ -1,59 +1,65 @@
 <style lang="scss">
-  .page-wrap{
+  .page-wrap {
     position: absolute;
     width: 750rpx;
-    top:0;
+    top: 0;
     bottom: 0;
     display: flex;
     flex-direction: column;
     padding-bottom: constant(safe-area-inset-bottom);
     padding-bottom: env(safe-area-inset-bottom);
   }
-  .im-card-box{
-    flex:1;
+
+  .im-card-box {
+    flex: 1;
     overflow-y: scroll;
     width: 750rpx;
     background: #e5e5e5;
   }
 
-  .im-bottom-action{
+  .im-bottom-action {
     width: 750rpx;
     background: #f2f2f2;
 
-    .onther{
+    .onther {
       border-top: 1px solid #E2E2E2;
       padding: 40rpx 0;
       display: flex;
-      .onther-item{
+
+      .onther-item {
         width: 96rpx;
         height: 126rpx;
         margin-left: 70rpx;
         text-align: center;
-        .label{
+
+        .label {
           font-size: 28rpx;
           height: 30rpx;
           line-height: 30rpx;
           color: #666;
         }
-        .icon-box{
+
+        .icon-box {
           width: 96rpx;
           height: 96rpx;
         }
 
       }
     }
-    .text{
+
+    .text {
       display: flex;
       align-items: center;
       width: 750rpx;
       height: 110rpx;
 
-      .input-box{
+      .input-box {
         margin-left: 20rpx;
         flex: 1;
         display: flex;
         align-items: center;
-        .input-ele{
+
+        .input-ele {
           flex: 1;
           margin-right: 20rpx;
           padding: 0 20rpx;
@@ -65,10 +71,12 @@
           font-size: 28rpx;
         }
       }
-      .submit-btn{
+
+      .submit-btn {
         padding-right: 20rpx;
         height: 110rpx;
-        .text-btn{
+
+        .text-btn {
           background: linear-gradient(to right, #FF0006, #FF8417);
           line-height: 48rpx;
           margin-top: 31rpx;
@@ -78,12 +86,14 @@
           color: #fff;
           font-size: 12px;
         }
-        .img-btn{
+
+        .img-btn {
           margin-top: 31rpx;
           width: 48rpx;
           height: 48rpx;
         }
-        .btn{
+
+        .btn {
           width: 120rpx;
           text-align: center;
           line-height: 70rpx;
@@ -98,7 +108,7 @@
 
   }
 
-  .show-new-tip{
+  .show-new-tip {
     position: fixed;
     transform: translateY(-80px);
     bottom: constant(safe-area-inset-bottom);
@@ -128,7 +138,7 @@
       @scrolltolower="bindScrolltolower"
     >
       <block v-for="(chat,idx) in chatList" :key="idx">
-        <div class="im-item-box" >
+        <div class="im-item-box">
           <wzw-im-card
             @itemClick="bindItemClick"
             :msg-id="'msg-'+idx"
@@ -140,17 +150,19 @@
         </div>
       </block>
     </scroll-view>
-    <div class="show-new-tip" :style="{marginBottom:showOnther?'130px':'0px'}" v-if="showNewMsg && !isToLower" @click="showNewMsgFun">
-      <icon color="#00A8FF" size="12" type="iconright1" display="inline"></icon>有新消息
+    <div class="show-new-tip" :style="{marginBottom:showOnther?'130px':'0px'}" v-if="showNewMsg && !isToLower"
+         @click="showNewMsgFun">
+      <icon color="#00A8FF" size="12" type="iconright1" display="inline"></icon>
+      有新消息
     </div>
     <div class="im-bottom-action">
       <div class="text">
         <div class="input-box">
-          <input type="text" @focus="mode='text'" @blur="inputBlur" class="input-ele"  v-model="tempText" />
+          <input type="text" @focus="mode='text'" @blur="inputBlur" class="input-ele" v-model="tempText"/>
         </div>
         <div class="submit-btn" @click="taggleMore">
-          <div  v-if="mode=='text' && tempText" class="text-btn">发送</div>
-          <image class="img-btn" v-else  src="/static/im/im-action-more.png"></image>
+          <div v-if="mode=='text' && tempText" class="text-btn">发送</div>
+          <image class="img-btn" v-else src="/static/im/im-action-more.png"></image>
         </div>
       </div>
       <div class="onther" v-if="showOnther">
@@ -170,11 +182,11 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { ls, setNavigationBarTitle, getArrColumn, chooseImageByPromise, checkIsLogin } from '../../common/helper'
+  import { checkIsLogin, chooseImageByPromise, getArrColumn, ls, setNavigationBarTitle } from '../../common/helper'
   import IM from '../../common/Im/Im'
 
   import { error, modal } from '../../common/fun'
-  import {Exception} from '../../common/Exception'
+  import { Exception } from '../../common/Exception'
   import eventHub from '../../common/eventHub'
   import { readMsg } from '@/common/Im/Fetch'
 
@@ -198,10 +210,10 @@
       tempText: ''
     },
     computed: {
-      bizInfo () {
+      bizInfo() {
         return this.$store.getters.getBizInfo()
       },
-      toViewPosition () {
+      toViewPosition() {
         try {
           // - 1指向最后一个占位的就好了
           return this.imInstance.chatList.length * 1000
@@ -209,7 +221,7 @@
           return 0
         }
       },
-      chatList () {
+      chatList() {
         try {
           const list = this.imInstance.chatList
           return list || []
@@ -219,7 +231,7 @@
       }
     },
     methods: {
-      bindItemClick(){
+      bindItemClick() {
         this.showOnther = false
       },
       showNewMsgFun() {
@@ -259,18 +271,18 @@
         }, 50)
       },
       // 更新记录用，用于添加的时候
-      setViewIdx (val) {
+      setViewIdx(val) {
         this.toViewIdx = val || ('msg-' + (this.imInstance.chatList.length - 1))
       },
-      async handleProductSend (productInfo) {
+      async handleProductSend(productInfo) {
         // 发送产品消息
         await imInstance.sendImMessage({ content: productInfo, type: 'prod', isTip: 0 })
         this.setViewIdx()
       },
-      onPulling () {
+      onPulling() {
         console.log('onPulling')
       },
-      onRefresh () {
+      onRefresh() {
         // 无意义，随便的，不让滚动栏滚动到底部而已
         this.setViewIdx('xxx')
         if (this.isFreshing) return
@@ -287,19 +299,22 @@
           this.isFreshing = false
         })
       },
-      onRestore () {},
-      async sendImg () {
+      onRestore() {
+      },
+      async sendImg() {
         try {
-          const files = await chooseImageByPromise({ sizeType: 1, sourceType: ['album'] }).catch(err => { throw Error(err.errMsg || '选择照片失败') })
+          const files = await chooseImageByPromise({ sizeType: 1, sourceType: ['album'] }).catch(err => {
+            throw Error(err.errMsg || '选择照片失败')
+          })
           const imgs = getArrColumn(files, 'path')
 
           await imInstance.sendImMessage({ content: '', type: 'image', tempPath: imgs[0] })
           this.setViewIdx()
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
         }
       },
-      async sendCamera () {
+      async sendCamera() {
         try {
           const files = await chooseImageByPromise({ sizeType: 1, sourceType: ['camera'] }).catch(err => {
             throw Error(err.errMsg || '选择照片失败')
@@ -308,26 +323,26 @@
           await imInstance.sendImMessage({ content: '', type: 'image', tempPath: imgs[0] })
           this.setViewIdx()
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
         }
       },
-      inputBlur () {
+      inputBlur() {
         if (!this.tempText) {
           this.mode = ''
         }
       },
-      taggleMore () {
-        if(!this.tempText){
+      taggleMore() {
+        if (!this.tempText) {
           this.showOnther = !this.showOnther
           if (this.showOnther) this.refreshScrollBottomPostion()
         }
 
-        if(this.tempText){
+        if (this.tempText) {
           this.sendMsg()
         }
 
       },
-      async _init_func (options) {
+      async _init_func(options) {
         const { productId, orderId, origin } = options
 
         if (eventHub.imInstance) {
@@ -337,9 +352,14 @@
         }
 
         // 设置本地用户信息
-        imInstance.setSendInfo({ type: 'biz', id: ls.get('biz_id'), name: this.bizInfo.biz_name, avatar: this.bizInfo.biz_logo })
+        imInstance.setSendInfo({
+          type: 'biz',
+          id: ls.get('biz_id'),
+          name: this.bizInfo.biz_name,
+          avatar: this.bizInfo.biz_logo
+        })
         // 设置接收人的信息
-        imInstance.setReceiveInfo({type: this.totype, id: this.toid})
+        imInstance.setReceiveInfo({ type: this.totype, id: this.toid })
 
         // 如果没有start过,就start
         if (!imInstance.intervalInstance) {
@@ -354,7 +374,11 @@
 
         // 将最后一个设置为已读
         if (this.chatList.length > 0) {
-          await readMsg({msg_id: this.chatList[this.chatList.length - 1].id, to: imInstance.getToUid(), out_uid: imInstance.getOutUid()}).catch(err => {
+          await readMsg({
+            msg_id: this.chatList[this.chatList.length - 1].id,
+            to: imInstance.getToUid(),
+            out_uid: imInstance.getOutUid()
+          }).catch(err => {
             console.log(err.msg || '消息设置已读失败')
           })
         }
@@ -377,7 +401,7 @@
         this.setViewIdx()
         this.imReady = true
       },
-      sendMsg () {
+      sendMsg() {
         if (!this.tempText) {
           error('请输入内容')
           return
@@ -386,7 +410,7 @@
         this.setViewIdx()
         this.tempText = ''
       },
-      bindInputChange (e) {
+      bindInputChange(e) {
         this.tempText = e.detail.value
       }
     },
@@ -426,8 +450,8 @@
   "navigationBarTitleText": "demo",
   "navigationBarTextStyle": "black",
   "usingComponents": {
-    "wzw-im-card":"~@/components/wzw-im-card",
-    "icon":"~@/components/icon"
+  "wzw-im-card":"~@/components/wzw-im-card",
+  "icon":"~@/components/icon"
   }
   }
 </config>

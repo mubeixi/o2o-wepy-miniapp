@@ -6,17 +6,17 @@
         <div class="feature-item" @click="goFlashSale('shop')">
           <image src="/static/order/order1.png" class="img"></image>
           <div class="title">普通订单</div>
-          <span  class="order-tag" v-if="orderNumber.shop&&orderNumber.shop.waitsend>0">{{(orderNumber.shop.waitsend>99)?'n':orderNumber.shop.waitsend}}</span>
+          <span class="order-tag" v-if="orderNumber.shop&&orderNumber.shop.waitsend>0">{{(orderNumber.shop.waitsend>99)?'n':orderNumber.shop.waitsend}}</span>
         </div>
         <div class="feature-item" @click="goFlashSale('pintuan')">
           <image src="/static/order/order2.png" class="img"></image>
           <div class="title">拼团订单</div>
-          <span  class="order-tag" v-if="orderNumber.pintuan&&orderNumber.pintuan.waitsend>0">{{(orderNumber.pintuan.waitsend>99)?'n':orderNumber.pintuan.waitsend}}</span>
+          <span class="order-tag" v-if="orderNumber.pintuan&&orderNumber.pintuan.waitsend>0">{{(orderNumber.pintuan.waitsend>99)?'n':orderNumber.pintuan.waitsend}}</span>
         </div>
         <div class="feature-item" @click="goFlashSale('spike')">
           <image src="/static/order/order3.png" class="img"></image>
           <div class="title">限时抢购订单</div>
-          <span  class="order-tag" v-if="orderNumber.spike&&orderNumber.spike.waitsend>0">{{(orderNumber.spike.waitsend>99)?'n':orderNumber.spike.waitsend}}</span>
+          <span class="order-tag" v-if="orderNumber.spike&&orderNumber.spike.waitsend>0">{{(orderNumber.spike.waitsend>99)?'n':orderNumber.spike.waitsend}}</span>
         </div>
       </div>
 
@@ -24,17 +24,17 @@
         <div class="feature-item" @click="goFlashSale('flashsale')">
           <image src="/static/order/order4.png" class="img"></image>
           <div class="title">秒杀订单</div>
-          <span  class="order-tag" v-if="orderNumber.flashsale&&orderNumber.flashsale.waitsend>0">{{(orderNumber.flashsale.waitsend>99)?'n':orderNumber.flashsale.waitsend}}</span>
+          <span class="order-tag" v-if="orderNumber.flashsale&&orderNumber.flashsale.waitsend>0">{{(orderNumber.flashsale.waitsend>99)?'n':orderNumber.flashsale.waitsend}}</span>
         </div>
-<!--        <div class="feature-item" @click="goFlashSale('waimai')">-->
-<!--          <image src="/static/order/order5.png" class="img"></image>-->
-<!--          <div class="title">外卖订单</div>-->
-<!--          <span  class="order-tag" v-if="orderNumber.waimai&&orderNumber.waimai.waitsend>0">{{(orderNumber.waimai.waitsend>99)?'n':orderNumber.waimai.waitsend}}</span>-->
-<!--        </div>-->
+        <!--        <div class="feature-item" @click="goFlashSale('waimai')">-->
+        <!--          <image src="/static/order/order5.png" class="img"></image>-->
+        <!--          <div class="title">外卖订单</div>-->
+        <!--          <span  class="order-tag" v-if="orderNumber.waimai&&orderNumber.waimai.waitsend>0">{{(orderNumber.waimai.waitsend>99)?'n':orderNumber.waimai.waitsend}}</span>-->
+        <!--        </div>-->
         <div class="feature-item" @click="goFlashSale('offline')">
           <image src="/static/order/order6.png" class="img"></image>
           <div class="title">线下订单</div>
-          <span  class="order-tag" v-if="orderNumber.offline&&orderNumber.offline.waitsend>0">{{(orderNumber.offline.waitsend>99)?'n':orderNumber.offline.waitsend}}</span>
+          <span class="order-tag" v-if="orderNumber.offline&&orderNumber.offline.waitsend>0">{{(orderNumber.offline.waitsend>99)?'n':orderNumber.offline.waitsend}}</span>
         </div>
         <div class="feature-item" @click="$linkTo('/pages/order/CheckChannel')">
           <image src="/static/order/order7.png" class="img"></image>
@@ -43,12 +43,7 @@
       </div>
 
 
-
-
-
     </div>
-
-
 
 
   </div>
@@ -58,9 +53,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {checkIsLogin} from '../../common/helper'
+  import { checkIsLogin } from '../../common/helper'
   import { error, linkTo } from '../../common/fun'
-  import {getOrderNum} from '../../api/order'
+  import { getOrderNum } from '../../api/order'
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -72,7 +68,9 @@
     },
     methods: {
       async init() {
-        let arr = await getOrderNum({}, {onlyData: true}).catch(e => { error(e.msg) })
+        let arr = await getOrderNum({}, { onlyData: true }).catch(e => {
+          error(e.msg)
+        })
         this.orderNumber = arr.type_data
       },
       goFlashSale(item) {
@@ -90,39 +88,45 @@
 <style lang="scss">
   /*@import "../../assets/variables.scss";*/
   /*@import "../../assets/mixins.scss";*/
-  .page-wrap{
+  .page-wrap {
     height: 100vh;
     background: white;
   }
-  .feature{
-    &-list{
+
+  .feature {
+    &-list {
       padding: 40rpx 0;
     }
-    &-row{
+
+    &-row {
       display: flex;
       padding: 40rpx 0;
     }
-    &-item{
+
+    &-item {
       position: relative;
       flex: 1;
       text-align: center;
-      .img{
+
+      .img {
         width: 100rpx;
         height: 100rpx;
       }
-      .title{
+
+      .title {
         margin-top: 16rpx;
         color: #333;
         font-size: 14px;
       }
     }
   }
-  .order-tag{
-    color:#fff;
+
+  .order-tag {
+    color: #fff;
     display: block;
     width: 16px;
-    height:16px;
-    font-size:14px;
+    height: 16px;
+    font-size: 14px;
     text-align: center;
     line-height: 16px;
     border-radius: 50%;

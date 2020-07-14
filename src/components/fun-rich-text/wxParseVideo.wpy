@@ -3,7 +3,7 @@
   <div>
     <!--增加video标签支持，并循环添加-->
     <!--    :class="node.classStr"-->
-<!--    :class="node.classStr" :style="node.styleStr"-->
+    <!--    :class="node.classStr" :style="node.styleStr"-->
     <view style="position: relative;z-index: 2;width: 750rpx;height: 375rpx;">
       <video
         id="myVideo1"

@@ -26,12 +26,8 @@
   wepy.page({
     store,
     mixins: [pageMixin],
-    data: {
-
-    },
-    methods: {
-
-    },
+    data: {},
+    methods: {},
     created() {
 
     }
@@ -41,29 +37,31 @@
 </script>
 <style lang="scss">
 
-.page-wrap{
-  height: 100vh;
-  background: white;
-}
-.group-cell{
-  padding-right: 30rpx;
-  padding-left: 30rpx;
-}
-.label{
-  color: #333 !important;
-  padding: 20rpx 0;
-}
+  .page-wrap {
+    height: 100vh;
+    background: white;
+  }
+
+  .group-cell {
+    padding-right: 30rpx;
+    padding-left: 30rpx;
+  }
+
+  .label {
+    color: #333 !important;
+    padding: 20rpx 0;
+  }
 
 </style>
 <config>
   {
-    "navigationBarTitleText": "电子面单",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "wzw-im-tip": "~@/components/wzw-im-tip",
-      "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon",
-      "ad": "~@/components/ad"
-    }
+  "navigationBarTitleText": "电子面单",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
   }
 </config>

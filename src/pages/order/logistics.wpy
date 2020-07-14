@@ -1,5 +1,5 @@
 <template>
-  <view  class="all"  @click="commonClick">
+  <view class="all" @click="commonClick">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <view class="wuliu box-sizing" v-if="pro.list">
       <image :src="pro.imgpath" class="image"></image>
@@ -85,7 +85,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { error } from '../../common/fun'
-  import {getOrderExpress} from '../../api/order'
+  import { getOrderExpress } from '../../api/order'
 
   wepy.page({
     store,
@@ -94,22 +94,22 @@
       pro: [],
       shipping_id: ''
     },
-    onLoad (options) {
+    onLoad(options) {
       const {
         shipping_id
       } = options
       this.shipping_id = shipping_id
     },
-    onShow () {
+    onShow() {
       this.getOrderExpress()
     },
     methods: {
-      call () {
+      call() {
         wx.makePhoneCall({
           phoneNumber: this.pro.delivery_man_phone
         })
       },
-      getOrderExpress () {
+      getOrderExpress() {
         const data = {
           shipping_id: this.shipping_id
         }

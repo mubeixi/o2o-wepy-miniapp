@@ -1,8 +1,7 @@
-
 <template>
   <div v-show="show" @touchmove.prevent.stop="noop">
-    <div class="mask" @click="close" ></div>
-    <div class="wrap" >
+    <div class="mask" @click="close"></div>
+    <div class="wrap">
       <div class="title">
         <div class="text">选择行业</div>
         <div @click="subFn" class="btn">确认</div>
@@ -32,6 +31,9 @@
   import { error } from '../common/fun'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       has: {
         type: Array,
@@ -80,7 +82,7 @@
       }
     },
     created() {
-    // setTimeout(()=>{
+      // setTimeout(()=>{
       //   this.treeData = mockData
       //   this.isReady = true
       // },200)
@@ -123,36 +125,39 @@
 <style lang="scss">
 
 
-  .title{
+  .title {
     display: flex;
     align-items: center;
-    padding: 0px 10px 15px ;
-    .text{
+    padding: 0px 10px 15px;
+
+    .text {
       flex: 1;
       text-align: center;
     }
-    .btn{
+
+    .btn {
       background: $fun-primary-color;
       color: #333;
       font-size: 14px;
-      padding:6px 12px;
+      padding: 6px 12px;
       border-radius: 2px;
       color: #fff;
       text-align: center;
     }
   }
 
-  .mask{
+  .mask {
     position: fixed;
     z-index: 9;
-    background: rgba(0, 0, 0 , .6);
+    background: rgba(0, 0, 0, .6);
     height: 100%;
     width: 100%;
     top: 0px;
     left: 0px;
     overflow: hidden;
   }
-  .wrap{
+
+  .wrap {
     padding: 15px 0 30px;
     position: fixed;
     left: 0;
@@ -166,8 +171,8 @@
 </style>
 <config>
   {
-    "usingComponents": {
-      "fun-tree": "~@/components/fun-tree"
-    }
+  "usingComponents": {
+  "fun-tree": "~@/components/fun-tree"
+  }
   }
 </config>

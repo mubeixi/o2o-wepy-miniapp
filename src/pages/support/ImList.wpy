@@ -1,16 +1,36 @@
 <style lang="scss">
-  .page-wrap{
+  .page-wrap {
     min-height: 100vh;
     background: #fff;
     padding-bottom: 50px;
   }
-  .chat-item-box{
+
+  .message-face {
+    margin: 0 30rpx 30rpx;
+    padding: 0rpx 30rpx;
+    height: 80rpx;
+    border-radius: 40rpx;
+    background: #FFF3F0;
+    display: flex;
+    align-items: center;
+
+    .title {
+      flex: 1;
+      color: #FF3E00;
+      text-align: left;
+      padding-left: 10px;
+      font-weight: bold;
+    }
+  }
+
+  .chat-item-box {
     position: relative;
     height: 140rpx;
     width: 750rpx;
     overflow: hidden;
   }
-  .inner-del{
+
+  .inner-del {
     position: absolute;
     background: $fun-red-color;
     width: 180rpx;
@@ -21,7 +41,8 @@
     right: 0;
     color: #fff
   }
-  .chat-item{
+
+  .chat-item {
     position: absolute;
     width: 100%;
     left: 0;
@@ -30,10 +51,12 @@
     z-index: 3;
     background: #fff;
     transition: left 0.2s ease-in-out;
-    .left{
+
+    .left {
       width: 160rpx;
       position: relative;
-      .cover{
+
+      .cover {
         margin: 22rpx 32rpx;
         width: 96rpx;
         height: 96rpx;
@@ -41,11 +64,12 @@
         /*overflow: hidden;*/
         //@include cover-img(cover,0);
       }
+
       .item-tag {
         position: absolute;
         right: 32rpx;
         top: 22rpx;
-        transform: translate(50%,-50%);
+        transform: translate(50%, -50%);
         background: #F53636;
         height: 14px;
         text-align: center;
@@ -54,6 +78,7 @@
         border-radius: 7px;
         color: #fff;
         font-size: 10px;
+
         &.circle {
           width: 14px;
           padding: 0px 0px 0px 0px;
@@ -62,9 +87,9 @@
       }
 
 
-
     }
-    .right{
+
+    .right {
       width: 590rpx;
       padding: 30rpx 10rpx 30rpx 0;
       box-sizing: border-box;
@@ -72,13 +97,15 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      .nickname{
+
+      .nickname {
         width: 300rpx;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .msg{
+
+      .msg {
         width: 580rpx;
         white-space: nowrap;
         overflow: hidden;
@@ -101,7 +128,13 @@
 </style>
 <template>
   <div class="page-wrap">
-    <div @click="toMessageList">公告列表</div>
+    <!--E64340-->
+    <div style="height: 30rpx"></div>
+    <div @click="toMessageList" class="message-face">
+      <icon type="icongonggao" color="#FF3E00" size="24"></icon>
+      <div class="title">公告列表</div>
+      <icon display="inline" color="#FF3D00" size="18" type="iconarrowleft"></icon>
+    </div>
     <div class="chat-list" v-if="chatList.length>0">
       <div class="chat-item-box"
            @click="toRoom(idx)"
@@ -110,12 +143,12 @@
            @touchstart="touchS($event,idx)"
            @touchmove="touchM($event,idx)"
            @touchend="touchE($event,idx)">
-        <div class="chat-item flex" style="{{chat.txtStyle}}" >
+        <div class="chat-item flex" style="{{chat.txtStyle}}">
           <div class="left">
             <image class="cover" :src="chat.avatar"></image>
             <div class="item-tag" :class="{circle:chat.no_read<10}" v-if="chat.no_read>0">{{chat.no_read}}</div>
           </div>
-          <div class="right" >
+          <div class="right">
             <div class="info flex flex-vertical-center flex-justify-between">
               <div class="nickname c3 fz-17">{{chat.name}}</div>
               <div class="time c9 fz-12">{{chat.time}}</div>
@@ -138,32 +171,24 @@
 
     </div>
     <div class="none" v-else>
-      <image :src="spaceImg" class="img" />
+      <image :src="spaceImImg" class="img"/>
       <div class="m-t-15"><span>信箱是空的</span></div>
     </div>
 
-<!--    <fun-tabbar></fun-tabbar>-->
+    <!--    <fun-tabbar></fun-tabbar>-->
   </div>
 </template>
 <script>
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls,
-    setNavigationBarTitle,
-    getArrColumn,
-    chooseImageByPromise,
-    checkIsLogin,
-    getDomain, findArrayIdx, objTranslate
-  } from '../../common/helper'
+  import { checkIsLogin, getDomain, ls, objTranslate } from '@/common/helper'
   import IM from '../../common/Im/Im'
 
-  import { error, hideLoading, modal, showLoading } from '../../common/fun'
-  import { Exception } from '../../common/Exception'
-  import { delChat, getChatList } from '../../common/Im/Fetch'
+  import { modal } from '@/common/fun'
+  import { Exception } from '@/common/Exception'
+  import { delChat, getChatList } from '@/common/Im/Fetch'
   import eventHub from '../../common/eventHub'
-  import moment from 'moment'
 
   let imInstance = null
 
@@ -175,7 +200,7 @@
       imInstance: null,
       out_uid: '',
       chatList: [],
-      spaceImg: getDomain('/static/client/box.png'),
+      spaceImImg: getDomain('/static/client/box.png'),
       paginate: {
         page: 1,
         page_size: 999,
@@ -183,7 +208,7 @@
       }
     },
     computed: {
-      bizInfo () {
+      bizInfo() {
         return this.$store.getters.getBizInfo()
       }
     },
@@ -193,9 +218,9 @@
           // showLoading()
           // chatItem.to_uid : chatItem.from_uid
           // uid一定是对方
-          const {uid: to_uid} = chat
+          const { uid: to_uid } = chat
           const out_uid = `biz_${this.bizInfo.id}`
-          await delChat({out_uid, to_uid}).catch(err => {
+          await delChat({ out_uid, to_uid }).catch(err => {
             throw Error(err.msg || '删除失败')
           })
           this.chatList.splice(idx, 1)
@@ -214,7 +239,7 @@
         if (e.touches.length === 1) {
           // 手指移动时水平方向位置
           var moveX = e.touches[0].clientX
-        // 手指起始点位置与移动期间的差值
+          // 手指起始点位置与移动期间的差值
           var disX = this.startX - moveX
           var delBtnWidth = this.delBtnWidth
           var txtStyle = ''
@@ -235,17 +260,17 @@
         if (e.changedTouches.length === 1) {
           // 手指移动结束后水平位置
           var endX = e.changedTouches[0].clientX
-        // 触摸开始与结束，手指移动的距离
+          // 触摸开始与结束，手指移动的距离
           var disX = this.startX - endX
           var delBtnWidth = this.delBtnWidth
-        // 如果距离小于删除按钮的1/2，不显示删除按钮
+          // 如果距离小于删除按钮的1/2，不显示删除按钮
           var txtStyle = disX > delBtnWidth / 2 ? 'left:-' + delBtnWidth + 'px' : 'left:0px'
-        // 获取手指触摸的是哪一项
+          // 获取手指触摸的是哪一项
           this.$set(this.chatList[idx], 'txtStyle', txtStyle)
         }
       },
       // 获取元素自适应后的实际宽度
-      getEleWidth: function (w) {
+      getEleWidth: function(w) {
         var real = 0
         try {
           var res = wx.getSystemInfoSync().windowWidth
@@ -254,13 +279,13 @@
           return real
         } catch (e) {
           return 90
-        // Do something when catch error
+          // Do something when catch error
         }
       },
-      toMessageList(){
+      toMessageList() {
         this.$linkTo('/pages/message/list')
       },
-      toRoom (idx) {
+      toRoom(idx) {
         const chatItem = this.chatList[idx]
         chatItem.no_read = 0
         // 商家得找客户聊
@@ -290,12 +315,16 @@
           })
         }
       },
-      async _init_func () {
+      async _init_func() {
         await imInstance._getAccessToken() // 等拿token
-        const chatList = await getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
+        const chatList = await getChatList({
+          page: this.paginate.page,
+          page_size: this.paginate.page_size,
+          out_uid: this.out_uid
+        }).then(res => {
           this.paginate.totalCount = res.totalCount
           const list = res.data.map(row => {
-            return {...row, txtStyle: ''}
+            return { ...row, txtStyle: '' }
           })
           console.log(list)
           return list
@@ -314,7 +343,7 @@
         await this.refreshTabTag()
       }
     },
-    onReachBottom () {
+    onReachBottom() {
       // if (this.chatList.length < this.totalCount) {
       //   getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
       //     this.paginate.page++
@@ -335,10 +364,14 @@
         console.log(objTranslate(res))
 
         if (eventHub.imInstance) {
-          const chatList = await getChatList({ page: this.paginate.page, page_size: this.paginate.page_size, out_uid: this.out_uid }).then(res => {
+          const chatList = await getChatList({
+            page: this.paginate.page,
+            page_size: this.paginate.page_size,
+            out_uid: this.out_uid
+          }).then(res => {
             this.paginate.totalCount = res.totalCount
             const list = res.data.map(row => {
-              return {...row, txtStyle: ''}
+              return { ...row, txtStyle: '' }
             })
             console.log(list)
             return list
@@ -404,7 +437,8 @@
   "navigationBarTitleText": "消息",
   "navigationBarTextStyle": "black",
   "usingComponents": {
-    "wzw-im-card":"~@/components/wzw-im-card"
+  "icon": "~@/components/icon",
+  "wzw-im-card":"~@/components/wzw-im-card"
   }
   }
 </config>

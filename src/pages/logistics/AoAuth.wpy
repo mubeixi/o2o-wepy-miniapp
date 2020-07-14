@@ -3,24 +3,26 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
 
     <template v-if="forms.length>0">
-      <diy-form :action="action" @update="upFormData"  eid="authForm" ref="refForm" :forms="forms"></diy-form>
+      <diy-form :action="action" @update="upFormData" eid="authForm" ref="refForm" :forms="forms"></diy-form>
     </template>
 
 
     <div class="form-cell">
 
-        <div  class="form-cell-item cell-item  form-my" >
-          <div class="form-cell-item__label">快递单高度</div>
-          <div class="form-cell-item__content">
-            <input placeholder-class="__placeholder"  v-model="express_height" class="input" placeholder="单位为mm,不填则为默认180mm高" />
-          </div>
+      <div class="form-cell-item cell-item  form-my">
+        <div class="form-cell-item__label">快递单高度</div>
+        <div class="form-cell-item__content">
+          <input placeholder-class="__placeholder" v-model="express_height" class="input"
+                 placeholder="单位为mm,不填则为默认180mm高"/>
         </div>
-        <div  class="form-cell-item cell-item  form-my"  v-if="postData[0].value==='HHTT'||postData[0].value=='STO'||postData[0].value==='XFEX'||postData[0].value==='ANE'">
-          <div class="form-cell-item__label">{{sendsiteName}}</div>
-          <div class="form-cell-item__content">
-            <input placeholder-class="__placeholder"  v-model="sendsite" class="input" :placeholder="sendsiteName" />
-          </div>
+      </div>
+      <div class="form-cell-item cell-item  form-my"
+           v-if="postData[0].value==='HHTT'||postData[0].value=='STO'||postData[0].value==='XFEX'||postData[0].value==='ANE'">
+        <div class="form-cell-item__label">{{sendsiteName}}</div>
+        <div class="form-cell-item__content">
+          <input placeholder-class="__placeholder" v-model="sendsite" class="input" :placeholder="sendsiteName"/>
         </div>
+      </div>
 
     </div>
 
@@ -28,7 +30,7 @@
     <div class="safearea-box fixed bgwhite"></div>
     <!--放置页面底部内容被挡住，额外给的高度-->
     <div class="safearea-box"></div>
-    <div class="btn action-btn btn-primary"  @click="subFn">保存</div>
+    <div class="btn action-btn btn-primary" @click="subFn">保存</div>
 
   </div>
 </template>
@@ -38,11 +40,8 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { findArrayIdx, getArrColumn, objTranslate } from '../../common/helper'
-  import { getShippingCompany } from '../../api/store'
+  import { getCoopCompany, getShippingCompany, opCoopCompany } from '../../api/store'
   import { modal } from '../../common/fun'
-  import {
-    opCoopCompany, getCoopCompany
-  } from '../../api/store'
 
   let infoTmpl = [
     {
@@ -118,7 +117,9 @@
           formatFormData.express_height = this.express_height
           formatFormData.sendsite = this.sendsite
 
-          await opCoopCompany({...formatFormData}).catch(e => { throw Error(e.msg || '保存失败') })
+          await opCoopCompany({ ...formatFormData }).catch(e => {
+            throw Error(e.msg || '保存失败')
+          })
 
           this.$back()
         } catch (e) {
@@ -128,7 +129,7 @@
       upFormData(data) {
         let _data = objTranslate(data)
 
-        const shippingIdx = findArrayIdx(this.expressCompanyList, {Shipping_Name: _data[0].value})
+        const shippingIdx = findArrayIdx(this.expressCompanyList, { Shipping_Name: _data[0].value })
 
         if (shippingIdx !== false) {
           _data[0].value = this.expressCompanyList[shippingIdx].Shipping_Code
@@ -150,7 +151,9 @@
         this.postData = _data
       },
       async _init_func() {
-        this.expressCompanyList = await getShippingCompany().then(res => res.data).catch(e => { throw Error(e.msg || '获取快递公司列表失败') })
+        this.expressCompanyList = await getShippingCompany().then(res => res.data).catch(e => {
+          throw Error(e.msg || '获取快递公司列表失败')
+        })
 
         if (this.action === 'add') {
           // add模式下，options由value切割得到，然后diy-form会把value置空
@@ -158,7 +161,9 @@
         }
 
         if (this.action === 'edit') {
-          const vo = await getCoopCompany({coop_id: this.coop_id}).then(res => res.data).catch(e => { throw Error(e.msg || '数据初始化失败') })
+          const vo = await getCoopCompany({ coop_id: this.coop_id }).then(res => res.data).catch(e => {
+            throw Error(e.msg || '数据初始化失败')
+          })
           console.log(vo)
 
           this.express_height = vo.express_height
@@ -168,11 +173,11 @@
 
           // 用服务器上的值覆盖默认值
           for (var row of infoTmpl) {
-            if (vo.hasOwnProperty(row.name))row.value = vo[row.name]
+            if (vo.hasOwnProperty(row.name)) row.value = vo[row.name]
           }
 
           // 物流公司code还是要换成企业名称
-          const shippingIdx = findArrayIdx(this.expressCompanyList, {Shipping_Code: vo.shippingcode})
+          const shippingIdx = findArrayIdx(this.expressCompanyList, { Shipping_Code: vo.shippingcode })
 
           if (shippingIdx !== false) {
             infoTmpl[0].value = this.expressCompanyList[shippingIdx].Shipping_Name
@@ -202,31 +207,35 @@
 </script>
 <style lang="scss">
 
-  .page-wrap{
+  .page-wrap {
     min-height: 100vh;
     padding-bottom: 44px;
     box-sizing: border-box;
     background: white;
   }
-  .group-cell{
+
+  .group-cell {
     padding-right: 30rpx;
     padding-left: 30rpx;
-    .cell-item{
-      .label{
+
+    .cell-item {
+      .label {
         color: #333 !important;
         padding: 20rpx 0;
       }
-      .content{
+
+      .content {
         color: #999;
         font-size: 12px;
       }
-      .right{
+
+      .right {
         margin-right: 0;
       }
     }
   }
 
-  .actions{
+  .actions {
     position: fixed;
     bottom: constant(safe-area-inset-bottom);
     bottom: env(safe-area-inset-bottom);
@@ -237,88 +246,99 @@
     align-items: center;
     justify-content: center;
     color: #333;
-    box-shadow:0rpx 0rpx 18rpx 0rpx rgba(0, 0, 0, 0.16);
+    box-shadow: 0rpx 0rpx 18rpx 0rpx rgba(0, 0, 0, 0.16);
   }
-  .form{
 
-    &-panel{
+  .form {
+
+    &-panel {
       margin: 10px;
     }
-    &-title{
+
+    &-title {
       display: flex;
       align-items: center;
       padding: 10px 0;
-      &__place{
+
+      &__place {
         background: #00A8FF;
         width: 4px;
         height: 16px;
         margin: 0 10px;
         border-radius: 2px;
       }
-      &__text{
+
+      &__text {
         color: #333333;
         font-weight: bold;
       }
     }
-    &-upload{
+
+    &-upload {
 
 
-      &-item{
+      &-item {
         display: block;
         margin: 0 10px;
         padding: 10px 0;
         border-bottom: 1px solid #eee;
 
-        &__label{
+        &__label {
           color: #555555;
         }
-        &__content{
+
+        &__content {
           padding: 10px 0;
         }
 
       }
 
     }
-    &-cell{
+
+    &-cell {
       background: white;
       border-radius: 4px;
       overflow: hidden;
       font-size: 14px;
 
-      &-item{
+      &-item {
         display: flex;
         align-items: center;
         padding: 10px 0;
         border-bottom: 1px solid #eee;
         margin: 0 10px;
 
-        &__label{
+        &__label {
           width: 80px;
           padding: 0 10px 0 0;
           color: #555555;
           line-height: 1.3;
         }
-        &__content{
+
+        &__content {
           flex: 1;
           height: 32px;
           line-height: 32px;
           display: flex;
           align-items: center;
-          .input{
+
+          .input {
             font-size: 14px;
             flex: 1;
             color: #555555;
-            &::placeholder{
+
+            &::placeholder {
               color: #CAC8C8;
             }
           }
 
-          .__placeholder{
+          .__placeholder {
             color: #CAC8C8;
           }
 
         }
-        &__right{
+
+        &__right {
           width: 32px;
           text-align: center;
         }
@@ -328,7 +348,7 @@
 
   }
 
-  .form-my{
+  .form-my {
     border-bottom: 0px;
     border-top: 1px solid #eee;
   }
@@ -337,14 +357,14 @@
 </style>
 <config>
   {
-    "navigationBarTitleText": "电子面单公司管理",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-       "wzw-im-tip": "~@/components/wzw-im-tip",
-      "diy-form": "~@/components/diy-form-format",
-      "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon",
-      "ad": "~@/components/ad"
-    }
+  "navigationBarTitleText": "电子面单公司管理",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "diy-form": "~@/components/diy-form-format",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
   }
 </config>
