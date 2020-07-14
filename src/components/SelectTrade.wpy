@@ -7,7 +7,7 @@
         <div class="text">选择行业</div>
         <div @click="subFn" class="btn">确认</div>
       </div>
-      <div v-if="isReady">
+      <scroll-view scroll-y  v-if="isReady" style="max-height:60vh">
         <fun-tree
           ele-id="select_treade"
           ref="tree"
@@ -20,7 +20,7 @@
           nodeKey="id"
         >
         </fun-tree>
-      </div>
+      </scroll-view>
 <!--      <div @click="subFn" class="btn">提交</div>-->
     </div>
   </div>
