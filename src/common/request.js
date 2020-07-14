@@ -159,7 +159,7 @@ export const ajax = ({ url, method = 'post', data = {}, options = {}, isAddHost 
             ls.set('toLogin', 1, 1)
 
             ls.remove('access_token')
-            ls.remove('users_id')
+            // ls.remove('users_id')
             ls.remove('biz_account')
             ls.remove('biz_id')
             ls.remove('status')

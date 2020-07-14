@@ -470,11 +470,12 @@
         })
       }
 
-      this._init_func()
+
 
       this.AccessToken = getAccessToken()
       if (this.AccessToken) {
         this.getInit()
+        this._init_func()
       }
 
       this.status = ls.get('status')
