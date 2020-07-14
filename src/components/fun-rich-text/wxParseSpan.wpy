@@ -1,0 +1,77 @@
+<template>
+  <view>
+    <view v-if="diyLinkEle" class="diy-link-ele" @click="bindDiyLink">
+      <parse-template v-for="(node, index) of node.nodes" :key="index" :node="node"></parse-template>
+    </view>
+    <view v-else>
+      <template  v-for="(node, index) of node.nodes" :key="index">
+        <parse-template :node="node"></parse-template>
+      </template>
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import { diyLinkTo } from '@/common/helper'
+
+  wepy.component({
+    props: {
+      node: {
+        type: Object,
+        default () {
+          return {}
+        }
+      }
+    },
+    data: {
+      diyLinkEle: false,
+      ext: null,
+      linkType: null,
+      link: null
+    },
+    watch: {
+      node: {
+        immediate: true,
+        deep: true,
+        handler (nval) {
+          if (nval && JSON.stringify(nval) !== '{}') {
+            this._init_func(nval)
+          }
+        }
+      }
+    },
+    methods: {
+      bindDiyLink(e) {
+        diyLinkTo({link: this.link, linkType: this.linkType, ext: this.ext})
+      },
+      _init_func(val) {
+        console.log(val)
+        if (val.classStr && val.classStr.indexOf('diy-link-ele') !== -1) {
+          this.diyLinkEle = true
+          this.ext = JSON.parse(decodeURIComponent(val.attr['data-ext']))
+          this.linkType = val.attr['data-linktype']
+          this.link = val.attr['data-url']
+        }
+      },
+      bindTap (e) {
+
+      }
+    }
+  })
+
+</script>
+<style scoped lang="scss">
+  .diy-link-ele{
+    color: mediumseagreen;
+    text-decoration: underline;
+  }
+</style>
+<config>
+  {
+  "usingComponents": {
+  "parse-template":"~@/components/fun-rich-text/wxParseTemplate",
+  }
+  }
+</config>

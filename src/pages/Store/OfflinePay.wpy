@@ -138,7 +138,6 @@
   })
 </script>
 <style lang="scss" scoped>
-  /*@import "../../assets/variables.scss";*/
 
   .page-wrap{
     height: 100vh;

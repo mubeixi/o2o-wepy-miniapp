@@ -56,7 +56,7 @@
       visiable: {
         immediate: true,
         handler (newValue) {
-          console.log('fun-upload-loading components props show value is', newValue)
+          console.log('fun-upload-loading comp props show value is', newValue)
           this._computedStyle(newValue, this.animated)
         }
       },

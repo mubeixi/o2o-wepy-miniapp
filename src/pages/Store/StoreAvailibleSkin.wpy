@@ -62,8 +62,7 @@
 
 </script>
 <style lang="scss">
-  /*@import "../../assets/variables.scss";*/
-  /*@import "../../assets/mixins.scss";*/
+
   .store-skin{
       padding:50rpx 50rpx;
       flex-wrap:wrap;

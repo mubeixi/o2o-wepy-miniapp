@@ -1,6 +1,9 @@
 <style lang="scss">
 @import "/assets/app.scss";
-/*@import "/components/fun-rich-text/parse.scss";*/
+@import "/assets/richtext.scss";
+</style>
+<style>
+
 </style>
 <script>
 import wepy from '@wepy/core'
@@ -173,6 +176,8 @@ wepy.app({
       "pages/live/apply",
       "pages/recomment/list",
       "pages/recomment/form",
+      "pages/message/list",
+      "pages/message/detail",
       "pages/demo"
 
     ],

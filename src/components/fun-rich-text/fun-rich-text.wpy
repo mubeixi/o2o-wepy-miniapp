@@ -3,7 +3,8 @@
 </style>
 <template>
   <!--基础元素-->
-  <div class="wxParse" :class="className" :style="'user-select:' + userSelect">
+
+  <div class="wxParse" >
     <block v-for="(node, index) of nodes" :key="index">
       <wxParseTemplate v-if="!loading" :node="node" />
     </block>
@@ -66,7 +67,7 @@
         type: Object,
         default () {
           return {
-            mode: 'aspectFit',
+            mode: 'widthFix',
             padding: 0,
             lazyLoad: true,
             domain: ''
@@ -139,7 +140,7 @@
         if (!this.imageUrls.length || typeof this.imgOptions === 'boolean') {
 
         } else {
-          uni.previewImage({
+          wx.previewImage({
             current: src,
             urls: this.imageUrls,
             loop: this.imgOptions.loop,
@@ -179,7 +180,7 @@
 <config>
 {
   "usingComponents": {
-    "wxParseTemplate":"~@/components/fun-rich-text/components/wxParseTemplate",
+    "wxParseTemplate":"~@/components/fun-rich-text/wxParseTemplate",
     "icon": "~@/components/icon",
     "layout-loading":"~@/components/layout-loading"
   }

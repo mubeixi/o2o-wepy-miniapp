@@ -36,3 +36,6 @@ export const operateFeedback = (param, options) => fetch({act: 'operateFeedback'
 
 // 公告列表
 export const bizMessageList = (param, options) => fetch({act: 'bizMessageList', param, options})
+
+// 公告详情
+export const bizMessageDetail = (param, options) => fetch({act: 'bizMessageDetail', param, options})

@@ -1,39 +1,40 @@
-<style lang="scss">
-.page-wrap{
-  min-height: 100vh;
-  padding-bottom: 50px;
-  background: #f2f2f2;
-}
-.recomment-item{
-  margin:30rpx;
-  padding: 10px;
-  background: #fff;
-  border-radius: 4px;
-  .head{
-    padding: 5px 0 5px ;
-    .title{
-      width: 600rpx;
-      overflow-x: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-  }
-  .pics{
-    overflow-x: scroll;
-    overflow-y: hidden;
-    white-space: nowrap;
-    .pic-item{
-      display: inline-block;
-      width: 150rpx;
-      height: 150rpx;
-      margin-right: 20rpx;
-    }
-  }
-  .action{
-    padding: 10px 0 10px 0;
 
+<style lang="scss">
+  .page-wrap{
+    min-height: 100vh;
+    padding-bottom: 50px;
+    background: #f2f2f2;
   }
-}
+  .recomment-item{
+    margin:30rpx;
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+    .head{
+      padding: 5px 0 5px ;
+      .title{
+        width: 600rpx;
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+    .pics{
+      overflow-x: scroll;
+      overflow-y: hidden;
+      white-space: nowrap;
+      .pic-item{
+        display: inline-block;
+        width: 150rpx;
+        height: 150rpx;
+        margin-right: 20rpx;
+      }
+    }
+    .action{
+      padding: 10px 0 10px 0;
+
+    }
+  }
 </style>
 <template>
   <div class="page-wrap">
@@ -58,56 +59,56 @@
   </div>
 </template>
 <script>
-import wepy from '@wepy/core'
-import store from '@/store'
-import pageMixin from '@/mixins'
-import { feedbackList } from '@/api/system'
-import { Exception } from '@/common/Exception'
-import moment from 'moment'
-wepy.page({
-  store,
-  mixins: [pageMixin],
-  data: {
-    recomments: []
-  },
-  computed: {
-
-  },
-  methods: {
-    toDetail(id){
-      this.$linkTo('/pages/recomment/form?id='+id)
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import pageMixin from '@/mixins'
+  import { feedbackList } from '@/api/system'
+  import { Exception } from '@/common/Exception'
+  import moment from 'moment'
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      recomments: []
     },
-    toAdd() {
-      this.$linkTo('/pages/recomment/form')
-    },
-    async _init_func (options) {
-      const recomments = await feedbackList({pageSize: 999}).then(res => res.data).catch(err => {
-        Exception.handle(Error(err.msg))
-      })
+    computed: {
 
-      this.recomments = recomments.map(row => {
-        const {created_at, ..._row} = row
-        return {..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss')}
-      })
+    },
+    methods: {
+      toDetail(id){
+        this.$linkTo('/pages/recomment/form?id='+id)
+      },
+      toAdd() {
+        this.$linkTo('/pages/recomment/form')
+      },
+      async _init_func (options) {
+        const recomments = await feedbackList({pageSize: 999}).then(res => res.data).catch(err => {
+          Exception.handle(Error(err.msg))
+        })
+
+        this.recomments = recomments.map(row => {
+          const {created_at, ..._row} = row
+          return {..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss')}
+        })
+      }
+    },
+    onReady() {
+
+    },
+    onLoad() {
+      this._init_func()
+    },
+    created() {
+
     }
-  },
-  onReady() {
-
-  },
-  onLoad() {
-    this._init_func()
-  },
-  created() {
-
-  }
-})
+  })
 </script>
 <config>
-{
+  {
   "navigationBarTitleText": "建议反馈列表",
   "navigationBarTextStyle": "black",
   "usingComponents": {
-    "icon": "~@/components/icon"
+  "icon": "~@/components/icon"
   }
-}
+  }
 </config>

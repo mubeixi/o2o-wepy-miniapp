@@ -1,12 +1,4 @@
-/* variables start */
-//@import "./variables.scss";
-/* variables end */
 
-/* mixin start */
-//@import "./mixins.scss";
-/* mixin end */
-
-/* rest style start */
 .rest{
   padding: 0;
   margin: 0;
@@ -14,11 +6,6 @@
   list-style: none;
 }
 
-
-/* rest style end */
-
-/* common style start */
-//$color-list: 000,111,222,333,444,555,666,777,888,999;
 .c0{
   color: #000;
 }
@@ -50,25 +37,25 @@
   color: #999;
 }
 
-//@for $i from 4 through 100 {
-//  .m-#{$i} { margin: ($i)+px; }
-//  .m-t-#{$i} { margin-top: ($i)+px; }
-//  .m-b-#{$i} { margin-bottom: ($i)+px; }
-//  .m-l-#{$i} { margin-left: ($i)+px; }
-//  .m-r-#{$i} { margin-right: ($i)+px; }
-//
-//  .p-#{$i} { padding: ($i)+px; }
-//  .p-t-#{$i} { padding-top: ($i)+px; }
-//  .p-b-#{$i} { padding-bottom: ($i)+px; }
-//  .p-l-#{$i} { padding-left: ($i)+px; }
-//  .p-r-#{$i} { padding-right: ($i)+px; }
-//
-//
-//  .w#{$i} { width: ($i)+px; }
-//  .h#{$i} { height: ($i)+px; }
-//
-//  .fz-#{$i} { font-size: ($i)+px; }
-//}
+@for $i from 4 through 50 {
+  .m-#{$i} { margin: ($i)+px; }
+  .m-t-#{$i} { margin-top: ($i)+px; }
+  .m-b-#{$i} { margin-bottom: ($i)+px; }
+  .m-l-#{$i} { margin-left: ($i)+px; }
+  .m-r-#{$i} { margin-right: ($i)+px; }
+
+  .p-#{$i} { padding: ($i)+px; }
+  .p-t-#{$i} { padding-top: ($i)+px; }
+  .p-b-#{$i} { padding-bottom: ($i)+px; }
+  .p-l-#{$i} { padding-left: ($i)+px; }
+  .p-r-#{$i} { padding-right: ($i)+px; }
+
+
+  .w#{$i} { width: ($i)+px; }
+  .h#{$i} { height: ($i)+px; }
+
+  .fz-#{$i} { font-size: ($i)+px; }
+}
 
 .fz-bold{
   font-weight: bold;
@@ -76,12 +63,11 @@
 
 page{
   background: #f8f8f8;
-
 }
 
 
 .page-wrap{
-  //min-height: 100vh;
+
   &.safearea{
     margin-bottom: constant(safe-area-inset-bottom);
     margin-bottom: env(safe-area-inset-bottom);
@@ -95,8 +81,6 @@ page{
     left: 0;
     z-index: 4;
     bottom:0;
-    //bottom: constant(safe-area-inset-bottom);
-    //bottom: env(safe-area-inset-bottom);
   }
 
 }
@@ -182,8 +166,6 @@ page{
   }
 }
 
-
-/* common style end */
 
 
 .block{
