@@ -1,0 +1,179 @@
+<style lang="scss">
+.recomment-item{
+  margin:30rpx;
+  padding: 10px;
+  background: #fff;
+  border-radius: 4px;
+  .head{
+    padding: 5px 0 5px ;
+    .title{
+      width: 600rpx;
+      overflow-x: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  .pics{
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    .pic-item{
+      display: inline-block;
+      width: 150rpx;
+      height: 150rpx;
+      margin-right: 20rpx;
+    }
+  }
+  .action{
+    padding: 10px 0 10px 0;
+
+  }
+}
+</style>
+<template>
+  <div class="page-wrap">
+    <err-msg :errs="formCheckResult"></err-msg>
+    <template v-if="forms.length>0">
+      <diy-form  :action="mode" @update="upForm"  eid="xxxxx" ref="formdemo" :forms="forms"></diy-form>
+    </template>
+
+    <div class="reply-list" v-if="replyList.length>0">
+
+      <div class="recomment-item fz-14" v-for="(row,idx) in replyList" :key="idx" >
+        <div class="head flex flex-justify-between flex-vertical-center">
+          <div class="title fz-14 c3">{{row.created_at}}的回复</div>
+          <div class="create_at c9 fz-12"></div>
+        </div>
+        <div class="pics p-t-10" v-if="row.images.length>0" >
+          <image class="pic-item" v-for="(img,idx) in row.images" :src="img" @click="previewImg(row.images,img)"></image>
+        </div>
+        <div class="content c5 p-t-10">
+          {{row.content}}
+        </div>
+<!--        <div class="action flex flex-justify-between flex-vertical-center">-->
+<!--          <div class="c6"></div>-->
+<!--          <div class="create_at c9 fz-12">{{row.created_at}}</div>-->
+<!--        </div>-->
+      </div>
+
+    </div>
+    <div v-if="mode==='show' && replyList.length<1 " class="p-15 text-center fz-14 c9">暂无回复</div>
+    <div class="safearea-box"></div>
+    <div v-if="mode==='add'" @click="subFn" class="btn action-btn btn-primary m-b-safe-area">提交反馈</div>
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import pageMixin from '@/mixins'
+  import { objTranslate } from '@/common/helper'
+  import { feedbackDetail, operateFeedback } from '@/api/system'
+  import { Exception } from '@/common/Exception'
+  import { hideLoading, modal, showLoading, toast } from '@/common/fun'
+  import moment from 'moment'
+
+  const infoTmpl = [
+    { label: '标题', name: 'title', required: true, type: 'input', value: '', desc: '', autoDesc: true },
+    { label: '反馈/建议', name: 'content', required: true, type: 'textarea', value: '', desc: '', autoDesc: true},
+    { label: '上传图片', name: 'images', required: false, type: 'img', limit: 9, count: 0, value: '', desc: '' }
+  ]
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      mode: 'add',
+      forms: [],
+      formCheckResult: false,
+      replyList: [],
+      postData: {}
+    },
+    computed: {
+
+    },
+    methods: {
+      previewImg(urls, current) {
+        wx.previewImage({
+          urls,
+          current
+        })
+      },
+      async subFn() {
+        try {
+          var formData = {}
+          for (let item of this.postData) {
+            if (item.require && !item.value) {
+              this.formCheckResult = [`${item.label}必填`]
+              return
+            }
+            formData[item.name] = item.value
+          }
+
+          formData.images = JSON.stringify(formData.images.split('|'))
+          showLoading()
+          operateFeedback({...formData}).catch(err => { throw Error(err.msg) })
+          toast('发布成功')
+        } catch (e) {
+          Exception.handle(e)
+        } finally {
+          hideLoading()
+        }
+      },
+      upForm(data) {
+        const _data = objTranslate(data)
+        this.postData = _data
+      },
+      async _init_func (options) {
+        var _infoTmpl = objTranslate(infoTmpl)
+        // 自动加desc
+        for (const row of _infoTmpl) {
+          if (row.type === 'input' && !row.desc && row.autoDesc)row.desc = `请输入${row.label}`
+        }
+
+        if (this.id) {
+          var vo = await feedbackDetail({id: this.id}).then(res => res.data).catch(err => {
+            modal(err.msg)
+          })
+
+          this.replyList = vo.reply_list.map(row => {
+            const {created_at, ..._row} = row
+            return {..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss')}
+          })
+          vo.images = vo.images.join('|')
+          // 用服务器上的值覆盖默认值
+          for (var row of _infoTmpl) {
+            if (vo.hasOwnProperty(row.name))row.value = vo[row.name]
+          }
+        }
+
+        console.log(_infoTmpl)
+
+        this.$set(this, 'forms', objTranslate(_infoTmpl))
+      }
+    },
+    onReady() {
+
+    },
+    onLoad(options) {
+      if (options.id) {
+        this.mode = 'show'
+        this.id = options.id
+      }
+      this._init_func()
+    },
+    created() {
+
+    }
+  })
+</script>
+<config>
+{
+  "navigationBarTitleText": "建议反馈详情",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "icon": "~@/components/icon",
+    "err-msg": "~@/components/err-msg",
+    "diy-form": "~@/components/diy-form-format"
+  }
+}
+</config>

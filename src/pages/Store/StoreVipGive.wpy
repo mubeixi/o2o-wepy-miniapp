@@ -218,8 +218,8 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
   .submit-main{
     width:750rpx;
     height:86rpx;

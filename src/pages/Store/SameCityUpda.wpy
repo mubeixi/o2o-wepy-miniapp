@@ -155,8 +155,8 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
   .mail-all{
     background-color: #f6f6f6;
     height: 100vh;

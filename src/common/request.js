@@ -5,6 +5,7 @@ import { emptyObject, ls, objTranslate } from './helper'
 import { hexMD5 } from './tool/md5'
 import Base64 from './tool/base64.js'
 import { buildVersion } from './env'
+import eventHub from '@/common/eventHub'
 
 export const getUsersID = () => ls.get('users_id') ? ls.get('users_id') : ''
 
@@ -153,6 +154,23 @@ export const ajax = ({url, method = 'post', data = {}, options = {}, isAddHost =
         if (hookErrorCode.indexOf(errorCode) !== -1) {
           if (errorCode === 66001) {
             error(res.msg)
+
+            // 阻断后面的跳转
+            if (ls.get('toLogin')) return
+            ls.set('toLogin', 1, 1)
+
+            ls.remove('access_token')
+            ls.remove('users_id')
+            ls.remove('biz_account')
+            ls.remove('biz_id')
+            ls.remove('status')
+
+            // 取消监听
+            if (eventHub.imInstance) {
+              eventHub.imInstance.cancalListen()
+              eventHub.imInstance.close()
+              eventHub.imInstance = null
+            }
 
             // 重置用户信息
 

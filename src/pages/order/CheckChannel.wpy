@@ -80,8 +80,8 @@
   })
 </script>
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
+  /*@import "../../assets/mixins.scss";*/
+  /*@import "../../assets/variables.scss";*/
   .items{
       width: 640rpx;
       height: 300rpx;

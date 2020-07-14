@@ -79,8 +79,8 @@
   })
 </script>
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
+  /*@import "../../assets/mixins.scss";*/
+  /*@import "../../assets/variables.scss";*/
 
   .img{
     width: 698rpx;

@@ -235,8 +235,8 @@
 
 </script>
 <style lang="scss">
-  @import "../../assets/variables.scss";
-  @import "../../assets/mixins.scss";
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
   .station-all{
     min-height: 100vh;
     padding-left: 10px;

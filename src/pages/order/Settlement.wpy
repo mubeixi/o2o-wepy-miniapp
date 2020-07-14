@@ -199,8 +199,8 @@ const moment = require('moment')
   })
 </script>
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
+  /*@import "../../assets/mixins.scss";*/
+  /*@import "../../assets/variables.scss";*/
 
   .settlement-time{
     width: 710rpx;

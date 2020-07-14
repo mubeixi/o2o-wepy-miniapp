@@ -1,6 +1,6 @@
 <style lang="scss">
 
-  @import "../assets/app.scss";
+  /*@import "../assets/app.scss";*/
   .err-msg{
     position: fixed;
     top: 0;

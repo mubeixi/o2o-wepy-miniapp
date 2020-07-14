@@ -1,5 +1,5 @@
 <style lang="scss">
-  @import "../assets/app.scss";
+  /*@import "../assets/app.scss";*/
   .wrap{
     padding-left: 15px;
   }
@@ -104,9 +104,7 @@
 <config>
   {
     "usingComponents": {
-      "icon": "~@/components/icon",
-      "address": "~@/components/address",
-      "upload-image": "~@/components/upload-image"
+      "icon": "~@/components/icon"
     }
   }
 </config>

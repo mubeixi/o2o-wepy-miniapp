@@ -42,6 +42,11 @@
       </div>
     </div>
 
+<!--    <div class="message-list" v-if="messageList.length>0">-->
+<!--      <icon type="icongonggao" color="#333" size="18"></icon>-->
+<!--      <div class="content">{{messageList[0].title}}</div>-->
+<!--    </div>-->
+
     <div class="finance-box" >
       <div class="finance-item"  @click="goBanlance">
         <div><span class="fz-12" v-if="AccessToken">￥</span><span class="fz-18">{{AccessToken?info.biz_money:'-'}}</span></div>
@@ -73,83 +78,76 @@
       </div>
 
       <div class="grid">
-        <div class="grid-row">
-          <div class="grid-item" @click="goModule">
-            <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
-            <div class="grid-item-title">店铺模板</div>
-          </div>
-          <div class="grid-item" @click="goPro">
-            <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
-            <div class="grid-item-title">商品管理</div>
-          </div>
-          <div class="grid-item" @click="goStoreInfo">
-            <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
-            <div class="grid-item-title">修改资料</div>
-          </div>
-
+        <div class="grid-item" @click="goModule">
+          <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
+          <div class="grid-item-title">店铺模板</div>
         </div>
-        <div class="grid-row">
-          <div class="grid-item" @click="goStatistics">
-            <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
-            <div class="grid-item-title">数据统计</div>
-          </div>
-
-          <div class="grid-item" @click="goMarketing">
-            <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
-            <div class="grid-item-title">推广营销</div>
-          </div>
-          <div class="grid-item" @click="goOrder">
-            <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
-            <div class="grid-item-title" style="display: flex;justify-content: center;">
-              订单管理
-<!--              <span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>-->
-<!--              <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)">-->
-<!--                 -->
-<!--              </div>-->
-            </div>
-          </div>
-
+        <div class="grid-item" @click="goPro">
+          <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
+          <div class="grid-item-title">商品管理</div>
         </div>
-        <div class="grid-row">
-          <div class="grid-item"  @click="goStoreSetting">
-            <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
-            <div class="grid-item-title">店铺设置</div>
-          </div>
-
-          <div class="grid-item" @click="goLogistics">
-            <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
-            <div class="grid-item-title">物流管理</div>
-          </div>
-          <div class="grid-item" @click="goSettlementList">
-            <icon type="iconjiesuan" class="grid-item-icon" size="24" color="#6058fd"></icon>
-            <div class="grid-item-title">结算</div>
-          </div>
-
-
+        <div class="grid-item" @click="goStoreInfo">
+          <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"  ></icon>
+          <div class="grid-item-title">修改资料</div>
         </div>
-        <div class="grid-row" >
-          <div class="grid-item" @click="goOrderRefund">
-            <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
-            <div class="grid-item-title" style="display: flex;justify-content: center;">
-              退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
-            </div>
-          </div>
-          <div class="grid-item"   @click="goVip">
-            <icon type="iconMember" class="grid-item-icon" size="28" color="#17ccce"></icon>
-            <div class="grid-item-title">会员管理</div>
-          </div>
-
-          <div class="grid-item" @click="goLive"  v-if="AccessToken&&info.live_flag===1">
-            <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
-            <div class="grid-item-title">直播申请</div>
-          </div>
-          <div class="grid-item" @click="goLive"  v-else>
-
-          </div>
-
-
-
+        <div class="grid-item" @click="goStatistics">
+          <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
+          <div class="grid-item-title">数据统计</div>
         </div>
+
+        <div class="grid-item" @click="goMarketing">
+          <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
+          <div class="grid-item-title">推广营销</div>
+        </div>
+        <div class="grid-item" @click="goOrder">
+          <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
+          <div class="grid-item-title" style="display: flex;justify-content: center;">
+            订单管理
+            <!--              <span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>-->
+            <!--              <div style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)">-->
+            <!--                 -->
+            <!--              </div>-->
+          </div>
+        </div>
+        <div class="grid-item"  @click="goStoreSetting">
+          <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
+          <div class="grid-item-title">店铺设置</div>
+        </div>
+
+        <div class="grid-item" @click="goLogistics">
+          <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
+          <div class="grid-item-title">物流管理</div>
+        </div>
+        <div class="grid-item" @click="goSettlementList">
+          <icon type="iconjiesuan" class="grid-item-icon" size="24" color="#6058fd"></icon>
+          <div class="grid-item-title">结算</div>
+        </div>
+        <div class="grid-item" @click="goOrderRefund">
+          <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
+          <div class="grid-item-title" style="display: flex;justify-content: center;">
+            退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+          </div>
+        </div>
+        <div class="grid-item"   @click="goVip">
+          <icon type="iconMember" class="grid-item-icon" size="28" color="#17ccce"></icon>
+          <div class="grid-item-title">会员管理</div>
+        </div>
+        <div class="grid-item" @click="goLive"  v-if="AccessToken&&info.live_flag===1">
+          <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
+          <div class="grid-item-title">直播申请</div>
+        </div>
+        <div class="grid-item" @click="goRecommend"  v-if="cash_from===2">
+          <icon type="iconfankui" class="grid-item-icon" size="28" color="#f54012"></icon>
+          <div class="grid-item-title">反馈建议</div>
+        </div>
+<!--        <div class="grid-row">-->
+<!--        </div>-->
+<!--        <div class="grid-row">-->
+<!--        </div>-->
+<!--        <div class="grid-row">-->
+<!--        </div>-->
+<!--        <div class="grid-row" >-->
+<!--        </div>-->
       </div>
 
     </div>
@@ -168,7 +166,7 @@
   import pageMixin from '../mixins'
   import { spaceImg } from '../common/env'
 
-  import { bizLogin, initInfo } from '../api/system'
+  import { bizLogin, bizMessageList, initInfo } from '../api/system'
   import { getBizInfo } from '../api/store'
   import { linkTo } from '../common/fun'
   import { getOrderNum, getBackOrderNum } from '../api/order'
@@ -187,6 +185,7 @@
       storeInfo: {
         volidate: false
       },
+      messageList: [],
       liveInfo: {},
       orderBackNum: {
         orderSum: 0,
@@ -196,6 +195,7 @@
       orderNum: {waitsend: 0},
       info: {},
       status: 1,
+      cash_from: 1,
       infoData: {},
       AccessToken: {}
     },
@@ -212,6 +212,10 @@
       goVip() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/user/UserVipList')
+      },
+      goRecommend() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/recomment/list')
       },
       goLive() {
         if (!checkIsLogin(1, 1)) return
@@ -339,6 +343,9 @@
           })
         }
       },
+      async _init_func() {
+        this.messageList = await bizMessageList({home_show: 1, biz_id: ''}).then(res => res.data).catch(err => { console.log('获取首页公告失败：', err) })
+      },
       async getInit() {
         try {
         // 初始化商户信息
@@ -418,21 +425,37 @@
         })
       }
 
+      this._init_func()
+
       this.AccessToken = getAccessToken()
       if (this.AccessToken) {
         this.getInit()
       }
+
       this.status = ls.get('status')
+
+      this.cash_from = Number(ls.get('cash_from'))
     },
     created() {
+
     }
 
   })
 
 </script>
 <style lang="scss">
-  @import "../assets/variables.scss";
-  @import "../assets/mixins.scss";
+  /*@import "../assets/variables.scss";*/
+  /*@import "../assets/mixins.scss";*/
+
+  .message-list{
+    display: flex;
+    .content{
+      width: 400rpx;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
   .page-wrap{
     padding-bottom: 50px;
   }
@@ -578,23 +601,25 @@
   /*九宫格 start*/
   .grid{
     border-top: 1rpx solid #e7e7e7;
-    &-row{
-      width: 750rpx;
-      display: flex;
-      box-sizing: border-box;
-      border-bottom: 1rpx solid #e7e7e7;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    /*&-row{*/
+    /*  width: 750rpx;*/
+    /*  display: flex;*/
+    /*  box-sizing: border-box;*/
+    /*  border-bottom: 1rpx solid #e7e7e7;*/
+    /*}*/
     &-item{
-      border-right: 1rpx solid #e7e7e7;
-      flex: 1;
+      border-right: 1px solid #e7e7e7;
+      border-bottom: 1px solid #e7e7e7;
+      box-sizing: border-box;
+      width: 250rpx;
       height: 184rpx;
       text-align: center;
       display: flex;
       justify-content: center;
       flex-direction: column;
-      &:last-child{
-        border-right: none;
-      }
+
       &-title{
         padding-top: 20rpx;
         font-size: 12px;

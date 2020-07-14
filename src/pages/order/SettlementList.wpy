@@ -113,8 +113,8 @@
   })
 </script>
 <style lang="scss">
-  @import "../../assets/mixins.scss";
-  @import "../../assets/variables.scss";
+  /*@import "../../assets/mixins.scss";*/
+  /*@import "../../assets/variables.scss";*/
 
   .cr{
     color: #FF0000;
