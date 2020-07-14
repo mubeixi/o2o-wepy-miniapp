@@ -61,8 +61,8 @@
     </div>
     <div class="safearea-box"></div>
     <div @click="toAdd" class="btn action-btn btn-primary m-b-safe-area flex flex-vertical-center flex-justify-center">
-      <icon type="iconadd" size="20" color="#00a8ff"></icon>
-      <span>新增反馈与建议</span>
+      <icon type="iconadd" size="20" color="#fff"></icon>
+      <span class="m-l-6">新增反馈与建议</span>
     </div>
   </div>
 </template>
@@ -103,6 +103,9 @@
 
     },
     onLoad() {
+
+    },
+    onShow() {
       this._init_func()
     },
     created() {
