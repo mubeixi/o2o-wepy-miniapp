@@ -1,6 +1,5 @@
 <style lang="scss">
-/*@import "../assets/variables.scss";*/
-/*@import "../assets/mixins.scss";*/
+
 .wrap{
   position: relative;
   .swiper{

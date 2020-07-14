@@ -1,6 +1,4 @@
 <style lang="scss">
-  /*@import "../../assets/variables.scss";*/
-  /*@import "../../assets/mixins.scss";*/
   .page-wrap{
     min-height: 100vh;
     background: #fff;
@@ -103,6 +101,7 @@
 </style>
 <template>
   <div class="page-wrap">
+    <div @click="toMessageList">公告列表</div>
     <div class="chat-list" v-if="chatList.length>0">
       <div class="chat-item-box"
            @click="toRoom(idx)"
@@ -257,6 +256,9 @@
           return 90
         // Do something when catch error
         }
+      },
+      toMessageList(){
+        this.$linkTo('/pages/message/list')
       },
       toRoom (idx) {
         const chatItem = this.chatList[idx]

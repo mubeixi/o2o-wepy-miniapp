@@ -5,27 +5,8 @@ var prod = process.env.NODE_ENV === 'production'
 const UglifyPlugin = require('@wepy/plugin-uglifyjs')
 const TypeScriptCompiler = require('@wepy/compiler-typescript')
 const fs = require('fs')
-const prependData = fs.readFileSync('src/assets/variables.scss', 'utf-8') + fs.readFileSync('src/assets/mixins.scss', 'utf-8')
-// const prependData = '@import "src/assets/variables.scss";@import "src/assets/mixins.scss";'
+const prependData = fs.readFileSync('src/assets/variables.scss', 'utf-8').toString() + fs.readFileSync('src/assets/mixins.scss', 'utf-8').toString()
 
-// const prependData = `
-// $fun-gray-color: #BEBEBE;
-// $fun-primary-color:#26C78D;
-// $fun-green-color:#26C78D;
-// $fun-black-color:#000000;
-// $fun-red-color:#F53636;
-// $fun-blue-color:#00A8FF;
-// @mixin cover-img($paddingTop:0px,$bgsize:cover,$bgcolor:#f2f2f2,$repreat:no-repeat) {
-//   background: {
-//     color: $bgcolor;
-//     size: $bgsize;
-//     repeat: $repreat;
-//   };
-//   padding: {
-//     top:$paddingTop;
-//   };
-// }
-// `
 module.exports = {
   wpyExt: '.wpy',
   eslint: true,

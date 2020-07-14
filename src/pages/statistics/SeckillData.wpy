@@ -1,6 +1,5 @@
 <style lang="scss">
 
-  /*@import "../../assets/variables.scss";*/
   .page-wrap{
     background-color: #f3f5f8;
     width: 750rpx;
