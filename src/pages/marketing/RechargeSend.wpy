@@ -1,13 +1,15 @@
 <template>
   <div class="alls page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="flex flex-vertical-center   items " v-for="(item,index) of infoData"  :key="index">
-      冲 <input type="digit" v-model="item.deposit_money" class="input-full m-l-5 m-r-5" />元 送 <input type="digit" v-model="item.present_money"  class="input-full m-l-5 m-r-5" />元
-      <icon size="24"  v-if="index>0" class="iconminus" type="iconminus"  @click="delItem(index)" color="#00A8FF"></icon>
+    <div class="flex flex-vertical-center   items " v-for="(item,index) of infoData" :key="index">
+      冲 <input type="digit" v-model="item.deposit_money" class="input-full m-l-5 m-r-5"/>元 送 <input type="digit"
+                                                                                                    v-model="item.present_money"
+                                                                                                    class="input-full m-l-5 m-r-5"/>元
+      <icon size="24" v-if="index>0" class="iconminus" type="iconminus" @click="delItem(index)" color="#00A8FF"></icon>
     </div>
 
     <div class="submits" @click="goAdd">
-      <icon type="iconadd" color="#00A8FF"  size="20"></icon>
+      <icon type="iconadd" color="#00A8FF" size="20"></icon>
       添加充值送
     </div>
 
@@ -33,7 +35,7 @@
     store,
     mixins: [pageMixin],
     data: {
-      infoData: [{deposit_money: '', present_money: ''}]
+      infoData: [{ deposit_money: '', present_money: '' }]
     },
     methods: {
       delItem(index) {
@@ -62,13 +64,16 @@
         opActive(data).then(res => {
           back()
           hideLoading()
-        }).catch(e => {})
+        }).catch(e => {
+        })
       },
       goAdd() {
-        this.infoData.push({deposit_money: '', present_money: ''})
+        this.infoData.push({ deposit_money: '', present_money: '' })
       },
       async init() {
-        let arr = await getActiveInfo({type: 'chargepresent'}, {onlyData: true, tip: '加载中'}).catch(e => { error('获取列表失败') })
+        let arr = await getActiveInfo({ type: 'chargepresent' }, { onlyData: true, tip: '加载中' }).catch(e => {
+          error('获取列表失败')
+        })
         console.log(arr, 'ss')
         if (arr.active_info.length > 0) {
           this.infoData = arr.active_info
@@ -87,28 +92,31 @@
 </script>
 <style lang="scss">
 
-  .page-wrap{
+  .page-wrap {
     padding-bottom: 44px; //.btn的是44px
   }
-  .alls{
+
+  .alls {
     height: 100vh;
     background-color: #FFFFFF;
     padding-top: 40rpx;
   }
-  .submits{
+
+  .submits {
     width: 276rpx;
     height: 70rpx;
     display: flex;
     font-size: 28rpx;
     color: #00A8FF;
-    margin:60rpx  auto ;
+    margin: 60rpx auto;
     align-items: center;
     justify-content: center;
-    border:1px solid rgba(0,168,255,1);
-    border-radius:6rpx;
+    border: 1px solid rgba(0, 168, 255, 1);
+    border-radius: 6rpx;
     margin-bottom: 80rpx;
   }
-  .items{
+
+  .items {
     margin: 0 auto;
     width: 700rpx;
     padding-left: 40rpx;
@@ -116,7 +124,8 @@
     padding-right: 10rpx;
     box-sizing: border-box;
   }
-  .input-full{
+
+  .input-full {
     width: 200rpx;
     height: 60rpx;
     line-height: 60rpx;
@@ -125,7 +134,8 @@
     padding-left: 10px;
     text-align: center;
   }
-  .submit{
+
+  .submit {
     width: 750rpx;
     height: 86rpx;
     line-height: 86rpx;
@@ -137,7 +147,8 @@
     color: #FFFFFF;
     z-index: 99;
   }
-  .iconminus{
+
+  .iconminus {
     margin-left: auto;
   }
 

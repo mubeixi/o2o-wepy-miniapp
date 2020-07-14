@@ -1,7 +1,6 @@
 import { back, error, linkTo, modal, toast } from '../common/fun'
-import { ls, checkIsLogin } from '../common/helper'
+import { checkIsLogin, ls } from '../common/helper'
 import eventHub from '../common/eventHub'
-
 
 /**
  * 自定义处理错误
@@ -9,21 +8,22 @@ import eventHub from '../common/eventHub'
  * @constructor
  */
 export function FunError(e) {
-  let {message = '错误信息', type = 'toast', icon = 'none'} = e
+  let { message = '错误信息', type = 'toast', icon = 'none' } = e
   if (typeof e !== 'object') {
     message = e
   }
-  if (type === 'toast')toast(message, icon)
-  if (type === 'modal')modal(message)
-  return ({message, type, icon})
+  if (type === 'toast') toast(message, icon)
+  if (type === 'modal') modal(message)
+  return ({ message, type, icon })
 }
+
 FunError.prototype = Object.create(Error.prototype)
 FunError.prototype.constructor = FunError
 
 export default {
   data: {
     menuButtonInfo: {},
-    systemInfo: {statusBarHeight: 0},
+    systemInfo: { statusBarHeight: 0 },
     diyHeadHeight: 0,
     diyHeadRight: 0,
     currentPagePath: ''
@@ -42,18 +42,17 @@ export default {
     },
     default_init_func(option) {
       let users_id = option.users_id || ls.get('users_id')
-        // 如果连接里面已经有了，就不需要搞事
+      // 如果连接里面已经有了，就不需要搞事
       if (users_id) {
-          // 不管ls有没有，都存一次
+        // 不管ls有没有，都存一次
         ls.set('users_id', users_id)
       }
-
     },
-    mixintap () {
+    mixintap() {
       this.mixin = 'MixinText' + (Math.random() + '').substring(3, 7)
       // console.log('mixin method tap')
     },
-    tap () {
+    tap() {
       // console.log('tap in mixin')
     },
     getCurrentPageRoute() {
@@ -62,7 +61,7 @@ export default {
       return currentPagePath
     }
   },
-  created () {
+  created() {
     // console.log('created in mixin')
   },
   onShow() {
@@ -113,7 +112,7 @@ export default {
   onLoad(options) {
     this.menuButtonInfo = wx.getMenuButtonBoundingClientRect()
     this.systemInfo = wx.getSystemInfoSync()
-    const {height, top, left} = this.menuButtonInfo
+    const { height, top, left } = this.menuButtonInfo
     // this.diyHeadHeight = top + height
 
     this.diyHeadHeight = top + height + (top - this.systemInfo.statusBarHeight) + 10
@@ -124,9 +123,11 @@ export default {
 }
 
 export const componentMixins = {
+  // https://github.com/Tencent/wepy/issues/2507
+  // https://developers.weixin.qq.com/miniprogram/dev/framework/custom-component/wxml-wxss.html
   data: {
     menuButtonInfo: {},
-    systemInfo: {statusBarHeight: 0},
+    systemInfo: { statusBarHeight: 0 },
     diyHeadHeight: 0,
     diyHeadRight: 0
     // mixin: 'PageMin'
@@ -143,18 +144,18 @@ export const componentMixins = {
     $closePop(name) {
       this.$refs[name].close()
     },
-    mixintap () {
+    mixintap() {
       this.mixin = 'MixinText' + (Math.random() + '').substring(3, 7)
       // console.log('mixin method tap')
     },
-    tap () {
+    tap() {
       // console.log('tap in mixin')
     }
   },
   ready() {
     this.menuButtonInfo = wx.getMenuButtonBoundingClientRect()
     this.systemInfo = wx.getSystemInfoSync()
-    const {height, top, left} = this.menuButtonInfo
+    const { height, top, left } = this.menuButtonInfo
     // this.diyHeadHeight = top + height
 
     this.diyHeadHeight = top + height + (top - this.systemInfo.statusBarHeight) + 10

@@ -1,55 +1,68 @@
 <style lang="scss">
-.bottom-last{
-  width: 750rpx;
-  height: 106rpx;
-  padding: 10rpx;
-  display: flex;
-  justify-content: space-between;
-  background-color: #ffffff;
-  box-sizing: border-box;
-  align-items: center;
-}
-  .left-bottom{
+  .bottom-last {
+    width: 750rpx;
+    height: 106rpx;
+    padding: 10rpx;
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    align-items: center;
+  }
+
+  .left-bottom {
     height: 86rpx;
     display: flex;
     align-items: center;
     padding-left: 54rpx;
   }
-  .bottom-q{width: 50rpx;font-size: 13px;color: #666666}
-  .dandu{
-    width:198rpx;
-    height:86rpx;
+
+  .bottom-q {
+    width: 50rpx;
+    font-size: 13px;
+    color: #666666
+  }
+
+  .dandu {
+    width: 198rpx;
+    height: 86rpx;
     line-height: 86rpx;
     text-align: center;
-    background:rgba(133,212,184,1);
-    border-radius:42rpx;
+    background: rgba(133, 212, 184, 1);
+    border-radius: 42rpx;
   }
-  .pin{
+
+  .pin {
     margin-left: 10rpx;
-    width:240rpx;
-    height:86rpx;
+    width: 240rpx;
+    height: 86rpx;
     line-height: 86rpx;
     text-align: center;
-    background:rgba(38,199,141,1);
-    border-radius:42rpx;
+    background: rgba(38, 199, 141, 1);
+    border-radius: 42rpx;
   }
-  .mubeixi{
+
+  .mubeixi {
     display: flex;
     align-items: center;
   }
-  .dan-q{
+
+  .dan-q {
     font-size: 12px;
     color: #ffffff;
   }
-  .dan-w{
+
+  .dan-w {
     font-size: 15px;
     color: #ffffff;
   }
-  .dan-e{
+
+  .dan-e {
     font-size: 13px;
     color: #ffffff;
   }
-  .dan-r{
+
+  .dan-r {
     font-size: 17px;
     color: #ffffff;
   }
@@ -57,53 +70,54 @@
 
 </style>
 <template>
- <div>
+  <div>
     <div class="bottom-last flex flex-justify-between">
-          <div class="left-bottom">
-                <div class="bottom-q" style="margin-right: 60rpx"  @click="goStore">
-                  <div style="display: flex;justify-content: center;margin-bottom: 6rpx">
-                    <icon  type="iconstore" size="17" color="#666666"></icon>
-                  </div>
-                  <div>
-                    进店
-                  </div>
-                </div>
-                <div class="bottom-q"   @click="goShare">
-                  <div style="display: flex;justify-content: center;margin-bottom: 6rpx">
-                    <icon  type="iconshare" size="17" color="#666666"></icon>
-                  </div>
-                  <div>
-                    分享
-                  </div>
-                </div>
+      <div class="left-bottom">
+        <div class="bottom-q" style="margin-right: 60rpx" @click="goStore">
+          <div style="display: flex;justify-content: center;margin-bottom: 6rpx">
+            <icon type="iconstore" size="17" color="#666666"></icon>
           </div>
-          <div class="mubeixi">
-            <div class="dandu"    @click="myPay">
+          <div>
+            进店
+          </div>
+        </div>
+        <div class="bottom-q" @click="goShare">
+          <div style="display: flex;justify-content: center;margin-bottom: 6rpx">
+            <icon type="iconshare" size="17" color="#666666"></icon>
+          </div>
+          <div>
+            分享
+          </div>
+        </div>
+      </div>
+      <div class="mubeixi">
+        <div class="dandu" @click="myPay">
 
-              <span class="dan-q">单买￥</span>
-              <span class="dan-w">199.00</span>
-            </div>
-            <div class="pin"    @click="allPay">
-              <span class="dan-e">拼购￥</span>
-              <span class="dan-r">199.00</span>
-            </div>
-          </div>
+          <span class="dan-q">单买￥</span>
+          <span class="dan-w">199.00</span>
+        </div>
+        <div class="pin" @click="allPay">
+          <span class="dan-e">拼购￥</span>
+          <span class="dan-r">199.00</span>
+        </div>
+      </div>
     </div>
- </div>
+  </div>
 </template>
 <script>
   import wepy from '@wepy/core'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       imgs: {
         type: Array,
         default: []
       }
     },
-    data: {
-
-    },
+    data: {},
     methods: {
       myPay() {
         this.$emit('myPay')

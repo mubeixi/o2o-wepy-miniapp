@@ -9,18 +9,18 @@
       <div class="btn-sub fz-14" @click="$linkTo('/pages/store/StoreWithdrawal')">提现</div>
     </div>
 
-    <div class="store-item"  v-for="(item,ind) of balanceList" :key="ind">
-        <div class="flex flex-vertical-center flex-justify-between m-b-4">
-            <div class="fz-14 c3">
-              {{item.descr}}
-            </div>
-          <div class="fz-16" style="color: #FF0000;">
-            {{item.money}}
-          </div>
+    <div class="store-item" v-for="(item,ind) of balanceList" :key="ind">
+      <div class="flex flex-vertical-center flex-justify-between m-b-4">
+        <div class="fz-14 c3">
+          {{item.descr}}
         </div>
-        <div class="fz-12 c8">
-          {{item.created_at}}
+        <div class="fz-16" style="color: #FF0000;">
+          {{item.money}}
         </div>
+      </div>
+      <div class="fz-12 c8">
+        {{item.created_at}}
+      </div>
     </div>
 
   </div>
@@ -45,7 +45,7 @@
     },
     methods: {
       async _init_func() {
-        this.initInfo = await this.$store.dispatch('getInitInfo', {storage: 'online'})
+        this.initInfo = await this.$store.dispatch('getInitInfo', { storage: 'online' })
         console.log(this.initInfo)
       },
       async bizMoneyRecord(it) {
@@ -53,7 +53,8 @@
           page: this.page,
           pageSize: this.pageSize
         }
-        let arr = await bizMoneyRecord(data).catch(e => {})
+        let arr = await bizMoneyRecord(data).catch(e => {
+        })
         this.totalCount = arr.totalCount
         this.biz_money = arr.data.biz_money
         if (it === 1) {
@@ -81,49 +82,58 @@
 <style lang="scss">
 
 
-  .img{
+  .img {
     width: 698rpx;
     height: 388rpx;
     margin: 0 auto;
     position: relative;
   }
-  .full-img{width: 100%;height: 100%;}
-  .balance-store{
+
+  .full-img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .balance-store {
     font-size: 18px;
     color: #f6f6f6;
     position: absolute;
-    top:80rpx;
-    left:278rpx;
+    top: 80rpx;
+    left: 278rpx;
   }
-  .price-store{
+
+  .price-store {
     color: #f6f6f6;
     position: absolute;
-    top:150rpx;
-    left:260rpx;
+    top: 150rpx;
+    left: 260rpx;
   }
-  .btn-sub{
-    width:160rpx;
-    height:56rpx;
+
+  .btn-sub {
+    width: 160rpx;
+    height: 56rpx;
     line-height: 56rpx;
     text-align: center;
-    background:#969aff;
+    background: #969aff;
     //opacity:0.2;
-    border-radius:28rpx;
+    border-radius: 28rpx;
     position: absolute;
-    top:230rpx;
-    left:370rpx;
+    top: 230rpx;
+    left: 370rpx;
     color: #F6F6F6;
   }
-  .btn-pay{
+
+  .btn-pay {
     position: absolute;
-    top:230rpx;
-    left:198rpx;
+    top: 230rpx;
+    left: 198rpx;
   }
-  .store-item{
-    width:710rpx;
-    height:110rpx;
-    background:rgba(255,255,255,1);
-    border-radius:6rpx;
+
+  .store-item {
+    width: 710rpx;
+    height: 110rpx;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 6rpx;
     padding: 22rpx 20rpx;
     box-sizing: border-box;
     margin: 0 auto 20rpx;

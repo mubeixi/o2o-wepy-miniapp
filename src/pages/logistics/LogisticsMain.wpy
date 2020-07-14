@@ -41,12 +41,8 @@
   wepy.page({
     store,
     mixins: [pageMixin],
-    data: {
-
-    },
-    methods: {
-
-    },
+    data: {},
+    methods: {},
     created() {
 
     }
@@ -56,37 +52,43 @@
 </script>
 <style lang="scss">
 
-  .page-wrap{
+  .page-wrap {
     height: 100vh;
     background: white;
   }
-  .channel{
-    &-list{
+
+  .channel {
+    &-list {
       padding: 80rpx 0 0;
     }
-    &-item{
+
+    &-item {
       width: 610rpx;
       height: 120rpx;
-      margin:0 30rpx 55rpx;
+      margin: 0 30rpx 55rpx;
       padding: 0 40rpx;
       box-shadow: 1rpx 0 18rpx rgba(4, 0, 0, 0.11);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      .content{
+
+      .content {
         display: flex;
         align-items: center;
-        .img{
+
+        .img {
           width: 70rpx;
           height: 80rpx;
         }
-        .title{
+
+        .title {
           margin-left: 40rpx;
           color: #333;
           font-size: 14px;
         }
       }
-      .arrow-right{
+
+      .arrow-right {
 
       }
 
@@ -96,13 +98,13 @@
 </style>
 <config>
   {
-    "navigationBarTitleText": "物流管理",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "wzw-im-tip": "~@/components/wzw-im-tip",
-      "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon",
-      "ad": "~@/components/ad"
-    }
+  "navigationBarTitleText": "物流管理",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon",
+  "ad": "~@/components/ad"
+  }
   }
 </config>

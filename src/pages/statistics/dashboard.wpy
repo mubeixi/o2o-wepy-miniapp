@@ -1,29 +1,34 @@
 <style lang="scss">
   /*@import "../../assets/variables.scss";*/
-  .page-wrap{
+  .page-wrap {
   }
-  .customer{
-    .main{
+
+  .customer {
+    .main {
       padding-top: 30rpx !important;
       padding-bottom: 20rpx !important;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .pie-echarts{
+
+    .pie-echarts {
       display: block;
       width: 500rpx;
       height: 340rpx;
     }
-    &-info{
+
+    &-info {
       color: #666;
     }
-    &-row{
+
+    &-row {
       font-size: 12px;
       line-height: 24px;
     }
   }
-  .section{
+
+  .section {
     width: 710rpx;
     margin: 30rpx auto 0;
     background: white;
@@ -31,22 +36,27 @@
     overflow: hidden;
     padding: 20rpx 0;
     box-sizing: border-box;
-    .title{
+
+    .title {
       padding: 0 20rpx;
-      .before{
+
+      .before {
         width: 6rpx;
         height: 32rpx;
         background: $fun-blue-color;
       }
-      .text{
+
+      .text {
         font-weight: bold;
         color: #333333;
       }
     }
-    .main{
+
+    .main {
       padding: 0 20rpx;
     }
-    .foot{
+
+    .foot {
       border-top: 1px solid #eee;
       font-size: 12px;
       display: flex;
@@ -56,12 +66,14 @@
       padding: 20rpx 20rpx 0;
     }
   }
-  .tab{
-    &-list{
+
+  .tab {
+    &-list {
       margin: 30rpx 0;
       display: flex;
     }
-    &-item{
+
+    &-item {
       position: relative;
       color: #333333;
       font-size: 12px;
@@ -69,58 +81,70 @@
       text-align: center;
       background: #F0FAFF;
       padding: 30rpx 0;
-      &.active{
-        background: rgba(255,255,255,.2);
+
+      &.active {
+        background: rgba(255, 255, 255, .2);
         color: $fun-blue-color;
       }
-      .underline{
+
+      .underline {
         position: absolute;
         width: 100%;
         top: 2px;
         height: 2px;
         background: $fun-blue-color;
       }
-      .label{
+
+      .label {
         margin-bottom: 24rpx;
       }
     }
   }
-  .swiper-echarts{
+
+  .swiper-echarts {
     display: block;
     width: 670rpx;
     height: 400rpx;
   }
-  .product-list{
+
+  .product-list {
     margin-top: 20px;
-    .th,.td{
+
+    .th, .td {
       width: 136rpx;
       overflow: hidden;
     }
-    .Products_Name{
+
+    .Products_Name {
       width: 116rpx;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
   }
-  .time-box{
+
+  .time-box {
     width: 710rpx;
     margin: 0 25rpx 30rpx;
-    .time-tab{
+
+    .time-tab {
       display: flex;
       padding: 30rpx 0;
-      .time-tab-item{
+
+      .time-tab-item {
         flex: 1;
         padding: 20rpx 0;
         text-align: center;
         box-sizing: border-box;
-        &.active{
+
+        &.active {
           border-bottom: 4rpx solid $fun-blue-color;
           color: $fun-blue-color;
         }
       }
     }
-    .time-line{
+
+    .time-line {
       background: #fff;
       border-radius: 10rpx;
       height: 97rpx;
@@ -130,38 +154,43 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      .start-end{
+
+      .start-end {
         display: flex;
-        .start{
+
+        .start {
           width: 230rpx;
-          height:  55rpx;
+          height: 55rpx;
           line-height: 55rpx;
-          border:1px solid #eee;
+          border: 1px solid #eee;
           box-sizing: border-box;
           padding: 0 16rpx;
         }
-        .hr{
+
+        .hr {
           height: 1px;
           background: #eee;
           width: 10rpx;
           margin: 0 10rpx;
         }
-        .end{
+
+        .end {
           width: 230rpx;
-          height:  55rpx;
+          height: 55rpx;
           line-height: 55rpx;
           box-sizing: border-box;
           padding: 0 16rpx;
-          border:1px solid #eee;
+          border: 1px solid #eee;
         }
       }
-      .search-btn{
-        width:90rpx;
-        height:50rpx;
+
+      .search-btn {
+        width: 90rpx;
+        height: 50rpx;
         text-align: center;
         line-height: 50rpx;
-        background:$fun-blue-color;
-        border-radius:5rpx;
+        background: $fun-blue-color;
+        border-radius: 5rpx;
         color: #fff;
       }
     }
@@ -180,7 +209,8 @@
       <div class="time-line">
         <div class="start-end">
           <div class="start">
-            <picker mode="date" :value="startTime" :start="timeLimitStart" :end="timeLimitEnd" @change="bindStartTimeChange">
+            <picker mode="date" :value="startTime" :start="timeLimitStart" :end="timeLimitEnd"
+                    @change="bindStartTimeChange">
               <div class="flex flex-vertical-center flex-justify-between">
                 <div class="fz-12 c6">{{startTime||'请选择'}}</div>
                 <icon color="#999" type="iconrili"></icon>
@@ -189,7 +219,8 @@
           </div>
           <div class="hr"></div>
           <div class="end">
-            <picker class="flex-1" mode="date" :value="endTime" :start="timeLimitStart" :end="timeLimitEnd" @change="bindEndTimeChange">
+            <picker class="flex-1" mode="date" :value="endTime" :start="timeLimitStart" :end="timeLimitEnd"
+                    @change="bindEndTimeChange">
               <div class="flex flex-vertical-center flex-justify-between">
                 <div class="fz-12 c6">{{endTime||'请选择'}}</div>
                 <icon color="#999" type="iconrili"></icon>
@@ -206,23 +237,29 @@
         <div class="tab-list">
           <div class="tab-item" :class="{active:tabActiveIdx===7}" @click="tabIdx(7)">
             <div v-if="tabActiveIdx===7" class="underline"></div>
-            <div class="label">{{tabData.view_person_count.name}}</div><div class="val">{{tabData.view_person_count.value}}</div>
+            <div class="label">{{tabData.view_person_count.name}}</div>
+            <div class="val">{{tabData.view_person_count.value}}</div>
           </div>
           <div class="tab-item" :class="{active:tabActiveIdx===0}" @click="tabIdx(0)">
             <div v-if="tabActiveIdx===0" class="underline"></div>
-            <div class="label">{{tabData.order_count.name}}</div><div class="val">{{tabData.order_count.value}}</div>
+            <div class="label">{{tabData.order_count.name}}</div>
+            <div class="val">{{tabData.order_count.value}}</div>
           </div>
           <div class="tab-item" :class="{active:tabActiveIdx===1}" @click="tabIdx(1)">
             <div v-if="tabActiveIdx===1" class="underline"></div>
-            <div class="label">{{tabData.order_pay_count.name}}</div><div class="val">{{tabData.order_pay_count.value}}</div>
+            <div class="label">{{tabData.order_pay_count.name}}</div>
+            <div class="val">{{tabData.order_pay_count.value}}</div>
           </div>
           <div class="tab-item" :class="{active:tabActiveIdx===2}" @click="tabIdx(2)">
             <div v-if="tabActiveIdx===2" class="underline">
-            </div><div class="label">{{tabData.order_pay_money.name}}</div><div class="val">{{tabData.order_pay_money.value}}</div>
+            </div>
+            <div class="label">{{tabData.order_pay_money.name}}</div>
+            <div class="val">{{tabData.order_pay_money.value}}</div>
           </div>
           <div class="tab-item" :class="{active:tabActiveIdx===4}" @click="tabIdx(4)">
             <div v-if="tabActiveIdx===4" class="underline"></div>
-            <div class="label">{{tabData.order_pay_person_count.name}}</div><div class="val">{{tabData.order_pay_person_count.value}}</div>
+            <div class="label">{{tabData.order_pay_person_count.name}}</div>
+            <div class="val">{{tabData.order_pay_person_count.value}}</div>
           </div>
         </div>
         <echarts
@@ -233,27 +270,29 @@
           class="swiper-echarts"
           :onInit="onInitChart1"
         ></echarts>
-<!--        <div class="foot">-->
-<!--          <span>查看详情</span>-->
-<!--          <icon type="iconarrowleft" size="14" color="#999"></icon>-->
-<!--        </div>-->
+        <!--        <div class="foot">-->
+        <!--          <span>查看详情</span>-->
+        <!--          <icon type="iconarrowleft" size="14" color="#999"></icon>-->
+        <!--        </div>-->
       </div>
     </div>
     <div class="section customer">
       <div class="title"><span class="before"></span><span class="text">客户分析</span></div>
       <div class="main">
         <div class="customer-info">
-          <div class="customer-row">{{tabData.view_person_count.name}}：{{tabData.view_person_count.value}} </div>
+          <div class="customer-row">{{tabData.view_person_count.name}}：{{tabData.view_person_count.value}}</div>
           <div class="customer-row">{{tabData.order_person_count.name}}：{{tabData.order_person_count.value}}</div>
-          <div class="customer-row">{{tabData.order_pay_person_count.name}}：{{tabData.order_pay_person_count.value}}</div>
+          <div class="customer-row">{{tabData.order_pay_person_count.name}}：{{tabData.order_pay_person_count.value}}
+          </div>
           <div class="customer-row">{{tabData.order_avg_money.name}}：￥{{tabData.order_avg_money.value}}</div>
         </div>
-        <echarts ref="pie" :propData="newOldTradeStatistic.circles" :conf="newOldTradeStatistic.circlesConf"  class="pie-echarts" :onInit="onInitChartPie" ></echarts>
+        <echarts ref="pie" :propData="newOldTradeStatistic.circles" :conf="newOldTradeStatistic.circlesConf"
+                 class="pie-echarts" :onInit="onInitChartPie"></echarts>
       </div>
-<!--      <div class="foot">-->
-<!--        <span>查看详情</span>-->
-<!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
-<!--      </div>-->
+      <!--      <div class="foot">-->
+      <!--        <span>查看详情</span>-->
+      <!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
+      <!--      </div>-->
     </div>
     <div class="section">
       <div class="title"><span class="before"></span><span class="text">商品分析</span></div>
@@ -282,7 +321,7 @@
           </div>
           <div class="tr" v-for="(product,idx) in systemProdSalesData.list" :key="idx">
             <div class="td">
-<!--              <div style="margin: 0 auto" :style="{backgroundImage:'url('+product.ImgPath+')'}" class="w30 h20 img-cover"></div>-->
+              <!--              <div style="margin: 0 auto" :style="{backgroundImage:'url('+product.ImgPath+')'}" class="w30 h20 img-cover"></div>-->
               <div class="fz-12 Products_Name">{{product.Products_Name}}</div>
             </div>
             <div class="td">{{product.view_user_count}}</div>
@@ -292,10 +331,10 @@
           </div>
         </div>
       </div>
-<!--      <div class="foot">-->
-<!--        <span>查看详情</span>-->
-<!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
-<!--      </div>-->
+      <!--      <div class="foot">-->
+      <!--        <span>查看详情</span>-->
+      <!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
+      <!--      </div>-->
     </div>
     <div class="section">
       <div class="title"><span class="before"></span><span class="text">交易分析</span></div>
@@ -315,10 +354,10 @@
           </div>
         </div>
       </div>
-<!--      <div class="foot">-->
-<!--        <span>查看详情</span>-->
-<!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
-<!--      </div>-->
+      <!--      <div class="foot">-->
+      <!--        <span>查看详情</span>-->
+      <!--        <icon type="iconarrowleft" size="14" color="#999"></icon>-->
+      <!--      </div>-->
     </div>
   </div>
 </template>
@@ -330,7 +369,9 @@
   import { getNewOldTradeStatistic, getTradeStatistic, systemProdSales } from '../../api/store'
   import { createF2Chart } from '../../mixins/f2'
   import { getCharCount, ls, objTranslate } from '../../common/helper'
+
   const moment = require('moment')
+
   /**
    * 求某个对象组成数组中，某个对象的值占百分比。方便配合f2-chart做饼图
    * @param item
@@ -346,9 +387,11 @@
     // 如果都是0的话，大家就一起穷。
     return arrSum === 0 ? (parseInt(1 / arr.length * 100) / 100) : (parseInt(item[key] / arrSum * 100) / 100)
   }
+
   function getChartMask() {
     return ls.get('today') ? 'HH' : 'MM-DD'
   }
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -359,7 +402,7 @@
       timeLimitStart: '',
       timeLimitEnd: '',
       newOldTradeStatistic: {},
-      systemProdSalesData: {list: []},
+      systemProdSalesData: { list: [] },
       tabData: {},
       titles: [],
       time_list: [],
@@ -370,7 +413,7 @@
       tabActiveIdx: 7, // 浏览人数
       onInitChartPie(el, config, data) {
         if (!el) return
-        const {width, height} = config
+        const { width, height } = config
         let chart = createF2Chart({
           el,
           width,
@@ -401,7 +444,7 @@
         chart.axis(false)
         chart.interval()
           .position('a*percent')
-          .color('name', [ '#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864', '#8543E0' ])
+          .color('name', ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864', '#8543E0'])
           .adjust('stack')
           .style({
             lineWidth: 1,
@@ -423,7 +466,7 @@
         var chart = null
         if (!hasChart) {
           if (!el) return
-          const {width, height} = config
+          const { width, height } = config
           chart = createF2Chart({
             el,
             width,
@@ -512,8 +555,13 @@
         try {
           showLoading('初始化信息')
           // 线图
-          const {data: tradeStatistic} = await getTradeStatistic({start_time: this.startTime, end_time: this.endTime}).catch(() => { throw new Error('获取统计失败') })
-          const {data: tabData = {}, titles = [], time_list = [], charts = [], max_num = 0, max_rate = 0} = tradeStatistic
+          const { data: tradeStatistic } = await getTradeStatistic({
+            start_time: this.startTime,
+            end_time: this.endTime
+          }).catch(() => {
+            throw new Error('获取统计失败')
+          })
+          const { data: tabData = {}, titles = [], time_list = [], charts = [], max_num = 0, max_rate = 0 } = tradeStatistic
           this.tabData = tabData
           this.titles = titles
           if (ls.get('today')) {
@@ -572,7 +620,8 @@
               item.data[i] = {
                 value: item.data[i], // + parseInt(Math.random() * 100) + 1,
                 label: item.name,
-                date: this.time_list[i]}
+                date: this.time_list[i]
+              }
             }
           }
 
@@ -585,25 +634,29 @@
             this.$refs.catTime.init()
           }
           // 饼图
-          let {data: newOldTradeStatistic} = await getNewOldTradeStatistic({search_time: this.startTime}).catch(() => { throw new Error('获取统计失败') })
+          let { data: newOldTradeStatistic } = await getNewOldTradeStatistic({ search_time: this.startTime }).catch(() => {
+            throw new Error('获取统计失败')
+          })
           // for (let item of newOldTradeStatistic.circles) {
           //   item.value = Math.random() * 100
           // }
           const circles = newOldTradeStatistic.circles.map(item => {
             // 绘制饼图时，数据集中的每一条记录中必须包含一个常量字段（并且必须是字符串类型）
-            return {...item, a: '1', percent: getPercent(item, newOldTradeStatistic.circles)}
+            return { ...item, a: '1', percent: getPercent(item, newOldTradeStatistic.circles) }
           })
           newOldTradeStatistic.circles = circles
           let map = {}
           for (let key in circles) {
             map[circles[key].name] = parseInt(circles[key].percent * 100 * 100) / 100 + '%'
           }
-          newOldTradeStatistic.circlesConf = {map: map} // 配置
+          newOldTradeStatistic.circlesConf = { map: map } // 配置
           this.newOldTradeStatistic = newOldTradeStatistic
           this.$refs.pie.init()
           // 底部
-          const proPostData = {time: 'desc', start_time: this.startTime, end_time: this.endTime}
-          const {data: systemProdSalesData} = await systemProdSales(proPostData).catch(() => { throw new Error('获取商品销售数据失败') })
+          const proPostData = { time: 'desc', start_time: this.startTime, end_time: this.endTime }
+          const { data: systemProdSalesData } = await systemProdSales(proPostData).catch(() => {
+            throw new Error('获取商品销售数据失败')
+          })
           this.systemProdSalesData = systemProdSalesData
           hideLoading()
         } catch (e) {
@@ -637,13 +690,13 @@
 </script>
 <config>
   {
-    "navigationBarTitleText": "数据统计",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
+  "navigationBarTitleText": "数据统计",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
   "wzw-im-tip": "~@/components/wzw-im-tip",
-      "echarts": "~@/components/echarts",
-      "icon": "~@/components/icon",
-      "popup-layer": "~@/components/popup-layer"
-    }
+  "echarts": "~@/components/echarts",
+  "icon": "~@/components/icon",
+  "popup-layer": "~@/components/popup-layer"
+  }
   }
 </config>

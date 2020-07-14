@@ -1,32 +1,34 @@
 <template>
   <div class="store-all">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="store-item flex flex-vertical-center flex-justify-between" >
+    <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
         同城配送
       </div>
       <picker class="store-titles picker-open" @change="bindPickerChangeOpen" :value="indexOpen" :range="array">
         {{array[indexOpen]}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </picker>
     </div>
     <block v-if="open===1">
-      <div class="store-item flex flex-vertical-center flex-justify-between" @click="$linkTo('/pages/store/StoreInfoUpda?type=3')">
+      <div class="store-item flex flex-vertical-center flex-justify-between"
+           @click="$linkTo('/pages/store/StoreInfoUpda?type=3')">
         <div class="store-title">
           取货地址
         </div>
         <div class="store-titles flex flex-vertical-center">
           <span class="address">{{address||''}}</span>
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </div>
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between">
-        <div  class="store-title">
+        <div class="store-title">
           业务类型
         </div>
-        <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{business_type}}"   range-key="name">
+        <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{business_type}}"
+                range-key="name">
           {{businessTypeValue}}
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </picker>
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between" @click="show">
@@ -38,7 +40,7 @@
           <block v-if="dada.provider_status===2||meituan.provider_status===2||fengniao.provider_status===2">
             已配置
           </block>
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </div>
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between" @click="go">
@@ -46,11 +48,11 @@
           免运费权益
         </div>
         <div class="store-titles">
-          {{free_shipping==1?"适用":"不适用"}}
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          {{free_shipping==1?'适用':'不适用'}}
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </div>
       </div>
-      <div class="store-item flex flex-vertical-center flex-justify-between"  @click="goUpda('1')">
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="goUpda('1')">
         <div class="store-title">
           费用配置
         </div>
@@ -58,10 +60,10 @@
           <block v-if="cityData.distance_money_config.start_distance>0">
             已配置
           </block>
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </div>
       </div>
-      <div class="store-item flex flex-vertical-center flex-justify-between"   @click="goUpda('2')">
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="goUpda('2')">
         <div class="store-title">
           续重收费
         </div>
@@ -69,10 +71,10 @@
           <block v-if="cityData.weight_money_config.free_weight>0">
             已配置
           </block>
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </div>
       </div>
-      <div class="store-item flex flex-vertical-center flex-justify-between"   @click="goUpda('3')">
+      <div class="store-item flex flex-vertical-center flex-justify-between" @click="goUpda('3')">
         <div class="store-title">
           配送限制
         </div>
@@ -80,7 +82,7 @@
           <block v-if="cityData.limit_config.send_distance>0">
             已配置
           </block>
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </div>
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('subscribePopup')">
@@ -88,8 +90,8 @@
           预约配送
         </div>
         <div class="store-titles">
-          {{appoint_send==1?"开启":"关闭"}}
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          {{appoint_send==1?'开启':'关闭'}}
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </div>
       </div>
     </block>
@@ -128,39 +130,40 @@
           平台设置的各种免运费权益是否适用于同城配送
         </div>
       </div>
-      <div v-else  style="padding-bottom: 50rpx">
+      <div v-else style="padding-bottom: 50rpx">
         <div class="wzw-title">
           服务商
         </div>
-        <div class="list-item flex flex-justify-between"  v-if="(provider.dada)===1">
-              <div class="list-item-q">
-                达达
+        <div class="list-item flex flex-justify-between" v-if="(provider.dada)===1">
+          <div class="list-item-q">
+            达达
+          </div>
+          <div class="flex flex1 flex-vertical-center flex-justify-between">
+            <div class="font-wzw">
+              <div style="color: #2ABB23" v-if="dada.provider_status==2">
+                已开通
               </div>
-              <div class="flex flex1 flex-vertical-center flex-justify-between">
-                  <div class="font-wzw">
-                    <div style="color: #2ABB23" v-if="dada.provider_status==2">
-                      已开通
-                    </div>
-                    <div v-else-if="dada.provider_status==1">
-                      审核中
-                    </div>
-<!--                    <div v-else-if="dada.provider_status==-1">-->
-<!--                      未开通-->
-<!--                    </div>-->
-                    <div class="font-wzw"   v-else-if="dada.provider_status==-1">
-                      <div >
-                        已驳回
-                      </div>
-                      <div class="bohui">
-                        {{dada.reject_reason}}
-                      </div>
-                    </div>
+              <div v-else-if="dada.provider_status==1">
+                审核中
+              </div>
+              <!--                    <div v-else-if="dada.provider_status==-1">-->
+              <!--                      未开通-->
+              <!--                    </div>-->
+              <div class="font-wzw" v-else-if="dada.provider_status==-1">
+                <div>
+                  已驳回
+                </div>
+                <div class="bohui">
+                  {{dada.reject_reason}}
+                </div>
+              </div>
 
-                  </div>
-                  <div>
-                    <switch :checked="dada.status===1" bindchange="switch1Changes('dada',$event,dada)" style="transform: scale(.8)"></switch>
-                  </div>
-              </div>
+            </div>
+            <div>
+              <switch :checked="dada.status===1" bindchange="switch1Changes('dada',$event,dada)"
+                      style="transform: scale(.8)"></switch>
+            </div>
+          </div>
         </div>
         <div class="list-item flex flex-justify-between" v-if="(provider.meituan)===1">
           <div class="list-item-q">
@@ -174,11 +177,11 @@
               <div v-else-if="meituan.provider_status==1">
                 审核中
               </div>
-<!--              <div v-else-if="meituan.provider_status==-1">-->
-<!--                未开通-->
-<!--              </div>-->
-              <div class="font-wzw"  v-else-if="meituan.provider_status==-1">
-                <div >
+              <!--              <div v-else-if="meituan.provider_status==-1">-->
+              <!--                未开通-->
+              <!--              </div>-->
+              <div class="font-wzw" v-else-if="meituan.provider_status==-1">
+                <div>
                   已驳回
                 </div>
                 <div class="bohui">
@@ -188,7 +191,8 @@
 
             </div>
             <div>
-              <switch :checked="meituan.status===1" bindchange="switch1Changes('meituan',$event,meituan)" style="transform: scale(.8)"></switch>
+              <switch :checked="meituan.status===1" bindchange="switch1Changes('meituan',$event,meituan)"
+                      style="transform: scale(.8)"></switch>
             </div>
           </div>
         </div>
@@ -204,11 +208,11 @@
               <div v-else-if="fengniao.provider_status==1">
                 审核中
               </div>
-<!--              <div v-else-if="fengniao.provider_status==-1">-->
-<!--                未开通-->
-<!--              </div>-->
+              <!--              <div v-else-if="fengniao.provider_status==-1">-->
+              <!--                未开通-->
+              <!--              </div>-->
               <div class="font-wzw" v-else-if="fengniao.provider_status==-1">
-                <div >
+                <div>
                   已驳回
                 </div>
                 <div class="bohui">
@@ -218,7 +222,8 @@
 
             </div>
             <div>
-              <switch :checked="fengniao.status===1"  bindchange="switch1Changes('fengniao',$event,fengniao)" style="transform: scale(.8)"></switch>
+              <switch :checked="fengniao.status===1" bindchange="switch1Changes('fengniao',$event,fengniao)"
+                      style="transform: scale(.8)"></switch>
             </div>
           </div>
         </div>
@@ -248,7 +253,7 @@
       businessTypeValue: '',
       free_shipping: 2,
       business_type: {},
-      dada: {status: 0},
+      dada: { status: 0 },
       meituan: {},
       fengniao: {},
       cityData: {},
@@ -271,7 +276,7 @@
           objData.status = 0
           showLoading('关闭中')
         }
-        await cityExpressProvider({type: item}).then(res => {
+        await cityExpressProvider({ type: item }).then(res => {
           if (boo) {
             objData.status = 1
           } else {
@@ -296,7 +301,7 @@
         } else {
           showLoading('关闭中')
         }
-        opCityExpressConfig({free_shipping: this.free_shipping == 1 ? 2 : 1}).then(res => {
+        opCityExpressConfig({ free_shipping: this.free_shipping == 1 ? 2 : 1 }).then(res => {
           if (boo) {
             this.free_shipping = 1
           } else {
@@ -314,7 +319,7 @@
         } else {
           showLoading('关闭中')
         }
-        opCityExpressConfig({appoint_send: boo ? 1 : 0}).then(res => {
+        opCityExpressConfig({ appoint_send: boo ? 1 : 0 }).then(res => {
           if (boo) {
             this.appoint_send = 1
           } else {
@@ -327,7 +332,7 @@
         let ind = e.$wx.detail.value
         let data = this.business_type[ind].name
         showLoading('修改中')
-        opCityExpressConfig({business_type: data}).then(res => {
+        opCityExpressConfig({ business_type: data }).then(res => {
           this.businessTypeValue = data
           hideLoading()
         })
@@ -346,7 +351,7 @@
           showLoading('关闭中')
           this.open = 0
         }
-        opCityExpressConfig({open: this.open}).then(res => {
+        opCityExpressConfig({ open: this.open }).then(res => {
           hideLoading()
         })
       },
@@ -382,7 +387,7 @@
 
           let arrData = []
           for (let it in arr) {
-            arrData.push({name: it, id: arr[it]})
+            arrData.push({ name: it, id: arr[it] })
           }
           this.business_type = arrData
 
@@ -407,26 +412,30 @@
 <style lang="scss">
 
 
-  .store-all{
+  .store-all {
     background-color: #FFFFFF;
     height: 100vh;
-    .store-item{
+
+    .store-item {
       height: 108rpx;
       border-bottom: 1px solid #EBEBEB;
       box-sizing: border-box;
       width: 710rpx;
       margin: 0 auto;
     }
-    .store-title{
+
+    .store-title {
       color: #333333;
       font-size: 30rpx;
     }
-    .store-titles{
+
+    .store-titles {
       color: #999999;
       font-size: 26rpx;
     }
   }
-  .wzw-title{
+
+  .wzw-title {
     width: 750rpx;
     text-align: center;
     height: 30rpx;
@@ -436,14 +445,16 @@
     padding-top: 30rpx;
     padding-bottom: 90rpx;
   }
-  .wzw-content{
+
+  .wzw-content {
     width: 690rpx;
     margin: 0 auto;
     height: 44rpx;
     line-height: 44rpx;
     margin-bottom: 26rpx;
   }
-  .wzw-info{
+
+  .wzw-info {
     font-size: 22rpx;
     color: #999999;
     width: 690rpx;
@@ -452,31 +463,35 @@
     line-height: 20rpx;
     margin-bottom: 86rpx;
   }
-  .list-item{
+
+  .list-item {
     width: 710rpx;
     margin: 0 auto;
     height: 118rpx;
     border-bottom: 1px solid #E6E6E6;
     box-sizing: border-box;
   }
-  .list-item-q{
+
+  .list-item-q {
     width: 150rpx;
     height: 118rpx;
     line-height: 118rpx;
     font-size: 28rpx;
     color: #333333;
   }
-  .font-wzw{
+
+  .font-wzw {
     font-size: 26rpx;
     color: #777777;
   }
-  .bohui{
+
+  .bohui {
     color: #B1B1B1;
     font-size: 20rpx;
     margin-top: 14rpx;
   }
 
-  .picker-mbx{
+  .picker-mbx {
     flex: 1;
     text-align: right;
     height: 108rpx;
@@ -484,16 +499,18 @@
     color: #999999;
     font-size: 26rpx;
   }
-  .address{
+
+  .address {
     display: inline-block;
     width: 500rpx;
     white-space: nowrap;
     overflow: hidden;
     height: 108rpx;
     line-height: 108rpx;
-    text-overflow:ellipsis;
+    text-overflow: ellipsis;
   }
-  .picker-open{
+
+  .picker-open {
     flex: 1;
     display: flex;
     align-items: center;
@@ -506,8 +523,8 @@
   "navigationBarTitleText": "同城配送",
   "usingComponents": {
   "wzw-im-tip": "~@/components/wzw-im-tip",
-    "icon": "~@/components/icon",
-    "modal": "~@/components/ModelComponents"
+  "icon": "~@/components/icon",
+  "modal": "~@/components/ModelComponents"
   }
   }
 </config>

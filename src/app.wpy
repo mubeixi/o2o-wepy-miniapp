@@ -1,211 +1,212 @@
 <style lang="scss">
-@import "/assets/app.scss";
-@import "/assets/richtext.scss";
+  @import "/assets/app.scss";
+  @import "/assets/richtext.scss";
 </style>
 <style>
 
 </style>
 <script>
-import wepy from '@wepy/core'
-// import eventHub from './common/eventHub'
-import vuex from '@wepy/x'
+  import wepy from '@wepy/core'
+  // import eventHub from './common/eventHub'
+  import vuex from '@wepy/x'
 
-import { FunError } from './mixins'
-import { ls } from './common/helper'
-import {initInfo} from '@/api/system'
-import {getAccessToken} from './common/request'
-wepy.use(vuex)
-// import IM from '@/common/Im/Im'
-// import eventHub from '@/common/eventHub'
+  import { FunError } from './mixins'
+  import { ls } from './common/helper'
+  import { initInfo } from '@/api/system'
+  import { getAccessToken } from './common/request'
 
-// import store from './store'
+  wepy.use(vuex)
+  // import IM from '@/common/Im/Im'
+  // import eventHub from '@/common/eventHub'
 
-wx.$errorHandle = FunError // 全局的错误处理
+  // import store from './store'
 
-require('./common/index')
-// import promisify.js  from '@wepy/use-promisify.js'
-// wepy.use(promisify.js)
+  wx.$errorHandle = FunError // 全局的错误处理
 
-wepy.app({
-  hooks: {
-    // App 级别 hook，对整个 App 生效
-    // 同时存在 Page hook 和 App hook 时，优先执行 Page hook，返回值再交由 App hook 处
-    // 'before-setData': function (dirty) {
-    //   console.log('setData dirty: ', dirty)
-    //   return dirty
-    // }
-  },
-  globalData: {
-    userInfo: null
-  },
+  require('./common/index')
+  // import promisify.js  from '@wepy/use-promisify.js'
+  // wepy.use(promisify.js)
 
-  onLaunch() {
-    var obj = wx.getLaunchOptionsSync()
-    if (obj.query.users_id) {
-      ls.set('users_id', obj.query.users_id)
+  wepy.app({
+    hooks: {
+      // App 级别 hook，对整个 App 生效
+      // 同时存在 Page hook 和 App hook 时，优先执行 Page hook，返回值再交由 App hook 处
+      // 'before-setData': function (dirty) {
+      //   console.log('setData dirty: ', dirty)
+      //   return dirty
+      // }
+    },
+    globalData: {
+      userInfo: null
+    },
+
+    onLaunch() {
+      var obj = wx.getLaunchOptionsSync()
+      if (obj.query.users_id) {
+        ls.set('users_id', obj.query.users_id)
+      }
+
+      // this.testAsync()
+      // eventHub.$on('app-launch', (...args) => {
+      //   console.log('app-launch event emitted, the params are:')
+      //   console.log(args)
+      // })
+      ls.remove('listenStatus')
+    },
+    onShow() {
+      // const cash_from = ls.get('cash_from')
+      const AccessToken = getAccessToken()
+      if (AccessToken) {
+        initInfo().then(res => {
+
+        })
+      }
+
+      // 初始化商户信息
+      // initInfo().then(res => {
+      //   store.dispatch('setInitInfo', res.data)
+      // }).catch(err => { throw Error(err.msg) })
+
+      // 如果有的
+      // if (eventHub.imInstance) {
+      //   // IM全局
+      //   const imInstance = new IM()
+      //   // 设置本地用户信息
+      //   imInstance.setSendInfo({ type: 'biz', id: this.infoData.id, name: this.infoData.biz_shop_name, avatar: this.infoData.biz_logo })
+      //   await imInstance.start() // 等拿token
+
+      //   imInstance.openListen()
+      //   eventHub.imInstance = imInstance // 全局用一个句柄
+      // }
+    },
+
+    methods: {
+
+      // sleep (s) {
+      //   return new Promise((resolve, reject) => {
+      //     setTimeout(() => {
+      //       resolve('promise resolved')
+      //     }, s * 1000)
+      //   })
+      // },
+      //
+      // async testAsync () {
+      //   let d = await this.sleep(3)
+      //   console.log(d)
+      // }
     }
-
-    // this.testAsync()
-    // eventHub.$on('app-launch', (...args) => {
-    //   console.log('app-launch event emitted, the params are:')
-    //   console.log(args)
-    // })
-    ls.remove('listenStatus')
-  },
-  onShow() {
-    // const cash_from = ls.get('cash_from')
-    const AccessToken = getAccessToken()
-    if (AccessToken) {
-      initInfo().then(res => {
-
-      })
-    }
-
-    // 初始化商户信息
-    // initInfo().then(res => {
-    //   store.dispatch('setInitInfo', res.data)
-    // }).catch(err => { throw Error(err.msg) })
-
-    // 如果有的
-    // if (eventHub.imInstance) {
-    //   // IM全局
-    //   const imInstance = new IM()
-    //   // 设置本地用户信息
-    //   imInstance.setSendInfo({ type: 'biz', id: this.infoData.id, name: this.infoData.biz_shop_name, avatar: this.infoData.biz_logo })
-    //   await imInstance.start() // 等拿token
-
-    //   imInstance.openListen()
-    //   eventHub.imInstance = imInstance // 全局用一个句柄
-    // }
-  },
-
-  methods: {
-
-    // sleep (s) {
-    //   return new Promise((resolve, reject) => {
-    //     setTimeout(() => {
-    //       resolve('promise resolved')
-    //     }, s * 1000)
-    //   })
-    // },
-    //
-    // async testAsync () {
-    //   let d = await this.sleep(3)
-    //   console.log(d)
-    // }
-  }
-})
+  })
 </script>
 <config>
-{
-    pages: [
-      "pages/index",
-      "pages/join/BusinessStation",
-      "pages/join/SettlementAgreement",
-      "pages/join/PersonalCertification",
-      "pages/join/CompanyCertification",
-      "pages/join/BusinessPay",
-      "pages/store/StoreSetting",
-      "pages/store/StoreSettingConfig",
-      "pages/store/StoreSettingAdd",
-      "pages/store/StoreSettingList",
-      "pages/store/StoreInfo",
-      "pages/store/StoreInfoUpda",
-      "pages/store/SameCityDelivery",
-      "pages/store/StoreVip",
-      "pages/store/StoreVipList",
-      "pages/store/StoreVipGive",
-      "pages/store/SameCityUpda",
-      "pages/store/StoreCoupon",
-      "pages/store/StoreCouponAdd",
-      "pages/store/StoreMarketing",
-      "pages/store/StoreBalance",
-      "pages/store/StoreWithdrawal",
-      "pages/store/Record",
-      "pages/store/Recharge",
-      "pages/store/AlbumList",
-      "pages/store/AddAlbum",
-      "pages/store/PhotoList",
-      "pages/store/StoreAvailibleSkin",
-      "pages/logistics/LogisticsMain",
-      "pages/logistics/LogisticsAdds",
-      "pages/logistics/LogisticsAddsMail",
-      "pages/logistics/LogisticsMethod",
-      "pages/logistics/LogisticsUsual",
-      "pages/logistics/LogisticsTmpl",
-      "pages/logistics/LogisticsPaperless",
-      "pages/logistics/ExpressCompany",
-      "pages/logistics/AoAuth",
-      "pages/product/ProductManager",
-      "pages/product/DiyCate",
-      "pages/product/form",
-      "pages/product/imgs",
-      "pages/user/login",
-      "pages/user/UserVipList",
-      "pages/statistics/dashboard",
-      "pages/statistics/SeckillData",
-      "pages/marketing/Seckill",
-      "pages/marketing/SeckillAdd",
-      "pages/marketing/Group",
-      "pages/marketing/GroupForm",
-      "pages/marketing/SeckillAddSelect",
-      "pages/marketing/FlashSale",
-      "pages/marketing/FlashSaleForm",
-      "pages/marketing/Give",
-      "pages/marketing/GiveAdd",
-      "pages/marketing/GiveAddSelect",
-      "pages/marketing/FullReduce",
-      "pages/marketing/RechargeSend",
-      "pages/store/OfflinePay",
-      "pages/order/OrderRetail",
-      "pages/order/OrderRefund",
-      "pages/order/OrderRefundDetail",
-      "pages/order/logistics",
-      "pages/order/OrderList",
-      "pages/order/OrderTmpl",
-      "pages/order/OrderTmplList",
-      "pages/order/OrderRetailSend",
-      "pages/order/CheckChannel",
-      "pages/order/CheckByCode",
-      "pages/order/CheckOrderInfo",
-      "pages/order/SettlementList",
-      "pages/order/Settlement",
-      "pages/marketing/shareQrcode",
-      "pages/support/ImList",
-      "pages/support/Im",
-      "pages/live/apply",
-      "pages/recomment/list",
-      "pages/recomment/form",
-      "pages/message/list",
-      "pages/message/detail",
-      "pages/demo"
+  {
+  pages: [
+  "pages/index",
+  "pages/join/BusinessStation",
+  "pages/join/SettlementAgreement",
+  "pages/join/PersonalCertification",
+  "pages/join/CompanyCertification",
+  "pages/join/BusinessPay",
+  "pages/store/StoreSetting",
+  "pages/store/StoreSettingConfig",
+  "pages/store/StoreSettingAdd",
+  "pages/store/StoreSettingList",
+  "pages/store/StoreInfo",
+  "pages/store/StoreInfoUpda",
+  "pages/store/SameCityDelivery",
+  "pages/store/StoreVip",
+  "pages/store/StoreVipList",
+  "pages/store/StoreVipGive",
+  "pages/store/SameCityUpda",
+  "pages/store/StoreCoupon",
+  "pages/store/StoreCouponAdd",
+  "pages/store/StoreMarketing",
+  "pages/store/StoreBalance",
+  "pages/store/StoreWithdrawal",
+  "pages/store/Record",
+  "pages/store/Recharge",
+  "pages/store/AlbumList",
+  "pages/store/AddAlbum",
+  "pages/store/PhotoList",
+  "pages/store/StoreAvailibleSkin",
+  "pages/logistics/LogisticsMain",
+  "pages/logistics/LogisticsAdds",
+  "pages/logistics/LogisticsAddsMail",
+  "pages/logistics/LogisticsMethod",
+  "pages/logistics/LogisticsUsual",
+  "pages/logistics/LogisticsTmpl",
+  "pages/logistics/LogisticsPaperless",
+  "pages/logistics/ExpressCompany",
+  "pages/logistics/AoAuth",
+  "pages/product/ProductManager",
+  "pages/product/DiyCate",
+  "pages/product/form",
+  "pages/product/imgs",
+  "pages/user/login",
+  "pages/user/UserVipList",
+  "pages/statistics/dashboard",
+  "pages/statistics/SeckillData",
+  "pages/marketing/Seckill",
+  "pages/marketing/SeckillAdd",
+  "pages/marketing/Group",
+  "pages/marketing/GroupForm",
+  "pages/marketing/SeckillAddSelect",
+  "pages/marketing/FlashSale",
+  "pages/marketing/FlashSaleForm",
+  "pages/marketing/Give",
+  "pages/marketing/GiveAdd",
+  "pages/marketing/GiveAddSelect",
+  "pages/marketing/FullReduce",
+  "pages/marketing/RechargeSend",
+  "pages/store/OfflinePay",
+  "pages/order/OrderRetail",
+  "pages/order/OrderRefund",
+  "pages/order/OrderRefundDetail",
+  "pages/order/logistics",
+  "pages/order/OrderList",
+  "pages/order/OrderTmpl",
+  "pages/order/OrderTmplList",
+  "pages/order/OrderRetailSend",
+  "pages/order/CheckChannel",
+  "pages/order/CheckByCode",
+  "pages/order/CheckOrderInfo",
+  "pages/order/SettlementList",
+  "pages/order/Settlement",
+  "pages/marketing/shareQrcode",
+  "pages/support/ImList",
+  "pages/support/Im",
+  "pages/live/apply",
+  "pages/recomment/list",
+  "pages/recomment/form",
+  "pages/message/list",
+  "pages/message/detail",
+  "pages/demo"
 
-    ],
-    window: {
-        backgroundTextStyle: "light",
-        navigationBarBackgroundColor: "#fff",
-        navigationBarTitleText: "本地生活",
-        navigationBarTextStyle: "black"
-    },
-    tabBar: {
-        "custom": true,
-        borderStyle: "black",
-        color: "#999999",
-        selectedColor: "#26C78D",
-        list: [
-            {
-                pagePath: "pages/index",
-                iconPath: "/static/tabbar/find.png",
-                selectedIconPath: "/static/tabbar/find-a.png",
-                text: "首页"
-            },
-            {
-                pagePath: "pages/support/ImList",
-                iconPath: "/static/tabbar/notify.png",
-                selectedIconPath: "/static/tabbar/notify-a.png",
-                text: "消息"
-            }
-        ]
-    }
-}
+  ],
+  window: {
+  backgroundTextStyle: "light",
+  navigationBarBackgroundColor: "#fff",
+  navigationBarTitleText: "本地生活",
+  navigationBarTextStyle: "black"
+  },
+  tabBar: {
+  "custom": true,
+  borderStyle: "black",
+  color: "#999999",
+  selectedColor: "#26C78D",
+  list: [
+  {
+  pagePath: "pages/index",
+  iconPath: "/static/tabbar/find.png",
+  selectedIconPath: "/static/tabbar/find-a.png",
+  text: "首页"
+  },
+  {
+  pagePath: "pages/support/ImList",
+  iconPath: "/static/tabbar/notify.png",
+  selectedIconPath: "/static/tabbar/notify-a.png",
+  text: "消息"
+  }
+  ]
+  }
+  }
 </config>

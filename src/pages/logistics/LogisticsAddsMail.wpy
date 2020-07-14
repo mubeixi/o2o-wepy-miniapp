@@ -1,55 +1,56 @@
 <template>
   <div class="mail-all page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-      <div class="mail-item"  v-for="(item,index) of editData" :key="index">
-         <icon v-if="editData.length>1" type="icondel" @click="del(index)" color="#ccc"  size="24" class="del-icon"></icon>
-         <div class="mail-item-top flex">
-            <div class="select-area">
-              选择地区
-            </div>
-            <div class="flex1 area-all">
-              {{item.areas_desc}}
-              <span style="color: #00A8FF" @click="edit(index)">编辑</span>
-            </div>
-         </div>
-         <div class="mail-item-bottom flex">
-           <div class="select-area">
-             设置包邮条件
-           </div>
-           <div>
-             <div>
-               <radio-group class="radio-group" bindchange="radioChange($event,index)" >
-                 <radio class="radio" value="0"  :checked="item.designated==0?true:false">
-                    件数
-                 </radio>
-                 <radio class="radio"  value="1"  :checked="item.designated==1?true:false">
-                   金额
-                 </radio>
-                 <radio class="radio"  value="2"  :checked="item.designated==2?true:false">
-                   件数+金额
-                 </radio>
-               </radio-group>
-             </div>
-             <div class="input-all">
-                  <block v-if="item.designated==0">
-                    满 <input type="number" v-model="item.prefrrendial_qty" class="inputs"/>件以上包邮
-                  </block>
-                 <block v-else-if="item.designated==1">
-                   满 <input type="digit" v-model="item.prefrrendial_money" class="inputs"/>元以上包邮
-                 </block>
-                  <block v-else>
-                    满 <input type="number" v-model="item.prefrrendial_qty" class="inputs"/>件，<input v-model="item.prefrrendial_money" type="digit" class="inputs"/>元以上包邮
-                  </block>
-             </div>
-           </div>
-         </div>
+    <div class="mail-item" v-for="(item,index) of editData" :key="index">
+      <icon v-if="editData.length>1" type="icondel" @click="del(index)" color="#ccc" size="24" class="del-icon"></icon>
+      <div class="mail-item-top flex">
+        <div class="select-area">
+          选择地区
+        </div>
+        <div class="flex1 area-all">
+          {{item.areas_desc}}
+          <span style="color: #00A8FF" @click="edit(index)">编辑</span>
+        </div>
       </div>
-
-      <div class="submit-last" @click="addList">
-        为指定区域设置运费
+      <div class="mail-item-bottom flex">
+        <div class="select-area">
+          设置包邮条件
+        </div>
+        <div>
+          <div>
+            <radio-group class="radio-group" bindchange="radioChange($event,index)">
+              <radio class="radio" value="0" :checked="item.designated==0?true:false">
+                件数
+              </radio>
+              <radio class="radio" value="1" :checked="item.designated==1?true:false">
+                金额
+              </radio>
+              <radio class="radio" value="2" :checked="item.designated==2?true:false">
+                件数+金额
+              </radio>
+            </radio-group>
+          </div>
+          <div class="input-all">
+            <block v-if="item.designated==0">
+              满 <input type="number" v-model="item.prefrrendial_qty" class="inputs"/>件以上包邮
+            </block>
+            <block v-else-if="item.designated==1">
+              满 <input type="digit" v-model="item.prefrrendial_money" class="inputs"/>元以上包邮
+            </block>
+            <block v-else>
+              满 <input type="number" v-model="item.prefrrendial_qty" class="inputs"/>件，<input
+              v-model="item.prefrrendial_money" type="digit" class="inputs"/>元以上包邮
+            </block>
+          </div>
+        </div>
       </div>
+    </div>
 
-    <city @onConfirm="selectValue" :has.sync="hasValue"  deep="2"   ref="cityPopup"></city>
+    <div class="submit-last" @click="addList">
+      为指定区域设置运费
+    </div>
+
+    <city @onConfirm="selectValue" :has.sync="hasValue" deep="2" ref="cityPopup"></city>
 
     <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
@@ -75,7 +76,7 @@
     data: {
       ind: 0, // 当前修改的是哪个
       temp_id: '',
-      editData: [{areas: '', areas_desc: '', designated: '0', prefrrendial_qty: '', prefrrendial_money: ''}],
+      editData: [{ areas: '', areas_desc: '', designated: '0', prefrrendial_qty: '', prefrrendial_money: '' }],
       // showSelect: false,
       hasValue: [],
       designated: '0',
@@ -99,12 +100,12 @@
       },
       // 保存返回
       saveNext() {
-        eventHub.$emit('bind_free_method', {...this.editData})
+        eventHub.$emit('bind_free_method', { ...this.editData })
         ls.set('Free_Content', this.editData)
-        wx.navigateBack({delta: -1})
+        wx.navigateBack({ delta: -1 })
       },
       addList() {
-        this.editData.push({areas: '', areas_desc: '', designated: '0', prefrrendial_qty: '', prefrrendial_money: ''})
+        this.editData.push({ areas: '', areas_desc: '', designated: '0', prefrrendial_qty: '', prefrrendial_money: '' })
       },
       radioChange(e, index) {
         this.editData[index].designated = e.$wx.detail.value
@@ -132,31 +133,35 @@
 </script>
 <style lang="scss">
 
-  .page-wrap{
+  .page-wrap {
     padding-bottom: 44px;
   }
 
-  .mail-all{
+  .mail-all {
     background-color: #FFFFFF;
     min-height: 100vh;
     padding-top: 40rpx;
   }
-  .mail-item{
+
+  .mail-item {
     width: 710rpx;
     margin: 0 auto 30rpx;
     border: 1px solid #E1E1E1;
     position: relative;
   }
-  .mail-item-top{
+
+  .mail-item-top {
     min-height: 142rpx;
     border-bottom: 1px solid #E1E1E1;
-    .area-all{
+
+    .area-all {
       padding: 40rpx 70rpx 40rpx 40rpx;
       font-size: 22rpx;
       color: #888888;
     }
   }
-  .select-area{
+
+  .select-area {
     width: 170rpx;
     display: flex;
     align-items: center;
@@ -167,10 +172,12 @@
     font-size: 24rpx;
     color: #333333;
   }
-  .mail-item-bottom{
+
+  .mail-item-bottom {
     height: 194rpx;
   }
-  .radio-group{
+
+  .radio-group {
     font-size: 24rpx;
     height: 28rpx;
     line-height: 28rpx;
@@ -179,12 +186,14 @@
     color: #888888;
     display: flex;
     align-items: center;
-    .radio{
+
+    .radio {
       margin-left: 50rpx;
       transform: scale(0.8);
     }
   }
-  .inputs{
+
+  .inputs {
     width: 120rpx;
     height: 50rpx;
     border: 1px solid #C8C8C8;
@@ -192,7 +201,8 @@
     margin-right: 10rpx;
     text-align: center;
   }
-  .input-all{
+
+  .input-all {
     height: 50rpx;
     margin-bottom: 38rpx;
     display: flex;
@@ -201,31 +211,34 @@
     font-size: 24rpx;
     color: #888888;
   }
-  .submit-last{
-    width:226rpx;
-    height:56rpx;
-    border:1px solid rgba(0,168,255,1);
-    border-radius:6rpx;
+
+  .submit-last {
+    width: 226rpx;
+    height: 56rpx;
+    border: 1px solid rgba(0, 168, 255, 1);
+    border-radius: 6rpx;
     margin-left: 504rpx;
     line-height: 56rpx;
     text-align: center;
     color: #00A8FF;
     font-size: 22rpx;
   }
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
+
+  .submit-main {
+    width: 750rpx;
+    height: 86rpx;
     line-height: 86rpx;
     text-align: center;
     color: #FFFFFF;
     font-size: 32rpx;
-    background:rgba(0,168,255,1);
+    background: rgba(0, 168, 255, 1);
     position: fixed;
     bottom: 0rpx;
     left: 0rpx;
     z-index: 9;
   }
-  .del-icon{
+
+  .del-icon {
     position: absolute;
     z-index: 9;
     right: -22rpx;
@@ -237,9 +250,9 @@
   {
   "navigationBarTitleText": "指定包邮条件",
   "usingComponents": {
-    "icon": "~@/components/icon",
-    "city": "~@/components/SelectCity",
-    "wzw-im-tip": "~@/components/wzw-im-tip"
+  "icon": "~@/components/icon",
+  "city": "~@/components/SelectCity",
+  "wzw-im-tip": "~@/components/wzw-im-tip"
   }
   }
 </config>

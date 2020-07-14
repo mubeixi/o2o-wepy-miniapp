@@ -3,18 +3,18 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="first">
       <span class="first-title">默认运费：</span>
-      <input type="digit" class="input-out"  v-model="express_start"/> {{indexs===0?'kg':'件'}}内，
-      <input type="digit"  class="input-out" v-model="express_postage"/> 元
+      <input type="digit" class="input-out" v-model="express_start"/> {{indexs===0?'kg':'件'}}内，
+      <input type="digit" class="input-out" v-model="express_postage"/> 元
     </div>
     <div class="second">
       每增加
       <input type="digit" class="input-out" v-model="express_plus"/> {{indexs===0?'kg':'件'}}，增加运费
-      <input type="digit"  class="input-out" v-model="express_postageplus"/> 元
+      <input type="digit" class="input-out" v-model="express_postageplus"/> 元
     </div>
 
 
-    <div class="mail-item"  v-for="(item,index) of special_content" :key="index">
-      <icon type="icondel" @click="del(index)" color="#ccc"  size="24" class="del-icon"></icon>
+    <div class="mail-item" v-for="(item,index) of special_content" :key="index">
+      <icon type="icondel" @click="del(index)" color="#ccc" size="24" class="del-icon"></icon>
       <div class="mail-item-top flex">
         <div class="select-area">
           选择地区
@@ -29,7 +29,7 @@
           首重
         </div>
         <div class="input-div">
-          <input type="digit"  class="input-my" v-model="item.express_start"/>  {{indexs===0?'kg':'件'}}
+          <input type="digit" class="input-my" v-model="item.express_start"/> {{indexs===0?'kg':'件'}}
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -37,7 +37,7 @@
           首费
         </div>
         <div class="input-div">
-          <input type="digit"  class="input-my"  v-model="item.express_postage"/>  元
+          <input type="digit" class="input-my" v-model="item.express_postage"/> 元
         </div>
       </div>
       <div class="mail-item-bottom flex">
@@ -45,7 +45,7 @@
           续重
         </div>
         <div class="input-div">
-          <input type="digit"  class="input-my"  v-model="item.express_plus"/>  {{indexs===0?'kg':'件'}}
+          <input type="digit" class="input-my" v-model="item.express_plus"/> {{indexs===0?'kg':'件'}}
         </div>
       </div>
       <div class="mail-item-bottom flex" style="border-bottom: 0px">
@@ -53,12 +53,12 @@
           续费
         </div>
         <div class="input-div">
-          <input type="digit"  class="input-my"  v-model="item.express_postageplus"/>  元
+          <input type="digit" class="input-my" v-model="item.express_postageplus"/> 元
         </div>
       </div>
     </div>
 
-    <div class="submit-last"  @click="addList">
+    <div class="submit-last" @click="addList">
       为指定区域设置运费
     </div>
     <div class="h20"></div>
@@ -127,18 +127,23 @@
           error('请配置默认运费')
           return
         }
-        eventHub.$emit('bind_send_method', {Template_Content})
+        eventHub.$emit('bind_send_method', { Template_Content })
         ls.set('Template_Content', Template_Content)
-        wx.navigateBack({delta: -1})
+        wx.navigateBack({ delta: -1 })
       },
       addList() {
-        this.special_content.push({express_areas: '', express_desc: '', express_start: '', express_postage: '', express_plus: '', express_postageplus: ''})
+        this.special_content.push({
+          express_areas: '',
+          express_desc: '',
+          express_start: '',
+          express_postage: '',
+          express_plus: '',
+          express_postageplus: ''
+        })
       },
       edit(index) {
         this.ind = index
         this.hasValue = this.hasAllList.hasOwnProperty(this.ind) ? this.hasAllList[this.ind] : []
-
-
 
         // this.showSelect = true
         this.$refs.cityPopup.open()
@@ -192,31 +197,36 @@
 </script>
 <style lang="scss">
 
-  .page-wrap{
+  .page-wrap {
     padding-bottom: 44px;
   }
-  .mail-all{
+
+  .mail-all {
     background-color: #f6f6f6;
     min-height: 100vh;
   }
-  .mail-item{
+
+  .mail-item {
     width: 710rpx;
     background-color: #FFFFFF;
     margin: 0 auto 20rpx;
     border: 1px solid #E1E1E1;
     position: relative;
   }
-  .mail-item-top{
+
+  .mail-item-top {
     min-height: 110rpx;
     border-bottom: 1px solid #eeeeee;
-    .area-all{
+
+    .area-all {
       padding: 26rpx 26rpx 24rpx 40rpx;
       font-size: 22rpx;
 
       color: #888888;
     }
   }
-  .select-area{
+
+  .select-area {
     width: 140rpx;
     display: flex;
     align-items: center;
@@ -227,18 +237,21 @@
     font-size: 24rpx;
     color: #333333;
   }
-  .mail-item-bottom{
+
+  .mail-item-bottom {
     height: 90rpx;
     border-bottom: 1px solid #eeeeee;
   }
-  .input-div{
+
+  .input-div {
     height: 90rpx;
     display: flex;
     align-items: center;
     padding-left: 40rpx;
     font-size: 24rpx;
     color: #888888;
-    .input-my{
+
+    .input-my {
       width: 166rpx;
       height: 50rpx;
       border: 1px solid #C8C8C8;
@@ -247,29 +260,32 @@
     }
   }
 
-  .submit-last{
-    width:226rpx;
-    height:56rpx;
-    border:1px solid rgba(0,168,255,1);
-    border-radius:6rpx;
+  .submit-last {
+    width: 226rpx;
+    height: 56rpx;
+    border: 1px solid rgba(0, 168, 255, 1);
+    border-radius: 6rpx;
     margin-left: 504rpx;
     line-height: 56rpx;
     text-align: center;
     color: #00A8FF;
     font-size: 22rpx;
   }
-  .first{
+
+  .first {
     margin: 50rpx 20rpx 30rpx 20rpx;
     font-size: 24rpx;
     color: #888888;
     display: flex;
     align-items: center;
-    .first-title{
+
+    .first-title {
       font-size: 30rpx;
       color: #333333;
     }
   }
-  .second{
+
+  .second {
     margin-bottom: 40rpx;
     padding-left: 94rpx;
     font-size: 24rpx;
@@ -277,7 +293,8 @@
     display: flex;
     align-items: center;
   }
-  .input-out{
+
+  .input-out {
     width: 140rpx;
     height: 56rpx;
     text-align: center;
@@ -285,20 +302,22 @@
     margin-left: 16rpx;
     margin-right: 18rpx;
   }
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
+
+  .submit-main {
+    width: 750rpx;
+    height: 86rpx;
     line-height: 86rpx;
     text-align: center;
     color: #FFFFFF;
     font-size: 32rpx;
-    background:rgba(0,168,255,1);
+    background: rgba(0, 168, 255, 1);
     position: fixed;
     bottom: 0rpx;
     left: 0rpx;
     z-index: 9;
   }
-  .del-icon{
+
+  .del-icon {
     position: absolute;
     z-index: 9;
     right: -22rpx;
@@ -310,9 +329,9 @@
   {
   "navigationBarTitleText": "运送方式",
   "usingComponents": {
-    "wzw-im-tip": "~@/components/wzw-im-tip",
-    "icon": "~@/components/icon",
-    "city": "~@/components/SelectCity"
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon",
+  "city": "~@/components/SelectCity"
   }
   }
 </config>

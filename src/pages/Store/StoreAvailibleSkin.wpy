@@ -2,13 +2,13 @@
   <div class="mail-all">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
 
-    <div  class="store-skin flex flex-justify-between">
-        <div class="w300"  v-for="(item,index) of storeData" :key="index"  @click="checkId(item.id)">
-          <img :src="item.url"   class="store-img" :class="{'checked':skin_id==item.id}"/>
-          <div class="store-text"  :class="{'checked':skin_id==item.id}">
-            {{item.name}}
-          </div>
+    <div class="store-skin flex flex-justify-between">
+      <div class="w300" v-for="(item,index) of storeData" :key="index" @click="checkId(item.id)">
+        <img :src="item.url" class="store-img" :class="{'checked':skin_id==item.id}"/>
+        <div class="store-text" :class="{'checked':skin_id==item.id}">
+          {{item.name}}
         </div>
+      </div>
     </div>
 
   </div>
@@ -18,9 +18,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getAvailibleSkin, getBizInfo, opBizInfo} from '../../api/store'
+  import { getAvailibleSkin, getBizInfo, opBizInfo } from '../../api/store'
   import { error, toast } from '../../common/fun'
-  import {confirm} from '../../common/helper'
+  import { confirm } from '../../common/helper'
 
   wepy.page({
     store,
@@ -31,8 +31,8 @@
     },
     methods: {
       checkId(skin_id) {
-        confirm({title: '提示', content: '确定要选择该模板吗?', confirmText: '确定', cancelText: '取消'}).then(() => {
-          opBizInfo({skin_id}).then(res => {
+        confirm({ title: '提示', content: '确定要选择该模板吗?', confirmText: '确定', cancelText: '取消' }).then(() => {
+          opBizInfo({ skin_id }).then(res => {
             toast('修改成功')
             this.skin_id = skin_id
             setTimeout(function() {
@@ -41,7 +41,8 @@
           }).catch(e => {
             error(e.msg || '修改失败')
           })
-        }).catch(() => {})
+        }).catch(() => {
+        })
 
       },
       async init() {
@@ -63,19 +64,22 @@
 </script>
 <style lang="scss">
 
-  .store-skin{
-      padding:50rpx 50rpx;
-      flex-wrap:wrap;
+  .store-skin {
+    padding: 50rpx 50rpx;
+    flex-wrap: wrap;
   }
-  .store-img{
+
+  .store-img {
     width: 300rpx;
     height: 480rpx;
     box-sizing: border-box;
   }
-  .w300{
+
+  .w300 {
     width: 300rpx;
   }
-  .store-text{
+
+  .store-text {
     width: 300rpx;
     height: 40rpx;
     line-height: 40rpx;
@@ -83,8 +87,9 @@
     margin: 20px 0px;
     border: 0px !important;
   }
-  .checked{
-    border: 2px solid  #FF0000;
+
+  .checked {
+    border: 2px solid #FF0000;
     color: #FF0000;
   }
 

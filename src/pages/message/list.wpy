@@ -1,17 +1,20 @@
 <style lang="scss">
-  .page-wrap{
+  .page-wrap {
     min-height: 100vh;
     background: #f2f2f2;
     padding-top: 30rpx;
   }
-  .recomment-item{
-    margin:0 30rpx 30rpx;
+
+  .recomment-item {
+    margin: 0 30rpx 30rpx;
     padding: 10px;
     background: #fff;
     border-radius: 4px;
-    .head{
-      padding: 5px 0 5px ;
-      .title{
+
+    .head {
+      padding: 5px 0 5px;
+
+      .title {
         width: 420rpx;
         overflow-x: hidden;
         white-space: nowrap;
@@ -39,7 +42,7 @@
   import { bizMessageList } from '@/api/system'
   import { Exception } from '@/common/Exception'
   import moment from 'moment'
-  import { error, toast } from '@/common/fun'
+  import { toast } from '@/common/fun'
 
   wepy.page({
     store,
@@ -50,23 +53,25 @@
       pageSize: 10,
       totalCount: 0
     },
-    computed: {
-
-    },
+    computed: {},
     methods: {
       toDetail(id) {
         this.$linkTo('/pages/message/detail?id=' + id)
       },
-      async _init_func (options) {
-        const {totalCount, data: list} = await bizMessageList({pageSize: this.pageSize, page: this.page, biz_id: ''}).catch(err => {
+      async _init_func(options) {
+        const { totalCount, data: list } = await bizMessageList({
+          pageSize: this.pageSize,
+          page: this.page,
+          biz_id: ''
+        }).catch(err => {
           Exception.handle(Error(err.msg))
         })
         this.page++
         this.totalCount = totalCount
 
         this.messageList = list.map(row => {
-          const {created_at, ..._row} = row
-          return {..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss')}
+          const { created_at, ..._row } = row
+          return { ..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss') }
         })
       }
     },
@@ -75,18 +80,21 @@
     },
     async onReachBottom() {
       if (this.messageList.length >= this.totalCount) {
-        toast('到底了','none')
+        toast('到底了', 'none')
         return
       }
-      const {totalCount, data: list} = await bizMessageList({pageSize: this.pageSize, page: this.page}).catch(err => {
+      const { totalCount, data: list } = await bizMessageList({
+        pageSize: this.pageSize,
+        page: this.page
+      }).catch(err => {
         Exception.handle(Error(err.msg))
       })
       this.page++
       this.totalCount = totalCount
 
       this.messageList = list.map(row => {
-        const {created_at, ..._row} = row
-        return {..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss')}
+        const { created_at, ..._row } = row
+        return { ..._row, created_at: moment.unix(created_at).format('YYYY-MM-DD hh:mm:ss') }
       })
     },
     onLoad() {

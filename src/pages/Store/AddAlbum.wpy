@@ -1,42 +1,42 @@
 <template>
   <div class="AddAlbum page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-        <div class="cell-item">
-            <div class="label">相册名称</div>
-            <input type="text" class="content" v-model="cate_name" placeholder="请输入相册名称" />
+    <div class="cell-item">
+      <div class="label">相册名称</div>
+      <input type="text" class="content" v-model="cate_name" placeholder="请输入相册名称"/>
 
-          </div>
-          <div class="cell-item ">
-            <div class="label">相册分类图片</div>
-            <div class="content flex">
-                 <div
-                  @click="bindThumbClick"
-                  class="img-item img"
-                  v-for="(img,idx) in imgs"
-                  :key="idx"
-                  :style="{backgroundImage:'url('+img+')'}">
-                  <span class="progress" v-if="img.task && img.task.progress<100">{{img.task.progress}}%</span>
-                </div>
-
-                <div
-                    v-if="imgs.length<=0"
-                  class="img-item add"
-                  @click="addImg"
-                >
-                  <icon color="#ddd" size="40" type="iconupload"></icon>
-                </div>
-
-            </div>
-          </div>
-
-
-        <!--占住底部的位置-->
-        <div class="safearea-box fixed bgwhite"></div>
-        <!--放置页面底部内容被挡住，额外给的高度-->
-        <div class="safearea-box"></div>
-        <div class="submit" @click="submit">
-          新增相册
+    </div>
+    <div class="cell-item ">
+      <div class="label">相册分类图片</div>
+      <div class="content flex">
+        <div
+          @click="bindThumbClick"
+          class="img-item img"
+          v-for="(img,idx) in imgs"
+          :key="idx"
+          :style="{backgroundImage:'url('+img+')'}">
+          <span class="progress" v-if="img.task && img.task.progress<100">{{img.task.progress}}%</span>
         </div>
+
+        <div
+          v-if="imgs.length<=0"
+          class="img-item add"
+          @click="addImg"
+        >
+          <icon color="#ddd" size="40" type="iconupload"></icon>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <div class="submit" @click="submit">
+      新增相册
+    </div>
 
 
   </div>
@@ -46,16 +46,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {opPhotoAlbum} from '../../api/store'
+  import { opPhotoAlbum } from '../../api/store'
   import { error, toast } from '../../common/fun'
-  import {
-    chooseImageByPromise,
-    confirm,
-    getArrColumn,
-    getDomain,
-    uploadImages,
-    validateFun
-  } from '../../common/helper'
+  import { chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '../../common/helper'
 
   wepy.page({
     store,
@@ -95,7 +88,7 @@
         wx.showActionSheet({
           itemList: ['预览图片', '移除图片'],
           success: (res) => {
-            const {tapIndex} = res
+            const { tapIndex } = res
 
             if (tapIndex === 0) {
               wx.previewImage({
@@ -106,7 +99,7 @@
               this.imgs = []
             }
           },
-          fail (res) {
+          fail(res) {
 
           }
         })
@@ -114,20 +107,24 @@
       async addImg() {
         try {
           if (this._click) throw Error('操作过快')
-          const files = await chooseImageByPromise({count: 1}).catch((err) => { throw Error(err.errMsg) })
-          const arr1 = files.map(file => {
-            return {...file, task: {progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0}}
+          const files = await chooseImageByPromise({ count: 1 }).catch((err) => {
+            throw Error(err.errMsg)
           })
-            // this.imgTempList = this.imgTempList.concat(arr1)
+          const arr1 = files.map(file => {
+            return { ...file, task: { progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0 } }
+          })
+          // this.imgTempList = this.imgTempList.concat(arr1)
           const imgs = getArrColumn(files, 'path')
-          const ossUrls = await uploadImages({imgs, progressList: this.imgTempList}).catch((errMsg) => { throw {message: errMsg, type: 'modal'} })
+          const ossUrls = await uploadImages({ imgs, progressList: this.imgTempList }).catch((errMsg) => {
+            throw { message: errMsg, type: 'modal' }
+          })
           for (var i = 0; i < ossUrls.length; i++) {
             ossUrls[i] = getDomain(ossUrls[i])
           }
           this.imgs = ossUrls
           this._click = false
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
           wx.$errorHandle(e)
         }
       }
@@ -138,81 +135,93 @@
 </script>
 <style lang="scss">
 
-  .AddAlbum{
-      background-color: #FFFFFF;
-     height: 100vh;
+  .AddAlbum {
+    background-color: #FFFFFF;
+    height: 100vh;
   }
-   .cell-item{
-       width: 750rpx;
-       padding: 0rpx 20rpx;
-       box-sizing: border-box;
-       min-height: 80rpx;
-       display: flex;
-       align-items: center;
-       margin-bottom: 10px;
-        .label{
-          /*font-size: 16px;*/
-          margin-right: 20rpx
-        }
-        .content{
-          padding-right : 20rpx;
-          text-align: left;
-          .line-input{
-            border:1px solid #eee;
-            height: 56rpx;
-            line-height: 56rpx;
-            text-align: center;
-            font-size: 14px;
-          }
-        }
+
+  .cell-item {
+    width: 750rpx;
+    padding: 0rpx 20rpx;
+    box-sizing: border-box;
+    min-height: 80rpx;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .label {
+      /*font-size: 16px;*/
+      margin-right: 20rpx
     }
-    .add{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border: 1px dashed #ccc;
-        box-sizing: border-box;
-        margin-right: 0;
-        margin-bottom: 0;
+
+    .content {
+      padding-right: 20rpx;
+      text-align: left;
+
+      .line-input {
+        border: 1px solid #eee;
+        height: 56rpx;
+        line-height: 56rpx;
+        text-align: center;
+        font-size: 14px;
+      }
     }
-    .progress{
+  }
+
+  .add {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+    box-sizing: border-box;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+
+  .progress {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 120rpx;
+    color: white;
+    background: rgba(0, 0, 0, .3);
+  }
+
+  .img {
+    @include cover-img();
+
+    &-box {
+      display: flex;
+      flex-wrap: wrap;
+      width: 400rpx;
+    }
+
+    &-item {
+      width: 120rpx;
+      height: 120rpx;
+      margin-bottom: 20rpx;
+      margin-right: 20rpx;
+      position: relative;
+
+      .progress {
         position: absolute;
         width: 100%;
         height: 100%;
         text-align: center;
         line-height: 120rpx;
         color: white;
-        background: rgba(0,0,0,.3);
+        background: rgba(0, 0, 0, .3);
       }
-      .img{
-            @include cover-img();
-            &-box{
-            display: flex;
-            flex-wrap: wrap;
-            width: 400rpx;
-            }
-            &-item{
-            width: 120rpx;
-            height: 120rpx;
-            margin-bottom: 20rpx;
-            margin-right: 20rpx;
-            position: relative;
-            .progress{
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                text-align: center;
-                line-height: 120rpx;
-                color: white;
-                background: rgba(0,0,0,.3);
-            }
-            &:nth-child(3n+0){
-                margin-right: 0;
-            }
-            }
+
+      &:nth-child(3n+0) {
+        margin-right: 0;
+      }
     }
-  .submit{
+  }
+
+  .submit {
     width: 750rpx;
     height: 86rpx;
     line-height: 86rpx;
@@ -224,7 +233,6 @@
     left: 0px;
     bottom: 0px
   }
-
 
 
 </style>

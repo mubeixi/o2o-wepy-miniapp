@@ -1,4 +1,3 @@
-
 export const toast = (title, icon, image, duration) => {
   wx.showToast({
     title,
@@ -49,7 +48,9 @@ export const linkTo = (url, type = 'default') => {
         console.log(err)
         wx.switchTab({
           url,
-          fail(e) { error(e.errMsg) }
+          fail(e) {
+            error(e.errMsg)
+          }
         })
       }
     })

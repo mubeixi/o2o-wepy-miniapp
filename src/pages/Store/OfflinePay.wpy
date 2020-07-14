@@ -1,8 +1,8 @@
 <template>
   <view class="page-wrap ">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="preview-box" >
-      <image v-if="current_url" class="preview" @click="preFn" :src="current_url" mode="widthFix" />
+    <div class="preview-box">
+      <image v-if="current_url" class="preview" @click="preFn" :src="current_url" mode="widthFix"/>
     </div>
 
 
@@ -59,34 +59,34 @@
         balance: ''
       }//
     },
-    created () {
+    created() {
       this.initFunc(this.type, this.again)
     },
-    onShow () {
+    onShow() {
       this.$refs.permissionModal.close()
     },
-    onLoad () {
+    onLoad() {
 
     },
     methods: {
       getDomain,
-      backSetting () {
+      backSetting() {
         this.$refs.permissionModal.close()
       },
-      openSetting () {
+      openSetting() {
         const _self = this
         wx.authorize({
           scope: 'scope.writePhotosAlbum',
-          success () {
+          success() {
             _self.saveFn()
           },
-          fail () {
+          fail() {
             _self.$refs.permissionModal.show()
             error('拒绝相册授权,保存失败')
           }
         })
       },
-      saveImg () {
+      saveImg() {
         const _self = this
         wx.getSetting({
           success: (res) => {
@@ -99,7 +99,7 @@
           }
         })
       },
-      async saveFn () {
+      async saveFn() {
         showLoading('保存中')
         const handleRT = await saveImageToDisk({
           fileUrl: this.current_url,
@@ -112,7 +112,7 @@
         }
         toast('保存成功')
       },
-      preFn () {
+      preFn() {
         if (!this.current_url) {
           error('请选择模板')
           return
@@ -121,17 +121,19 @@
           urls: [this.current_url]
         })
       },
-      async initFunc () {
+      async initFunc() {
         try {
           showLoading('获取中')
-          this.current_url = await bizPaySign().then(res => res.data.img_url).catch((err) => { throw Error(err.msg) })
+          this.current_url = await bizPaySign().then(res => res.data.img_url).catch((err) => {
+            throw Error(err.msg)
+          })
         } catch (e) {
           Exception.handle(e)
         } finally {
           hideLoading()
         }
       },
-      goBack () {
+      goBack() {
         this.$back()
       }
     }
@@ -139,17 +141,19 @@
 </script>
 <style lang="scss" scoped>
 
-  .page-wrap{
+  .page-wrap {
     height: 100vh;
     display: flex;
     flex-direction: column;
   }
-  .preview-box{
-    flex:1;
+
+  .preview-box {
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
+
   .preview {
     height: auto;
     margin: 0 auto;
@@ -159,9 +163,10 @@
   .handle-box {
     width: 750rpx;
     height: 90rpx;
-    padding-bottom:constant(safe-area-inset-bottom);
-    padding-bottom:env(safe-area-inset-bottom);
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
     background: white;
+
     .share-btn {
       width: 750rpx;
       text-align: center;
@@ -172,11 +177,13 @@
     }
 
   }
-  .control{
+
+  .control {
     display: flex;
     width: 100%;
     align-items: center;
-    .action-btn-sure{
+
+    .action-btn-sure {
       flex: 1;
       text-align: center;
       height: 80rpx;
@@ -185,24 +192,27 @@
       background-color: #FFFFFF;
       border: 0px;
     }
-    button::after{
+
+    button::after {
       width: 0;
       height: 0;
     }
   }
 
-  .refuseApplyDialog{
+  .refuseApplyDialog {
     width: 560rpx;
     box-sizing: border-box;
     padding-left: 40rpx;
     padding-right: 40rpx;
-    .modal-title{
+
+    .modal-title {
       height: 80rpx;
       line-height: 80rpx;
       text-align: center;
       font-weight: bold;
     }
-    .btn-sub{
+
+    .btn-sub {
       color: #1aac19;
     }
 
@@ -213,13 +223,13 @@
   }
 </style>
 <config>
-{
+  {
   "navigationBarTitleText": "商家收款码",
   "usingComponents": {
-    "wzw-dialog": "~@/components/ModelComponents",
-    "wzw-im-tip": "~@/components/wzw-im-tip",
-    "copyright": "~@/components/copyright",
-    "icon": "~@/components/icon"
+  "wzw-dialog": "~@/components/ModelComponents",
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon"
   }
-}
+  }
 </config>

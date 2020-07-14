@@ -1,7 +1,8 @@
 <template>
   <view v-if="isShow">
-    <view @tap="ableClose" @touchmove.stop.prevent id="mask" class="popup-layer" v-if="showMask"  ></view>
-    <view :animation="animationData" id="wrap" class="popup-wrap"   @tap.stop="noop" :style="{height:full?'100%':'auto','top':topStr?topStr:'auto',backgroundColor:mainBgColor}" >
+    <view @tap="ableClose" @touchmove.stop.prevent id="mask" class="popup-layer" v-if="showMask"></view>
+    <view :animation="animationData" id="wrap" class="popup-wrap" @tap.stop="noop"
+          :style="{height:full?'100%':'auto','top':topStr?topStr:'auto',backgroundColor:mainBgColor}">
       <div @touchmove.stop.prevent v-if="title" class="pupup-title">{{title}}</div>
       <slot></slot>
       <div v-if="showSafeArea" @touchmove.stop.prevent class="safearea-box2"></div>
@@ -14,8 +15,11 @@
   import wepy from '@wepy/core'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
-      showSafeArea:{
+      showSafeArea: {
         type: Boolean,
         default: true
       },
@@ -58,7 +62,7 @@
     },
     data: {
       isShow: false,
-      systemInfo: {statusBarHeight: 0},
+      systemInfo: { statusBarHeight: 0 },
       domInfo: {},
       animationData: {}
     },
@@ -86,7 +90,8 @@
       // }
     },
     methods: {
-      noop() {},
+      noop() {
+      },
       show: function() {
         this.isShow = true
         // var animation = wx.createAnimation({
@@ -111,7 +116,8 @@
         }
         this.$emit('maskClicked', true)
       },
-      stopEvent(event) {},
+      stopEvent(event) {
+      },
       doSome() {
 
       }
@@ -126,31 +132,33 @@
   .popup-layer {
     position: fixed;
     z-index: 99;
-    background: rgba(0, 0, 0,.6);
+    background: rgba(0, 0, 0, .6);
     width: 100%;
-    height:100%;
+    height: 100%;
     left: 0px;
-    top:0;
+    top: 0;
     //transform: translateY(100%);
   }
 
   .popup-wrap {
     position: fixed;
     left: 0;
-    bottom:0;
+    bottom: 0;
     width: 100%;
     //transform:translateY(100%);
     z-index: 100;
     background: #FFFFFF;
     overflow: hidden;
-    .pupup-title{
+
+    .pupup-title {
       padding: 30rpx 0 60rpx;
       font-size: 16px;
       text-align: center;
       color: #333;
     }
   }
-  .safearea-box2{
+
+  .safearea-box2 {
     height: constant(safe-area-inset-bottom);
     height: env(safe-area-inset-bottom);
     width: 100%;

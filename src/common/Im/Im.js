@@ -1,10 +1,10 @@
 import ENV from '../env'
-import { bindUid, getAccessToken, sendMsg, getMsgList, getNoReadMsg, checkOnline } from './Fetch'
+import { bindUid, checkOnline, getAccessToken, getMsgList, getNoReadMsg, sendMsg } from './Fetch'
 import moment from 'moment'
 import Promisify from '../promisify'
-import { ls as Storage, createUpTaskArr, uploadImages, getDomain } from '../helper'
+import { createUpTaskArr, getDomain, ls as Storage, uploadImages } from '../helper'
 import { modal } from '../fun'
-import {Exception} from '../Exception'
+import { Exception } from '../Exception'
 import eventHub from '../eventHub'
 import store from '@/store'
 
@@ -14,7 +14,7 @@ import store from '@/store'
  *
  */
 class Message {
-  constructor (type, content = '', ext) {
+  constructor(type, content = '', ext) {
     if (!type) throw Error('type必须指定')
     this.content = content
     this.type = type
@@ -22,7 +22,7 @@ class Message {
     this.ext = ext
   }
 
-  async getContent () {
+  async getContent() {
     let rt = null
     switch (this.type) {
       case 'text':
@@ -49,7 +49,7 @@ Message.prototype.imgHeightMax = 160 // px
  * 图片类，会额外用到加载进度、以及本地临时路径（加快显示，然后方便显示进度)
  */
 class Image extends Message {
-  constructor (type = 'image', content = '', ext) {
+  constructor(type = 'image', content = '', ext) {
     super(type, content)
     const { tempPath } = ext
     this.tempPath = tempPath
@@ -101,8 +101,10 @@ class Image extends Message {
     return true
   }
 
-  async getContent (chatIdx, chatList) {
-    const ossUrls = await uploadImages({ imgs: [this.tempPath], progressList: this.taskList }).catch(msg => { throw Error(msg) })
+  async getContent(chatIdx, chatList) {
+    const ossUrls = await uploadImages({ imgs: [this.tempPath], progressList: this.taskList }).catch(msg => {
+      throw Error(msg)
+    })
 
     for (var i = 0; i < ossUrls.length; i++) {
       ossUrls[i] = getDomain(ossUrls[i])
@@ -118,7 +120,7 @@ class Image extends Message {
 }
 
 class Product extends Message {
-  constructor (type = 'prod', content = {}, ext) {
+  constructor(type = 'prod', content = {}, ext) {
     console.log(content, ext)
     super(type, content)
 
@@ -138,7 +140,7 @@ class Product extends Message {
     }
   }
 
-  async getContent () {
+  async getContent() {
     // {"prod_name":"商品一","img":"图片路径","price":"100","url":"商品卡片点击跳转的URL"}
 
     // 走到这里就代表已经发送了
@@ -158,7 +160,7 @@ class IM {
    * @param identityType 身份信息
    * @param dentityId信息id
    */
-  constructor ({ productId, orderId, origin, ...extConf } = {}) {
+  constructor({ productId, orderId, origin, ...extConf } = {}) {
     // this.createInstance = false
     // this.productId = productId
     // this.orderId = orderId
@@ -192,7 +194,7 @@ class IM {
   /**
    * 获取以往信息
    */
-  async getHistory () {
+  async getHistory() {
     const pageSize = this.historyPageSize
     const page = this.page
 
@@ -202,7 +204,9 @@ class IM {
         row.direction = row.from_uid === out_uid ? 'to' : 'accept' // 标记哪些是自己的
         return row
       })
-    }).catch(err => { throw Error(err.msg || '获取历史消息失败') })
+    }).catch(err => {
+      throw Error(err.msg || '获取历史消息失败')
+    })
 
     if (historyList.length > 0) {
       this.chatList = historyList.concat(this.chatList)
@@ -217,7 +221,7 @@ class IM {
    * @param id
    * @param ext
    */
-  setSendInfo ({ type, id, ...ext }) {
+  setSendInfo({ type, id, ...ext }) {
     console.log(type, id)
     // 获取发送人的信息要用的
     this.setIdentity({ type, id })
@@ -227,7 +231,7 @@ class IM {
     this.sendAvatar = avatar
   }
 
-  getSendInfo () {
+  getSendInfo() {
     return { name: this.sendName, avatar: this.sendAvatar }
   }
 
@@ -237,7 +241,7 @@ class IM {
    * @param id
    * @param ext
    */
-  setReceiveInfo ({ type, id, ...ext }) {
+  setReceiveInfo({ type, id, ...ext }) {
     this.receiveIdentity = type
     this.receiveId = id
   }
@@ -247,16 +251,16 @@ class IM {
    * @param type system user biz store 分别代表系统 用户、商家、门店
    * @param id 身份id
    */
-  setIdentity ({ type = 'user', id }) {
+  setIdentity({ type = 'user', id }) {
     this.sendIdentity = type
     this.sendId = id
   }
 
-  setClientId (val) {
+  setClientId(val) {
     this.clientId = val
   }
 
-  getClientId () {
+  getClientId() {
     if (!this.clientId) throw Error('获取client_id失败')
     return this.clientId
   }
@@ -267,7 +271,7 @@ class IM {
    * system 平台，直接使用平台的appid值
    * @returns {string}
    */
-  getOutUid () {
+  getOutUid() {
     if (this.sendIdentity === 'system') {
       return this.appid
     } else {
@@ -280,7 +284,7 @@ class IM {
    * 获取接收人
    * @returns {string}
    */
-  getToUid () {
+  getToUid() {
     if (this.receiveIdentity === 'system') {
       return this.appid
     } else {
@@ -289,7 +293,7 @@ class IM {
     }
   }
 
-  get token () {
+  get token() {
     const { expires_at, token } = this.accessToken
     // 看是否过期
     if (expires_at && moment(expires_at * 1000).isAfter()) {
@@ -299,14 +303,14 @@ class IM {
     return false
   }
 
-  set token (val) {
+  set token(val) {
     const { expires_at, token } = val
     if (!token) return
     this.accessToken = { expires_at, token }
   }
 
   // 启动的
-  async start () {
+  async start() {
     await this._getImConfig() // 配置从接口取，真开心
 
     // 获取token时候阻塞一下，问题不大吧。
@@ -325,7 +329,7 @@ class IM {
     this.page = 1 // 重置页码
   }
 
-  close () {
+  close() {
     // this.task.close()
     wx.closeSocket()
     this.clearIntervalFn()
@@ -336,7 +340,7 @@ class IM {
    * 获取未读消息总数
    */
   async getNoReadMsgCount() {
-    const total = await getNoReadMsg({out_uid: this.getOutUid()}, {errtip: false}).then(res => res.totalCount).catch(err => {
+    const total = await getNoReadMsg({ out_uid: this.getOutUid() }, { errtip: false }).then(res => res.totalCount).catch(err => {
       console.log(err.msg || '获取未读记录失败')
       // 处理token错误
       if (err.errorCode === 66000) {
@@ -345,7 +349,7 @@ class IM {
       return 0
     })
     console.log(total)
-    store.commit('SET_TABBAR_TAG', {idx: 1, num: total})
+    store.commit('SET_TABBAR_TAG', { idx: 1, num: total })
     return total
   }
 
@@ -380,7 +384,7 @@ class IM {
    * @param content
    * @param type
    */
-  async sendImMessage ({ content, type = 'text', ...ext }) {
+  async sendImMessage({ content, type = 'text', ...ext }) {
     var message = null
     switch (type) {
       case 'image':
@@ -395,7 +399,7 @@ class IM {
     }
 
     // 不然本地发送的会没有头像
-    Object.assign(message, {nickname: this.sendName, avatar: this.sendAvatar})
+    Object.assign(message, { nickname: this.sendName, avatar: this.sendAvatar })
 
     if (type === 'image') {
       await message.getImgInfo()
@@ -414,7 +418,7 @@ class IM {
       // checkOnline({ out_uid: this.getOutUid() })
 
       // 不提示token过期
-      sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }, {errtip: false}).then(res => {
+      sendMsg({ type, content, out_uid: this.getOutUid(), to: this.getToUid() }, { errtip: false }).then(res => {
         console.log('发送成功', res)
         this.chatList[chatIdx].sendStatus = 1 // 标记成功
         return res.data
@@ -431,7 +435,8 @@ class IM {
             }).catch(() => {
               console.log('消息重发失败')
             })
-          }).catch(() => {})
+          }).catch(() => {
+          })
         }
         Exception.handle(Error(err.msg))
       })
@@ -444,7 +449,7 @@ class IM {
    * 维持心跳
    * @private
    */
-  _holdHeartBeat () {
+  _holdHeartBeat() {
     const message = JSON.stringify({ type: 'heartbeat' })
     this.task.send({
       data: message,
@@ -471,7 +476,7 @@ class IM {
     clearInterval(this.intervalInstance)
   }
 
-  _takeMessage (messageObj) {
+  _takeMessage(messageObj) {
     const { type, from } = messageObj
 
     // 需要绑定
@@ -483,7 +488,10 @@ class IM {
         out_uid: this.getOutUid(),
         name: sendUserInfo.name,
         avatar: sendUserInfo.avatar
-      }).catch(res => {}).catch(e => { throw Error('绑定用户失败') })
+      }).catch(res => {
+      }).catch(e => {
+        throw Error('绑定用户失败')
+      })
       return
     }
 
@@ -494,15 +502,15 @@ class IM {
         this.chatList.push({ ...messageObj, direction: 'from' })
       }
 
-      eventHub.$emit('getMsg', {...messageObj})
+      eventHub.$emit('getMsg', { ...messageObj })
       if (this.listenStatus) {
-        eventHub.$emit('IM_TAKE_MSG', {...messageObj})
+        eventHub.$emit('IM_TAKE_MSG', { ...messageObj })
       }
     }
   }
 
   // 建立连接
-  async _craeteSocket () {
+  async _craeteSocket() {
     /** add event listen **/
 
       // 好像对异步的uni.connectSocket没什么作用
@@ -551,19 +559,21 @@ class IM {
     /** add event listen end **/
   }
 
-  async _getAccessToken () {
+  async _getAccessToken() {
     const tokenRT = await getAccessToken({
       appid: this.appid,
       appsecret: this.appsecret
     }).then(res => {
       return res.data
-    }).catch(error => { throw Error(error.msg || '获取token失败') })
+    }).catch(error => {
+      throw Error(error.msg || '获取token失败')
+    })
     this.accessToken = tokenRT
     Storage.set('IM_ACCESS_TOKEN', tokenRT.token)
     return tokenRT
   }
 
-  async _getImConfig () {
+  async _getImConfig() {
     const initData = await store.dispatch('getInitInfo', { storage: 'online' })
     const { im_appid: IM_APPID, im_appsecret: IM_APPSECRET } = initData
     this.appid = IM_APPID

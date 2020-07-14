@@ -1,36 +1,33 @@
-import {ls as Storage} from '@/common/helper'
-import { modal } from '@/common/fun'
-
 const state = {
   tabbarCurrentIndex: 0,
-  tabTags: [0, 0],
+  tabTags: [0, 0]
 
 }
 
 const mutations = {
-  SET_CURRENT_TABBAR (state, idx) {
+  SET_CURRENT_TABBAR(state, idx) {
     state.tabbarCurrentIndex = idx
   },
-  SET_TABBAR_TAG(state, {idx, num}) {
+  SET_TABBAR_TAG(state, { idx, num }) {
     state.tags[idx] = num
-  },
+  }
 
 }
 
 const actions = {
-  tabbarTagAdd: ({state, commit}, {idx, num = 1}) => {
+  tabbarTagAdd: ({ state, commit }, { idx, num = 1 }) => {
     const tempNum = state.tags[idx]
     const newNum = tempNum + num // 可以正负
     if (newNum < 0) throw Error('数据不能为负')
-    commit('SET_TABBAR_TAG', {idx, num: newNum})
+    commit('SET_TABBAR_TAG', { idx, num: newNum })
   },
-  tabbarTagClear: ({state, commit}, {idx}) => {
-    commit('SET_TABBAR_TAG', {idx, num: 0})
+  tabbarTagClear: ({ state, commit }, { idx }) => {
+    commit('SET_TABBAR_TAG', { idx, num: 0 })
   },
-  setInitInfo({commit},val){
+  setInitInfo({ commit }, val) {
     commit('SET_INIT_INFO', val)
   },
-  setTabActiveIdx: ({commit}, value) => {
+  setTabActiveIdx: ({ commit }, value) => {
     commit('SET_CURRENT_TABBAR', value)
   }
 }

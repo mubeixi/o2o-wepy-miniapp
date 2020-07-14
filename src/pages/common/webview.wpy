@@ -6,13 +6,14 @@
   import wepy from '@wepy/core'
   import store from '@/store'
   import pageMixin from '@/mixins'
+
   wepy.page({
     store,
     mixins: [pageMixin],
-    data:{
+    data: {
       url: ''
     },
-    onLoad (options) {
+    onLoad(options) {
       if (options.hasOwnProperty('encode') && options.encode) {
         this.url = decodeURIComponent(options.url)
       } else {

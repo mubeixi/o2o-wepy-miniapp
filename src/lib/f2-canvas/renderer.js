@@ -35,7 +35,7 @@ export default class Renderer extends EventEmitter {
     Object.keys(CAPITALIZED_ATTRS_MAP).map(style => {
       Object.defineProperty(wxCtx, style, {
         set: value => {
-          if (style == 'textAlign') {
+          if (style === 'textAlign') {
             value = TEXT_ALIGN_MAP[value] ? TEXT_ALIGN_MAP[value] : value
           }
           const name = 'set' + CAPITALIZED_ATTRS_MAP[style]

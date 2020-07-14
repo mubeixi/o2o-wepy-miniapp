@@ -1,33 +1,37 @@
 <style lang="scss">
   /*@import "../assets/variables.scss";*/
   /*@import "../assets/mixins.scss";*/
-  .tabbar{
+  .tabbar {
     z-index: 99;
     background: white;
     display: flex;
     position: fixed;
     left: 0;
-    border-top:1px solid #eee;
+    border-top: 1px solid #eee;
     box-sizing: border-box;
     width: 750rpx;
     bottom: constant(safe-area-inset-bottom);
     bottom: env(safe-area-inset-bottom);
     height: 98rpx;
-    .tabbar-item-wrap{
+
+    .tabbar-item-wrap {
       height: 98rpx;
-      flex:1;
+      flex: 1;
       text-align: center;
       color: #888;
       display: flex;
       align-items: center;
       justify-content: center;
-      &.active{
+
+      &.active {
 
       }
-      .tabbar-item{
+
+      .tabbar-item {
         position: relative;
       }
-      .item-tag{
+
+      .item-tag {
         position: absolute;
         right: 0;
         top: 0;
@@ -39,17 +43,20 @@
         border-radius: 15rpx;
         color: #fff;
         font-size: 20rpx;
-        &.circle{
+
+        &.circle {
           width: 30rpx;
-          padding:  0px 0px 0px 0px;
+          padding: 0px 0px 0px 0px;
           border-radius: 50%;
         }
       }
-      .item-icon{
+
+      .item-icon {
         height: 48rpx;
         width: 48rpx;
       }
-      .item-title{
+
+      .item-title {
         font-size: 20rpx;
       }
 
@@ -59,10 +66,13 @@
 </style>
 <template>
   <div class="tabbar">
-    <view class="tabbar-item-wrap" :class="{active:tabbarCurrentIndex===idx}" v-for="(item,idx) in tabbarConf.list" :key="idx" @click="toItem(idx)">
+    <view class="tabbar-item-wrap" :class="{active:tabbarCurrentIndex===idx}" v-for="(item,idx) in tabbarConf.list"
+          :key="idx" @click="toItem(idx)">
       <div class="tabbar-item">
         <image :src="tabbarCurrentIndex === idx ? item.selectedIconPath:item.iconPath" class="item-icon"></image>
-        <div class="item-title" :style="{color:tabbarCurrentIndex === idx ?tabbarConf.selectedColor:tabbarConf.color}">{{item.text}}</div>
+        <div class="item-title" :style="{color:tabbarCurrentIndex === idx ?tabbarConf.selectedColor:tabbarConf.color}">
+          {{item.text}}
+        </div>
         <div class="item-tag" :class="{circle:tags[idx]<10}" v-if="tags[idx]>0">{{tags[idx]}}</div>
       </div>
     </view>
@@ -70,76 +80,78 @@
   </div>
 </template>
 <script>
-import wepy from '@wepy/core'
-import {linkTo} from '@/common/fun'
-import store from '@/store'
-import { findArrayIdx } from '@/common/helper'
-wepy.component({
-  store,
-  props: {
+  import wepy from '@wepy/core'
+  import { linkTo } from '@/common/fun'
+  import store from '@/store'
+  import { findArrayIdx } from '@/common/helper'
 
-  },
-  computed: {
-    tags() {
-      return this.$store.getters.getTabbarTags()
+  wepy.component({
+    options: {
+      addGlobalClass: true
     },
-    tabbarCurrentIndex() {
-      return this.$store.getters.tabbarCurrentIndex
-    }
-  },
-  watch: {
-    tags: {
-      deep: true,
-      handler(val) {
-        console.log(val)
+    store,
+    props: {},
+    computed: {
+      tags() {
+        return this.$store.getters.getTabbarTags()
+      },
+      tabbarCurrentIndex() {
+        return this.$store.getters.tabbarCurrentIndex
       }
-    }
-  },
-  data: {
-    tabbarIndx: 0,
-    tabbarConf: {
-      borderStyle: 'black',
-      color: '#999999',
-      selectedColor: '#26C78D',
-      list: [
-        {
-          pagePath: '/pages/index',
-          route: 'pages/index',
-          iconPath: '/static/tabbar/find.png',
-          selectedIconPath: '/static/tabbar/find-a.png',
-          text: '首页'
-        },
-        {
-          pagePath: '/pages/support/ImList',
-          route: 'pages/support/ImList',
-          iconPath: '/static/tabbar/notify.png',
-          selectedIconPath: '/static/tabbar/notify-a.png',
-          text: '消息'
+    },
+    watch: {
+      tags: {
+        deep: true,
+        handler(val) {
+          console.log(val)
         }
-      ]
-    }
-  },
-  methods: {
-    toItem(idx) {
-      this.$store.dispatch('setTabActiveIdx', idx)
-      const currentPages = getCurrentPages()
-      console.log(currentPages)
-      const pageIdx = findArrayIdx(currentPages, {route: this.tabbarConf.list[idx].route})
-      if (pageIdx === false) {
-        linkTo(this.tabbarConf.list[idx].pagePath)
-      } else {
-        // 退回去，不要跳了
-        wx.navigateBack({
-          delta: currentPages.length - 1 - pageIdx
-        })
       }
     },
-    _onClick () {
-      this.$emit('click')
+    data: {
+      tabbarIndx: 0,
+      tabbarConf: {
+        borderStyle: 'black',
+        color: '#999999',
+        selectedColor: '#26C78D',
+        list: [
+          {
+            pagePath: '/pages/index',
+            route: 'pages/index',
+            iconPath: '/static/tabbar/find.png',
+            selectedIconPath: '/static/tabbar/find-a.png',
+            text: '首页'
+          },
+          {
+            pagePath: '/pages/support/ImList',
+            route: 'pages/support/ImList',
+            iconPath: '/static/tabbar/notify.png',
+            selectedIconPath: '/static/tabbar/notify-a.png',
+            text: '消息'
+          }
+        ]
+      }
+    },
+    methods: {
+      toItem(idx) {
+        this.$store.dispatch('setTabActiveIdx', idx)
+        const currentPages = getCurrentPages()
+        console.log(currentPages)
+        const pageIdx = findArrayIdx(currentPages, { route: this.tabbarConf.list[idx].route })
+        if (pageIdx === false) {
+          linkTo(this.tabbarConf.list[idx].pagePath)
+        } else {
+          // 退回去，不要跳了
+          wx.navigateBack({
+            delta: currentPages.length - 1 - pageIdx
+          })
+        }
+      },
+      _onClick() {
+        this.$emit('click')
+      }
+    },
+    ready() {
+      console.log(this.$store.state)
     }
-  },
-  ready() {
-    console.log(this.$store.state)
-  }
-})
+  })
 </script>

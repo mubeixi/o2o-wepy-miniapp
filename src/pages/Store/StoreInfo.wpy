@@ -1,13 +1,14 @@
 <template>
   <div class="store-all">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="store-item item-last flex flex-vertical-center flex-justify-between"  @click="updaImg">
+    <div class="store-item item-last flex flex-vertical-center flex-justify-between" @click="updaImg">
       <div class="store-title">
         店铺logo
       </div>
       <div class="store-titles">
-        <image :src="info.biz_logo"  @error="repalceImg"  style="width: 102rpx;height: 102rpx;margin-left: 20rpx;border-radius: 50%;overflow: hidden;"></image>
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <image :src="info.biz_logo" @error="repalceImg"
+               style="width: 102rpx;height: 102rpx;margin-left: 20rpx;border-radius: 50%;overflow: hidden;"></image>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between" @click="updateInfo(1)">
@@ -16,37 +17,38 @@
       </div>
       <div class="store-titles">
         {{info.biz_shop_name}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="store-title">
         主营类目
       </div>
-      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{business_type}}"   range-key="name">
-          {{info.city_express_config.business_type}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{index}}" range="{{business_type}}"
+              range-key="name">
+        {{info.city_express_config.business_type}}
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </picker>
 
     </div>
-<!--    <div class="store-item flex flex-vertical-center flex-justify-between">-->
-<!--      <div class="store-title">-->
-<!--        店铺行业-->
-<!--      </div>-->
-<!--      <div class="store-titles">-->
-<!--        <icon  type="iconarrowleft" size="16"  color="#999"></icon>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    <div class="store-item flex flex-vertical-center flex-justify-between">-->
+    <!--      <div class="store-title">-->
+    <!--        店铺行业-->
+    <!--      </div>-->
+    <!--      <div class="store-titles">-->
+    <!--        <icon  type="iconarrowleft" size="16"  color="#999"></icon>-->
+    <!--      </div>-->
+    <!--    </div>-->
     <div class="store-item flex flex-vertical-center flex-justify-between" @click="updateInfo(3)">
       <div class="store-title">
         店铺地址
       </div>
       <div class="store-titles">
         <span class="over-hidden">{{info.area_address}}{{info.biz_address}}</span>
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between"  @click="openVipBind">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="openVipBind">
       <div class="store-title">
         绑定会员
       </div>
@@ -54,7 +56,7 @@
         <block v-if="User_ID">
           已绑定
         </block>
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between" @click="updateInfo(4)">
@@ -63,47 +65,50 @@
       </div>
       <div class="store-titles">
         {{info.biz_name}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between"  @click="updateInfo(5)">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="updateInfo(5)">
       <div class="store-title">
         联系电话
       </div>
       <div class="store-titles">
         {{info.biz_mobile}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
 
 
-    <popup-layer title="搜索" ref="vipBind" >
-          <div class="flex flex-vertical-center vip-bind  m-b-20">
-            <span class="vip-bind-span">手机号</span>
-            <input type="number" v-model="mobile"  maxlength="11" class="vip-bind-input" placeholder="请输入手机号"/>
-            <icon  type="iconsearch1" size="26" class="m-l-20"  color="#999" @click="searchPhone"></icon>
-          </div>
-          <div class="vip-bind-text" v-if="mp_nickname">
-            小提示：绑定会员用于新订单和消息的推送，如你还未注册会员，请关注公众号{{'"'}}{{mp_nickname}}{{'"'}}会自动为你创建会员，绑定手机号后回到此处进行绑定会员操作，可<span class="code-span" @click="lookCode">点此查看</span>公众号二维码，保存后扫码关注
-          </div>
+    <popup-layer title="搜索" ref="vipBind">
+      <div class="flex flex-vertical-center vip-bind  m-b-20">
+        <span class="vip-bind-span">手机号</span>
+        <input type="number" v-model="mobile" maxlength="11" class="vip-bind-input" placeholder="请输入手机号"/>
+        <icon type="iconsearch1" size="26" class="m-l-20" color="#999" @click="searchPhone"></icon>
+      </div>
+      <div class="vip-bind-text" v-if="mp_nickname">
+        小提示：绑定会员用于新订单和消息的推送，如你还未注册会员，请关注公众号{{'"'}}{{mp_nickname}}{{'"'}}会自动为你创建会员，绑定手机号后回到此处进行绑定会员操作，可<span
+        class="code-span" @click="lookCode">点此查看</span>公众号二维码，保存后扫码关注
+      </div>
     </popup-layer>
-    <popup-layer  ref="vipInfo" >
-        <div class="vip-info-title">
-          <span>会员绑定</span>
-          <icon v-if="isBack"  type="iconshanchu2" @click="backNexts" size="24" class="vip-info-del m-r-10"  color="#999" ></icon>
-          <icon v-else        type="iconPrevious" @click="backNext" size="24" class="vip-info-del m-r-10"  color="#333" ></icon>
+    <popup-layer ref="vipInfo">
+      <div class="vip-info-title">
+        <span>会员绑定</span>
+        <icon v-if="isBack" type="iconshanchu2" @click="backNexts" size="24" class="vip-info-del m-r-10"
+              color="#999"></icon>
+        <icon v-else type="iconPrevious" @click="backNext" size="24" class="vip-info-del m-r-10" color="#333"></icon>
+      </div>
+      <div class="vip-info flex flex-vertical-center">
+        <img :src="userInfo.User_HeadImg" class="vip-info-img"/>
+        <div>
+          <div class="vip-info-text">昵称：{{userInfo.User_NickName}}</div>
+          <div class="vip-info-text">电话：{{userInfo.User_Mobile}}</div>
         </div>
-        <div class="vip-info flex flex-vertical-center">
-          <img :src="userInfo.User_HeadImg" class="vip-info-img" />
-          <div>
-            <div class="vip-info-text">昵称：{{userInfo.User_NickName}}</div>
-            <div class="vip-info-text">电话：{{userInfo.User_Mobile}}</div>
-          </div>
-        </div>
-      <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center"  @click="changeCode"  v-if="User_ID&&isBack">
+      </div>
+      <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center" @click="changeCode"
+           v-if="User_ID&&isBack">
         修改绑定
       </div>
-      <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center"  @click="bindCode"  v-else>
+      <div class="btn action-btn btn-primary flex flex-vertical-center flex-justify-center" @click="bindCode" v-else>
         确认绑定
       </div>
 
@@ -125,14 +130,15 @@
   import { chooseImageByPromise, uploadImages } from '@/common/helper'
   import ENV from '@/common/env'
   import { Exception } from '@/common/Exception'
-  import {initInfo, getUserInfo} from '@/api/system'
-  import {regPhone} from '@/common/regs'
+  import { getUserInfo, initInfo } from '@/api/system'
+  import { regPhone } from '@/common/regs'
+
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
       mobile: '',
-      mp_nickname:'',
+      mp_nickname: '',
       mp_qrcode: '',
       info: {},
       business_type: {},
@@ -148,7 +154,7 @@
         this.$refs.vipBind.show()
       },
       bindCode() {
-        opBizInfo({User_ID: this.userInfo.User_ID}).then(res => {
+        opBizInfo({ User_ID: this.userInfo.User_ID }).then(res => {
           toast('绑定成功')
           this.mobile = ''
           this.User_ID = this.userInfo.User_ID
@@ -169,7 +175,7 @@
           error('手机号格式错误，请重新输入')
           return
         }
-        getUserInfo({mobile: this.mobile}).then(res => {
+        getUserInfo({ mobile: this.mobile }).then(res => {
           this.userInfo = res.data
           this.isBack = false
           this.$refs.vipBind.close()
@@ -185,7 +191,7 @@
       },
       async initCode() {
         await initInfo().then(res => {
-          this.mp_nickname=res.data.mp_nickname
+          this.mp_nickname = res.data.mp_nickname
           this.mp_qrcode = res.data.mp_qrcode
         }).catch(e => {
           error(e.msg)
@@ -193,7 +199,7 @@
       },
       openVipBind() {
         if (this.User_ID) {
-          getUserInfo({User_ID: this.User_ID}).then(res => {
+          getUserInfo({ User_ID: this.User_ID }).then(res => {
             this.userInfo = res.data
             this.isBack = true
             this.$refs.vipInfo.show()
@@ -201,7 +207,7 @@
             error(e.msg || '查询会员失败')
           })
         } else {
-          this.mobile=''
+          this.mobile = ''
           this.isBack = false
           this.$refs.vipBind.show()
         }
@@ -215,22 +221,26 @@
           await chooseImageByPromise().then(tempFiles => {
             temp_file_list.push(tempFiles[0].path)
             showLoading('上传图片中')
-          }).catch(err => { throw Error(err.errMsg) })
+          }).catch(err => {
+            throw Error(err.errMsg)
+          })
           await uploadImages({ 'imgs': temp_file_list }).then(urls => {
             opBizInfo({ biz_logo: urls[0] }).then(res => {
               this.getDetail()
               hideLoading()
             })
-          }).catch(err => { throw Error(err.msg) })
+          }).catch(err => {
+            throw Error(err.msg)
+          })
         } catch (e) {
-          if (e.message !== 'chooseImage:fail cancel')Exception.handle(e)
+          if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
         }
       },
       bindPickerChange(e) {
         let ind = e.$wx.detail.value
         let data = this.business_type[ind].name
         showLoading('修改中')
-        opCityExpressConfig({business_type: data}).then(res => {
+        opCityExpressConfig({ business_type: data }).then(res => {
           this.info.city_express_config.business_type = data
           hideLoading()
         })
@@ -263,7 +273,7 @@
           let arr = res.data.business_type
           let arrData = []
           for (let it in arr) {
-            arrData.push({name: it, id: arr[it]})
+            arrData.push({ name: it, id: arr[it] })
           }
           this.business_type = arrData
           for (let it = 0; it < arrData.length; it++) {
@@ -285,31 +295,36 @@
 <style lang="scss">
 
 
-  .store-all{
+  .store-all {
     background-color: #FFFFFF;
     height: 100vh;
-    .store-item{
+
+    .store-item {
       height: 108rpx;
       border-bottom: 1px solid #EBEBEB;
       box-sizing: border-box;
       width: 710rpx;
       margin: 0 auto;
     }
-    .item-last{
+
+    .item-last {
       height: 150rpx;
     }
-    .store-title{
+
+    .store-title {
       color: #333333;
       font-size: 30rpx;
     }
-    .store-titles{
+
+    .store-titles {
       display: flex;
       align-items: center;
       color: #999999;
       font-size: 26rpx;
     }
   }
-  .picker-mbx{
+
+  .picker-mbx {
     flex: 1;
     text-align: right;
     height: 108rpx;
@@ -317,26 +332,29 @@
     color: #999999;
     font-size: 26rpx;
   }
-  .over-hidden{
+
+  .over-hidden {
     width: 500rpx;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
 
-  .vip-bind{
+  .vip-bind {
     width: 750rpx;
     height: 100rpx;
     padding: 0rpx 20rpx;
     box-sizing: border-box;
-    &-span{
+
+    &-span {
       width: 160rpx;
       text-align: center;
       height: 100rpx;
       font-size: 14px;
       line-height: 100rpx;
     }
-    &-input{
+
+    &-input {
       border: 1px solid #cccccc;
       width: 400rpx;
       height: 60rpx;
@@ -345,14 +363,16 @@
       padding-left: 20rpx;
     }
   }
-  .vip-bind-text{
+
+  .vip-bind-text {
     width: 750rpx;
     line-height: 40rpx;
     font-size: 12px;
     color: #999999;
-    padding: 0rpx 40rpx  40rpx 40rpx;
+    padding: 0rpx 40rpx 40rpx 40rpx;
     box-sizing: border-box;
-    .code-span{
+
+    .code-span {
       display: inline-block;
       padding: 0 20rpx;
       background-color: #00A7FF;
@@ -361,28 +381,33 @@
       border-radius: 10rpx;
     }
   }
-  .vip-info-title{
+
+  .vip-info-title {
     height: 100rpx;
     line-height: 100rpx;
     text-align: center;
     color: #333333;
   }
-  .vip-info-del{
+
+  .vip-info-del {
     float: right;
   }
-  .vip-info{
+
+  .vip-info {
     width: 710rpx;
     height: 180rpx;
     margin: 10px auto 60rpx;
-    border:1px solid #ccc;
+    border: 1px solid #ccc;
     padding: 10rpx;
   }
-  .vip-info-img{
+
+  .vip-info-img {
     width: 160rpx;
     height: 160rpx;
     margin-right: 20rpx;
   }
-  .vip-info-text{
+
+  .vip-info-text {
     height: 80rpx;
     line-height: 80rpx;
   }

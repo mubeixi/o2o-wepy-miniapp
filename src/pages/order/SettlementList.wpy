@@ -1,58 +1,58 @@
 <template>
   <div class="settlement-list p-t-20 page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-        <div class="settlement-list-item" v-for="(item,index) of listData" :key="index">
-            <div class="settlement-list-item-title flex flex-vertical-center flex-justify-between p-l-13 p-r-10 fz-14">
-                  <div class="c3">
-                    订单编号：{{item.id}}
-                    <icon  type="iconarrowleft" size="16"  color="#999"></icon>
-                  </div>
-                  <div v-if="item.status==0">
-                      待审核
-                  </div>
-                  <div v-if="item.status==1">
-                    已结算
-                  </div>
-                  <div v-if="item.status==2">
-                    已驳回({{item.reject_reason}})
-                  </div>
-            </div>
-            <div class="settlement-list-item-center c6 fz-14">
-              <div>
-                申请时间：{{item.created_at}}
-              </div>
-              <div>
-                订单总金额：{{item.Order_TotalPrice}}
-              </div>
-              <div>
-                退款金额：{{item.back_amount}}
-              </div>
-              <div>
-                商家优惠：{{item.biz_discount}}
-              </div>
-              <div>
-                平台佣金：{{item.platform_commi}}
-              </div>
-            </div>
-            <div class="settlement-list-item-bottom flex flex-vertical-center flex-justify-between p-l-13 p-r-10">
-                  <div class="fz-14 c3">
-                    实际应结： <span class="fz-12 cr">¥</span><span class="fz-15 cr">{{item.real_balance}}</span>
-                  </div>
-                  <div class="settlement-list-item-bottom-btn" v-if="item.status==0" @click="dealBizSettle(item.id,index)">
-                    撤回申请
-                  </div>
-            </div>
+    <div class="settlement-list-item" v-for="(item,index) of listData" :key="index">
+      <div class="settlement-list-item-title flex flex-vertical-center flex-justify-between p-l-13 p-r-10 fz-14">
+        <div class="c3">
+          订单编号：{{item.id}}
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </div>
-
-        <div style="height: 86rpx;width: 750rpx"></div>
-
-        <!--占住底部的位置-->
-        <div class="safearea-box fixed bgwhite"></div>
-        <!--放置页面底部内容被挡住，额外给的高度-->
-        <div class="safearea-box"></div>
-        <div class="submit" @click="$linkTo('/pages/order/Settlement')">
-          申请结算
+        <div v-if="item.status==0">
+          待审核
         </div>
+        <div v-if="item.status==1">
+          已结算
+        </div>
+        <div v-if="item.status==2">
+          已驳回({{item.reject_reason}})
+        </div>
+      </div>
+      <div class="settlement-list-item-center c6 fz-14">
+        <div>
+          申请时间：{{item.created_at}}
+        </div>
+        <div>
+          订单总金额：{{item.Order_TotalPrice}}
+        </div>
+        <div>
+          退款金额：{{item.back_amount}}
+        </div>
+        <div>
+          商家优惠：{{item.biz_discount}}
+        </div>
+        <div>
+          平台佣金：{{item.platform_commi}}
+        </div>
+      </div>
+      <div class="settlement-list-item-bottom flex flex-vertical-center flex-justify-between p-l-13 p-r-10">
+        <div class="fz-14 c3">
+          实际应结： <span class="fz-12 cr">¥</span><span class="fz-15 cr">{{item.real_balance}}</span>
+        </div>
+        <div class="settlement-list-item-bottom-btn" v-if="item.status==0" @click="dealBizSettle(item.id,index)">
+          撤回申请
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 86rpx;width: 750rpx"></div>
+
+    <!--占住底部的位置-->
+    <div class="safearea-box fixed bgwhite"></div>
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+    <div class="submit" @click="$linkTo('/pages/order/Settlement')">
+      申请结算
+    </div>
 
   </div>
 </template>
@@ -81,14 +81,16 @@
         dealBizSettle(data).then(res => {
           toast('操作成功')
           this.listData.splice(index, 1)
-        }).catch(e => {})
+        }).catch(e => {
+        })
       },
       async getSettle(it) {
         let data = {
           page: this.page,
           pageSize: this.pageSize
         }
-        let arr = await getSettle(data, { tip: '加载中'}).catch(e => {})
+        let arr = await getSettle(data, { tip: '加载中' }).catch(e => {
+        })
 
         if (it) {
           arr.data.map(item => {
@@ -115,42 +117,48 @@
 <style lang="scss">
 
 
-  .cr{
+  .cr {
     color: #FF0000;
   }
-  .settlement-list-item{
+
+  .settlement-list-item {
     margin: 0 auto 30rpx;
     width: 710rpx;
     border-radius: 10rpx;
     background-color: #FFFFff;
-    &-title{
+
+    &-title {
       color: #FF0000;
       background-color: #DFF4FF;
       height: 76rpx;
       line-height: 76rpx;
     }
-    &-center{
+
+    &-center {
       width: 670rpx;
       margin: 0 auto;
       padding: 40rpx 6rpx;
-      line-height:54rpx;
+      line-height: 54rpx;
       border-bottom: 1px solid #EBEBEB;
     }
-    &-bottom{
+
+    &-bottom {
       height: 112rpx;
-      &-btn{
-        width:154rpx;
-        height:60rpx;
+
+      &-btn {
+        width: 154rpx;
+        height: 60rpx;
         line-height: 60rpx;
         text-align: center;
         color: #FFFFff;
         font-size: 14px;
-        background:rgba(0,168,255,1);
-        border-radius:10rpx;
+        background: rgba(0, 168, 255, 1);
+        border-radius: 10rpx;
       }
     }
   }
-  .submit{
+
+  .submit {
     width: 750rpx;
     height: 86rpx;
     line-height: 86rpx;
@@ -162,7 +170,6 @@
     left: 0rpx;
     text-align: center;
   }
-
 
 
 </style>

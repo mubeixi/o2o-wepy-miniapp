@@ -2,40 +2,40 @@
   <view class="all">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <view class="main" v-for="(item,index) of data" :key="index">
-     <block v-if="type===5">
-       <view class="fir">
-         <view class="left">
-           充值方式：
-         </view>
-         <view class="right">
-           {{item.payMethodName}}
-         </view>
-       </view>
-       <view class="fir">
-         <view class="left">
-           充值金额：
-         </view>
-         <view class="right">
-           {{item.pay_price}}
-         </view>
-       </view>
-       <view class="fir">
-         <view class="left">
-           状态：
-         </view>
-         <view class="rights">
-           {{item.statusName}}
-         </view>
-       </view>
-       <view class="fir">
-         <view class="left">
-           时间：
-         </view>
-         <view class="right">
-           {{item.created_at}}
-         </view>
-       </view>
-     </block>
+      <block v-if="type===5">
+        <view class="fir">
+          <view class="left">
+            充值方式：
+          </view>
+          <view class="right">
+            {{item.payMethodName}}
+          </view>
+        </view>
+        <view class="fir">
+          <view class="left">
+            充值金额：
+          </view>
+          <view class="right">
+            {{item.pay_price}}
+          </view>
+        </view>
+        <view class="fir">
+          <view class="left">
+            状态：
+          </view>
+          <view class="rights">
+            {{item.statusName}}
+          </view>
+        </view>
+        <view class="fir">
+          <view class="left">
+            时间：
+          </view>
+          <view class="right">
+            {{item.created_at}}
+          </view>
+        </view>
+      </block>
       <block v-else>
         <view class="fir">
           <view class="left">
@@ -85,7 +85,7 @@
 
 
     <div class="defaults" v-if="data.length<=0">
-      <image :src="'/static/client/defaultImg.png'|domain" ></image>
+      <image :src="'/static/client/defaultImg.png'|domain"></image>
     </div>
   </view>
 </template>
@@ -94,8 +94,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getWithdrawRecordList, getOrderList} from '../../api/store'
-  import { error, toast } from '../../common/fun'
+  import { getOrderList, getWithdrawRecordList } from '../../api/store'
 
   wepy.page({
     store,
@@ -128,7 +127,7 @@
     onShow() {
       this.data = []
       this.page = 1
-    // 获取申请记录
+      // 获取申请记录
       this.getWithdrawRecordList()
     },
     onReachBottom() {
@@ -175,43 +174,50 @@
   })
 
 </script>
-<style lang="scss" >
+<style lang="scss">
 
-  .all{
+  .all {
     background-color: #f8f8f8;
     min-height: 100vh;
     padding-top: 40rpx;
     box-sizing: border-box;
   }
-  .main{
+
+  .main {
     width: 710rpx;
     margin: 0 auto;
     margin-bottom: 40rpx;
     background-color: #FFFFFF;
     box-sizing: border-box;
     padding: 28rpx 0rpx 32rpx 27rpx;
-    .fir{
+
+    .fir {
       height: 48rpx;
       display: flex;
       font-size: 26rpx;
       align-items: center;
-      .left{
+
+      .left {
         color: #333333;
         margin-right: 20rpx;
       }
-      .right{
+
+      .right {
         color: #888888;
       }
-      .rightt{
+
+      .rightt {
         color: #888888;
         margin-left: 20rpx;
       }
-      .rights{
+
+      .rights {
         color: #F43131;
       }
     }
   }
-  .defaults{
+
+  .defaults {
     margin: 0 auto;
     width: 640rpx;
     height: 480rpx;

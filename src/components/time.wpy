@@ -1,7 +1,7 @@
 <style lang="scss">
-.text{
-  font-size: 14px;
-}
+  .text {
+    font-size: 14px;
+  }
 </style>
 <template>
   <picker class="picker-mbx"
@@ -12,7 +12,9 @@
           range="{{dateTimeArray}}">
     <view class="text">
       <div v-if="selected">{{strTime}}</div>
-      <div v-else><slot></slot></div>
+      <div v-else>
+        <slot></slot>
+      </div>
     </view>
   </picker>
 </template>
@@ -20,12 +22,14 @@
   import wepy from '@wepy/core'
   import { dateTimePicker, getMonthDay, getNewDateArryByStr, withData } from '../common/time'
 
-  const moment = require('moment')
   const cutTimeStr = (str) => {
     const _str = str.substring(0, str.length - 1)
     return withData(_str)
   }
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       // 年月日 时分秒
       mode: {
@@ -78,7 +82,7 @@
       if (_str) {
         hasDate = getNewDateArryByStr(new Date(_str))
       }
-      let {dateTimeArray, dateTime} = dateTimePicker('', '', hasDate)
+      let { dateTimeArray, dateTime } = dateTimePicker('', '', hasDate)
       if (this.mode === 'time') {
         dateTimeArray = dateTimeArray.slice(-3)
         dateTime = dateTime.slice(-3)
@@ -107,7 +111,7 @@
         // this.dateTime = arr
         if (this.mode !== 'time') {
           // 月份更改 对应的天数 日  也更改
-          const {column, value} = e.$wx.detail
+          const { column, value } = e.$wx.detail
           this.$set(this.dateTime, column, value)
           let dateArr = this.dateTimeArray
           if ([1, 0].includes(column)) {
@@ -116,16 +120,14 @@
             if (!newDayList.hasOwnProperty(this.dateTime[2])) this.$set(this.dateTime, 2, 0)
           }
         }
-
-
       }
     }
   })
 </script>
 <config>
   {
-    "usingComponents": {
-      "icon": "~@/components/icon"
-    }
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
   }
 </config>

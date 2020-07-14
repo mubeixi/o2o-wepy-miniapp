@@ -1,37 +1,43 @@
 <style lang="scss">
-.recomment-item{
-  margin:30rpx;
-  padding: 10px;
-  background: #fff;
-  border-radius: 4px;
-  .head{
-    padding: 5px 0 5px ;
-    .title{
-      width: 600rpx;
-      overflow-x: hidden;
+  .recomment-item {
+    margin: 30rpx;
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+
+    .head {
+      padding: 5px 0 5px;
+
+      .title {
+        width: 600rpx;
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .pics {
+      overflow-x: scroll;
+      overflow-y: hidden;
       white-space: nowrap;
-      text-overflow: ellipsis;
+
+      .pic-item {
+        display: inline-block;
+        width: 150rpx;
+        height: 150rpx;
+        margin-right: 20rpx;
+      }
+    }
+
+    .action {
+      padding: 10px 0 10px 0;
+
+    }
+
+    .rich-text-box {
+
     }
   }
-  .pics{
-    overflow-x: scroll;
-    overflow-y: hidden;
-    white-space: nowrap;
-    .pic-item{
-      display: inline-block;
-      width: 150rpx;
-      height: 150rpx;
-      margin-right: 20rpx;
-    }
-  }
-  .action{
-    padding: 10px 0 10px 0;
-
-  }
-  .rich-text-box{
-
-  }
-}
 </style>
 <template>
   <div class="page-wrap">
@@ -47,22 +53,21 @@
   import { objTranslate } from '@/common/helper'
   import { bizMessageDetail } from '@/api/system'
   import { modal } from '@/common/fun'
+
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
       info: {}
     },
-    computed: {
-
-    },
+    computed: {},
     methods: {
       upForm(data) {
         const _data = objTranslate(data)
         this.postData = _data
       },
-      async _init_func (options) {
-        this.info = await bizMessageDetail({msg_id: this.id}).then(res => res.data).catch(err => {
+      async _init_func(options) {
+        this.info = await bizMessageDetail({ msg_id: this.id }).then(res => res.data).catch(err => {
           modal('获取公告失败' + err.msg)
         })
       }
@@ -82,12 +87,12 @@
   })
 </script>
 <config>
-{
+  {
   "navigationBarTitleText": "公告详情",
   "navigationBarTextStyle": "black",
   "usingComponents": {
-    "icon": "~@/components/icon",
-    "fun-rich-text":"~@/components/fun-rich-text/fun-rich-text"
+  "icon": "~@/components/icon",
+  "fun-rich-text":"~@/components/fun-rich-text/fun-rich-text"
   }
-}
+  }
 </config>
