@@ -1,9 +1,9 @@
 <style lang="scss">
-.svg-icon{
-  vertical-align: top;
-  color: #999;
+  .svg-icon {
+    vertical-align: top;
+    color: #999;
 
-}
+  }
 </style>
 <template>
   <image
@@ -16,6 +16,9 @@
   import wepy from '@wepy/core'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       name: {
         require: true,
@@ -38,14 +41,14 @@
     computed: {
       getSize() {
         let _size = this.size
-        if (!_size)_size = 16
-        if (this.size.indexOf('px') === -1)_size += 'px'
+        if (!_size) _size = 16
+        if (this.size.indexOf('px') === -1) _size += 'px'
         return _size
       }
     },
     methods: {
 
-      _onClick () {
+      _onClick() {
         this.$emit('click')
       }
     }

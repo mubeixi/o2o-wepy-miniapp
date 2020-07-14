@@ -1,5 +1,5 @@
 <style>
-  .fun-tree{
+  .fun-tree {
     padding-left: 10px;
   }
 </style>
@@ -34,10 +34,14 @@
 
   import wepy from '@wepy/core'
   import { TreeHub } from './TreeHub'
-  import { objTranslate } from '../common/helper'
-  import store from '../store'
+  import { objTranslate } from '@/common/helper'
+  import { componentMixins } from '@/mixins'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
+    mixins: [componentMixins],
     data: {
       treeData: [],
       hub: null,
@@ -94,7 +98,7 @@
       },
       conf: {
         type: Object,
-        default () {
+        default() {
           return {
             pidKey: 'Category_ParentID',
             children: 'children', // 指定子树为节点对象的某个属性值
@@ -132,22 +136,29 @@
        * 手动初始化
        */
       initHandler() {
-        this._init_func({refresh: true})
+        this._init_func({ refresh: true })
       },
       // 重新生成
-      clearFn({item, nodeKey}) {
+      clearFn({ item, nodeKey }) {
         console.log('clearFn', item, nodeKey, this.$refs)
         // this.tree = objTranslate(this.treeData)
         for (let i in this.$refs) {
-          this.$refs[i].restCheck({item, nodeKey})
+          this.$refs[i].restCheck({ item, nodeKey })
         }
       },
       getCheckedNodes() {
         return TreeHub.getCHeckList('tree_' + this.eleId)
       },
-      _init_func({refresh = false} = {}) {
+      _init_func({ refresh = false } = {}) {
         console.log('this.eleId is ', this.eleId)
-        this.hub = new TreeHub({eid: 'tree_' + this.eleId, childrenName: this.conf.children, treeData: objTranslate(this.treeData), nodeKey: this.nodeKey, has: this.has, plainArrayList: this.plainArrayList})
+        this.hub = new TreeHub({
+          eid: 'tree_' + this.eleId,
+          childrenName: this.conf.children,
+          treeData: objTranslate(this.treeData),
+          nodeKey: this.nodeKey,
+          has: this.has,
+          plainArrayList: this.plainArrayList
+        })
         // 用来告诉父组件我好了，可以搞事
         console.log('fun-tree component done')
         if (!refresh) {
@@ -164,8 +175,8 @@
 </script>
 <config>
   {
-    "usingComponents": {
-      "fun-tree-node": "~@/components/fun-tree-node"
-    }
+  "usingComponents": {
+  "fun-tree-node": "~@/components/fun-tree-node"
+  }
   }
 </config>

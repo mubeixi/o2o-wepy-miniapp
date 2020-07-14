@@ -1,20 +1,20 @@
 <template>
   <view v-if="isShow">
-    <view  @click="ableClose" @touchmove.stop.prevent class="pay-mask">
+    <view @click="ableClose" @touchmove.stop.prevent class="pay-mask">
     </view>
-<!--    <div class="zhezhao" v-if="password_input">-->
-<!--      <div class="input-wrap">-->
-<!--        <div>请输入余额支付密码</div>-->
-<!--        <input type="password" class="input" placeholder="请输入密码" @input="user_password">-->
-<!--        <div class="btns">-->
-<!--          <div @click="cancelInput" class="btn">取消</div>-->
-<!--          <div @click="confirmInput" class="btn">确定</div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    <div class="zhezhao" v-if="password_input">-->
+    <!--      <div class="input-wrap">-->
+    <!--        <div>请输入余额支付密码</div>-->
+    <!--        <input type="password" class="input" placeholder="请输入密码" @input="user_password">-->
+    <!--        <div class="btns">-->
+    <!--          <div @click="cancelInput" class="btn">取消</div>-->
+    <!--          <div @click="confirmInput" class="btn">确定</div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
 
-    <view  class="popup-content"  >
-      <div class="pay-method"  @click.stop="wxPay">
+    <view class="popup-content">
+      <div class="pay-method" @click.stop="wxPay">
         <div class="c_method border-b">
           微信支付
           <text>￥{{pay_money}}</text>
@@ -33,9 +33,11 @@
 <script>
   // 消息卡片组件
   import wepy from '@wepy/core'
-  import { error, linkTo, modal } from '../common/fun'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       pay_money: {
         type: Number
@@ -76,22 +78,25 @@
     left: 0px;
     overflow: hidden;
   }
+
   .pay-method {
     text-align: center;
     padding: 0 20rpx;
     font-size: 28rpx;
     color: #333;
   }
+
   .c_method {
     padding: 37rpx 0;
     color: #F43131;
 
   }
 
-  .border-b{
+  .border-b {
     border-bottom: 2rpx solid #E6E6E6;
   }
-  .popup-content{
+
+  .popup-content {
     position: fixed;
     z-index: 1000000;
     background: #FFFFFF;

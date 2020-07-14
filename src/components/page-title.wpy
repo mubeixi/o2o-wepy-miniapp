@@ -1,35 +1,40 @@
 <style lang="scss">
-.navigation-bar{
-  position: relative;
-  .left-icon{
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+  .navigation-bar {
+    position: relative;
+
+    .left-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .title {
+      text-align: center;
+      font-size: 16px;
+      color: #333;
+    }
   }
-  .title{
-    text-align: center;
-    font-size: 16px;
-    color: #333;
-  }
-}
 </style>
 <template>
-<div class="wrap">
-  <!--状态栏-->
-  <div class="status-bar" :style="{height:menuButtonInfo.top+'px',backgroundColor:statusBgColor}"></div>
-  <!--导航栏-->
-  <div class="navigation-bar" :style="{height:menuButtonInfo.height+'px',backgroundColor:menuButtonBgColor}">
-    <icon @click="bindBack" class="left-icon" size="22" type="iconright"></icon>
-    <div class="title" :style="{lineHeight:menuButtonInfo.height+'px'}">{{title}}</div>
+  <div class="wrap">
+    <!--状态栏-->
+    <div class="status-bar" :style="{height:menuButtonInfo.top+'px',backgroundColor:statusBgColor}"></div>
+    <!--导航栏-->
+    <div class="navigation-bar" :style="{height:menuButtonInfo.height+'px',backgroundColor:menuButtonBgColor}">
+      <icon @click="bindBack" class="left-icon" size="22" type="iconright"></icon>
+      <div class="title" :style="{lineHeight:menuButtonInfo.height+'px'}">{{title}}</div>
+    </div>
   </div>
-</div>
 </template>
 <script>
   import wepy from '@wepy/core'
   import { componentMixins } from '../mixins'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     mixins: [componentMixins],
     props: {
       statusBgColor: {
@@ -53,15 +58,15 @@
     methods: {
       bindBack() {
         if (this.letfFn) this.$emit('clickLeft')
-        if (!this.letfFn)wx.navigateBack()
+        if (!this.letfFn) wx.navigateBack()
       }
     }
   })
 </script>
 <config>
   {
-    "usingComponents": {
-      "icon": "~@/components/icon"
-    }
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
   }
 </config>

@@ -3,7 +3,8 @@
     width: 100%;
     height: 100%;
   }
-  .f2-canvas-wrap{
+
+  .f2-canvas-wrap {
     width: 100%;
     height: 100%;
   }
@@ -20,7 +21,7 @@
       class="f2-canvas"
       :canvas-id="canvasId"
       @init="init"
-      >
+    >
     </canvas>
   </div>
 </template>
@@ -29,11 +30,15 @@
   import { F2Mixin } from '../mixins/f2'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     mixins: [F2Mixin],
     props: {
       onInit: {
         type: Function,
-        default: () => {}
+        default: () => {
+        }
       },
       canvasId: {
         type: String,
@@ -51,9 +56,7 @@
         default: {}
       }
     },
-    data: {
-
-    },
+    data: {},
     watch: {
       postData: {
         deep: true,

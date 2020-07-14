@@ -5,20 +5,21 @@
       <div class="store-title">
         付款方式
       </div>
-      <picker class="picker-mbx" @change="bindPickerChange" value="{{ind}}" range="{{withDrawData}}"    range-key="name">
+      <picker class="picker-mbx" @change="bindPickerChange" value="{{ind}}" range="{{withDrawData}}" range-key="name">
         {{withDrawData[ind].name}}
-        <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+        <icon type="iconarrowleft" size="16" color="#999"></icon>
       </picker>
     </div>
 
     <block v-if="type=='bank_card'">
-      <div class="store-item flex flex-vertical-center flex-justify-between" >
+      <div class="store-item flex flex-vertical-center flex-justify-between">
         <div class="store-title">
           银行类型
         </div>
-        <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{cardDate}}"   range-key="bank_name" >
+        <picker class="picker-mbx" @change="bindPickerChanges" value="{{index}}" range="{{cardDate}}"
+                range-key="bank_name">
           {{cardDate[index].bank_name}}
-          <icon  type="iconarrowleft" size="16"  color="#999"></icon>
+          <icon type="iconarrowleft" size="16" color="#999"></icon>
         </picker>
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between">
@@ -26,7 +27,8 @@
           银行卡号
         </div>
         <div class="store-titles flex1">
-          <input type="text" v-model="account"  placeholder="请输入银行卡号" placeholder-class="__placeholder"  class="input-logistics" >
+          <input type="text" v-model="account" placeholder="请输入银行卡号" placeholder-class="__placeholder"
+                 class="input-logistics">
         </div>
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between">
@@ -34,7 +36,8 @@
           姓名
         </div>
         <div class="store-titles flex1">
-          <input type="text" v-model="account_name"  placeholder="请输入姓名" placeholder-class="__placeholder"  class="input-logistics" >
+          <input type="text" v-model="account_name" placeholder="请输入姓名" placeholder-class="__placeholder"
+                 class="input-logistics">
         </div>
       </div>
     </block>
@@ -46,7 +49,8 @@
           支付宝账号
         </div>
         <div class="store-titles flex1">
-          <input type="text" v-model="account"  placeholder="请输入支付宝账号" placeholder-class="__placeholder"  class="input-logistics" >
+          <input type="text" v-model="account" placeholder="请输入支付宝账号" placeholder-class="__placeholder"
+                 class="input-logistics">
         </div>
       </div>
       <div class="store-item flex flex-vertical-center flex-justify-between">
@@ -54,7 +58,8 @@
           姓名
         </div>
         <div class="store-titles flex1">
-          <input type="text" v-model="account_name"  placeholder="请输入姓名" placeholder-class="__placeholder"  class="input-logistics" >
+          <input type="text" v-model="account_name" placeholder="请输入姓名" placeholder-class="__placeholder"
+                 class="input-logistics">
         </div>
       </div>
     </block>
@@ -62,8 +67,6 @@
     <div class="submit-main" @click="save">
       保存
     </div>
-
-
 
 
   </div>
@@ -117,16 +120,22 @@
             let bankcode = res.data[0].settle_config.bankcode
 
             for (let i = 0; i < this.withDrawData.length; i++) {
-              if (this.withDrawData[i]['type'] == this.type) { this.ind = i }
+              if (this.withDrawData[i]['type'] == this.type) {
+                this.ind = i
+              }
             }
             if (bankcode) {
               for (let i = 0; i < this.cardDate.length; i++) {
-                if (this.cardDate[i]['bank_code'] == bankcode) { this.index = i }
+                if (this.cardDate[i]['bank_code'] == bankcode) {
+                  this.index = i
+                }
               }
             }
           }
           hideLoading()
-        }).catch(e => { hideLoading() })
+        }).catch(e => {
+          hideLoading()
+        })
       },
       save() {
         let data = {
@@ -175,48 +184,55 @@
   /*@import "../../assets/variables.scss";*/
   /*@import "../../assets/mixins.scss";*/
 
-  .store-all{
+  .store-all {
     background-color: #FFFFFF;
     height: 100vh;
-    .store-item{
+
+    .store-item {
       height: 108rpx;
       border-bottom: 1px solid #EBEBEB;
       box-sizing: border-box;
       width: 710rpx;
       margin: 0 auto;
     }
-    .store-title{
+
+    .store-title {
       color: #333333;
       font-size: 32rpx;
     }
-    .store-titles{
+
+    .store-titles {
       color: #999999;
       font-size: 26rpx;
     }
   }
-  .input-logistics{
+
+  .input-logistics {
     margin-left: 48rpx;
     height: 108rpx;
     font-size: 26rpx;
     color: #333333;
   }
-  .__placeholder{
+
+  .__placeholder {
     color: #CAC8C8;
   }
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
+
+  .submit-main {
+    width: 750rpx;
+    height: 86rpx;
     line-height: 86rpx;
     text-align: center;
     color: #FFFFFF;
     font-size: 32rpx;
-    background:rgba(0,168,255,1);
+    background: rgba(0, 168, 255, 1);
     position: fixed;
     bottom: 0rpx;
     left: 0rpx;
     z-index: 9;
   }
-  .picker-mbx{
+
+  .picker-mbx {
     flex: 1;
     text-align: right;
     height: 108rpx;

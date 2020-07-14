@@ -53,7 +53,7 @@ function ObjectToArr(object, addkey) {
   var newObj = {}// 创建一个新的对象，用于存放排好序的键值对
 
   // 此处不能使用for..in
-  newkey_1.forEach(function (val) {
+  newkey_1.forEach(function(val) {
     newObj[val] = arrs[val]// 向新创建的对象中按照排好的顺序依次增加键值对
   })
   return newObj
@@ -89,7 +89,7 @@ class XHR {
   }
 
   static formData = (param) => {
-    let _param = {access_token: getAccessToken(), biz_id: getBizId(), env: getEnv(), ...param}
+    let _param = { access_token: getAccessToken(), biz_id: getBizId(), env: getEnv(), ...param }
     if (!_param.hasOwnProperty('biz_id')) {
       _param.biz_id = getBizId()
     }
@@ -113,7 +113,7 @@ const hookErrorCode = [0, 66001, 88001, 200001]
  * @param headerExt 额外请求头
  * @returns {Promise<unknown>}
  */
-export const ajax = ({url, method = 'post', data = {}, options = {}, isAddHost = true, headerExt = {}}) => {
+export const ajax = ({ url, method = 'post', data = {}, options = {}, isAddHost = true, headerExt = {} }) => {
   let {
     tip = '', // loading text
     mask = false,
@@ -124,7 +124,7 @@ export const ajax = ({url, method = 'post', data = {}, options = {}, isAddHost =
     onlyData = false// 是否直接返回data，方便结构赋值
   } = options
 
-  if (tip)wx.showLoading({title: tip, mask})
+  if (tip) wx.showLoading({ title: tip, mask })
 
   // let token
   var header = {
@@ -142,13 +142,13 @@ export const ajax = ({url, method = 'post', data = {}, options = {}, isAddHost =
       method,
       data,
       success: (ret) => {
-        const {statusCode, data} = ret
+        const { statusCode, data } = ret
         if (statusCode !== 200 || typeof data !== 'object') {
           error('服务器去旅行了')
           reject(new Error('服务器去旅行了'))
         }
-        const {data: res} = ret
-        const {errorCode = 1, msg = '请求未成功'} = res
+        const { data: res } = ret
+        const { errorCode = 1, msg = '请求未成功' } = res
 
         if (hookErrorCode.indexOf(errorCode) !== -1) {
           if (errorCode === 66001) {
@@ -194,7 +194,7 @@ export const ajax = ({url, method = 'post', data = {}, options = {}, isAddHost =
       },
       complete: () => {
         if (tip) {
-          setTimeout(function () {
+          setTimeout(function() {
             wx.hideLoading()
           }, timeout)
         }
@@ -203,7 +203,7 @@ export const ajax = ({url, method = 'post', data = {}, options = {}, isAddHost =
   })
 }
 
-export const fetch = function ({act, param = {}, options = false, url = '/api/little_program/shopconfig.php', method = 'post'}) {
+export const fetch = function({ act, param = {}, options = false, url = '/api/little_program/shopconfig.php', method = 'post' }) {
   try {
     if (act) {
       param.act = act
@@ -223,13 +223,13 @@ export const fetch = function ({act, param = {}, options = false, url = '/api/li
     }
     // 签名
     const data = XHR.formData(param)
-    return ajax({url, method, data, options})
+    return ajax({ url, method, data, options })
   } catch (e) {
     console.log('request error :' + JSON.stringify(e))
   }
 }
 
-export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressList = [], vmobj, handlerPressFn}) => {
+export const upload = ({ filePath, idx = 0, name = 'image', param = {}, progressList = [], vmobj, handlerPressFn }) => {
   let _param = {
     access_token: getAccessToken(),
     Users_ID: getUsersID(),
@@ -251,7 +251,7 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
       formData,
       success: (res) => {
         // console.log('upload file result', res)
-        let {data: body} = res
+        let { data: body } = res
         if (typeof body === 'string' && body) {
           body = JSON.parse(body)
         }
@@ -264,7 +264,7 @@ export const upload = ({filePath, idx = 0, name = 'image', param = {}, progressL
           return
         }
 
-        const {errorCode = 0, data} = body
+        const { errorCode = 0, data } = body
 
         if (errorCode === 0 && data.hasOwnProperty('path') && data.path) {
           resolve(data.path)

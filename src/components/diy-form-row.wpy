@@ -1,28 +1,33 @@
 <style lang="scss">
   /*@import "../assets/app.scss";*/
-  .wrap{
+  .wrap {
     padding-left: 15px;
   }
-  .actions{
+
+  .actions {
     display: flex;
     align-items: center;
     padding-right: 10px;
-    .icon{
+
+    .icon {
 
     }
-    .space-line{
+
+    .space-line {
       width: 1px;
       background: #DADADA;
       height: 16px;
       margin: 0 10px;
     }
   }
-  .row{
+
+  .row {
     display: flex;
     border-bottom: 1px solid #eee;
     padding: 15px 0;
-    .label{
-      flex:1;
+
+    .label {
+      flex: 1;
     }
   }
 </style>
@@ -42,6 +47,9 @@
   import wepy from '@wepy/core'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       idx: {
         type: Number,
@@ -73,7 +81,7 @@
       rowData: {
         deep: true,
         handler(newVal) {
-          this.$emit('change', {idx: this.idx, val: newVal})
+          this.$emit('change', { idx: this.idx, val: newVal })
         }
       }
     },
@@ -83,7 +91,7 @@
     },
     methods: {
       openEdit() {
-        this.$emit('openEdit', {idx: this.idx})
+        this.$emit('openEdit', { idx: this.idx })
       },
 
       delFn() {
@@ -103,8 +111,8 @@
 </script>
 <config>
   {
-    "usingComponents": {
-      "icon": "~@/components/icon"
-    }
+  "usingComponents": {
+  "icon": "~@/components/icon"
+  }
   }
 </config>

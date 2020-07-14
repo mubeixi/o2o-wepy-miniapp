@@ -4,7 +4,7 @@
       <parse-template v-for="(node, index) of node.nodes" :key="index" :node="node"></parse-template>
     </view>
     <view v-else>
-      <template  v-for="(node, index) of node.nodes" :key="index">
+      <template v-for="(node, index) of node.nodes" :key="index">
         <parse-template :node="node"></parse-template>
       </template>
 
@@ -20,7 +20,7 @@
     props: {
       node: {
         type: Object,
-        default () {
+        default() {
           return {}
         }
       }
@@ -35,7 +35,7 @@
       node: {
         immediate: true,
         deep: true,
-        handler (nval) {
+        handler(nval) {
           if (nval && JSON.stringify(nval) !== '{}') {
             this._init_func(nval)
           }
@@ -44,7 +44,7 @@
     },
     methods: {
       bindDiyLink(e) {
-        diyLinkTo({link: this.link, linkType: this.linkType, ext: this.ext})
+        diyLinkTo({ link: this.link, linkType: this.linkType, ext: this.ext })
       },
       _init_func(val) {
         console.log(val)
@@ -55,7 +55,7 @@
           this.link = val.attr['data-url']
         }
       },
-      bindTap (e) {
+      bindTap(e) {
 
       }
     }
@@ -63,7 +63,7 @@
 
 </script>
 <style scoped lang="scss">
-  .diy-link-ele{
+  .diy-link-ele {
     color: mediumseagreen;
     text-decoration: underline;
   }

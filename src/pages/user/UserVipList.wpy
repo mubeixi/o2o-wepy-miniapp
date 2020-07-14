@@ -4,8 +4,8 @@
 
 
     <div class="vip-item flex" v-for="(item,index) of vipList" :key="index">
-      <div class="vip-item-img m-r-11"  >
-        <img :src="item.User_HeadImg"  class="img-full">
+      <div class="vip-item-img m-r-11">
+        <img :src="item.User_HeadImg" class="img-full">
       </div>
       <div class="vip-item-center ">
         <div class="vip-item-name">
@@ -19,14 +19,14 @@
           <div class="lin-120">
             会员等级 : {{item.level_name}}
           </div>
-<!--          <div class="lin-120">-->
-<!--            过期时间 : {{item.User_ExpireTime}}-->
-<!--          </div>-->
+          <!--          <div class="lin-120">-->
+          <!--            过期时间 : {{item.User_ExpireTime}}-->
+          <!--          </div>-->
         </div>
 
       </div>
       <div class="message" @click="sendMessage(item)">
-          发送消息
+        发送消息
       </div>
     </div>
 
@@ -37,9 +37,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getUserList} from '../../api/store'
+  import { getUserList } from '../../api/store'
   import { error } from '../../common/fun'
-  import {formatPhone} from '../../common/helper'
+  import { formatPhone } from '../../common/helper'
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -50,7 +51,7 @@
       vipList: []
     },
     methods: {
-      sendMessage(item){
+      sendMessage(item) {
         this.$linkTo(`/pages/support/Im?type=user&tid=${item.User_ID}&room_title=${item.User_NickName}`)
       },
       async init() {
@@ -87,52 +88,58 @@
 <style lang="scss">
   /*@import "../../assets/variables.scss";*/
   /*@import "../../assets/mixins.scss";*/
-  .page-wrap{
+  .page-wrap {
     background-color: #F8F8F8 !important;
     min-height: 100vh;
     overflow-x: hidden;
-    padding-top:40rpx;
+    padding-top: 40rpx;
     box-sizing: border-box;
   }
-  .vip-item{
-    width:710rpx;
-    height:220rpx;
-    background:rgba(255,255,255,1);
-    border-radius:20rpx;
+
+  .vip-item {
+    width: 710rpx;
+    height: 220rpx;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 20rpx;
     margin: 0 auto 24rpx;
     box-sizing: border-box;
     padding: 20rpx;
   }
-  .img-full{
+
+  .img-full {
     width: 100%;
     height: 100%;
   }
-  .vip-item-img{
+
+  .vip-item-img {
     width: 88rpx;
     height: 88rpx;
     border-radius: 50%;
     overflow: hidden;
   }
 
-  .vip-item-center{
+  .vip-item-center {
     width: 400rpx;
     padding-top: 8rpx;
     overflow-x: hidden;
   }
-  .vip-item-name{
+
+  .vip-item-name {
     height: 30rpx;
     line-height: 30rpx;
     font-size: 30rpx;
     color: #333333;
     font-weight: bold;
-    &-title{
+
+    &-title {
       width: 210rpx;
       overflow-x: hidden;
       display: inline-block;
       white-space: nowrap;
-      text-overflow:ellipsis;
+      text-overflow: ellipsis;
     }
-    &-phone{
+
+    &-phone {
       font-size: 28rpx;
       font-weight: 500;
       display: inline-block;
@@ -140,25 +147,28 @@
       overflow-x: hidden;
       margin-left: 12rpx;
       white-space: nowrap;
-      text-overflow:ellipsis;
+      text-overflow: ellipsis;
     }
   }
-  .vip-content{
+
+  .vip-content {
     font-size: 24rpx;
     color: #777777;
 
   }
-  .lin-120{
+
+  .lin-120 {
     height: 40rpx;
     line-height: 40rpx;
   }
-  .message{
-    width:160rpx;
-    height:60rpx;
+
+  .message {
+    width: 160rpx;
+    height: 60rpx;
     line-height: 60rpx;
     text-align: center;
-    background:rgba(0,168,255,1);
-    border-radius:30rpx;
+    background: rgba(0, 168, 255, 1);
+    border-radius: 30rpx;
     font-size: 28rpx;
     color: #FFFFFF;
     margin-top: 72rpx;

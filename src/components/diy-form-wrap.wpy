@@ -1,34 +1,39 @@
 <style lang="scss">
   /*@import "../assets/app.scss";*/
   /*@import "../assets/variables.scss";*/
-  .wrap{
+  .wrap {
     background: white;
     padding: 20px 10px;
   }
-  .row{
+
+  .row {
     border-bottom: 1px solid #eee;
     padding: 6px 0;
-    &:last-child{
+
+    &:last-child {
       /*border-bottom: none;*/
     }
   }
-  .specs-action-box{
+
+  .specs-action-box {
     display: flex;
     justify-content: center;
     margin: 15px auto;
-    .add-btn{
+
+    .add-btn {
       width: 110px;
       padding: 0 10px;
       height: 30px;
       display: flex;
       align-items: center;
-      border:1px solid $fun-blue-color;
-      color:$fun-blue-color;
+      border: 1px solid $fun-blue-color;
+      color: $fun-blue-color;
       border-radius: 2px;
       justify-content: center
     }
   }
-  .label{
+
+  .label {
     min-width: 80px;
 
   }
@@ -60,33 +65,34 @@
         <div class="row flex flex-vertical-center flex-justify-between">
           <div class="label">名称</div>
           <div class="content p-t-10 p-b-10 flex1 p-l-15">
-            <input style="display: block" v-model="_row.label" placeholder="请输入名称" />
+            <input style="display: block" v-model="_row.label" placeholder="请输入名称"/>
           </div>
         </div>
         <div class="row flex flex-vertical-center flex-justify-between">
           <div class="label">字段类型</div>
           <div class="content p-t-10 p-b-10">
             <picker :range="eleTypeList" @change="bindTypeChange" range-key="title">
-              <span class="c6">{{eleTypeList[typeIdx].title}}</span><icon type="iconarrowleft" color="#999"></icon>
+              <span class="c6">{{eleTypeList[typeIdx].title}}</span>
+              <icon type="iconarrowleft" color="#999"></icon>
             </picker>
           </div>
         </div>
         <div class="row flex flex-vertical-center flex-justify-between">
           <div class="label">是否必填</div>
           <div class="content p-t-10 p-b-10">
-            <switch style="transform: scale(.8)" :checked="_row.require"  bindchange="switchChange"/>
+            <switch style="transform: scale(.8)" :checked="_row.require" bindchange="switchChange"/>
           </div>
         </div>
         <div class="row">
           <div class="label">初始内容</div>
           <div class="content p-t-10 p-b-4">
-            <input placeholder-style="color:#666" style="color: #666" v-model="_row.value" placeholder="请输入初始内容" />
+            <input placeholder-style="color:#666" style="color: #666" v-model="_row.value" placeholder="请输入初始内容"/>
           </div>
         </div>
         <div class="row">
           <div class="label">内容提示</div>
           <div class="content p-t-10 p-b-4">
-            <input placeholder-style="color:#666" style="color: #666" v-model="_row.desc" placeholder="请输入内容提示" />
+            <input placeholder-style="color:#666" style="color: #666" v-model="_row.desc" placeholder="请输入内容提示"/>
           </div>
         </div>
       </div>
@@ -103,6 +109,9 @@
   import { findArrayIdx } from '../common/helper'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     mixins: [componentMixins],
     props: {
       _conf: {
@@ -170,25 +179,25 @@
         this._row = Object.assign({}, ele) // 不能有关联
         this.rowIdx = this.formData.length - 1
         // 更新type下标
-        const findIdx = findArrayIdx(eleTypeList, {type: this._row.type})
+        const findIdx = findArrayIdx(eleTypeList, { type: this._row.type })
         this.typeIdx = findIdx === false ? 0 : findIdx
         setTimeout(() => {
           this.$openPop('_form')
         }, 100)
       },
-      rowOpenEdit({idx}) {
+      rowOpenEdit({ idx }) {
         this._row = Object.assign({}, this.formData[idx])
 
         this.rowIdx = idx
         // 更新type下标
-        const findIdx = findArrayIdx(eleTypeList, {type: this._row.type})
+        const findIdx = findArrayIdx(eleTypeList, { type: this._row.type })
         this.typeIdx = findIdx === false ? 0 : findIdx
         setTimeout(() => {
           this.$openPop('_form')
         }, 100)
       },
       // 自己控制更新才可靠
-      rowUpdate({idx, val}) {
+      rowUpdate({ idx, val }) {
         this.$set(this.formData, idx, val)
       },
 
@@ -213,10 +222,10 @@
 </script>
 <config>
   {
-    "usingComponents": {
-      "icon": "~@/components/icon",
-      "form-row": "~@/components/diy-form-row",
-      "popup-layer": "~@/components/popup-layer",
-    }
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "form-row": "~@/components/diy-form-row",
+  "popup-layer": "~@/components/popup-layer",
+  }
   }
 </config>

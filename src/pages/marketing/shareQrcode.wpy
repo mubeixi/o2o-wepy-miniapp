@@ -2,7 +2,7 @@
   <view class="page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="preview-box">
-      <image v-show="drawPosterDone" class="preview" @click="preFn" :src="current_url" mode="widthFix" />
+      <image v-show="drawPosterDone" class="preview" @click="preFn" :src="current_url" mode="widthFix"/>
     </div>
 
 
@@ -39,9 +39,9 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {getPosterList, getDistributeWxQrcode, getBizShare} from '../../api/store'
+  import { getBizShare } from '../../api/store'
   import { error, hideLoading, showLoading, toast } from '../../common/fun'
-  import {getDomain, saveImageToDisk} from '../../common/helper'
+  import { getDomain, saveImageToDisk } from '../../common/helper'
   import wxPromisify from '../../common/promisify'
 
   let canvasInstance = null
@@ -73,7 +73,7 @@
         return this.$store.getters.getBizInfo()
       }
     },
-    onReady () {
+    onReady() {
       canvasInstance = wx.createCanvasContext('myCanvas')
       this.initFunc(this.type, this.again)
       // var context = wx.createCanvasContext('firstCanvas')
@@ -81,33 +81,33 @@
       // context.stroke()
       // context.draw()
     },
-    onShow () {
+    onShow() {
       this.$refs.commentModal.close()
     },
-    onLoad (options) {
+    onLoad(options) {
       const { type, again } = options
       this.type = type
       this.again = again
     },
     methods: {
       getDomain,
-      backSetting () {
+      backSetting() {
         this.$refs.commentModal.close()
       },
-      openSetting () {
+      openSetting() {
         const _self = this
         wx.authorize({
           scope: 'scope.writePhotosAlbum',
-          success () {
+          success() {
             _self.saveFn()
           },
-          fail () {
+          fail() {
             _self.$refs.commentModal.show()
             error('拒绝相册授权,保存失败')
           }
         })
       },
-      saveImg () {
+      saveImg() {
         const _self = this
         wx.getSetting({
           success: (res) => {
@@ -120,7 +120,7 @@
           }
         })
       },
-      async saveFn () {
+      async saveFn() {
         const handleRT = await saveImageToDisk({
           fileUrl: this.current_url,
           type: 'local'
@@ -131,10 +131,10 @@
         }
         toast('保存成功')
       },
-      setSelect (idx) {
+      setSelect(idx) {
         this.drawPoster(idx)
       },
-      preFn () {
+      preFn() {
         if (!this.current_url) {
           error('请选择模板')
           return
@@ -149,7 +149,7 @@
       //   const getPosterDataResult = await getPosterDetail({ id: this.poster_list[this.currentIdx].id })
       //   const posterConf = JSON.parse(getPosterDataResult.data.data)
       // },
-      handleChange (e) {
+      handleChange(e) {
         this.currentIdx = e.detail.current
       },
       async drawPoster(idx) {
@@ -163,14 +163,13 @@
 
           const itemInfo = {}
           for (var i in posterInfo.position) {
-            itemInfo[i] = {...posterInfo.position[i], ...posterInfo.size[i]}
+            itemInfo[i] = { ...posterInfo.position[i], ...posterInfo.size[i] }
           }
           console.log(itemInfo)
 
           const wrapHeight = 1500
           const wrapWidth = 1100
           const ctx = canvasInstance
-
 
           const userInfo = {
             avatar: getDomain(this.bizInfo.biz_logo),
@@ -181,13 +180,19 @@
 
           ctx.fillRect(wrapWidth, wrapHeight, 0, 0)
 
-          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(posterInfo.bg_img) }).catch(e => { throw Error(e.errMsg || '缓存海报背景失败') })
+          const wrapTempFile = await wxPromisify('getImageInfo', { src: getDomain(posterInfo.bg_img) }).catch(e => {
+            throw Error(e.errMsg || '缓存海报背景失败')
+          })
           ctx.drawImage(wrapTempFile.path, 0, 0, wrapWidth, wrapHeight)
 
-          const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          const qrcodeTempFile = await wxPromisify('getImageInfo', { src: userInfo.qrcode }).catch(e => {
+            throw Error(e.errMsg || '缓存二维码失败')
+          })
           ctx.drawImage(qrcodeTempFile.path, itemInfo.qrcode.left, itemInfo.qrcode.top, itemInfo.qrcode.width, itemInfo.qrcode.height)
 
-          const avatarTempFile = await wxPromisify('getImageInfo', { src: userInfo.avatar }).catch(e => { throw Error(e.errMsg || '缓存二维码失败') })
+          const avatarTempFile = await wxPromisify('getImageInfo', { src: userInfo.avatar }).catch(e => {
+            throw Error(e.errMsg || '缓存二维码失败')
+          })
 
           // 头像(需要画个圆角)
           ctx.save()
@@ -206,7 +211,7 @@
           ctx.fillText(`${this.bizInfo.follow}人关注`, itemInfo.follow.left, itemInfo.follow.top)
 
           await new Promise(resolve => {
-            ctx.draw(false, function () {
+            ctx.draw(false, function() {
               console.log('draw done')
               resolve()
             })
@@ -218,8 +223,8 @@
           this.current_url = tempFilePath
           this.drawPosterDone = true
 
-        // 绘制底部白色
-        // ctx.setFillStyle('#f2f2f2')
+          // 绘制底部白色
+          // ctx.setFillStyle('#f2f2f2')
         } catch (e) {
           console.log(e)
           error(e.message)
@@ -227,13 +232,17 @@
           hideLoading()
         }
       },
-      async initFunc (type, again) {
+      async initFunc(type, again) {
         try {
           // 先获取二维码
           // let qrRet = await getDistributeWxQrcode({type,again,owner_id:this.userInfo.User_ID},{tip:'生成中'})
           // this.qrimg = qrRet.data.img_url;
 
-          const {bg_img: lists, qrcode} = await getBizShare({ pageSize: 999, qrcode_type: 'wx_lp', biz_id: this.bizInfo.id })
+          const { bg_img: lists, qrcode } = await getBizShare({
+            pageSize: 999,
+            qrcode_type: 'wx_lp',
+            biz_id: this.bizInfo.id
+          })
             .then(res => {
               return res.data
             })
@@ -263,33 +272,35 @@
           error(e || '获取海报模板失败')
         }
       },
-      goBack () {
+      goBack() {
         this.$back()
       }
     }
   })
 </script>
 <style lang="scss" scoped>
-/*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/variables.scss";*/
 
-.myCanvas {
-  position: fixed;
-  left: 100%;
-  top: 0;
-  background: white;
-  width: 1100px;
-  height: 1500px;
-}
-.preview-box{
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 374rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+  .myCanvas {
+    position: fixed;
+    left: 100%;
+    top: 0;
+    background: white;
+    width: 1100px;
+    height: 1500px;
+  }
+
+  .preview-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 374rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .preview {
     height: auto;
     margin: 0 auto;
@@ -346,41 +357,46 @@
     }
 
   }
-.control{
-  display: flex;
-  width: 100%;
-  align-items: center;
-  .action-btn-sure{
-    flex: 1;
-    text-align: center;
-    height: 80rpx;
-    line-height: 80rpx;
-    font-size: 16px;
-    background-color: #FFFFFF;
-    border: 0px;
-  }
-  button::after{
-    width: 0;
-    height: 0;
-  }
-}
 
-.refuseApplyDialog{
-  width: 560rpx;
-  box-sizing: border-box;
-  padding-left: 40rpx;
-  padding-right: 40rpx;
-  .modal-title{
-    height: 80rpx;
-    line-height: 80rpx;
-    text-align: center;
-    font-weight: bold;
-  }
-  .btn-sub{
-    color: #1aac19;
+  .control {
+    display: flex;
+    width: 100%;
+    align-items: center;
+
+    .action-btn-sure {
+      flex: 1;
+      text-align: center;
+      height: 80rpx;
+      line-height: 80rpx;
+      font-size: 16px;
+      background-color: #FFFFFF;
+      border: 0px;
+    }
+
+    button::after {
+      width: 0;
+      height: 0;
+    }
   }
 
-}
+  .refuseApplyDialog {
+    width: 560rpx;
+    box-sizing: border-box;
+    padding-left: 40rpx;
+    padding-right: 40rpx;
+
+    .modal-title {
+      height: 80rpx;
+      line-height: 80rpx;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .btn-sub {
+      color: #1aac19;
+    }
+
+  }
 
   .page-wrap {
 
@@ -388,12 +404,12 @@
 </style>
 <config>
   {
-    "navigationBarTitleText": "店铺海报",
-    "usingComponents": {
-      "wzw-dialog": "~@/components/ModelComponents",
-      "wzw-im-tip": "~@/components/wzw-im-tip",
-      "copyright": "~@/components/copyright",
-      "icon": "~@/components/icon"
-    }
+  "navigationBarTitleText": "店铺海报",
+  "usingComponents": {
+  "wzw-dialog": "~@/components/ModelComponents",
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "copyright": "~@/components/copyright",
+  "icon": "~@/components/icon"
+  }
   }
 </config>

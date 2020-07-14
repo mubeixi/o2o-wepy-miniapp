@@ -2,66 +2,66 @@
   <!--判断是否是标签节点-->
   <template v-if="node.node === 'element'">
     <!--button类型-->
-<!--    :class="node.classStr"-->
-<!--    :style="node.styleStr"-->
-    <button v-if="node.tag === 'button'" type="default" size="mini"  >
-      <parse-template :node="node" />
+    <!--    :class="node.classStr"-->
+    <!--    :style="node.styleStr"-->
+    <button v-if="node.tag === 'button'" type="default" size="mini">
+      <parse-template :node="node"/>
     </button>
 
     <!--a类型-->
-<!--    :class="node.classStr"-->
-<!--    :style="node.styleStr"-->
-    <view v-else-if="node.tag === 'a'" @click="wxParseATap(node.attr,$event)" :data-href="node.attr.href" >
+    <!--    :class="node.classStr"-->
+    <!--    :style="node.styleStr"-->
+    <view v-else-if="node.tag === 'a'" @click="wxParseATap(node.attr,$event)" :data-href="node.attr.href">
       <template v-for="(node, index) of node.nodes" :key="index">
-        <parse-template :node="node" />
+        <parse-template :node="node"/>
       </template>
     </view>
 
     <!--li类型-->
-<!--    :class="node.classStr"-->
-<!--    :style="node.styleStr"-->
-    <view v-else-if="node.tag === 'li'" >
+    <!--    :class="node.classStr"-->
+    <!--    :style="node.styleStr"-->
+    <view v-else-if="node.tag === 'li'">
       <template v-for="(node, index) of node.nodes" :key="index">
-        <parse-template :node="node" />
+        <parse-template :node="node"/>
       </template>
     </view>
 
     <!--table类型-->
-<!--    :class="node.classStr" :style="node.styleStr"-->
-    <parse-table v-else-if="node.tag === 'table'"  :node="node" />
+    <!--    :class="node.classStr" :style="node.styleStr"-->
+    <parse-table v-else-if="node.tag === 'table'" :node="node"/>
 
-<!--    :class="node.classStr" :style="node.styleStr"-->
-    <parse-span v-else-if="node.tag === 'span'"  :node="node"></parse-span>
+    <!--    :class="node.classStr" :style="node.styleStr"-->
+    <parse-span v-else-if="node.tag === 'span'" :node="node"></parse-span>
 
     <!--br类型-->
     <!-- #ifndef H5 -->
     <text v-else-if="node.tag === 'br'">\n</text>
     <!-- #endif -->
     <!-- #ifdef H5 -->
-    <br v-else-if="node.tag === 'br'" />
+    <br v-else-if="node.tag === 'br'"/>
     <!-- #endif -->
 
     <!--video类型-->
-    <parse-video :node="node" v-else-if="node.tag === 'video'" />
+    <parse-video :node="node" v-else-if="node.tag === 'video'"/>
 
     <!--audio类型-->
-    <parse-audio :node="node" v-else-if="node.tag === 'audio'" />
+    <parse-audio :node="node" v-else-if="node.tag === 'audio'"/>
 
     <!--img类型-->
-<!--    :style="node.styleStr-->
-    <view v-else-if="node.tag === 'img'" >
-      <parse-img :node="node"  ></parse-img>
+    <!--    :style="node.styleStr-->
+    <view v-else-if="node.tag === 'img'">
+      <parse-img :node="node"></parse-img>
     </view>
 
 
     <!--其他标签-->
-<!--    :class="{node.classStr}"-->
-<!--    :style="node.styleStr"-->
+    <!--    :class="{node.classStr}"-->
+    <!--    :style="node.styleStr"-->
 
 
     <div v-else>
       <template v-for="(node, index) of node.nodes" :key="index">
-        <parse-template :node="node" />
+        <parse-template :node="node"/>
       </template>
     </div>
   </template>
@@ -73,39 +73,39 @@
 
 <script>
 
-import wepy from '@wepy/core'
+  import wepy from '@wepy/core'
 
-wepy.component({
-  name: 'wxParseTemplate',
-  props: {
-    node: {}
-  },
-  methods: {
-    wxParseATap (attr, e) {
-      console.log(attr,e)
-      // const {
-      //   href
-      // } = e.currentTarget.dataset
-      // if (!href) return
-      // let parent = this.$parent
-      // while (!parent.preview || typeof parent.preview !== 'function') {
-      //   parent = parent.$parent
-      // }
-      // parent.navigate(href, e, attr)
+  wepy.component({
+    name: 'wxParseTemplate',
+    props: {
+      node: {}
+    },
+    methods: {
+      wxParseATap(attr, e) {
+        console.log(attr, e)
+        // const {
+        //   href
+        // } = e.currentTarget.dataset
+        // if (!href) return
+        // let parent = this.$parent
+        // while (!parent.preview || typeof parent.preview !== 'function') {
+        //   parent = parent.$parent
+        // }
+        // parent.navigate(href, e, attr)
+      }
     }
-  }
-})
+  })
 </script>
 
 <config>
-{
+  {
   "usingComponents": {
-    "parse-template":"~@/components/fun-rich-text/wxParseTemplate",
-    "parse-img":"~@/components/fun-rich-text/wxParseImg",
-    "parse-table":"~@/components/fun-rich-text/wxParseTable",
-    "parse-span":"~@/components/fun-rich-text/WxParseSpan",
-    "parse-audio":"~@/components/fun-rich-text/wxParseAudio",
-    "parse-video":"~@/components/fun-rich-text/wxParseVideo",
+  "parse-template":"~@/components/fun-rich-text/wxParseTemplate",
+  "parse-img":"~@/components/fun-rich-text/wxParseImg",
+  "parse-table":"~@/components/fun-rich-text/wxParseTable",
+  "parse-span":"~@/components/fun-rich-text/WxParseSpan",
+  "parse-audio":"~@/components/fun-rich-text/wxParseAudio",
+  "parse-video":"~@/components/fun-rich-text/wxParseVideo",
   }
-}
+  }
 </config>

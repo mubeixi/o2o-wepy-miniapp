@@ -2,23 +2,27 @@
   @import "../../assets/app.scss";
   @import "../../assets/mixins.scss";
 
-  .page-wrap{
+  .page-wrap {
     padding-bottom: 44px; //.btn的是44px
   }
 
-  .form{
+  .form {
     background: #f8f8f8;
-    .group-cell{
+
+    .group-cell {
       background: white;
-      .cell-item{
-        .label{
+
+      .cell-item {
+        .label {
 
         }
-        .content{
+
+        .content {
           padding-right: 20rpx;
           text-align: left;
-          .line-input{
-            border:1px solid #eee;
+
+          .line-input {
+            border: 1px solid #eee;
             height: 56rpx;
             line-height: 56rpx;
             text-align: center;
@@ -27,57 +31,64 @@
         }
       }
     }
-    .safearea-space{
+
+    .safearea-space {
       height: constant(safe-area-inset-bottom);
       height: env(safe-area-inset-bottom);
     }
   }
 
-  .add-btn{
+  .add-btn {
     width: 155rpx;
     height: 56rpx;
     display: flex;
     align-items: center;
-    border:1px solid #00A8FF;
-    color:#00A8FF;
+    border: 1px solid #00A8FF;
+    color: #00A8FF;
     border-radius: 5rpx;
     justify-content: center
   }
 
   /*商品列表 start*/
-  .product-list{
+  .product-list {
     height: 800rpx;
     overflow: scroll;
   }
 
-  .product-item{
+  .product-item {
     padding: 30rpx 0;
     background: white;
     margin-bottom: 20rpx;
-    .info-box{
+
+    .info-box {
       padding: 0 20rpx;
       display: flex;
       font-size: 14px;
       height: 176rpx;
-      .check{
+
+      .check {
         padding-right: 20rpx;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        .check-icon{
+
+        .check-icon {
 
         }
       }
-      .thumb{
+
+      .thumb {
         width: 176rpx;
         height: 176rpx;
         background: #f2f2f2;
       }
-      .info{
+
+      .info {
         flex: 1;
         padding-left: 20rpx;
-        .title{
+
+        .title {
           color: #333;
           font-size: 14px;
           /*font-weight: bold;*/
@@ -87,22 +98,26 @@
           text-overflow: ellipsis;
           margin-bottom: 8px;
         }
-        .price-box{
+
+        .price-box {
           color: $fun-red-color;
           margin-bottom: 10px;
           font-size: 14px;
         }
-        .stock-box{
+
+        .stock-box {
           font-size: 12px;
           color: #888;
         }
       }
     }
-    .actions{
+
+    .actions {
       margin-top: 30rpx;
       font-size: 12px;
       display: flex;
-      .action{
+
+      .action {
         justify-content: center;
         padding: 0;
         flex: 1;
@@ -110,39 +125,47 @@
         align-items: center;
         color: #888;
         border-right: 1rpx solid #e7e7e7;
-        &:last-child{
+
+        &:last-child {
           border-right: none;
         }
-        .title{
+
+        .title {
           padding-left: 8px;
         }
       }
     }
   }
+
   /*商品列表 end*/
 
-  .goods{
+  .goods {
 
-    &-list{
+    &-list {
       width: 710rpx;
       margin: 0 20rpx;
     }
-    &-item{
+
+    &-item {
       background: white;
       margin-bottom: 30rpx;
       padding: 20rpx;
-      &:last-child{
+
+      &:last-child {
         margin-bottom: 0;
       }
-      .thumb{
+
+      .thumb {
         width: 150rpx;
         height: 150rpx;
         background: #f2f2f2;
       }
-      .info{
+
+      .info {
         flex: 1;
         padding-left: 20rpx;
-        .title{
+
+        .title {
           margin-bottom: 20px;
           line-height: 20px;
           height: 40px;
@@ -150,14 +173,17 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
-        .price-box{
+
+        .price-box {
           display: flex;
           align-items: center;
           font-size: 12px;
-          .selling-price{
+
+          .selling-price {
 
           }
-          .market-price{
+
+          .market-price {
             text-decoration: line-through;
           }
         }
@@ -165,14 +191,14 @@
     }
   }
 
-  .model-seckill{
+  .model-seckill {
     width: 500rpx;
     box-sizing: border-box;
     padding: 30rpx 44rpx;
     border-radius: 10rpx;
   }
 
-  .input-all{
+  .input-all {
     width: 410rpx;
     height: 66rpx;
     line-height: 66rpx;
@@ -180,7 +206,7 @@
     box-sizing: border-box;
   }
 
-  .btns{
+  .btns {
     width: 130rpx;
     height: 50rpx;
     line-height: 50rpx;
@@ -191,16 +217,16 @@
     border-radius: 6rpx;
   }
 
-  .btns-submit{
+  .btns-submit {
     background-color: #00A8FF;
   }
 
-  .placeholder{
+  .placeholder {
     font-size: 12px;
-    color:#C2C2C2;
+    color: #C2C2C2;
   }
 
-  .search-input{
+  .search-input {
     width: 300rpx;
     height: 60rpx;
     box-sizing: border-box;
@@ -209,7 +235,7 @@
     border: 1px solid #eeeeee;
   }
 
-  .search-btn{
+  .search-btn {
     height: 60rpx;
     line-height: 60rpx;
     text-align: center;
@@ -228,13 +254,13 @@
         <div class="cell-item">
           <div class="label">活动名称</div>
           <div class="content">
-            <input class="fz-14" type="text" v-model="formData.name" placeholder="请输入活动名称" />
+            <input class="fz-14" type="text" v-model="formData.name" placeholder="请输入活动名称"/>
           </div>
         </div>
         <div class="cell-item">
           <div class="label">每人限购</div>
           <div class="content">
-            <input class="fz-14" type="number" v-model="formData.limits" placeholder="请输入限购数量,0则代表不限制" />
+            <input class="fz-14" type="number" v-model="formData.limits" placeholder="请输入限购数量,0则代表不限制"/>
           </div>
           <div class="right">(件)</div>
         </div>
@@ -262,31 +288,35 @@
             <icon type="iconarrowleft" size="14" color="#999"></icon>
           </div>
         </div>
-<!--        <div class="cell-item">-->
-<!--          <div class="label">参与分销</div>-->
-<!--          <div class="content">-->
-<!--            <switch :animation="animation" @change="taggleDistributor" :checked="formData.is_distribute" />-->
-<!--          </div>-->
-<!--        </div>-->
+        <!--        <div class="cell-item">-->
+        <!--          <div class="label">参与分销</div>-->
+        <!--          <div class="content">-->
+        <!--            <switch :animation="animation" @change="taggleDistributor" :checked="formData.is_distribute" />-->
+        <!--          </div>-->
+        <!--        </div>-->
       </div>
 
       <div class="m-t-20 m-b-20 flex flex-vertical-center">
-        <span  class="fz-16 c3  m-l-10">选择商品</span>
-        <div  @click="openproductPop" class="add-btn m-l-20"><icon color="#00A8FF" type="iconadd"></icon><span class="fz-12 p-l-4"  >添加商品</span></div>
-        <div class="add-btn m-l-20"><span class="fz-12 p-l-4"  @click="setDiscount">批量设置折扣</span></div>
+        <span class="fz-16 c3  m-l-10">选择商品</span>
+        <div @click="openproductPop" class="add-btn m-l-20">
+          <icon color="#00A8FF" type="iconadd"></icon>
+          <span class="fz-12 p-l-4">添加商品</span></div>
+        <div class="add-btn m-l-20"><span class="fz-12 p-l-4" @click="setDiscount">批量设置折扣</span></div>
       </div>
 
       <div class="goods-list">
         <div class="goods-item" v-for="(product,idx) in select_prod" :key="idx" @click="setActiveIdx(idx)">
           <div class="flex">
-<!--            <div class="thumb" :style="{backgroundImage:'url('+product.ImgPath+')'}"></div>-->
+            <!--            <div class="thumb" :style="{backgroundImage:'url('+product.ImgPath+')'}"></div>-->
             <image class="thumb" :src="product.ImgPath"></image>
             <div class="info">
               <div class="title">{{product.Products_Name}}</div>
               <div class="flex flex-vertical-center flex-justify-between">
                 <div class="price-box">
-                  <div class="selling-price color-red"><span>￥</span><span class="fz-14">{{product.Products_PriceX}}</span></div>
-                  <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{product.Products_PriceY}}</span></div>
+                  <div class="selling-price color-red"><span>￥</span><span
+                    class="fz-14">{{product.Products_PriceX}}</span></div>
+                  <div class="market-price color-gray m-l-10"><span>￥</span><span class="fz-14">{{product.Products_PriceY}}</span>
+                  </div>
                 </div>
                 <icon @click="delPro(idx,product.Products_ID)" size="18" type="iconshanchu" color="#999"></icon>
               </div>
@@ -294,7 +324,9 @@
           </div>
           <div class="flex flex-vertical-center p-t-10 fz-14">
             <span>折扣</span>
-            <input :value="product.discount"  class="bor m-l-10 m-r-10 w140 fz-12 p-l-4 p-r-4" placeholder="请输入数字 0.1-9.9" type="digit" min="0.1" max="9.9" @input="bindDiscountInput" /><span>折</span>
+            <input :value="product.discount" class="bor m-l-10 m-r-10 w140 fz-12 p-l-4 p-r-4"
+                   placeholder="请输入数字 0.1-9.9" type="digit" min="0.1" max="9.9"
+                   @input="bindDiscountInput"/><span>折</span>
           </div>
         </div>
       </div>
@@ -319,7 +351,7 @@
         <div class="product-item" v-for="(product,idx) in proData" :key="idx">
           <template v-if="product.Products_Status===1">
             <div class="info-box" @click="taggleProductCheck(idx)">
-              <div class="check"   >
+              <div class="check">
                 <div v-show="!product.disalbed">
                   <icon
                     class="check-icon"
@@ -364,7 +396,8 @@
     <model positions="top-center" ref="myModel" :autoClose="false">
       <div class="model-seckill">
         <div class="fz-16 c3 text-center m-b-30">批量设置折扣</div>
-        <input type="digit" v-model="discount"  min="0.1" max="9.9"  class="input-all p-l-12" placeholder="请输入折扣0.1-9.9" placeholder-class="placeholder"/>
+        <input type="digit" v-model="discount" min="0.1" max="9.9" class="input-all p-l-12" placeholder="请输入折扣0.1-9.9"
+               placeholder-class="placeholder"/>
         <div class="flex flex-vertical-center flex-justify-between m-t-25 p-l-27 p-r-27">
           <div class="btns" @click="$closePop('myModel')">取消</div>
           <div class="btns btns-submit" @click="sureDiscount">确定</div>
@@ -431,7 +464,7 @@
               item.disalbed = false
             }
 
-            return {...item}
+            return { ...item }
           })
         })
       },
@@ -535,7 +568,7 @@
         // }
 
         let select_prod = this.select_prod.map(item => {
-          return {prod_id: item.Products_ID, discount: item.discount ? item.discount : 0}
+          return { prod_id: item.Products_ID, discount: item.discount ? item.discount : 0 }
         })
 
         let postData = {
@@ -543,7 +576,7 @@
           select_prod: JSON.stringify(select_prod)
         }
 
-        if (this.spike_id)postData.spike_id = this.spike_id
+        if (this.spike_id) postData.spike_id = this.spike_id
 
         const checkRt = validateFun(postData, rule)
         if (checkRt !== true) {
@@ -556,7 +589,8 @@
           setTimeout(() => {
             this.$back()
           }, 1000)
-        }).catch(() => {})
+        }).catch(() => {
+        })
       },
       setActiveIdx(idx) {
         this.actIdx = idx
@@ -577,7 +611,7 @@
         this.formData.is_distribute = e.$wx.detail.value ? 1 : 0
       },
       openproductPop() {
-      // 先把已经选中的放进来
+        // 先把已经选中的放进来
         for (let goods of this.proData) {
           for (let item of this.select_prod) {
             if (item.Products_ID === goods.Products_ID) {
@@ -593,12 +627,12 @@
       surePro() {
         this.$closePop('product')
         const selects = this.proData.filter(item => item.check).map(item => {
-          return {...item, prod_id: item.Products_ID, discount: ''}
+          return { ...item, prod_id: item.Products_ID, discount: '' }
         })
 
         // 不能加已经存在的
         for (let item of selects) {
-          if (findArrayIdx(this.select_prod, {Products_ID: item.Products_ID}) === false) {
+          if (findArrayIdx(this.select_prod, { Products_ID: item.Products_ID }) === false) {
             this.select_prod.push(item)
           }
         }
@@ -627,7 +661,9 @@
       async _init_func() {
         if (this.spike_id) {
           try {
-            let {data: info} = await bizSpikeDetail({spike_id: this.spike_id}).catch(() => { throw new Error('初始化参数失败') })
+            let { data: info } = await bizSpikeDetail({ spike_id: this.spike_id }).catch(() => {
+              throw new Error('初始化参数失败')
+            })
             // let {start_time,end_time,name,limits,biz_id} = info
             info.start_time = moment(info.start_time * 1000).format('YYYY-MM-DD HH:mm:ss')
             info.end_time = moment(info.end_time * 1000).format('YYYY-MM-DD HH:mm:ss')
@@ -641,12 +677,14 @@
         }
         this.timeReady = true
 
-        let reqData = await bizProdList({page: 1, pageSize: 999}).catch(() => { throw new Error('获取商品列表错误') })
+        let reqData = await bizProdList({ page: 1, pageSize: 999 }).catch(() => {
+          throw new Error('获取商品列表错误')
+        })
         const hasGoodsIds = getArrColumn(this.select_prod, 'prod_id')
         this.proData = reqData.data.map(item => {
           item.check = hasGoodsIds.includes(item.Products_ID)
           item.disalbed = false
-          return {...item}
+          return { ...item }
         })
       }
     },
@@ -669,15 +707,15 @@
 </script>
 <config>
   {
-    "navigationBarTitleText": "限时抢购",
-    "navigationBarTextStyle": "black",
-    "usingComponents": {
-      "wzw-im-tip": "~@/components/wzw-im-tip",
-      "err-msg": "~@/components/err-msg",
-      "icon": "~@/components/icon",
-      "model": "~@/components/ModelComponents",
-      "time": "~@/components/time",
-      "popup-layer": "~@/components/popup-layer"
-    }
+  "navigationBarTitleText": "限时抢购",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "err-msg": "~@/components/err-msg",
+  "icon": "~@/components/icon",
+  "model": "~@/components/ModelComponents",
+  "time": "~@/components/time",
+  "popup-layer": "~@/components/popup-layer"
+  }
   }
 </config>

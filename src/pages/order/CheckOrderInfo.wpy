@@ -1,11 +1,11 @@
 <template>
   <div @click="commonClick" class="myall" v-show="orderInfo.Order_ID">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="container" >
+    <div class="container">
       <div class="lists">
-        <div class="item" >
+        <div class="item">
 
-          <div class="goods-list" >
+          <div class="goods-list">
             <block v-if="orderInfo.prod_list">
               <div class="goods" v-for="(item,idx2) in orderInfo.prod_list">
                 <div class="l" :style="{backgroundImage:'url('+item.prod_img+')'}"></div>
@@ -17,7 +17,8 @@
                       x{{item.prod_count}}
                     </div>
                   </div>
-                  <div class="font14"><span class="danger-color">￥<span class="price-num font16">{{item.prod_price}}</span></span></div>
+                  <div class="font14"><span class="danger-color">￥<span
+                    class="price-num font16">{{item.prod_price}}</span></span></div>
 
                 </div>
               </div>
@@ -43,17 +44,50 @@
 
     <div class="infobox">
       <div class="title"><span class="tip"></span><span class="text">订单信息</span></div>
-      <div class="row"><div class="label">订单号</div><div class="form-item">{{orderInfo.Order_ID}}</div></div>
-      <div class="row"><div class="label">订单状态</div><div class="form-item" :style="{color:orderInfo.Order_Status!=2?'red':''}">{{orderInfo.Order_Status_desc}}</div></div>
-      <div class="row"><div class="label">总价</div><div class="form-item">￥{{orderInfo.Order_TotalAmount}}</div></div>
-      <div class="row" v-if="orderInfo.Coupon_Money > 0"><div class="label">优惠券</div><div class="form-item">￥-{{orderInfo.Coupon_Money}}</div></div>
-      <div class="row" v-if="orderInfo.Integral_Money > 0"><div class="label">积分抵扣</div><div class="form-item">￥-{{orderInfo.Integral_Money}}</div></div>
-      <div class="row" v-if="orderInfo.Manjian_Cash > 0"><div class="label">满减优惠</div><div class="form-item">￥-{{orderInfo.Manjian_Cash}}</div></div>
-      <div class="row" v-if="orderInfo.user_curagio_money > 0"><div class="label">会员折扣</div><div class="form-item">￥-{{orderInfo.user_curagio_money}}</div></div>
-      <div class="row"><div class="label">实付</div><div class="form-item danger-color">￥{{orderInfo.Order_TotalPrice}}</div></div>
-      <div class="row"><div class="label">获取积分</div><div class="form-item">{{orderInfo.Integral_Get}}</div></div>
-      <div class="row"><div class="label">下单时间</div><div class="form-item">{{orderInfo.Order_CreateTime }}</div></div>
-      <div class="row"><div class="label">付款时间</div><div class="form-item">{{orderInfo.Pay_time }}</div></div>
+      <div class="row">
+        <div class="label">订单号</div>
+        <div class="form-item">{{orderInfo.Order_ID}}</div>
+      </div>
+      <div class="row">
+        <div class="label">订单状态</div>
+        <div class="form-item" :style="{color:orderInfo.Order_Status!=2?'red':''}">{{orderInfo.Order_Status_desc}}</div>
+      </div>
+      <div class="row">
+        <div class="label">总价</div>
+        <div class="form-item">￥{{orderInfo.Order_TotalAmount}}</div>
+      </div>
+      <div class="row" v-if="orderInfo.Coupon_Money > 0">
+        <div class="label">优惠券</div>
+        <div class="form-item">￥-{{orderInfo.Coupon_Money}}</div>
+      </div>
+      <div class="row" v-if="orderInfo.Integral_Money > 0">
+        <div class="label">积分抵扣</div>
+        <div class="form-item">￥-{{orderInfo.Integral_Money}}</div>
+      </div>
+      <div class="row" v-if="orderInfo.Manjian_Cash > 0">
+        <div class="label">满减优惠</div>
+        <div class="form-item">￥-{{orderInfo.Manjian_Cash}}</div>
+      </div>
+      <div class="row" v-if="orderInfo.user_curagio_money > 0">
+        <div class="label">会员折扣</div>
+        <div class="form-item">￥-{{orderInfo.user_curagio_money}}</div>
+      </div>
+      <div class="row">
+        <div class="label">实付</div>
+        <div class="form-item danger-color">￥{{orderInfo.Order_TotalPrice}}</div>
+      </div>
+      <div class="row">
+        <div class="label">获取积分</div>
+        <div class="form-item">{{orderInfo.Integral_Get}}</div>
+      </div>
+      <div class="row">
+        <div class="label">下单时间</div>
+        <div class="form-item">{{orderInfo.Order_CreateTime }}</div>
+      </div>
+      <div class="row">
+        <div class="label">付款时间</div>
+        <div class="form-item">{{orderInfo.Pay_time }}</div>
+      </div>
     </div>
 
     <div class="subbox" v-if="orderInfo.Order_Status==2">
@@ -69,7 +103,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { checkOrderByCode, getOrderDetail } from '../../api/order'
-  import { back, error, toast } from '../../common/fun'
+  import { error, toast } from '../../common/fun'
 
   wepy.page({
     store,
@@ -92,7 +126,7 @@
       async subFn() {
         let that = this
         // let confirmConf = {title: '操作提示', confirmText: '继续核销', showCancel: true, cancelText: '回到首页', content: ''}
-        await checkOrderByCode({Order_Code: this.Order_Code, store_id: this.Stores_ID}).then(res => {
+        await checkOrderByCode({ Order_Code: this.Order_Code, store_id: this.Stores_ID }).then(res => {
           toast('核销成功')
           setTimeout(function() {
             that.$back()
@@ -116,11 +150,12 @@
 
         getOrderDetail({
           Order_Code: _self.Order_Code
-        }, {tip: '努力加载中'}).then(res => {
+        }, { tip: '努力加载中' }).then(res => {
           if (res.data.Order_Status != 2) {
-            confirm({title: '操作提示', content: '该订单状态不符:' + res.data.Order_Status_desc}).then(res => {
+            confirm({ title: '操作提示', content: '该订单状态不符:' + res.data.Order_Status_desc }).then(res => {
 
-            }).catch(err => {})
+            }).catch(err => {
+            })
           }
           // for (var i in res.data) {
           //   if (i == 'Order_Shipping') {
@@ -137,36 +172,41 @@
           //   }
           // }
           this.orderInfo = res.data
-        }).catch(() => {})
+        }).catch(() => {
+        })
       }
     }
   })
 </script>
 <style lang="scss">
 
-  .myall{
+  .myall {
 
   }
+
   .wrap {
     background: #fff;
   }
 
-  .lists{
-    .item{
+  .lists {
+    .item {
       margin: 15px;
       background: white;
       border-radius: 4px;
       overflow: hidden;
-      .head{
 
-        .info{
+      .head {
+
+        .info {
           padding: 10px;
           align-items: center;
           font-size: 14px;
-          .store-info{
+
+          .store-info {
             align-items: center;
           }
-          .store-pic{
+
+          .store-pic {
             width: 25px;
             height: 25px;
             border-radius: 50%;
@@ -175,47 +215,58 @@
             background-position: center;
             margin-right: 10px;
           }
-          .store-title{
+
+          .store-title {
             margin-right: 10px;
             color: #333;
           }
-          .action{
+
+          .action {
             color: red;
-            .action-item{
+
+            .action-item {
               text-decoration: underline;
               cursor: pointer;
             }
           }
-          .order_no{
+
+          .order_no {
             margin-left: 30px;
             color: #666;
           }
         }
-        .status{
+
+        .status {
           font-size: 12px;
           border-bottom: 1px solid #E6E6E6;
           padding: 10px;
           align-items: center;
-          .icon-delete{
+
+          .icon-delete {
             width: 14px;
             height: 14px;
           }
-          .el-icon-delete-solid{
+
+          .el-icon-delete-solid {
             cursor: pointer;
             color: #999;
-            &:hover{
+
+            &:hover {
               color: #F43131;
             }
           }
         }
       }
-      .goods-list{
+
+      .goods-list {
         border-bottom: 1px solid #EDEDED;
-        .goods{
+
+        .goods {
           display: flex;
           align-items: center;
           padding: 10px;
-          .l{
+
+          .l {
             width: 100px;
             height: 100px;
             background-size: cover;
@@ -223,10 +274,12 @@
             background-color: #f2f2f2;
             background-position: center;
           }
-          .c{
-            flex:1;
+
+          .c {
+            flex: 1;
             padding: 0 0 0 10px;
-            .title{
+
+            .title {
               font-size: 14px;
               height: 40px;
               line-height: 20px;
@@ -234,13 +287,15 @@
               overflow: hidden;
               text-overflow: ellipsis;
             }
-            .spec-key{
+
+            .spec-key {
               background: #FFF5F5;
               font-size: 12px;
               padding: 6px 10px;
               color: #666666;
             }
-            .numbox{
+
+            .numbox {
               color: #333333
             }
           }
@@ -249,15 +304,18 @@
 
 
       }
-      .price-box{
+
+      .price-box {
         text-align: right;
         padding: 10px;
         font-size: 14px;
       }
-      .actions{
+
+      .actions {
         text-align: right;
         padding: 0 10px;
-        .acion-btn{
+
+        .acion-btn {
           margin-bottom: 10px;
           margin-left: 10px;
         }
@@ -267,16 +325,19 @@
 
     }
   }
-  .infobox{
+
+  .infobox {
     font-size: 14px;
     margin: 10px;
     background: white;
-    .title{
+
+    .title {
       border-bottom: 1px solid #eee;
       display: flex;
       align-items: center;
       padding: 10px 0;
-      .tip{
+
+      .tip {
         display: inline-block;
         width: 4px;
         height: 16px;
@@ -284,39 +345,43 @@
         border-radius: 2px;
         margin: 0 10px;
       }
-      .text{
+
+      .text {
 
       }
     }
-    .row{
+
+    .row {
       margin: 0 6px;
       display: flex;
       align-items: center;
       height: 24px;
       line-height: 24px;
       padding: 4px 0;
-      .label{
+
+      .label {
         width: 90px;
         color: #666;
       }
-      .form-item{
+
+      .form-item {
         color: #444;
         flex: 1;
       }
 
     }
   }
-  .subbox{
-    position:fixed;
-    bottom:0;
+
+  .subbox {
+    position: fixed;
+    bottom: 0;
     left: 0;
     width: 750rpx;
-    .subbtn{
+
+    .subbtn {
       border-radius: 0;
     }
   }
-
-
 
 
 </style>

@@ -1,45 +1,52 @@
 <style lang="scss">
-.commtent-item{
-  padding: 30rpx 0;
-  border-bottom: 1px solid #eee;
-  .info{
-    padding-bottom: 20rpx;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .userInfo{
+  .commtent-item {
+    padding: 30rpx 0;
+    border-bottom: 1px solid #eee;
+
+    .info {
+      padding-bottom: 20rpx;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      .headimg{
-        width: 70rpx;
-        height: 70rpx;
-        border-radius: 50%;
-        overflow: hidden;
-        margin-right: 20rpx;
+
+      .userInfo {
+        display: flex;
+        align-items: center;
+
+        .headimg {
+          width: 70rpx;
+          height: 70rpx;
+          border-radius: 50%;
+          overflow: hidden;
+          margin-right: 20rpx;
+        }
+      }
+
+      .create_at {
+        color: #777;
       }
     }
-    .create_at{
-      color: #777;
-    }
-  }
-  .content{
-    font-size: 14px;
-    color: #333;
-    line-height: 1.6;
-  }
-  .actions{
-    padding-top: 20rpx;
-    text-align: right;
-    color: #999;
-    font-size: 12px;
-    .icon{
-      width: 30rpx;
-      height: 26rpx;
-      margin-right: 4px;
+
+    .content {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.6;
     }
 
+    .actions {
+      padding-top: 20rpx;
+      text-align: right;
+      color: #999;
+      font-size: 12px;
+
+      .icon {
+        width: 30rpx;
+        height: 26rpx;
+        margin-right: 4px;
+      }
+
+    }
   }
-}
 </style>
 <template>
   <div class="commtent-item" @click="tap">
@@ -61,13 +68,15 @@
   import wepy from '@wepy/core'
 
   wepy.component({
+    options: {
+      addGlobalClass: true
+    },
     props: {
       comment: {}
     },
-    data: {
-    },
+    data: {},
     methods: {
-      tap () {
+      tap() {
         console.log(this.comment)
       }
     }

@@ -7,14 +7,17 @@
         门店名称
       </div>
       <div class="store-titles flex1">
-        <input type="text" v-model="store_name"  placeholder="请输入门店名称" placeholder-class="__placeholder"  class="input-logistics" >
+        <input type="text" v-model="store_name" placeholder="请输入门店名称" placeholder-class="__placeholder"
+               class="input-logistics">
       </div>
     </div>
-    <div class="store-item "  @click.stop="$openPop('address')">
+    <div class="store-item " @click.stop="$openPop('address')">
       <div class="store-title" style="float: left;height: 108rpx;line-height: 108rpx">
         所属区域
       </div>
-      <address  @up="updateAddress" :visiable="false" :province="province" :city="city" :area="area"   class="address m-l-10 flex flex-vertical-center" ref="address"><span>{{selectArea?selectArea:'请选择地址'}}</span></address>
+      <address @up="updateAddress" :visiable="false" :province="province" :city="city" :area="area"
+               class="address m-l-10 flex flex-vertical-center" ref="address">
+        <span>{{selectArea?selectArea:'请选择地址'}}</span></address>
 
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
@@ -22,7 +25,8 @@
         详细地址
       </div>
       <div class="store-titles flex1">
-        <input type="text" v-model="store_address"  placeholder="请输入详细地址" placeholder-class="__placeholder"  class="input-logistics" >
+        <input type="text" v-model="store_address" placeholder="请输入详细地址" placeholder-class="__placeholder"
+               class="input-logistics">
       </div>
     </div>
     <div class="store-item flex flex-vertical-center flex-justify-between">
@@ -30,10 +34,11 @@
         联系方式
       </div>
       <div class="store-titles flex1">
-        <input type="text" v-model="store_mobile"  placeholder="请输入联系方式" placeholder-class="__placeholder"  class="input-logistics" >
+        <input type="text" v-model="store_mobile" placeholder="请输入联系方式" placeholder-class="__placeholder"
+               class="input-logistics">
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between" >
+    <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="titles">
         营业开始时间
       </div>
@@ -45,7 +50,7 @@
         <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between" >
+    <div class="store-item flex flex-vertical-center flex-justify-between">
       <div class="titles">
         营业结束时间
       </div>
@@ -54,7 +59,7 @@
           <span class="fz-14" v-if="business_end">{{business_end}}</span>
           <span class="fz-14 c9" v-else>请选择营业结束时间</span>
         </time>
-        <icon type="iconarrowleft" size="14" color="#999"  class="m-l-10"></icon>
+        <icon type="iconarrowleft" size="14" color="#999" class="m-l-10"></icon>
       </div>
     </div>
 
@@ -62,8 +67,6 @@
     <div class="submit-main" @click="save">
       保存
     </div>
-
-
 
 
   </div>
@@ -113,7 +116,7 @@
       },
       init() {
         showLoading('加载中')
-        getStoreList({store_id: this.id}).then(res => {
+        getStoreList({ store_id: this.id }).then(res => {
           let arr = res.data[0]
           this.store_name = arr.store_name
           this.store_address = arr.store_address
@@ -128,7 +131,9 @@
           this.city = arr.store_city
           this.area = arr.store_area
           hideLoading()
-        }).catch(e => { hideLoading() })
+        }).catch(e => {
+          hideLoading()
+        })
       },
       save() {
         let data = {
@@ -222,55 +227,65 @@
 
 </script>
 <style lang="scss">
-  .store-all{
+  .store-all {
     background-color: #FFFFFF;
     height: 100vh;
-    .store-item{
+
+    .store-item {
       height: 108rpx;
       border-bottom: 1px solid #EBEBEB;
       box-sizing: border-box;
       width: 710rpx;
       margin: 0 auto;
     }
-    .store-title{
+
+    .store-title {
       color: #333333;
       font-size: 32rpx;
     }
-    .store-titles{
+
+    .store-titles {
       color: #999999;
       font-size: 26rpx;
     }
   }
-  .input-logistics{
+
+  .input-logistics {
     margin-left: 48rpx;
     height: 108rpx;
     font-size: 26rpx;
     color: #333333;
   }
-  .address{
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+
+  .address {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     z-index: 10;
     height: 108rpx;
     width: 560rpx;
     float: left;
   }
-  .__placeholder{
+
+  .__placeholder {
     color: #CAC8C8;
   }
-  .submit-main{
-    width:750rpx;
-    height:86rpx;
+
+  .submit-main {
+    width: 750rpx;
+    height: 86rpx;
     line-height: 86rpx;
     text-align: center;
     color: #FFFFFF;
     font-size: 32rpx;
-    background:rgba(0,168,255,1);
+    background: rgba(0, 168, 255, 1);
     position: fixed;
     bottom: 0rpx;
     left: 0rpx;
     z-index: 4;
   }
-  .picker-mbx{
+
+  .picker-mbx {
     flex: 1;
     text-align: right;
     height: 108rpx;
