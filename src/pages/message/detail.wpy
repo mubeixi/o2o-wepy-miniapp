@@ -35,8 +35,7 @@
 </style>
 <template>
   <div class="page-wrap">
-    <div class="c3 fz-18 fz-bold p-15 text-center">{{info.title}}</div>
-    <div class="rich-text-box p-10">
+    <div class="rich-text-box">
       <fun-rich-text :content="info.content"></fun-rich-text>
     </div>
   </div>

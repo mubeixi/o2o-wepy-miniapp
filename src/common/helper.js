@@ -1,5 +1,5 @@
 import { staticUrl } from './env'
-import { back, error } from './fun'
+import { back, error, linkTo } from './fun'
 import { getAccessToken, upload } from './request'
 
 import Schema from 'validate'
@@ -587,6 +587,53 @@ export const chooseFileByPromise = ({count = 10, type = 'file', extension = ['do
       }
     })
   })
+}
+
+export const diyLinkTo = ({ link, linkType, ext = {} } = {}) => {
+  if (!link) {
+    // error('跳转地址为空')
+    return
+  }
+
+  // 跳转到小程序
+  if (linkType === 'mini') {
+    const { url, appid, origin_id } = ext
+    if (appid && link) {
+      wx.navigateToMiniProgram({
+        appId: appid,
+        path: link,
+        success (res) {
+          console.log(res)
+          // 打开成功
+        },
+        fail (err) {
+          const { errMsg = '请联系客服' } = err
+          wx.showModal({
+            title: '跳转小程序错误',
+            content: errMsg
+          })
+          console.log(err)
+        }
+      })
+    } else {
+      error('小程序跳转参数错误')
+    }
+
+    return
+  }
+
+  // 第三方链接
+  if (linkType === 'third' || link.indexOf('http') !== -1) {
+    linkTo('/pages/common/webview?encode=1&url=' + encodeURIComponent(link))
+    return
+  }
+
+  // 系统内页面
+  if (link[0] !== '/') {
+    link = '/' + link
+  }
+  // 除了这些页面之外，其他都走普通跳转
+  linkTo(link)
 }
 
 export const cashFromValue = () => {
