@@ -1,0 +1,51 @@
+<template>
+  <view>
+    <block v-for="(node, index) of node.nodes" :key="index">
+      <parse-template :node="node"></parse-template>
+    </block>
+  </view>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.component({
+    props: {
+      node: {
+        type: Object,
+        default () {
+          return {}
+        }
+      }
+    },
+    watch: {
+      node: {
+        immediate: true,
+        deep: true,
+        handler (nval) {
+          if (nval) {
+            //console.log(nval)
+          }
+        }
+      }
+    },
+    methods: {
+      bindTap (e) {
+
+      }
+    }
+  })
+
+</script>
+<style scoped lang="scss">
+  image {
+    will-change: transform
+  }
+</style>
+<config>
+  {
+  "usingComponents": {
+  "parse-template":"~@/components/fun-rich-text/wxParseTemplate",
+  }
+  }
+</config>

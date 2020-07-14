@@ -375,8 +375,7 @@
 
 </script>
 <style lang="scss">
-  /*@import "../../assets/variables.scss";*/
-  /*@import "../../assets/mixins.scss";*/
+
   .myCanvas {
     position: fixed;
     left: 100%;

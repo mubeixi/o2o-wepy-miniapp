@@ -123,8 +123,7 @@
   })
 </script>
 <style lang="scss">
-  /*@import "../../assets/mixins.scss";*/
-  /*@import "../../assets/variables.scss";*/
+
 
   .all {
     background-color: #f8f8f8;
