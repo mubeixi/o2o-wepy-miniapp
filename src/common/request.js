@@ -1,10 +1,9 @@
-import * as ENV from './env'
+import ENV from './env'
 // import store from '../store'
 import { error } from './fun'
 import { emptyObject, ls, objTranslate } from './helper'
 import { hexMD5 } from './tool/md5'
 import Base64 from './tool/base64.js'
-import { buildVersion } from './env'
 import eventHub from '@/common/eventHub'
 
 export const getUsersID = () => ls.get('users_id') ? ls.get('users_id') : ''
@@ -215,7 +214,7 @@ export const fetch = function ({act, param = {}, options = false, url = '/api/li
     }
 
     param.Users_ID = getUsersID()
-    param.build = buildVersion
+    param.build = ENV.buildVersion
     // 如果某接口指定不要User_ID的
     if (options && options.noUid) delete param.User_ID
     // 检查是否同一个接口请求过快

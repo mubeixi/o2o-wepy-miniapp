@@ -1,11 +1,11 @@
 <style lang="scss">
   .page-wrap{
     min-height: 100vh;
-    padding-bottom: 50px;
     background: #f2f2f2;
+    padding-top: 30rpx;
   }
   .recomment-item{
-    margin:30rpx;
+    margin:0 30rpx 30rpx;
     padding: 10px;
     background: #fff;
     border-radius: 4px;

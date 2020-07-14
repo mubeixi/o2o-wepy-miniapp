@@ -42,10 +42,6 @@
       </div>
     </div>
 
-    <div class="message-list" v-if="messageList.length>0">
-      <icon type="icongonggao" color="#333" size="18"></icon>
-      <div class="content">{{messageList[0].title}}</div>
-    </div>
 
     <div class="finance-box" >
       <div class="finance-item"  @click="goBanlance">
@@ -63,6 +59,16 @@
         <span class="title">分享</span>
       </div>
     </div>
+
+    <div class="message-list" v-if="messageList.length>0" @click="toMessageDetail(messageList[0])">
+      <icon type="icongonggao" color="#FF3E00" size="18"></icon>
+      <div style="flex: 1;" class="content fz-12 c7 p-l-10">{{messageList[0].title}}</div>
+      <div class="flex flex-vertical-center m-l-10">
+        <span class="fz-12" style="color:#FF3D00">详情</span>
+        <icon display="inline" color="#FF3D00" size="14" type="iconarrowleft" ></icon>
+      </div>
+    </div>
+
 
     <div class="container">
       <div class="count-box">
@@ -164,19 +170,19 @@
   import wepy from '@wepy/core'
   import store from '../store'
   import pageMixin from '../mixins'
-  import { spaceImg } from '../common/env'
+  import ENV from '@/common/env'
 
-  import { bizLogin, bizMessageList, initInfo } from '../api/system'
-  import { getBizInfo } from '../api/store'
-  import { linkTo } from '../common/fun'
-  import { getOrderNum, getBackOrderNum } from '../api/order'
-  import { checkIsLogin, checkIsSettle, confirm, findArrayIdx, getArrColumn, ls } from '../common/helper'
+  import { bizLogin, bizMessageList, initInfo } from '@/api/system'
+  import { getBizInfo } from '@/api/store'
+  import { linkTo } from '@/common/fun'
+  import { getBackOrderNum, getOrderNum } from '@/api/order'
+  import { checkIsLogin, checkIsSettle, confirm, ls } from '@/common/helper'
   import IM from '../common/Im/Im'
-  import { Exception } from '../common/Exception'
+  import { Exception } from '@/common/Exception'
   import eventHub from '../common/eventHub'
-  import { getAccessToken } from '../common/request'
+  import { getAccessToken } from '@/common/request'
   import { getLiveApplyStatus } from '@/api/live'
-  const moment = require('moment')
+
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -205,6 +211,9 @@
       }
     },
     methods: {
+      toMessageDetail(message){
+        this.$linkTo('/pages/message/detail?id='+message.id)
+      },
       goModule() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreAvailibleSkin')
@@ -322,7 +331,7 @@
         if (checkIsLogin(false, false)) this.$linkTo('/pages/store/StoreInfo')
       },
       repalceImg() {
-        this.info.biz_logo = spaceImg
+        this.info.biz_logo = ENV.spaceImg
       },
       login() {
         let data = {
@@ -448,9 +457,14 @@
   /*@import "../assets/mixins.scss";*/
 
   .message-list{
+    margin: 30rpx 0rpx 0;
+    background: #FFF3F0;
+    padding: 20rpx;
     display: flex;
+    align-items: center;
+    color: #fff;
     .content{
-      width: 400rpx;
+
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;

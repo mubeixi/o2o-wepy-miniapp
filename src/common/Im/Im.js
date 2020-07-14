@@ -1,7 +1,4 @@
-import {
-  // IM_APPID,
-  // IM_APPSECRET,
-  IM_WSS_URL } from '../env'
+import ENV from '../env'
 import { bindUid, getAccessToken, sendMsg, getMsgList, getNoReadMsg, checkOnline } from './Fetch'
 import moment from 'moment'
 import Promisify from '../promisify'
@@ -512,7 +509,7 @@ class IM {
     let SocketTask = null
     await new Promise(resolve => {
       SocketTask = wx.connectSocket({
-        url: IM_WSS_URL,
+        url: ENV.IM_WSS_URL,
         complete: () => {
           // this.createInstance = true // 标记为创建成功
           resolve(true)

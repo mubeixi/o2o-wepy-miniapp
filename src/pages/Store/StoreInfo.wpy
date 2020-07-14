@@ -119,14 +119,14 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
 
-  import { getBizInfo, getCityExpressConfig, opBizInfo, opCityExpressConfig } from '../../api/store'
+  import { getBizInfo, getCityExpressConfig, opBizInfo, opCityExpressConfig } from '@/api/store'
 
-  import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
-  import { chooseImageByPromise, uploadImages } from '../../common/helper'
-  import { spaceImg } from '../../common/env'
-  import { Exception } from '../../common/Exception'
-  import {initInfo, getUserInfo} from '../../api/system'
-  import {regPhone} from '../../common/regs'
+  import { error, hideLoading, linkTo, showLoading, toast } from '@/common/fun'
+  import { chooseImageByPromise, uploadImages } from '@/common/helper'
+  import ENV from '@/common/env'
+  import { Exception } from '@/common/Exception'
+  import {initInfo, getUserInfo} from '@/api/system'
+  import {regPhone} from '@/common/regs'
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -207,7 +207,7 @@
         }
       },
       repalceImg() {
-        this.info.biz_logo = spaceImg
+        this.info.biz_logo = ENV.spaceImg
       },
       async updaImg() {
         let temp_file_list = []

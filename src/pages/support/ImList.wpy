@@ -4,6 +4,22 @@
     background: #fff;
     padding-bottom: 50px;
   }
+  .message-face{
+    margin: 0 30rpx 30rpx;
+    padding:0rpx 30rpx;
+    height: 80rpx;
+    border-radius: 40rpx;
+    background: #FFF3F0;
+    display: flex;
+    align-items: center;
+    .title{
+      flex:1;
+      color: #FF3E00;
+      text-align: left;
+      padding-left: 10px;
+      font-weight: bold;
+    }
+  }
   .chat-item-box{
     position: relative;
     height: 140rpx;
@@ -101,7 +117,13 @@
 </style>
 <template>
   <div class="page-wrap">
-    <div @click="toMessageList">公告列表</div>
+    <!--E64340-->
+    <div style="height: 30rpx"></div>
+    <div @click="toMessageList" class="message-face">
+      <icon type="icongonggao" color="#FF3E00" size="24"></icon>
+      <div class="title">公告列表</div>
+      <icon display="inline" color="#FF3D00" size="18" type="iconarrowleft" ></icon>
+    </div>
     <div class="chat-list" v-if="chatList.length>0">
       <div class="chat-item-box"
            @click="toRoom(idx)"
@@ -138,7 +160,7 @@
 
     </div>
     <div class="none" v-else>
-      <image :src="spaceImg" class="img" />
+      <image :src="spaceImImg" class="img" />
       <div class="m-t-15"><span>信箱是空的</span></div>
     </div>
 
@@ -149,21 +171,13 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import {
-    ls,
-    setNavigationBarTitle,
-    getArrColumn,
-    chooseImageByPromise,
-    checkIsLogin,
-    getDomain, findArrayIdx, objTranslate
-  } from '../../common/helper'
+  import { checkIsLogin, getDomain, ls, objTranslate } from '@/common/helper'
   import IM from '../../common/Im/Im'
 
-  import { error, hideLoading, modal, showLoading } from '../../common/fun'
-  import { Exception } from '../../common/Exception'
-  import { delChat, getChatList } from '../../common/Im/Fetch'
+  import { modal } from '@/common/fun'
+  import { Exception } from '@/common/Exception'
+  import { delChat, getChatList } from '@/common/Im/Fetch'
   import eventHub from '../../common/eventHub'
-  import moment from 'moment'
 
   let imInstance = null
 
@@ -175,7 +189,7 @@
       imInstance: null,
       out_uid: '',
       chatList: [],
-      spaceImg: getDomain('/static/client/box.png'),
+      spaceImImg: getDomain('/static/client/box.png'),
       paginate: {
         page: 1,
         page_size: 999,
@@ -404,6 +418,7 @@
   "navigationBarTitleText": "消息",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+    "icon": "~@/components/icon",
     "wzw-im-card":"~@/components/wzw-im-card"
   }
   }

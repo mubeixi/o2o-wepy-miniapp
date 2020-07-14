@@ -1,12 +1,12 @@
 import { ajax } from '../request'
-import { IM_API_URL } from '../env'
+import ENV from '../env'
 import { ls } from '../helper'
 
 export const Fetch = function ({ url, param = {}, options = false, method = 'post' }) {
   try {
     const data = { ...param }
     return ajax({
-      url: IM_API_URL + url,
+      url: ENV.IM_API_URL + url,
       method,
       data,
       options,
