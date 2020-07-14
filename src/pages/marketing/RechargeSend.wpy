@@ -2,7 +2,7 @@
   <div class="alls page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="flex flex-vertical-center   items " v-for="(item,index) of infoData"  :key="index">
-      冲 <input type="digit" v-model="item.deposit_money" class="input-full m-l-5 m-r-5" />元 送 <input type="digit" v-model="item.present_money"  class="input-full m-l-5 m-r-5" />元
+      充 <input type="digit" v-model="item.deposit_money" class="input-full m-l-5 m-r-5" />元 送 <input type="digit" v-model="item.present_money"  class="input-full m-l-5 m-r-5" />元
       <icon size="24"  v-if="index>0" class="iconminus" type="iconminus"  @click="delItem(index)" color="#00A8FF"></icon>
     </div>
 
@@ -47,11 +47,18 @@
             error('请输入金额')
             return
           }
-          // if (parseFloat(item.deposit_money) < parseFloat(item.present_money)) {
-          //   error('充值送设置有误')
-          //   return
-          // }
         }
+        if (this.infoData.length >= 2) {
+          for (let i = 0; i < this.infoData.length; i++) {
+            for (let j = i + 1; j < this.infoData.length; j++) {
+              if (this.infoData[i].deposit_money == this.infoData[j].deposit_money) {
+                error('不能设置相同金额')
+                return
+              }
+            }
+          }
+        }
+
         let data = {
           type: 'chargepresent',
           start_time: 0,
