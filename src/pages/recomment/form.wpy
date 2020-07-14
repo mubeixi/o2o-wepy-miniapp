@@ -1,6 +1,6 @@
 <style lang="scss">
   .recomment-item {
-    margin: 30rpx;
+    margin: 0 30rpx 30rpx;
     padding: 10px;
     background: #fff;
     border-radius: 4px;
@@ -38,15 +38,23 @@
 <template>
   <div class="page-wrap">
     <err-msg :errs="formCheckResult"></err-msg>
+    <div class="bgwhite p-l-10 p-r-10 p-t-10" v-if="mode==='show'">
+      <div class=" flex fz-14 p-b-10" style="border-bottom: 1px solid #eee">
+        <span style="width: 80px;padding-right: 10px;" class="c9">编号</span>
+        <span class="c3">{{info.id}}</span>
+      </div>
+    </div>
     <template v-if="forms.length>0">
       <diy-form :action="mode" @update="upForm" eid="xxxxx" ref="formdemo" :forms="forms"></diy-form>
     </template>
 
     <div class="reply-list" v-if="replyList.length>0">
-
+      <div class="p-t-20 m-l-15 m-b-15 p-b-15 c3 fz-18 fz-bold bor-b">
+        平台回复
+      </div>
       <div class="recomment-item fz-14" v-for="(row,idx) in replyList" :key="idx">
         <div class="head flex flex-justify-between flex-vertical-center">
-          <div class="title fz-14 c3">{{row.created_at}}的回复</div>
+          <div class="title fz-14 c3">回复时间:{{row.created_at}}</div>
           <div class="create_at c9 fz-12"></div>
         </div>
         <div class="pics p-t-10" v-if="row.images.length>0">
@@ -88,6 +96,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      info:{},
       mode: 'add',
       forms: [],
       formCheckResult: false,
@@ -143,6 +152,8 @@
           var vo = await feedbackDetail({ id: this.id }).then(res => res.data).catch(err => {
             modal(err.msg)
           })
+
+          this.info = vo
 
           this.replyList = vo.reply_list.map(row => {
             const { created_at, ..._row } = row

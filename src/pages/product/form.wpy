@@ -702,7 +702,8 @@
             <div class="title m-b-4">推荐</div>
           </div>
         </label>
-        <label v-if="_default.one_hour_send_switch" class="type-item flex flex-vertical-center bor-t"
+
+        <label v-if="cash_from!=2 && _default.one_hour_send_switch" class="type-item flex flex-vertical-center bor-t"
                @click="taggleFormData('one_hour_send')">
           <checkbox color="#00A8FF" :checked="formData.one_hour_send"></checkbox>
           <div class="label p-10">
