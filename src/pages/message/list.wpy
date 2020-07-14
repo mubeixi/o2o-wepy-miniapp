@@ -15,7 +15,7 @@
       padding: 5px 0 5px;
 
       .title {
-        width: 420rpx;
+        flex:1;
         overflow-x: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
