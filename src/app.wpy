@@ -127,6 +127,7 @@
   "pages/store/AlbumList",
   "pages/store/AddAlbum",
   "pages/store/PhotoList",
+  "pages/store/PoliteInvitation",
   "pages/store/StoreAvailibleSkin",
   "pages/logistics/LogisticsMain",
   "pages/logistics/LogisticsAdds",

@@ -165,6 +165,13 @@
           <icon type="iconfankui" class="grid-item-icon" size="28" color="#f54012"></icon>
           <div class="grid-item-title">反馈建议</div>
         </div>
+        <div class="grid-item" @click="goPolite" >
+<!--          v-if="info.recommend_flag"-->
+          <icon type="iconfankui" class="grid-item-icon" size="28" color="#f54012"></icon>
+          <div class="grid-item-title">邀请有礼</div>
+        </div>
+
+
         <!--        <div class="grid-row">-->
         <!--        </div>-->
         <!--        <div class="grid-row">-->
@@ -236,6 +243,10 @@
       goModule() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreAvailibleSkin')
+      },
+      goPolite(){
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/PoliteInvitation')
       },
       goVip() {
         if (!checkIsLogin(1, 1)) return
