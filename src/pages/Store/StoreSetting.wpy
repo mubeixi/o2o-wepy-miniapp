@@ -304,7 +304,7 @@
   import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
   import { getBizInfo, opBizInfo } from '../../api/store'
   import { bizLogout } from '../../api/system'
-  import { ls } from '../../common/helper'
+  import { ls, confirm } from '../../common/helper'
   import eventHub from '../../common/eventHub'
 
   const moment = require('moment')
@@ -314,7 +314,7 @@
     data: {
       formCheckResult: '',
       infoData: {},
-      out_business_time_order: 0,//非营业时间是否允许下单
+      out_business_time_order: 0, // 非营业时间是否允许下单
       arrive_get: 0,
       start_time: '',
       end_time: '',
@@ -366,7 +366,7 @@
       bizOuts() {
         bizLogout().then(res => {
           ls.remove('access_token')
-          //ls.remove('users_id')
+          // ls.remove('users_id')
           ls.remove('biz_account')
           ls.remove('biz_id')
           ls.remove('status')
@@ -555,11 +555,27 @@
       },
       switch1Change(e) {
         let boo = e.$wx.detail.value
+        let _self = this
         let data = {}
         if (boo) {
+          this.arrive_get = 1
+          if (!this.infoData.area_address) {
+            confirm({ title: '提示', content: '该操作需要设置店铺地址,请问是否设置店铺地址?', confirmText: '去设置', cancelText: '暂不设置' }).then(() => {
+              this.arrive_get = 0
+              wx.navigateTo({
+                url: '/pages/store/StoreInfoUpda?type=3'
+              })
+            }).catch(() => {
+              this.arrive_get = 0
+              _self.$closePop('store-setting')
+            })
+
+            return
+          }
           showLoading('开启中')
           data.arrive_get = 1
         } else {
+          this.arrive_get = 0
           showLoading('关闭中')
           data.arrive_get = 0
         }
