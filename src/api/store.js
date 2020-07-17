@@ -171,3 +171,5 @@ export const buyActiveCode = (param, options) => fetch({ act: 'buyActiveCode', p
 // 获取商家或总后台会员列表
 export const getUserList = (param, options) => fetch({ act: 'getUserList', param, options })
 
+
+export const bizInviteData = (param, options) => fetch({ act: 'bizInviteData', param, options })
