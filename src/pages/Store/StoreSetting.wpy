@@ -11,7 +11,7 @@
         <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
-    <div class="store-item flex flex-vertical-center flex-justify-between" @click="bindOpenZiti">
+    <div class="store-item flex flex-vertical-center flex-justify-between" @click="$openPop('store-setting')">
       <div class="store-title">
         到店自提
       </div>
@@ -301,10 +301,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { hideLoading, linkTo, showLoading, toast } from '@/common/fun'
-  import { getBizInfo, opBizInfo } from '@/api/store'
-  import { bizLogout } from '@/api/system'
-  import { confirm, ls } from '@/common/helper'
+  import { hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { getBizInfo, opBizInfo } from '../../api/store'
+  import { bizLogout } from '../../api/system'
+  import { ls, confirm } from '../../common/helper'
   import eventHub from '../../common/eventHub'
 
   const moment = require('moment')
@@ -341,22 +341,22 @@
       this.init()
     },
     methods: {
-      bindOpenZiti() {
-        if (this.area_id) {
-          this.$openPop('store-setting')
-          return;
-        }
-        confirm({
-          title: '操作提示',
-          content: '开启到店自提，需要先设置门店所在位置。',
-          showCancel: false,
-          cancelText: '暂不设置',
-          confirmText: '立即设置'
-        }).then(() => {
-          this.$linkTo('/pages/store/StoreInfoUpda?type=3')
-        }).catch(() => {})
-
-      },
+      // bindOpenZiti() {
+      //   if (this.area_id) {
+      //     this.$openPop('store-setting')
+      //     return;
+      //   }
+      //   confirm({
+      //     title: '操作提示',
+      //     content: '开启到店自提，需要先设置门店所在位置。',
+      //     showCancel: false,
+      //     cancelText: '暂不设置',
+      //     confirmText: '立即设置'
+      //   }).then(() => {
+      //     this.$linkTo('/pages/store/StoreInfoUpda?type=3')
+      //   }).catch(() => {})
+      //
+      // },
       saveMbx() {
         if (!this.print_config.sn) {
           this.formCheckResult = ['请输入打印机SN码']
@@ -573,11 +573,27 @@
       },
       switch1Change(e) {
         let boo = e.$wx.detail.value
+        let _self = this
         let data = {}
         if (boo) {
+          this.arrive_get = 1
+          if (!this.infoData.area_address) {
+            confirm({ title: '提示', content: '该操作需要设置店铺地址,请问是否设置店铺地址?', confirmText: '去设置', cancelText: '暂不设置' }).then(() => {
+              this.arrive_get = 0
+              wx.navigateTo({
+                url: '/pages/store/StoreInfoUpda?type=3'
+              })
+            }).catch(() => {
+              this.arrive_get = 0
+              _self.$closePop('store-setting')
+            })
+
+            return
+          }
           showLoading('开启中')
           data.arrive_get = 1
         } else {
+          this.arrive_get = 0
           showLoading('关闭中')
           data.arrive_get = 0
         }
