@@ -1,5 +1,5 @@
 <template>
-  <div @click="commonClick" class="myall" v-show="orderInfo.Order_ID">
+  <div  class="myall" v-show="orderInfo.Order_ID">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="container">
       <div class="lists">
@@ -105,6 +105,7 @@
   import { checkOrderByCode, getOrderDetail } from '../../api/order'
   import { error, toast } from '../../common/fun'
 
+  const moment = require('moment')
   wepy.page({
     store,
     mixins: [pageMixin],
@@ -126,7 +127,7 @@
       async subFn() {
         let that = this
         // let confirmConf = {title: '操作提示', confirmText: '继续核销', showCancel: true, cancelText: '回到首页', content: ''}
-        await checkOrderByCode({ Order_Code: this.Order_Code, store_id: this.Stores_ID }).then(res => {
+        await checkOrderByCode({ Order_Code: this.Order_Code}).then(res => {
           toast('核销成功')
           setTimeout(function() {
             that.$back()
@@ -171,7 +172,11 @@
           //     }
           //   }
           // }
-          this.orderInfo = res.data
+          const orderInfo = res.data
+
+          orderInfo.Order_CreateTime = moment.unix(orderInfo.Order_CreateTime).format('YYYY-MM-DD HH:mm:ss')
+          orderInfo.Pay_time = moment.unix(orderInfo.Pay_time).format('YYYY-MM-DD HH:mm:ss')
+          this.orderInfo = orderInfo
         }).catch(() => {
         })
       }
