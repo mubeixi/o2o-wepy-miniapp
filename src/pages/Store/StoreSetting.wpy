@@ -312,6 +312,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      area_id: '',
       formCheckResult: '',
       infoData: {},
       out_business_time_order: 0, // 非营业时间是否允许下单
@@ -340,6 +341,22 @@
       this.init()
     },
     methods: {
+      // bindOpenZiti() {
+      //   if (this.area_id) {
+      //     this.$openPop('store-setting')
+      //     return;
+      //   }
+      //   confirm({
+      //     title: '操作提示',
+      //     content: '开启到店自提，需要先设置门店所在位置。',
+      //     showCancel: false,
+      //     cancelText: '暂不设置',
+      //     confirmText: '立即设置'
+      //   }).then(() => {
+      //     this.$linkTo('/pages/store/StoreInfoUpda?type=3')
+      //   }).catch(() => {})
+      //
+      // },
       saveMbx() {
         if (!this.print_config.sn) {
           this.formCheckResult = ['请输入打印机SN码']
@@ -393,6 +410,7 @@
           this.print_config.count = this.infoData.print_config.count
           this.print_config.auto = this.infoData.print_config.auto
           this.out_business_time_order = this.infoData.out_business_time_order
+          this.area_id = this.infoData.area_id
           if (this.infoData.print_config.order) {
             this.print_config.order = this.infoData.print_config.order
           }

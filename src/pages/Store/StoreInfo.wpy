@@ -284,9 +284,12 @@
         })
       }
     },
-    onLoad() {
+    onShow(){
       this.getBizInfo()
       this.initCode()
+    },
+    onLoad() {
+
     }
 
   })
