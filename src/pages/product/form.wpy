@@ -106,10 +106,10 @@
             <div class="flex">
               <div class="flex1 flex flex-vertical-center">
                 <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceX"
-                       placeholder="请输入价格"/>
+                       placeholder="请输入现价"/>
               </div>
               <div class="flex1 flex flex-vertical-center" style="margin-left: 30rpx">
-                <span style="white-space: nowrap" class="c3 text-centert p-r-10">划线价</span>
+                <span style="white-space: nowrap" class="c3 text-centert p-r-10 fz-15">划线价</span>
                 <input class="line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceY"
                        placeholder="请输入划线价"/>
               </div>
@@ -158,9 +158,9 @@
             <div class="content">
               <div class="flex flex-vertical-center" style="width: 450rpx">
                 <input type="digit" class="line-input" :value="item.Supply_Price" @input="bindSpecMarketPriceInput"
-                       style="width: 210rpx" placeholder="请输入商品原价"/>
+                       style="width: 210rpx" placeholder="请输入划线价"/>
                 <input type="digit" class="line-input" :value="item.Attr_Price" @input="bindSpecSellingPriceInput"
-                       style="width: 210rpx;margin-left: 30rpx" placeholder="请输入商品现价"/>
+                       style="width: 210rpx;margin-left: 30rpx" placeholder="请输入现价"/>
               </div>
             </div>
           </div>

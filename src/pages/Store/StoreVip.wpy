@@ -135,7 +135,7 @@
           value: ''
         },
         price_back: {
-          name: '购卡金额是否返赠到余额',
+          name: '购卡金额返赠到余额',
           value: 0	// 0=不赠送，1=赠送
         },
         money: {
