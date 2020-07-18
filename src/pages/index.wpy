@@ -362,7 +362,12 @@
         })
       },
       async refreshTabTag() {
-        if (!eventHub.imInstance) return
+        if (!eventHub.imInstance) {
+          this.$wx.getTabBar().setData({
+            tags: [0, 0]
+          })
+          return
+        }
         const count = await eventHub.imInstance.getNoReadMsgCount()
         if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
           console.log('更新IM下标数量' + count)
@@ -470,12 +475,12 @@
         })
       }
 
-
-
       this.AccessToken = getAccessToken()
       if (this.AccessToken) {
         this.getInit()
         this._init_func()
+      }else{
+        this.refreshTabTag()
       }
 
       this.status = ls.get('status')
