@@ -176,6 +176,7 @@
   "pages/support/ImList",
   "pages/support/Im",
   "pages/live/apply",
+  "pages/live/room",
   "pages/recomment/list",
   "pages/recomment/form",
   "pages/message/list",
