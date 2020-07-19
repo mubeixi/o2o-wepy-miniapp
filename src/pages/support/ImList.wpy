@@ -303,7 +303,12 @@
         this.$linkTo(`/pages/support/Im?type=${type}&tid=${id}&room_title=${chatItem.name}`)
       },
       async refreshTabTag() {
-        if (!imInstance) return
+        if (!imInstance) {
+          this.$wx.getTabBar().setData({
+            tags: [0, 0]
+          })
+          return
+        }
         const count = await imInstance.getNoReadMsgCount()
         if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
           console.log('更新IM下标数量' + count)
@@ -403,7 +408,11 @@
 
     },
     onShow() {
-      if (!checkIsLogin(1, 1)) return
+      if (!checkIsLogin(1, 1)) {
+        this.chatList = []
+        this.refreshTabTag()
+        return
+      }
       if (eventHub.imInstance) {
         this.imInstance = imInstance = eventHub.imInstance
       } else {

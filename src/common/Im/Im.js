@@ -560,6 +560,9 @@ class IM {
   }
 
   async _getAccessToken() {
+    if (!this.appid || !this.appsecret) {
+      throw Error('appid及appsecret获取失败')
+    }
     const tokenRT = await getAccessToken({
       appid: this.appid,
       appsecret: this.appsecret
@@ -578,6 +581,7 @@ class IM {
     const { im_appid: IM_APPID, im_appsecret: IM_APPSECRET } = initData
     this.appid = IM_APPID
     this.appsecret = IM_APPSECRET
+    return true
   }
 }
 

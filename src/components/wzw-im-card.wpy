@@ -173,7 +173,7 @@
           width: 84rpx;
           height: 84rpx;
           border-radius: 4rpx;
-          @include cover-img();
+          @include cover-img(0,cover,none);
         }
 
         .content-arrow {
