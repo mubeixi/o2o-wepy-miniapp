@@ -47,6 +47,11 @@ export default {
         // 不管ls有没有，都存一次
         ls.set('users_id', users_id)
       }
+      let pid = option.pid
+      if (pid) {
+        // 不管ls有没有，都存一次
+        ls.set('pid', pid)
+      }
     },
     mixintap() {
       this.mixin = 'MixinText' + (Math.random() + '').substring(3, 7)

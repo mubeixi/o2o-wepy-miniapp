@@ -437,6 +437,11 @@
           phone_data: loginData.encryptedData,
           iv: loginData.iv
         }
+        const pid = ls.get('pid')
+        if (pid) {
+          postData.pid = pid
+        }
+
         bizLogin(postData, { reqHeader: true, tip: '绑定中' }).then(res => {
           this.loginCall(res.data)
         }).catch((e) => {
@@ -555,6 +560,10 @@
             return
           }
 
+          const pid = ls.get('pid')
+          if (pid) {
+            postData.pid = pid
+          }
           const { errorCode, data } = await bizLogin(postData).catch(() => {
             throw Error('第三方登录请求错误')
           })
@@ -619,6 +628,10 @@
         if (checkRt !== true) {
           this.formCheckResult = checkRt
           return
+        }
+        const pid = ls.get('pid')
+        if (pid) {
+          postData.pid = pid
         }
 
         bizLogin(postData, { reqHeader: true }).then(res => {
@@ -732,11 +745,17 @@
 
           // 请求接口
           console.log('snslogin data is', { login_method: 'wx_lp', lp_code, lp_raw_data })
-          const { errorCode, data } = await bizLogin({
+
+          let postData = {
             login_method: 'wx_lp',
             lp_code,
             lp_raw_data
-          }, { tip: '登录中' }).catch((err) => {
+          }
+          const pid = ls.get('pid')
+          if (pid) {
+            postData.pid = pid
+          }
+          const { errorCode, data } = await bizLogin(postData, { tip: '登录中' }).catch((err) => {
             throw Error(err.msg || '第三方登录请求错误')
           })
 
