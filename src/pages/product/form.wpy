@@ -100,21 +100,40 @@
       </div>
       <!--价格和库存-->
       <div class="group-cell">
+<!--        <div class="cell-item">-->
+<!--          <div class="label">商品价格</div>-->
+<!--          <div class="content">-->
+<!--            <div class="flex">-->
+<!--              <div class="flex1 flex flex-vertical-center">-->
+<!--                <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceX"-->
+<!--                       placeholder="请输入现价"/>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="cell-item">-->
+<!--          <div class="label">划线价</div>-->
+<!--          <div class="content">-->
+<!--            <div class="flex">-->
+<!--              <div class="flex1 flex flex-vertical-center">-->
+<!--                <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceY"-->
+<!--                       placeholder="请输入划线价"/>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--          </div>-->
+<!--        </div>-->
         <div class="cell-item">
           <div class="label">商品价格</div>
           <div class="content">
-            <div class="flex">
-              <div class="flex1 flex flex-vertical-center">
-                <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceX"
-                       placeholder="请输入现价"/>
-              </div>
-              <div class="flex1 flex flex-vertical-center" style="margin-left: 30rpx">
-                <span style="white-space: nowrap" class="c3 text-centert p-r-10 fz-15">划线价</span>
-                <input class="line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceY"
-                       placeholder="请输入划线价"/>
-              </div>
-            </div>
-
+            <input class="fz-13" type="number" v-model="formData.Products_PriceX" placeholder="请输入商品价格"/>
+          </div>
+        </div>
+        <div class="cell-item">
+          <div class="label">划线价</div>
+          <div class="content">
+            <input class="fz-13" type="number" v-model="formData.Products_PriceY" placeholder="请输入划线价"/>
           </div>
         </div>
         <div class="cell-item">
@@ -1366,10 +1385,16 @@
       },
       setSystemCate() {
         const checkNodeList = this.$refs.systemCateTree.getCheckedNodes()
-        const lastVal = cleanNoParent(checkNodeList, 'Category_ParentID')
-        this.closePop('systemCatePop')
-        this.systemCateHas = getArrColumn(lastVal, 'Category_ID')
-        this.systemCateHasStr = getArrColumn(lastVal, 'Category_Name').join(',')
+        if (checkNodeList.length <= 0) {
+          this.systemCateHas = []
+          this.systemCateHasStr = ''
+          this.closePop('systemCatePop')
+        } else {
+          const lastVal = cleanNoParent(checkNodeList, 'Category_ParentID')
+          this.closePop('systemCatePop')
+          this.systemCateHas = getArrColumn(lastVal, 'Category_ID')
+          this.systemCateHasStr = getArrColumn(lastVal, 'Category_Name').join(',')
+        }
       },
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
