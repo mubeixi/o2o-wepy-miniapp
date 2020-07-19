@@ -644,3 +644,43 @@ export const cashFromValue = () => {
   const arr = ls.get('cash_from') ? ls.get('cash_from') : 1
   return arr
 }
+
+/**
+
+ */
+export const cleanNoParent = (arr = [], key = '') => {
+  let lastVal = []
+  if (arr.length <= 0) return
+  if (key.length <= 0) return
+  for (let item of arr) {
+    if (item[key] > 0) {
+      lastVal.push(item)
+    } else {
+      for (let it of arr) {
+        if (item['Category_ID'] == it[key]) {
+          lastVal.push(item)
+        }
+      }
+    }
+  }
+  lastVal = removeRepeat(lastVal, 'Category_ID')
+  return lastVal
+}
+
+/**
+* 数组对象去重
+* @param arr 去重的数组
+* @param key  去重的键
+* @returns []
+*/
+export const removeRepeat = (arr = [], key = '') => {
+  let obj = []
+  let val = []
+  for (let item of arr) {
+    if (obj.indexOf(item[key]) == -1) {
+      obj.push(item[key])
+      val.push(item)
+    }
+  }
+  return val
+}

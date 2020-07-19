@@ -66,3 +66,6 @@ export const showLoading = (title = 'loading', mask = true) => {
 export const hideLoading = () => {
   wx.hideLoading()
 }
+
+
+
