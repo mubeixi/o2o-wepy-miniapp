@@ -27,7 +27,7 @@
     mixins: [pageMixin],
     data: {
       storeData: [],
-      skin_id: 0
+      skin_id: -1
     },
     methods: {
       checkId(skin_id) {

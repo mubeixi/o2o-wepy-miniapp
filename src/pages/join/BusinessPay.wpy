@@ -19,7 +19,7 @@
 
     <div class="form-cell-items" v-if="type!=3">
       <div class="form-cell-item__labels">
-        选择年限
+        选择使用期限
       </div>
       <div class="flex flex-wrap">
         <block v-for="(item,index) of year_fee" :key="index">
@@ -73,9 +73,12 @@
 
     <div class="pay-bottom flex flex-vertical-center flex-between">
       <div class="pay-bottom-monery ">
-        总计：
+        <div>
+          总计：
         <text class="color-font font13 pay-bottom-text">¥</text>
         <text class="color-font font15 pay-bottom-text">{{pay_money}}</text>
+        </div>
+        <text v-if="free_money>0" class="c9 m-t-4">(邀请有礼优惠:{{free_money}})</text>
       </div>
 
       <div class="pay-button" @click="payLast">
@@ -121,6 +124,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      free_money:0,
       submitName: '立即支付',
       systemCateConf: {
         pidKey: 'Category_ParentID',
@@ -308,6 +312,7 @@
           this.pay_money = res.data.pay_money
           this.year_money = res.data.year_money
           this.bondMoneyLast = res.data.bond_money
+          this.free_money=res.data.free_money
           this.closePop('systemCate')
         }).catch(e => {
           console.log(e)
@@ -451,13 +456,16 @@
   }
 
   .pay-bottom-monery {
-    height: 13px;
+    height: 100%;
     line-height: 13px;
     flex: 1;
     margin-right: 12px;
     text-align: right;
     font-size: 12px;
     color: #333333;
+    display: flex;
+    justify-content: center;
+     flex-direction:column;
   }
 
   .pay-bottom-text {
