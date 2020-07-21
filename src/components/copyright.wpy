@@ -19,22 +19,25 @@
 <template>
   <div class="wrap">
     <img class="logo" :src="logoImg"/>
-    <p class="text">真产品聚划算就在网中网</p>
+    <p class="text">{{bussiBottom}}</p>
   </div>
 </template>
 <script>
   import wepy from '@wepy/core'
   import { getDomain } from '../common/helper'
+  import Env from '../common/env'
   wepy.component({
     options: {
       addGlobalClass: true
     },
-    data:{
-      logoImg:''
+    data: {
+      logoImg: '',
+      bussiBottom: ''
     },
     ready() {
+      this.bussiBottom = Env.bussiBottom
 
-      this.logoImg = getDomain('/static/images/jbay/logo/100_zi.png')
+      this.logoImg = Env.isJb ? getDomain('/static/images/jbay/logo/100_zi.png') : '/static/copyright.png'
     }
   })
 </script>
