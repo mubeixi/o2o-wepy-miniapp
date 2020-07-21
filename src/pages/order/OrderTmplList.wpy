@@ -88,12 +88,13 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { confirm, getArrColumn } from '../../common/helper'
-  import { delBizOrderTemplate, getBizOrderTemplateList } from '../../api/order'
+  import { confirm, getArrColumn } from '@/common/helper'
+  import { delBizOrderTemplate, getBizOrderTemplateList } from '@/api/order'
 
-  import { error } from '../../common/fun'
+  import { error } from '@/common/fun'
 
   import eventHub from '../../common/eventHub'
+  import { Exception } from '@/common/Exception'
 
   wepy.page({
     store,
@@ -119,14 +120,14 @@
       async delFn(row, idx) {
         try {
           await confirm({ content: '删除后无法恢复，是否确认删除?' }).catch(() => {
-            throw Error('notip')
+            throw Error('nocare')
           })
           await delBizOrderTemplate({ id: row.id }, { errtip: false }).catch(({ msg }) => {
             throw Error(msg)
           })
           this.list.splice(idx, 1)
         } catch (e) {
-          e.message !== 'notip' && wx.$errorHandle(e)
+          Exception.handle(e)
         }
       },
       async _init_func() {

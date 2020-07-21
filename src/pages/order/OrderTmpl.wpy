@@ -36,6 +36,7 @@
 
   import { error, hideLoading, modal, showLoading } from '../../common/fun'
   import { eleTypeList } from '../../lib/form/form'
+  import { Exception } from '@/common/Exception'
 
   wepy.page({
     store,
@@ -94,7 +95,7 @@
           this.ready = true
         } catch (e) {
           console.log(e)
-          wx.$errorHandle(e)
+          Exception.handle(e)
         } finally {
           hideLoading()
         }

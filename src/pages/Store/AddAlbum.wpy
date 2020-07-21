@@ -46,9 +46,10 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { opPhotoAlbum } from '../../api/store'
-  import { error, toast } from '../../common/fun'
-  import { chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '../../common/helper'
+  import { opPhotoAlbum } from '@/api/store'
+  import { error, toast } from '@/common/fun'
+  import { chooseImageByPromise, getArrColumn, getDomain, uploadImages } from '@/common/helper'
+  import {Exception} from '@/common/Exception'
 
   wepy.page({
     store,
@@ -125,7 +126,7 @@
           this._click = false
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
-          wx.$errorHandle(e)
+
         }
       }
     }
