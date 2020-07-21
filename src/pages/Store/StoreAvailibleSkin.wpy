@@ -17,7 +17,7 @@
         <div class="cancel-btn action-btn" @click="cancelPreview">取消</div>
         <div class="confirm-btn action-btn" @click="confirmUse">使用</div>
       </div>
-<!--      <div class="mask p-b-safe-area"></div>-->
+      <!--<div class="mask p-b-safe-area"></div>-->
     </div>
 
   </div>
