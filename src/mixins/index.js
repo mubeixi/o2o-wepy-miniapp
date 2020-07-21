@@ -1,5 +1,5 @@
 import { back, error, linkTo, modal, toast } from '../common/fun'
-import { checkIsLogin, ls } from '../common/helper'
+import { checkIsLogin, ls, getDomain } from '../common/helper'
 import eventHub from '../common/eventHub'
 
 /**
@@ -30,6 +30,7 @@ export default {
     // mixin: 'PageMin'
   },
   methods: {
+    getDomain: getDomain,
     $back: back,
     $linkTo: linkTo,
     $toast: toast,
