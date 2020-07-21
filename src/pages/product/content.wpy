@@ -1,0 +1,349 @@
+<template>
+  <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="h15"></div>
+    <div class="editor-container">
+      <editor
+        placeholder="{{placeholderCotnent}}"
+        showImgSize
+        showImgToolbar
+        showImgResize
+        @statuschange="onEditorStatusChange"
+        :style="{maxHeight:systemInfo.windowHeight-390+'px'}"
+        class="editor-instance"
+        id="editor"
+        @blur="bindEditorBlur"
+        @focus="bindEditorFocus"
+      ></editor>
+      <div>
+        <div class="editor-add-btn" @click.stop="addImgByEditor">
+          <icon color="#ddd" size="40" type="iconupload"></icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- -->
+<!--    <div v-if="editorIsFocus" style="height: 200px"></div>-->
+    <div class="m-10"><div style="width: 100%;border-radius: 6px;"  class="editor-done-btn btn btn-primary" @click.stop="editorDone">编辑完成</div></div>
+
+    <!--放置页面底部内容被挡住，额外给的高度-->
+    <div class="safearea-box"></div>
+
+    <fun-upload-loading ref="uploadLoading"></fun-upload-loading>
+
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { chooseImageByPromise, createUpTaskArr, getArrColumn, getDomain, uploadImages } from '@/common/helper'
+  import { error, hideLoading, modal, showLoading } from '@/common/fun'
+  import { Exception } from '@/common/Exception'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      cash_from: 1,
+      editorIsFocus: false,
+      descriptionPopShow: false, // 是否显示富文本编辑
+      placeholderCotnent: '请输入文字介绍...',
+      editorInstance: null,
+      Products_Description: '',
+      content: '',
+      contentReady: false
+    },
+    computed: {},
+    watch: {},
+    methods: {
+      openDescriptionPop() {
+        this.descriptionPopShow = true
+        this.$openPop('refContent')
+      },
+      // 拦截
+      bindBackFn() {
+        console.log('拦截返回成功了')
+        if (this.descriptionPopShow) {
+          return
+        }
+        this.$back()
+      },
+      setMoreShow() {
+        this.moreSetting = true
+      },
+      bindFeeSave() {
+        if (this.formData.fee_type === 2 && !this.formData.Products_Weight) {
+          error('勾选物流模板必须设置商品重量')
+          return
+        }
+        this.closePop('feeSetting')
+      },
+      closeSendType() {
+        let num = 0
+        for (let item of this.prod_send_type_list) {
+          if (item.checked) num++
+        }
+        if (num === 0) {
+          error('至少选择一种配送方式')
+          return
+        }
+        this.closePop('sendType')
+      },
+      // 更新选择结果
+      setSendType(e) {
+        let _self = this
+        setTimeout(function() {
+          const vals = e.$wx.detail.value
+          for (var idx in _self.prod_send_type_list) {
+            console.log(vals, idx, vals.includes(idx))
+            _self.$set(_self.prod_send_type_list[idx], 'checked', vals.includes(idx))
+          }
+          if (vals.length < 1) {
+            error('至少选择一种配送方式')
+            _self.$set(_self.prod_send_type_list[_self.typeIndex], 'checked', true)
+          }
+
+          const checkList = _self.prod_send_type_list.filter(row => row.checked)
+
+          if (checkList.length > 0) {
+            _self.prod_send_type_str = getArrColumn(checkList, 'title').join(',')
+          } else {
+            _self.prod_send_type_str = ''
+          }
+        }, 100)
+      },
+      editorDone() {
+        // this.descriptionPopShow = false
+        // this.closePop('refContent')
+        console.log('editorDoneeditorDoneeditorDoneeditorDoneeditorDoneeditorDoneeditorDone')
+        this.editorInstance.getContents({
+          success: (res) => {
+            this.Products_Description = res.html
+            eventHub.$emit('goods-description-update', { content: res.html })
+            this.$back()
+          },
+          fail: (err) => {
+            modal('获取商品详情失败:' + err.errMsg)
+          }
+        })
+      },
+      bindEditorBlur(e) {
+        this.editorIsFocus = false
+      },
+      bindEditorFocus(e) {
+        this.editorIsFocus = true
+      },
+      onEditorStatusChange(e) {
+        console.log(e)
+      },
+      openPop(name) {
+        this.$refs[name].show()
+      },
+      closePop(name) {
+        this.$refs[name].close()
+      },
+      async addImgByEditor() {
+        try {
+          if (this._click) throw Error('操作过快')
+
+          const files = await chooseImageByPromise({ count: 9 }).catch(e => {
+            throw Error(e.errMsg)
+          })
+          const imgs = getArrColumn(files, 'path')
+          showLoading('loading')
+          const ossUrls = await uploadImages({ imgs }).catch(() => {
+            throw Error('文件批量上传失败')
+          })
+          this._click = false
+          for (let img of ossUrls) {
+            this.editorInstance.insertImage({
+              src: getDomain(img),
+              extClass: 'editor-img'
+            })
+          }
+        } catch (e) {
+          if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
+          console.log(e.message)
+        } finally {
+          hideLoading()
+        }
+      },
+      handlerPressFunc(res, idx, vm) {
+        const { progress, totalBytesSent, totalBytesExpectedToSend } = res
+        console.log(`下标${idx}上传进度${progress}`)
+        console.log(`下标${idx}已经上传的数据长度${totalBytesSent}`)
+        console.log(`下标${idx}预期需要上传的数据总长度${totalBytesExpectedToSend}`)
+        // console.log(vm)
+        vm.$set(vm.imgTaskList[idx], 'task_progress', progress)
+      },
+      async addImg() {
+        const that = this
+        var tempIdx = this.imgs.length // 缓存长度，方便删除
+        try {
+          if (this._click) throw Error('操作过快')
+
+          const files = await chooseImageByPromise({ count: this.thumbLimit - this.imgs.length }).catch((err) => {
+            throw Error(err.errMsg)
+          })
+          const arr1 = files.map(file => {
+            return { ...file, task: { progress: 0, totalBytesSent: 0, totalBytesExpectedToSend: 0 } }
+          })
+
+          const tempPathList = arr1.map(file => {
+            return { path: file.path }
+          })
+          this.imgTempList = this.imgTempList.concat(tempPathList)
+          console.log('upload img arr1 is', arr1)
+
+          const imgs = getArrColumn(files, 'path')
+
+          this.imgTaskList = createUpTaskArr(files.length)
+          this.$refs.uploadLoading.show()
+          const ossUrls = await uploadImages({
+            imgs,
+            handlerPressFn: this.handlerPressFunc,
+            vmobj: that
+          }).catch((errMsg) => {
+            throw { message: errMsg, type: 'modal' }
+          })
+          for (var i = 0; i < ossUrls.length; i++) {
+            ossUrls[i] = getDomain(ossUrls[i])
+          }
+          this.imgs = this.imgs.concat(ossUrls)
+          this._click = false
+        } catch (e) {
+          if (e.message !== 'chooseImage:fail cancel') {
+            Exception.handle(e)
+            // 删除本次上传的
+            this.imgs.splice(tempIdx)
+            this.imgTempList.splice(tempIdx)
+          }
+        } finally {
+          this.$refs.uploadLoading.close()
+        }
+      },
+      async _init_func() {
+        try {
+
+          const Products_Description = this.Products_Description
+          // 富文本
+          wx.createSelectorQuery().select('#editor').context((res) => {
+            const editorInstance = res.context
+            if (editorInstance) {
+              editorInstance.setContents({
+                html: Products_Description,
+                fail: (e) => {
+                  throw Error('初始化商品详情失败' + e.errMsg)
+                }
+              })
+            } else {
+              // 这个时候还没有onReady
+              this.content = Products_Description
+              this.contentReady = false
+            }
+          }).exec()
+        } catch (e) {
+          error(e.message)
+        }
+      }
+    },
+    onReady() {
+      wx.createSelectorQuery().select('#editor').context((res) => {
+        this.editorInstance = res.context
+        // 编辑模式下初始化
+        if (this.content && !this.contentReady) {
+          this.editorInstance.setContents({
+            html: this.content,
+            fail: (e) => {
+              throw Error('初始化商品详情失败' + e.errMsg)
+            }
+          })
+        }
+      }).exec()
+    },
+    onLoad(options) {
+      // if (options.Products_ID) {
+      //   this.Products_ID = options.Products_ID
+      // } else {
+      //   this.Products_ID = ''
+      // }
+      this.Products_Description = this.$store.state.productContent
+      this._init_func()
+    },
+    onShow() {
+
+    }
+  })
+</script>
+<style lang="scss">
+
+  .page-wrap{
+    height: 100vh;
+  }
+  .ql-container {
+    height: auto;
+  }
+  .editor-container {
+    box-sizing: border-box;
+    margin: 0px 10px;
+    padding: 10px;
+    border-radius: 6px;
+    background: white;
+
+  }
+
+  .editor-instance {
+    min-height: 100px;
+    padding: 10px;
+    /*border: 1px solid #eee;*/
+    line-height: 1.4;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+
+
+  .editor-done-btn {
+
+    margin-top:40px;
+    /*position: absolute;*/
+    /*left: 0;*/
+    /*bottom: constant(safe-area-inset-bottom);*/
+    /*bottom: env(safe-area-inset-bottom);*/
+    /*&.hide {*/
+    /*  margin-top:30px;*/
+    /*  position: static;*/
+    /*  !*visibility: hidden;*!*/
+    /*}*/
+  }
+
+  .editor-add-btn {
+    margin-top: 15px;
+    width: 100rpx;
+    height: 100rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+    box-sizing: border-box;
+  }
+</style>
+<config>
+  {
+  "navigationBarTitleText": "商品信息-详情介绍",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "page-title": "~@/components/page-title",
+    "fun-upload-loading":"~@/components/fun-upload-loading",
+    "wzw-im-tip": "~@/components/wzw-im-tip",
+    "err-msg": "~@/components/err-msg",
+    "icon": "~@/components/icon",
+    "fun-tree": "~@/components/fun-tree",
+    "popup-layer": "~@/components/popup-layer",
+    "modal": "~@/components/ModelComponents"
+  }
+  }
+</config>

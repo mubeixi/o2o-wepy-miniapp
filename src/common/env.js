@@ -1,6 +1,8 @@
 // 测试appid   wx3d24c565489e305b https://newo2o.bafangka.com
 // 正式商户id   wxfcabc14aef501fdd   正式域名https://newo2o.netcnnet.net
 
+
+// const users_id = 'wkbq6nc2kc'
 // 及贝商家
 // wxb627a9dde54f65f6
 const buildVersion = 101

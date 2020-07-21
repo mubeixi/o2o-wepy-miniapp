@@ -1,5 +1,5 @@
 <template>
-  <view v-if="isShow">
+  <view v-if="isShow" @touchmove.stop.prevent>
     <view @tap="ableClose" @touchmove.stop.prevent id="mask" class="popup-layer" v-if="showMask"></view>
     <view :animation="animationData" id="wrap" class="popup-wrap" @tap.stop="noop"
           :style="{height:full?'100%':'auto','top':topStr?topStr:'auto',backgroundColor:mainBgColor}">
