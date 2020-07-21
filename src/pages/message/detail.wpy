@@ -1,46 +1,18 @@
 <style lang="scss">
-  .recomment-item {
-    margin: 30rpx;
-    padding: 10px;
+  .page-wrap{
+    min-height: 100vh;
     background: #fff;
-    border-radius: 4px;
-
-    .head {
-      padding: 5px 0 5px;
-
-      .title {
-        width: 600rpx;
-        overflow-x: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-    }
-
-    .pics {
-      overflow-x: scroll;
-      overflow-y: hidden;
-      white-space: nowrap;
-
-      .pic-item {
-        display: inline-block;
-        width: 150rpx;
-        height: 150rpx;
-        margin-right: 20rpx;
-      }
-    }
-
-    .action {
-      padding: 10px 0 10px 0;
-
-    }
-
-    .rich-text-box {
-
-    }
+  }
+  .rich-text-box {
+    padding: 0 10px 10px;
+    line-height: 1.6;
   }
 </style>
 <template>
   <div class="page-wrap">
+    <div class="base p-t-15 p-b-15 p-l-10">
+      <span class="fz-14 c3">发布时间：</span><span class="fz-14 c9">{{info.created_at}}</span>
+    </div>
     <div class="rich-text-box">
       <fun-rich-text :content="info.content"></fun-rich-text>
     </div>
@@ -53,6 +25,7 @@
   import { objTranslate } from '@/common/helper'
   import { bizMessageDetail } from '@/api/system'
   import { modal } from '@/common/fun'
+  const moment = require('moment')
 
   wepy.page({
     store,
@@ -67,9 +40,11 @@
         this.postData = _data
       },
       async _init_func(options) {
-        this.info = await bizMessageDetail({ msg_id: this.id }).then(res => res.data).catch(err => {
+        const info = await bizMessageDetail({ msg_id: this.id }).then(res => res.data).catch(err => {
           modal('获取公告失败' + err.msg)
         })
+        info.created_at = moment.unix(info.created_at).format('YYYY-MM-DD HH:MM')
+        this.info = info
       }
     },
     onReady() {

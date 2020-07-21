@@ -749,28 +749,33 @@
       <button class="btn btn-primary m-t-35" @click="closePop('specailAttr')">确认</button>
     </popup-layer>
 
-    <popup-layer ref="content" :auto-close="false" :show-safe-area="false">
-      <div :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" class="editor-wrap" @click.stop.prevent>
-        <div class="editor-container">
-          <editor
-            placeholder="{{placeholderCotnent}}"
-            showImgSize
-            showImgToolbar
-            showImgResize
-            @statuschange="onEditorStatusChange"
-            :style="{maxHeight:systemInfo.windowHeight-390+'px'}" class="editor-instance" id="editor"></editor>
-          <div>
-            <div class="editor-add-btn" @click.stop="addImgByEditor">
-              <icon color="#ddd" size="40" type="iconupload"></icon>
-            </div>
-          </div>
-        </div>
+<!--    <popup-layer ref="refContent" :auto-close="false" :show-safe-area="false">-->
+<!--      <div :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" class="editor-wrap" @click.stop.prevent>-->
+<!--        <div class="editor-container">-->
+<!--          <editor-->
+<!--            placeholder="{{placeholderCotnent}}"-->
+<!--            showImgSize-->
+<!--            showImgToolbar-->
+<!--            showImgResize-->
+<!--            @statuschange="onEditorStatusChange"-->
+<!--            :style="{maxHeight:systemInfo.windowHeight-390+'px'}"-->
+<!--            class="editor-instance"-->
+<!--            id="editor"-->
+<!--            @blur="bindEditorBlur"-->
+<!--            @focus="bindEditorFocus"-->
+<!--          ></editor>-->
+<!--          <div>-->
+<!--            <div class="editor-add-btn" @click.stop="addImgByEditor" >-->
+<!--              <icon color="#ddd" size="40" type="iconupload"></icon>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
-        <!--放置页面底部内容被挡住，额外给的高度-->
-        <div class="safearea-box"></div>
-        <button class="editor-done-btn btn btn-primary" @click="editorDone">编辑完成</button>
-      </div>
-    </popup-layer>
+<!--        &lt;!&ndash;放置页面底部内容被挡住，额外给的高度&ndash;&gt;-->
+<!--        <div class="safearea-box"></div>-->
+<!--        <button :class="{hide:editorIsFocus}" class="editor-done-btn btn btn-primary" @click="editorDone">编辑完成</button>-->
+<!--      </div>-->
+<!--    </popup-layer>-->
 
     <!-- <popup-layer title="支持外卖"  ref="delivery" >
       <div class="p-l-15 p-r-15" @touchmove.stop.prevent>
@@ -811,7 +816,6 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import Index from '../../mixins'
   import {
     cashFromValue,
     checkIsLogin,
@@ -835,14 +839,12 @@
   import { Exception } from '../../common/Exception'
   import { initInfo } from '@/api/system'
 
-  export default {
-    components: { Index }
-  }
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
       cash_from: 1,
+      editorIsFocus: false,
       descriptionPopShow: false, // 是否显示富文本编辑
       typeIndex: -1,
       toLogin: false, // 标记为是否去登陆了，为了onShow可以不要瞎响应
@@ -975,8 +977,11 @@
     },
     methods: {
       openDescriptionPop() {
-        this.descriptionPopShow = true
-        this.$openPop('content')
+        this.$store.state.productContent = this.formData.Products_Description // 下个页面就不要请求了
+
+        this.$linkTo(`/pages/product/content?Products_ID=${this.Products_ID}`)
+        // this.descriptionPopShow = true
+        // this.$openPop('refContent')
       },
       // 拦截
       bindBackFn() {
@@ -1038,7 +1043,7 @@
       },
       editorDone() {
         this.descriptionPopShow = false
-        this.closePop('content')
+        this.closePop('refContent')
 
         this.editorInstance.getContents({
           success: (res) => {
@@ -1448,6 +1453,12 @@
         this.limitBuyIndex = idx
         this.formData.prod_limit.limit.type = this.PROD_LIMIT_TYPE[idx].id
       },
+      bindEditorBlur(e) {
+        this.editorIsFocus = false
+      },
+      bindEditorFocus(e) {
+        this.editorIsFocus = true
+      },
       onEditorStatusChange(e) {
         console.log(e)
       },
@@ -1729,21 +1740,21 @@
             }
 
             // 富文本
-            wx.createSelectorQuery().select('#editor').context((res) => {
-              const editorInstance = res.context
-              if (editorInstance) {
-                editorInstance.setContents({
-                  html: productData.Products_Description,
-                  fail: (e) => {
-                    throw Error('初始化商品详情失败' + e.errMsg)
-                  }
-                })
-              } else {
-                // 这个时候还没有onReady
-                this.content = productData.Products_Description
-                this.contentReady = false
-              }
-            }).exec()
+            // wx.createSelectorQuery().select('#editor').context((res) => {
+            //   const editorInstance = res.context
+            //   if (editorInstance) {
+            //     editorInstance.setContents({
+            //       html: productData.Products_Description,
+            //       fail: (e) => {
+            //         throw Error('初始化商品详情失败' + e.errMsg)
+            //       }
+            //     })
+            //   } else {
+            //     // 这个时候还没有onReady
+            //     this.content = productData.Products_Description
+            //     this.contentReady = false
+            //   }
+            // }).exec()
 
             hideLoading()
           } else {
@@ -1784,18 +1795,18 @@
       }
     },
     onReady() {
-      wx.createSelectorQuery().select('#editor').context((res) => {
-        this.editorInstance = res.context
-        // 编辑模式下初始化
-        if (this.Products_ID && this.content && !this.contentReady) {
-          this.editorInstance.setContents({
-            html: this.content,
-            fail: (e) => {
-              throw Error('初始化商品详情失败' + e.errMsg)
-            }
-          })
-        }
-      }).exec()
+      // wx.createSelectorQuery().select('#editor').context((res) => {
+      //   this.editorInstance = res.context
+      //   // 编辑模式下初始化
+      //   if (this.Products_ID && this.content && !this.contentReady) {
+      //     this.editorInstance.setContents({
+      //       html: this.content,
+      //       fail: (e) => {
+      //         throw Error('初始化商品详情失败' + e.errMsg)
+      //       }
+      //     })
+      //   }
+      // }).exec()
     },
     onLoad(options) {
       if (options.id) {
@@ -1810,6 +1821,13 @@
         // const order_temp_id = this.args[0].order_temp_id
         this.formData.order_temp_id = tmpl.id
         this.order_temp_text = tmpl.title
+      })
+
+      eventHub.$on('goods-description-update', ({ content }) => {
+        console.log('goods-description-update event emitted, the params are:')
+        console.log(content)
+        // const order_temp_id = this.args[0].order_temp_id
+        this.formData.Products_Description = content
       })
 
       if (checkIsLogin(0, 0)) {
@@ -1869,8 +1887,10 @@
     left: 0;
     bottom: constant(safe-area-inset-bottom);
     bottom: env(safe-area-inset-bottom);
-
-
+    &.hide{
+      position: static;
+      /*visibility: hidden;*/
+    }
   }
 
   .editor-add-btn {
