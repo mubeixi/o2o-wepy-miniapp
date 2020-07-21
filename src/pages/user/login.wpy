@@ -784,7 +784,7 @@
       ls.remove('toLogin')
     },
     onLoad() {
-      this.logoImg = getDomain('/static/images/biz_logo.png')
+      this.logoImg = getDomain('/static/images/jbay/logo/100_zi.png')
     }
   })
 </script>

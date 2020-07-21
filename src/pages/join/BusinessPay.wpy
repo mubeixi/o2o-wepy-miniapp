@@ -78,7 +78,9 @@
         <text class="color-font font13 pay-bottom-text">¥</text>
         <text class="color-font font15 pay-bottom-text">{{pay_money}}</text>
         </div>
-        <text v-if="free_money>0" class="c9 m-t-4">(邀请有礼优惠:{{free_money}})</text>
+        <text v-if="free_money>0&&type!=2" class="c9 m-t-4">(邀请有礼优惠:{{free_money}})</text>
+        <text v-if="type==2&&year_fee[ind].free>0" class="c9 m-t-4">(邀请有礼优惠:{{year_fee[ind].free}})</text>
+
       </div>
 
       <div class="pay-button" @click="payLast">
@@ -124,7 +126,7 @@
     store,
     mixins: [pageMixin],
     data: {
-      free_money:0,
+      free_money: 0,
       submitName: '立即支付',
       systemCateConf: {
         pidKey: 'Category_ParentID',
@@ -191,7 +193,6 @@
           return
         }
         this.openPop('payRef')
-
       },
       async pay(open) {
         let data = {
@@ -252,7 +253,7 @@
         this.ind = ind
         this.year_fee[ind].check = true
         if (this.type == 2) {
-          this.pay_money = this.year_fee[ind].value
+          this.pay_money = (this.year_fee[ind].value * 100 - this.year_fee[ind].free * 100) / 100
         }
         if (!this.bondMoney) {
           return
@@ -284,7 +285,7 @@
           })
           this.year_fee[0].check = true
           if (this.type == 2) {
-            this.pay_money = this.year_fee[0].value
+            this.pay_money = (this.year_fee[0].value * 100 - this.year_fee[0].free * 100) / 100
           }
         }).catch(e => {
           error(e.msg || '初始化失败')
@@ -312,7 +313,7 @@
           this.pay_money = res.data.pay_money
           this.year_money = res.data.year_money
           this.bondMoneyLast = res.data.bond_money
-          this.free_money=res.data.free_money
+          this.free_money = res.data.free_money
           this.closePop('systemCate')
         }).catch(e => {
           console.log(e)
