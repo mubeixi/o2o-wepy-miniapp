@@ -39,7 +39,8 @@
   }
 
   .add-btn {
-    width: 155rpx;
+    /*width: 155rpx;*/
+    padding: 0px 10rpx;
     height: 56rpx;
     display: flex;
     align-items: center;

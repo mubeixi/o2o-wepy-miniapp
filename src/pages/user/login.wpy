@@ -399,6 +399,7 @@
   import wxPromisify from '../../common/promisify'
   import IM from '../../common/Im/Im'
   import eventHub from '../../common/eventHub'
+  import Env from '../../common/env'
 
   wepy.page({
     store,
@@ -784,7 +785,7 @@
       ls.remove('toLogin')
     },
     onLoad() {
-      this.logoImg = getDomain('/static/images/jbay/logo/100_zi.png')
+      this.logoImg = Env.isJb ? getDomain('/static/images/jbay/logo/100_zi.png') : getDomain('/static/images/biz_logo.png')
     }
   })
 </script>
