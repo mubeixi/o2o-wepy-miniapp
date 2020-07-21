@@ -10,6 +10,7 @@ export default new Vuex.Store({
     userInfo: null,
     bizInfo: null,
     treeData: [],
+    productContent: '', // 富文本
     productImgList: [],
     initInfo: null
   },

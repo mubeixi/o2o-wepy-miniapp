@@ -141,7 +141,7 @@
   "pages/product/ProductManager",
   "pages/product/DiyCate",
   "pages/product/form",
-  "pages/product/imgs",
+  "pages/product/content",
   "pages/user/login",
   "pages/user/UserVipList",
   "pages/statistics/dashboard",
