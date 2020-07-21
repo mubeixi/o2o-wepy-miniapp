@@ -1,4 +1,6 @@
 import Vuex from '@wepy/x'
+import wepy from '@wepy/core'
+wepy.use(Vuex)
 
 import { ls, objTranslate } from '@/common/helper'
 import { initInfo } from '@/api/system'
@@ -75,7 +77,7 @@ export default new Vuex.Store({
      */
     async getInitInfo({ state, commit }, conf = {}) {
       const { storage = 'local' } = conf
-      console.log(conf, storage)
+      // console.log(conf, storage)
       var data
       if (storage === 'local') {
         data = state.initInfo || ls.get('initInfo')
