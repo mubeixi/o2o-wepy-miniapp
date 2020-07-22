@@ -241,7 +241,7 @@
         } catch (e) {
           Exception.handle(e)
         } finally {
-          hideLoading()
+
         }
       },
       update(id, status, idx) {

@@ -121,6 +121,7 @@
 
   import { getArrColumn, ls } from '../../common/helper'
   import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { Exception } from '@/common/Exception'
 
   wepy.page({
     store,
@@ -195,18 +196,22 @@
         this.openPop('payRef')
       },
       async pay(open) {
-        let data = {
-          pay_type: this.type
-        }
-        if (this.type != 3) {
-          data.year = this.year_fee[this.ind].name
-        }
-        if (this.type != 2) {
-          data.bond_money = this.bondMoney
-        }
-        showLoading('提交中')
-        await addBizOrder(data).then(res => {
-          this.order_id = res.data.order_id
+        try {
+          let data = {
+            pay_type: this.type
+          }
+          if (this.type != 3) {
+            data.year = this.year_fee[this.ind].name
+          }
+          if (this.type != 2) {
+            data.bond_money = this.bondMoney
+          }
+          showLoading()
+          const ret = await addBizOrder(data).catch(e => {
+            throw Error(e.msg)
+          })
+
+          this.order_id = ret.data.order_id
           let datas = {
             pay_method: this.pay_method,
             order_id: this.order_id
@@ -214,37 +219,43 @@
           if (open) {
             datas.open_id = open
           }
-          bizOrderPay(datas).then(res => {
-            hideLoading()
-            let obj = res.data
+          var res = await bizOrderPay(datas).then(result => {
+            let obj = result.data
             if (obj && obj.hasOwnProperty('paySign')) {
-              let { timeStamp, nonceStr, paySign } = obj || {}
-              let packages = obj.package
-              wx.requestPayment({
-                timeStamp: timeStamp,
-                nonceStr: nonceStr,
-                package: packages,
-                signType: 'MD5',
-                paySign: paySign,
-                success(res) {
-                  ls.set('status', 2)
-                  linkTo('/pages/index')
-                },
-                fail(res) {
-                  console.log(res, 'ss')
-                }
-              })
+              return result
             } else {
-              toast(res.msg)
+              error(res.msg)
               // ls.set('status', 2)
               linkTo('/pages/index')
             }
           }).catch(e => {
-            hideLoading()
+            throw Error(e.msg)
           })
-        }).catch(e => {
+
           hideLoading()
-        })
+
+          let obj = res.data
+          let { timeStamp, nonceStr, paySign } = obj || {}
+          let packages = obj.package
+          wx.requestPayment({
+            timeStamp: timeStamp,
+            nonceStr: nonceStr,
+            package: packages,
+            signType: 'MD5',
+            paySign: paySign,
+            success(res) {
+              ls.set('status', 2)
+              linkTo('/pages/index')
+            },
+            fail(err) {
+              throw Error(err.errMsg)
+            }
+          })
+
+
+        } catch (e) {
+          Exception.handle(e)
+        }
       },
       changeIndex(ind) {
         this.year_fee = this.year_fee.map(item => {
