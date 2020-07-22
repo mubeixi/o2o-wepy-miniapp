@@ -59,8 +59,7 @@ export default {
 
     // 全局判断是否登录跳去登录
     let pathArr = [
-      'pages/join/PersonalCertification',
-      'pages/join/CompanyCertification',
+      'pages/join/Certification',
       'pages/user/login',
       'pages/index',
       'pages/support/ImList'
