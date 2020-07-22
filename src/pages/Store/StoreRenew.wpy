@@ -333,6 +333,8 @@
     },
     onShow() {
       this.showCate = false
+    },
+    onLoad() {
       this.init()
     },
     onReachBottom() {
