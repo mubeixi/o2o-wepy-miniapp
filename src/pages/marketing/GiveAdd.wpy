@@ -344,6 +344,10 @@
         let obj = {
           pro_id: this.pro_id
         }
+        if (this.selectValue.length <= 0) {
+          this.formCheckResult = ['请选择增品']
+          return
+        }
         if (this.selectValue.Products_Type != 0) {
           if (!selectSku.Attr_Value) {
             this.formCheckResult = ['请设置赠品规格']
