@@ -169,7 +169,7 @@
 
 </style>
 <template>
-  <div class="page-wrap">
+  <div class="page-wrap"  >
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="renew-info">
 
@@ -188,7 +188,7 @@
           <icon type="iconwenhao" size="18" color="#ccc" class="m-l-12" @click="showCate=!showCate"></icon>
 
           <div class="notice-fix fz-10 c3" v-show="showCate">
-              不用产品分类所需保证金不同，<span class="c-r fz-12 m-r-2" @click="goBond">点击查看</span>对应关系图
+              不用产品分类所需保证金不同，<span class="c-r fz-12 m-r-2" @click.stop="goBond">点击查看</span>对应关系图
           </div>
         </div>
         <div class="info-bond-btns flex flex-vertical-center flex-justify-between">
@@ -332,6 +332,7 @@
       }
     },
     onShow() {
+      this.showCate = false
       this.init()
     },
     onReachBottom() {
