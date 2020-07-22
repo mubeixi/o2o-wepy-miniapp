@@ -241,6 +241,7 @@
           <div class="form-title__text">资质信息</div>
         </div>
         <div class="form-cell">
+
           <template v-if="permissionsForms.length>0">
             <diy-form2 :action="action" :isshow="action==='show'" :isedit="action==='edit'" @update="upPermissions"
                        eid="permissions" ref="permissions" :forms="permissionsForms"></diy-form2>
@@ -289,6 +290,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      certType: '',
       AccessToken: '',
       showCode: false,
       code_num: '',
@@ -318,8 +320,8 @@
           bizIndustryDetail({ industry_id: newVal }, { tip: '加载所需资质' }).then(res => {
             const { industry_form } = res.data
             let person = []
-            if (industry_form && industry_form.hasOwnProperty('person') && Array.isArray(industry_form.person)) {
-              person = industry_form.person
+            if (industry_form && industry_form.hasOwnProperty(this.certType) && Array.isArray(industry_form[this.certType])) {
+              person = industry_form[this.certType]
             }
             this.permissionsForms = person
             this.upPermissions([])
@@ -395,9 +397,13 @@
 
         let postData = {
           industry_id,
-          principal_type: 2, // 1企业 2个人
+          principal_type: 1, // 1企业 2个人
           auth_info: JSON.stringify(this.auth_info) // 方便校验，就先不动了
         }
+        if (this.certType == 'person') {
+          postData.principal_type = 2
+        }
+
         const rule = {
           industry_id: {
             required: true,
@@ -457,8 +463,8 @@
           getBizConfig().then(res => {
             const { industry_form } = res.data
             let person = [], company = []
-            if (industry_form && industry_form.hasOwnProperty('person') && Array.isArray(industry_form.person)) {
-              person = industry_form.person
+            if (industry_form && industry_form.hasOwnProperty(this.certType) && Array.isArray(industry_form[this.certType])) {
+              person = industry_form[this.certType]
             }
             this.materialForms = person
           })
@@ -468,10 +474,10 @@
           }).catch(() => {
           })
           this.biz_apply_time = bizInfo.biz_apply_time
-          //this.biz_expires = moment(bizInfo.biz_expires * 1000).format('YYYY/MM/DD hh:mm:ss')
+          // this.biz_expires = moment(bizInfo.biz_expires * 1000).format('YYYY/MM/DD hh:mm:ss')
           this.biz_expires = bizInfo.biz_expires > 0 ? moment(bizInfo.biz_expires * 1000).format('YYYY/MM/DD hh:mm:ss') : '未购买'
           this.bond_fee = bizInfo.bond_fee
-          if (!this.apply_info) return
+          if (!bizInfo.apply_info) return
           this.materialForms = bizInfo.apply_info.auth_info.material
           this.permissionsForms = bizInfo.apply_info.auth_info.permissions
 
@@ -500,6 +506,12 @@
       if (options.show) {
         this.showBond = true
       }
+      this.certType = options.certType
+      if (this.certType == 'person') {
+        wx.setNavigationBarTitle({title: '个人认证'})
+      } else {
+        wx.setNavigationBarTitle({title: '企业认证'})
+      }
     },
     onShow() {
       if (!checkIsLogin(1, 1)) return
@@ -524,7 +536,7 @@
 
 <config>
   {
-  "navigationBarTitleText": "个人认证",
+  "navigationBarTitleText": "认证资料",
   "usingComponents": {
   "diy-form": "~@/components/diy-form-format",
   "diy-form2": "~@/components/diy-form-format",

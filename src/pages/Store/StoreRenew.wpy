@@ -1,0 +1,358 @@
+<style lang="scss">
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
+
+  .page-wrap {
+    background-color: #FFFFff !important;
+    min-height: 100vh;
+    width: 750rpx;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding-top: 60rpx;
+    padding-bottom: 40rpx;
+  }
+  .c-r{
+    color: #FF0000;
+  }
+  .renew-info{
+    width:680rpx;
+    height:320rpx;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 20rpx 0px rgba(0, 0, 0, 0.13);
+    border-radius:20rpx;
+    margin: 0 auto 78rpx;
+    box-sizing: border-box;
+    padding: 20rpx 30rpx;
+    position: relative;
+    &-top{
+      height: 82rpx;
+      width: 620rpx;
+    }
+    .info-logo{
+      width: 82rpx;
+      height: 82rpx;
+      border-radius:50%;
+      overflow: hidden;
+      margin-right: 24rpx;
+    }
+    .info-name{
+      width: 514rpx;
+      height: 32rpx;
+      line-height: 32rpx;
+      font-size: 32rpx;
+      color: #333333;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+    }
+    .info-bond{
+      width: 100%;
+      height: 50rpx;
+      margin-bottom: 34rpx;
+    }
+    .info-bond-btns{
+      width: 208rpx;
+      height: 50rpx;
+
+    }
+
+  }
+  .info-bond-btn{
+    width: 96rpx;
+    height: 50rpx;
+    line-height: 50rpx;
+    text-align: center;
+    border-radius: 10rpx;
+    background-color: #26C78D;
+    color: #ffffff;
+    font-size: 28rpx;
+    box-sizing: border-box;
+  }
+  .info-bond-btn-last{
+    color: #26C78D;
+    background-color: #ffffff;
+    border:1px solid #26C78D;
+  }
+
+  .info-time{
+    width: 100%;
+    height: 50rpx;
+  }
+
+  .info-title{
+    height: 32rpx;
+    width: 750rpx;
+    font-size: 32rpx;
+    color: #333333;
+    font-weight: bold;
+    line-height: 32rpx;
+    margin-bottom: 32rpx;
+    .info-line{
+      width: 50rpx;
+      height: 4rpx;
+      background-color: #26C78D;
+    }
+  }
+
+
+  .info-list{
+    width: 700rpx;
+    margin: 0 auto;
+    .info-item{
+      width: 700rpx;
+      height: 96rpx;
+      border-bottom: 1px solid #E6E6E6;
+      box-sizing: border-box;
+    }
+  }
+
+  .notice-fix{
+    width: 276rpx;
+    height: 132rpx;
+    position: absolute;
+    top: 40rpx;
+    right: -210rpx;
+    box-sizing: border-box;
+    padding: 38rpx 30rpx 0rpx 30rpx;
+    line-height: 34rpx;
+    background-image: url("data:image/png;base64,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");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+  .relative{
+    position: relative;
+  }
+  .zhezhao {
+    left: 0;
+    top: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .3);
+    z-index: 100;
+
+    .input-wrap {
+      background: #fff;
+      color: #000;
+      text-align: center;
+      width: 90%;
+      margin: 400rpx auto;
+      padding: 40rpx 50rpx 30rpx;
+      box-sizing: border-box;
+      font-size: 28rpx;
+      border-radius: 10rpx;
+
+      .input {
+        margin: 40rpx 0;
+        border: 1px solid #efefef;
+        min-height: 20px;
+        line-height: 20px;
+        padding: 10px 0px;
+        text-align: left;
+        padding-left: 10rpx;
+      }
+
+      .btns {
+        display: flex;
+        justify-content: space-around;
+        height: 60rpx;
+        line-height: 60rpx;
+
+        .btn {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+
+
+</style>
+<template>
+  <div class="page-wrap"  >
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <div class="renew-info">
+
+      <div class="flex flex-vertical-center renew-info-top m-b-19">
+        <img :src="storeInfo.biz_logo"  class="info-logo"/>
+        <div class="info-name">
+          {{storeInfo.biz_shop_name}}
+        </div>
+      </div>
+
+      <div class="flex flex-vertical-center info-bond flex-justify-between">
+        <div class="relative">
+            <span class="fz-13 c3">
+              保证金：<span class="c-r m-l-10">¥</span><span class="fz-18 c-r">{{storeInfo.bond_fee}}</span>
+            </span>
+          <icon type="iconwenhao" size="18" color="#ccc" class="m-l-12" @click="showCate=!showCate"></icon>
+
+          <div class="notice-fix fz-10 c3" v-show="showCate">
+              不用产品分类所需保证金不同，<span class="c-r fz-12 m-r-2" @click.stop="goBond">点击查看</span>对应关系图
+          </div>
+        </div>
+        <div class="info-bond-btns flex flex-vertical-center flex-justify-between">
+          <div class="info-bond-btn" @click="$linkTo('/pages/join/BusinessPay?type=3')">
+            追加
+          </div>
+          <div class="info-bond-btn info-bond-btn-last" @click="$linkTo('/pages/store/StoreWithdrawal?type=4')">
+            退款
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-vertical-center info-time flex-justify-between fz-13 c3">
+          <div>
+            过期时间：{{storeInfo.biz_expires}}
+          </div>
+          <div class="info-bond-btn" @click="renew">
+            续费
+          </div>
+      </div>
+
+
+
+    </div>
+
+
+
+    <div class="info-title flex flex-vertical-center flex-justify-center">
+      <div class="info-line"></div>
+      <div class="m-l-7 m-r-7">支付历史</div>
+      <div class="info-line"></div>
+    </div>
+
+
+    <div class="info-list">
+
+      <div class="info-item flex flex-vertical-center flex-justify-between"  v-for="(item,index) of orderList" :key="index">
+            <div class="fz-14 c6">
+              {{item.payTypeName}}<sapn class="fz-12 c-r">¥</sapn><span class="c-r">{{item.pay_price}}</span>
+            </div>
+            <div class="c9 fz-13">
+              {{item.pay_time}}
+            </div>
+      </div>
+
+    </div>
+
+
+
+    <div class="zhezhao" catchtouchmove="true" v-if="showCode">
+      <div class="input-wrap">
+        <div>请输入激活码</div>
+        <textarea auto-height class="input" placeholder="请输入激活码" v-model="code_num" style="width: 100%;"></textarea>
+        <div class="btns">
+          <div @click="showCode=false" class="btn">取消</div>
+          <div @click="confirmInput" class="btn">确定</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import { getOrderList, getBizInfo, codeActive } from '../../api/store'
+  import { error, toast, linkTo } from '../../common/fun'
+  import { checkIsLogin } from '../../common/helper'
+  const moment = require('moment')
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      storeInfo: {},
+      page: 1,
+      pageSize: 20,
+      totalCount: 0,
+      orderList: [],
+      showCode: false,
+      code_num: '',
+      showCate: false
+    },
+    methods: {
+      goBond() {
+        linkTo('/pages/store/StoreBond')
+      },
+      confirmInput() {
+        if (!this.code_num) {
+          error('请输入激活码')
+          return
+        }
+        codeActive({ code_num: this.code_num }).then(res => {
+          toast('激活成功')
+          this.init()
+          this.showCode = false
+        }).catch(e => {
+          this.code_num = ''
+          this.showCode = false
+          error(e.msg || '激活失败')
+        })
+      },
+      renew() {
+        if (!checkIsLogin(1, 1)) return
+        let _self = this
+        wx.showActionSheet({
+          itemList: ['直接续费', '使用激活码'],
+          success: (res) => {
+            const { tapIndex } = res
+            if (tapIndex === 0) {
+              _self.$linkTo('/pages/join/BusinessPay?type=2')
+            }
+            if (tapIndex === 1) {
+              _self.showCode = true
+              console.log(tapIndex)
+            }
+          },
+          fail(res) {
+
+          }
+        })
+      },
+      async getOrderListFn() {
+        const arr = await getOrderList({page: this.page, pageSize: this.pageSize, status: 1}).catch(e => {
+          error(e.msg)
+        })
+        this.totalCount = arr.totalCount
+        arr.data.map(item => {
+          this.orderList.push(item)
+        })
+      },
+      async init() {
+        const storeData = await getBizInfo({}, {onlyData: true}).catch(e => {
+          error(e.msg)
+        })
+
+        this.storeInfo = storeData[0]
+
+        this.storeInfo.biz_expires = this.storeInfo.biz_expires ? moment(this.storeInfo.biz_expires * 1000).format('YYYY-MM-DD hh:mm:ss') : '未购买'
+        await this.getOrderListFn()
+      }
+    },
+    onShow() {
+      this.showCate = false
+      this.init()
+    },
+    onReachBottom() {
+      if (this.totalCount > this.orderList.length) {
+        this.page++
+        this.getOrderListFn()
+      }
+    }
+
+  })
+
+</script>
+
+<config>
+  {
+  "navigationBarTitleText": "店铺续费",
+  "navigationBarBackgroundColor": "#F8F8F8",
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "wzw-im-tip": "~@/components/wzw-im-tip"
+  }
+  }
+</config>
