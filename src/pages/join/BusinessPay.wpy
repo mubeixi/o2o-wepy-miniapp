@@ -228,7 +228,10 @@
                 paySign: paySign,
                 success(res) {
                   ls.set('status', 2)
-                  linkTo('/pages/index')
+                  toast('支付成功')
+                  setTimeout(function() {
+                    linkTo('/pages/index')
+                  }, 1500)
                 },
                 fail(res) {
                   console.log(res, 'ss')
@@ -237,7 +240,9 @@
             } else {
               toast(res.msg)
               // ls.set('status', 2)
-              linkTo('/pages/index')
+              setTimeout(function() {
+                linkTo('/pages/index')
+              }, 1500)
             }
           }).catch(e => {
             hideLoading()
