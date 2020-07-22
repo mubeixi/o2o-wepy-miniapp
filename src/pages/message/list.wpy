@@ -1,25 +1,24 @@
 <style lang="scss">
   .page-wrap {
     min-height: 100vh;
-    background: #f2f2f2;
-    padding-top: 30rpx;
+    background: #fff;
   }
 
   .recomment-item {
     margin: 0 30rpx 30rpx;
-    padding: 10px;
+    border-bottom: 1px solid #E6E6E6;
+    padding: 20px 0;
     background: #fff;
-    border-radius: 4px;
+    &:last-child{
+      border-bottom: none;
+      margin-bottom: 0rpx;
+      padding-bottom: 30rpx;
+    }
 
-    .head {
-      padding: 5px 0 5px;
 
-      .title {
-        flex:1;
-        overflow-x: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
+    .title {
+      font-size: 13px;
+      line-height: 24px;
     }
 
   }
@@ -27,10 +26,8 @@
 <template>
   <div class="page-wrap">
     <div class="recomment-item fz-14" v-for="(row,idx) in messageList" :key="idx" @click="toDetail(row.id)">
-      <div class="head flex flex-justify-between flex-vertical-center">
-        <div class="title fz-16 c3">{{row.title}}</div>
-        <div class="c9 fz-12">{{row.created_at}}</div>
-      </div>
+      <div class="title c3">{{row.title}} <span class="text-underline color-red m-l-4">查看详情</span></div>
+      <div class="c9 fz-13 m-t-15">{{row.created_at}}</div>
     </div>
 
   </div>
