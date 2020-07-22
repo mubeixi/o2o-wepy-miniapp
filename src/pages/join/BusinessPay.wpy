@@ -3,7 +3,7 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="form-cell-item flex flex-justify-between flex-vertical-center" @click="openPop('systemCate')"
          v-if="type!=2">
-      <div class="form-cell-item__label">选择分类</div>
+      <div class="form-cell-item__label">选择产品分类</div>
       <div class="flex flex-vertical-center ">
         <text class="font12 form-cell-color mbx-item">{{bondName}}</text>
         <icon type="iconarrowleft" size="16" color="#999"></icon>
@@ -89,8 +89,8 @@
       <!--      <button class="pay-button"  open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="payLast">{{submitName}}</button>-->
     </div>
 
-    <popup-layer ref="systemCate" title="选择分类">
-      <div v-if="bizList.length>0" :style="{maxHeight:(systemInfo.windowHeight)*0.5+'px'}" style="overflow: scroll;">
+    <popup-layer ref="systemCate" title="选择产品分类">
+      <scroll-view  scroll-y v-if="bizList.length>0" :style="{maxHeight:(systemInfo.windowHeight)*0.5+'px'}" style="overflow: scroll;">
         <fun-tree
           ele-id="prodSystem"
           ref="systemCateTree"
@@ -101,7 +101,7 @@
           nodeKey="Category_ID"
         >
         </fun-tree>
-      </div>
+      </scroll-view>
       <button class="btn btn-primary m-t-35" @click="setSystemCate">确认</button>
     </popup-layer>
 
