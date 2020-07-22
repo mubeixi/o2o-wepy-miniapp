@@ -167,7 +167,7 @@
         } catch (e) {
           Exception.handle(e)
         } finally {
-          hideLoading()
+
         }
       },
       del(id, status, idx) {
