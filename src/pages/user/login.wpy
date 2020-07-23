@@ -120,7 +120,7 @@
     margin-right: 10px;
   }
 
-  .wrap {
+  .page-wrap {
     text-align: center;
     height: 100vh;
     color: #333;
@@ -257,7 +257,7 @@
 
 </style>
 <template>
-  <div class="wrap">
+  <div class="page-wrap">
     <page-title :letfFn="true" @clickLeft="bindBackFn" :title="pageTitle"></page-title>
     <err-msg :topStr="menuButtonInfo.height+menuButtonInfo.top+10+'px'" :errs="formCheckResult"></err-msg>
 
@@ -399,6 +399,7 @@
   import wxPromisify from '../../common/promisify'
   import IM from '../../common/Im/Im'
   import eventHub from '../../common/eventHub'
+  import Env from '../../common/env'
 
   wepy.page({
     store,
@@ -437,6 +438,11 @@
           phone_data: loginData.encryptedData,
           iv: loginData.iv
         }
+        const pid = ls.get('pid')
+        if (pid) {
+          postData.pid = pid
+        }
+
         bizLogin(postData, { reqHeader: true, tip: '绑定中' }).then(res => {
           this.loginCall(res.data)
         }).catch((e) => {
@@ -555,6 +561,10 @@
             return
           }
 
+          const pid = ls.get('pid')
+          if (pid) {
+            postData.pid = pid
+          }
           const { errorCode, data } = await bizLogin(postData).catch(() => {
             throw Error('第三方登录请求错误')
           })
@@ -619,6 +629,10 @@
         if (checkRt !== true) {
           this.formCheckResult = checkRt
           return
+        }
+        const pid = ls.get('pid')
+        if (pid) {
+          postData.pid = pid
         }
 
         bizLogin(postData, { reqHeader: true }).then(res => {
@@ -732,11 +746,17 @@
 
           // 请求接口
           console.log('snslogin data is', { login_method: 'wx_lp', lp_code, lp_raw_data })
-          const { errorCode, data } = await bizLogin({
+
+          let postData = {
             login_method: 'wx_lp',
             lp_code,
             lp_raw_data
-          }, { tip: '登录中' }).catch((err) => {
+          }
+          const pid = ls.get('pid')
+          if (pid) {
+            postData.pid = pid
+          }
+          const { errorCode, data } = await bizLogin(postData, { tip: '登录中' }).catch((err) => {
             throw Error(err.msg || '第三方登录请求错误')
           })
 
@@ -765,7 +785,7 @@
       ls.remove('toLogin')
     },
     onLoad() {
-      this.logoImg = getDomain('/static/images/biz_logo.png')
+      this.logoImg = Env.isJb ? getDomain('/static/images/jbay/logo/100_zi.png') : getDomain('/static/images/biz_logo.png')
     }
   })
 </script>

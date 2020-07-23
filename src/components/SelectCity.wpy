@@ -4,7 +4,7 @@
     <div class="wrap">
       <div class="title">
         <div class="text">选择城市</div>
-        <div @click="subFn" class="btn">确认</div>
+        <div @click="subFn" class="btns">确认</div>
       </div>
       <scroll-view v-if="isReady" scroll-y class="mbx" :style="{height:systemInfo.windowHeight*0.6+'px'}">
         <fun-tree
@@ -210,9 +210,8 @@
       text-align: center;
     }
 
-    .btn {
+    .btns {
       background: $fun-primary-color;
-      color: #333;
       font-size: 14px;
       padding: 6px 12px;
       border-radius: 2px;

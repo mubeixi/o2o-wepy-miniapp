@@ -4,26 +4,33 @@
 
 #### 安装依赖
 ```javascript
-npm i
+// 建议使用yarn
+npm install -g yarn --registry=https://registry.npm.taobao.org
+
+//换源
+yarn config set registry https://registry.npm.taobao.org -g
+yarn config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g
+
+yarn install
 ```
 #### 启动项目
 ```javascript
-npm run dev
+yarn run dev
 ```
 
 #### 清空上次编译的文件（适用于编译文件错误的情况)
 ```javascript
-npm run cleacn
+yarn run cleacn
 ```
 
 #### 打包发布
 ```javascript
-npm run build
+yarn run build
 ```
 
 #### 彩蛋
 ```javascript
-npm run restart === npm run clean && npm run dev
+yarn run restart === yarn run clean && yarn run dev
 ```
 
 #### 将工程导入微信开发者工具
@@ -90,3 +97,6 @@ src/assets/*.scss
 
 额外建议：使用iconfont图标，一个项目中的所有图标需要对齐基线，不然图标会达不到预期的效果。
 参见[CSS > ICONFONT 基线和大小问题](https://blog.csdn.net/weixin_34114823/article/details/88967683)
+
+
+

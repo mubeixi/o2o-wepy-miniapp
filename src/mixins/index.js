@@ -1,24 +1,6 @@
-import { back, error, linkTo, modal, toast } from '../common/fun'
-import { checkIsLogin, ls } from '../common/helper'
+import { back, error, linkTo, toast } from '@/common/fun'
+import { checkIsLogin, getDomain, ls } from '@/common/helper'
 import eventHub from '../common/eventHub'
-
-/**
- * 自定义处理错误
- * @param msg
- * @constructor
- */
-export function FunError(e) {
-  let { message = '错误信息', type = 'toast', icon = 'none' } = e
-  if (typeof e !== 'object') {
-    message = e
-  }
-  if (type === 'toast') toast(message, icon)
-  if (type === 'modal') modal(message)
-  return ({ message, type, icon })
-}
-
-FunError.prototype = Object.create(Error.prototype)
-FunError.prototype.constructor = FunError
 
 export default {
   data: {
@@ -30,6 +12,7 @@ export default {
     // mixin: 'PageMin'
   },
   methods: {
+    getDomain: getDomain,
     $back: back,
     $linkTo: linkTo,
     $toast: toast,
@@ -46,6 +29,11 @@ export default {
       if (users_id) {
         // 不管ls有没有，都存一次
         ls.set('users_id', users_id)
+      }
+      let pid = option.pid
+      if (pid) {
+        // 不管ls有没有，都存一次
+        ls.set('pid', pid)
       }
     },
     mixintap() {
@@ -71,8 +59,7 @@ export default {
 
     // 全局判断是否登录跳去登录
     let pathArr = [
-      'pages/join/PersonalCertification',
-      'pages/join/CompanyCertification',
+      'pages/join/Certification',
       'pages/user/login',
       'pages/index',
       'pages/support/ImList'

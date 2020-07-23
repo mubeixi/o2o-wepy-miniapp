@@ -3,5 +3,6 @@ dist
 weapp
 .DS_Store
 .idea
+.vs
 project.config.json
 package-lock.json

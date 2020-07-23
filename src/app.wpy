@@ -7,25 +7,14 @@
 </style>
 <script>
   import wepy from '@wepy/core'
-  // import eventHub from './common/eventHub'
-  import vuex from '@wepy/x'
-
-  import { FunError } from './mixins'
+  import IM from '@/common/Im/Im'
+  import store from '@/store'
   import { ls } from './common/helper'
-  import { initInfo } from '@/api/system'
   import { getAccessToken } from './common/request'
-
-  wepy.use(vuex)
-  // import IM from '@/common/Im/Im'
-  // import eventHub from '@/common/eventHub'
+  import eventHub from '@/common/eventHub'
 
   // import store from './store'
-
-  wx.$errorHandle = FunError // 全局的错误处理
-
   require('./common/index')
-  // import promisify.js  from '@wepy/use-promisify.js'
-  // wepy.use(promisify.js)
 
   wepy.app({
     hooks: {
@@ -56,10 +45,19 @@
     onShow() {
       // const cash_from = ls.get('cash_from')
       const AccessToken = getAccessToken()
-      if (AccessToken) {
-        initInfo().then(res => {
+      if (AccessToken && !eventHub.imInstance) {
+        const bizInfo = store.getters.getBizInfo()
 
-        })
+        if (!bizInfo || JSON.stringify(bizInfo) === '{}') return
+
+        // // IM全局
+        const imInstance = new IM()
+        // 设置本地用户信息
+        imInstance.setSendInfo({ type: 'biz', id: bizInfo.id, name: bizInfo.biz_shop_name, avatar: bizInfo.biz_logo })
+        imInstance.start().then(() => {
+          imInstance.openListen()
+          eventHub.imInstance = imInstance // 全局用一个句柄
+        }).catch((e) => { console.log(e) })
       }
 
       // 初始化商户信息
@@ -79,7 +77,14 @@
       //   eventHub.imInstance = imInstance // 全局用一个句柄
       // }
     },
-
+    onHide: function () {
+      console.log('App Hide')
+      // hide的时候主动关比较好
+      if (eventHub.imInstance) {
+        // IM全局
+        eventHub.imInstance.close()
+      }
+    },
     methods: {
 
       // sleep (s) {
@@ -103,8 +108,7 @@
   "pages/index",
   "pages/join/BusinessStation",
   "pages/join/SettlementAgreement",
-  "pages/join/PersonalCertification",
-  "pages/join/CompanyCertification",
+  "pages/join/Certification",
   "pages/join/BusinessPay",
   "pages/store/StoreSetting",
   "pages/store/StoreSettingConfig",
@@ -127,6 +131,9 @@
   "pages/store/AlbumList",
   "pages/store/AddAlbum",
   "pages/store/PhotoList",
+  "pages/store/StoreRenew",
+  "pages/store/StoreBond",
+  "pages/store/PoliteInvitation",
   "pages/store/StoreAvailibleSkin",
   "pages/logistics/LogisticsMain",
   "pages/logistics/LogisticsAdds",
@@ -140,7 +147,7 @@
   "pages/product/ProductManager",
   "pages/product/DiyCate",
   "pages/product/form",
-  "pages/product/imgs",
+  "pages/product/content",
   "pages/user/login",
   "pages/user/UserVipList",
   "pages/statistics/dashboard",
@@ -175,6 +182,7 @@
   "pages/support/ImList",
   "pages/support/Im",
   "pages/live/apply",
+  "pages/live/room",
   "pages/recomment/list",
   "pages/recomment/form",
   "pages/message/list",

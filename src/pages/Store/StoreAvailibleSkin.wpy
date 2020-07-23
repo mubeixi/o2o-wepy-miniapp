@@ -3,12 +3,21 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
 
     <div class="store-skin flex flex-justify-between">
-      <div class="w300" v-for="(item,index) of storeData" :key="index" @click="checkId(item.id)">
+      <div class="w300" v-for="(item,index) of storeData" :key="index" @click="checkId(item)">
         <img :src="item.url" class="store-img" :class="{'checked':skin_id==item.id}"/>
         <div class="store-text" :class="{'checked':skin_id==item.id}">
           {{item.name}}
         </div>
       </div>
+    </div>
+
+    <div class="priview-box" v-if="showPriviewBox">
+      <image class="priview-img" :src="priviewImg" mode="widthFix" lazy-load></image>
+      <div class="action p-b-safe-area">
+        <div class="cancel-btn action-btn" @click="cancelPreview">取消</div>
+        <div class="confirm-btn action-btn" @click="confirmUse">使用</div>
+      </div>
+      <!--<div class="mask p-b-safe-area"></div>-->
     </div>
 
   </div>
@@ -26,24 +35,36 @@
     store,
     mixins: [pageMixin],
     data: {
+      showPriviewBox: false,
+      priviewImg: '',
+      priviewId: '',
       storeData: [],
-      skin_id: 0
+      skin_id: -1
     },
     methods: {
-      checkId(skin_id) {
+      confirmUse() {
         confirm({ title: '提示', content: '确定要选择该模板吗?', confirmText: '确定', cancelText: '取消' }).then(() => {
-          opBizInfo({ skin_id }).then(res => {
+          opBizInfo({ skin_id: this.priviewId }).then(res => {
             toast('修改成功')
-            this.skin_id = skin_id
-            setTimeout(function() {
-              wx.navigateBack()
-            }, 1000)
+            this.skin_id = this.priviewId
+            this.showPriviewBox = false
+            // setTimeout(function() {
+            //   wx.navigateBack()
+            // }, 1000)
           }).catch(e => {
             error(e.msg || '修改失败')
           })
         }).catch(() => {
-        })
 
+        })
+      },
+      cancelPreview() {
+        this.showPriviewBox = false
+      },
+      checkId(item) {
+        this.priviewImg = item.preview_url
+        this.priviewId = item.id
+        this.showPriviewBox = true
       },
       async init() {
         this.storeData = await getAvailibleSkin({}, { onlyData: true }).catch(e => {
@@ -55,6 +76,9 @@
         this.skin_id = bizInfo[0].skin_id
       }
     },
+    created() {
+      this.showPriviewBox = false
+    },
     onShow() {
       this.init()
     }
@@ -64,6 +88,54 @@
 </script>
 <style lang="scss">
 
+  .priview-box{
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background: #fff;
+    .priview-img{
+      width: 750rpx;
+    }
+    .action{
+      z-index: 3;
+      position: fixed;
+      width: 610rpx;
+      bottom: 0;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 70rpx;
+      .action-btn{
+        &.cancel-btn{
+          background: #777;
+        }
+
+        background: $fun-blue-color;
+
+        color: #fff;
+        font-size: 28rpx;
+        height: 70rpx;
+        width: 130rpx;
+        border-radius: 35rpx;
+        text-align: center;
+        line-height: 70rpx;
+      }
+    }
+    .mask{
+      z-index: 2;
+      position: fixed;
+      width: 750rpx;
+      bottom: 0;
+      background: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.3));
+      height: 140px;
+    }
+  }
   .store-skin {
     padding: 50rpx 50rpx;
     flex-wrap: wrap;
@@ -72,6 +144,7 @@
   .store-img {
     width: 300rpx;
     height: 480rpx;
+    border-radius: 10rpx;
     box-sizing: border-box;
   }
 

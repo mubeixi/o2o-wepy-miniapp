@@ -1,0 +1,142 @@
+<style lang="scss">
+  /*@import "../../assets/variables.scss";*/
+  /*@import "../../assets/mixins.scss";*/
+
+  .page-wrap {
+    background-color: #FFFFff !important;
+    min-height: 100vh;
+    width: 750rpx;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding-top: 70rpx;
+    padding-bottom: 40rpx;
+  }
+  .c-r{
+    color: #FF0000;
+  }
+
+  .bond-table{
+    width: 680rpx;
+    margin: 0 auto;
+    border: 1px solid #D4D4D4;
+    box-sizing: border-box;
+  }
+  .th{
+    height: 72rpx;
+    border-bottom: 1px solid #D4D4D4;
+    box-sizing: border-box;
+    background-color: #ECECEC;
+    box-sizing: border-box;
+    .td{
+      flex: 1;
+      height: 72rpx;
+      line-height: 72rpx;
+      text-align: center;
+      border-right: 1px solid #D4D4D4;
+      box-sizing: border-box;
+      &:last-child{
+        border-right: 0rpx;
+      }
+    }
+  }
+  .tr{
+    height: 86rpx;
+    border-bottom: 1px solid #D4D4D4;
+    box-sizing: border-box;
+    .td{
+      flex: 1;
+      height: 86rpx;
+      line-height: 83rpx;
+      border-right: 1px solid #D4D4D4;
+      box-sizing: border-box;
+      &:last-child{
+        border-right: 0rpx;
+      }
+    }
+    &:last-child{
+      border-bottom: 0rpx;
+    }
+  }
+  .text-align{
+    text-align: center;
+  }
+
+
+
+
+
+</style>
+<template>
+  <div class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+
+
+    <div class="bond-table">
+
+      <div class="th flex fz-15 c3">
+          <div class="td">
+            分类名
+          </div>
+          <div class="td">
+            保证金
+          </div>
+      </div>
+      <div class="tr flex fz-12 c3"  v-for="(item,index) of cateList" :key="index">
+        <div class="td  c8 p-l-40">
+          <span v-if="item.level==1" class="p-l-15">
+              |-
+          </span>
+          <span v-if="item.level==2" class="p-l-15">
+              |--
+          </span>
+          {{item.Category_Name}}
+        </div>
+        <div class="td c-r text-align ">
+          ¥{{item.Category_Bond}}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import store from '../../store'
+  import pageMixin from '../../mixins'
+  import {proCate} from '../../api/store'
+  import { error } from '../../common/fun'
+  import {plainArray} from '../../common/helper'
+
+  wepy.page({
+    store,
+    mixins: [pageMixin],
+    data: {
+      cateList: []
+    },
+    methods: {
+      async init() {
+        const cateList = await proCate({}, {onlyData: true}).catch(e => { error(e.msg) })
+
+        plainArray(cateList, 'child', this.cateList)
+      }
+    },
+    onLoad() {
+      this.init()
+    }
+
+  })
+
+</script>
+
+<config>
+  {
+  "navigationBarTitleText": "保证金",
+  "navigationBarBackgroundColor": "#F8F8F8",
+  "usingComponents": {
+  "icon": "~@/components/icon",
+  "wzw-im-tip": "~@/components/wzw-im-tip"
+  }
+  }
+</config>

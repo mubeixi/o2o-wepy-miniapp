@@ -3,97 +3,103 @@
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
     <div class="head">
       <div class="base" v-if="AccessToken">
-        <image @error="repalceImg" :src="info.biz_logo" class="store-logo"
-               @click.stop="$linkTo('/pages/store/StoreSetting')"></image>
+        <image :src="info.biz_logo" @click.stop="$linkTo('/pages/store/StoreSetting')" @error="repalceImg"
+               class="store-logo"></image>
         <block v-if="info.biz_shop_name">
-          <span class="store-title" @click.stop="$linkTo('/pages/store/StoreSetting')">{{info.biz_shop_name}}</span>
+          <span @click.stop="$linkTo('/pages/store/StoreSetting')" class="store-title">{{info.biz_shop_name}}</span>
         </block>
         <block v-else>
-          <span class="store-title store-setting-name" @click.stop="$linkTo('/pages/store/StoreInfo')">设置店名 <icon
-            type="iconarrowleft" color="#fdad58" class="iconarrowleft"></icon></span>
+          <span @click.stop="$linkTo('/pages/store/StoreInfo')" class="store-title store-setting-name">设置店名 <icon
+            class="iconarrowleft" color="#fdad58" type="iconarrowleft"></icon></span>
 
         </block>
 
       </div>
-      <div class="base" @click.stop="$linkTo('/pages/user/login')" v-else>
+      <div @click.stop="$linkTo('/pages/user/login')" class="base" v-else>
         <div class="login-main">
           登录/注册
         </div>
       </div>
       <div class="flex flex-vertical-center" v-if="AccessToken && info.apply_switch">
 
-        <div class="action" v-if="biz_expires&&status==2" @click.stop="goBusiness(1)">
+        <div @click.stop="goBusiness(1)" class="action" v-if="biz_expires&&status==2">
           <div class="no-validate"><span class="tip">已过期</span>
             <icon class="iconrenzheng" type="iconrenzheng"></icon>
           </div>
-          <icon type="iconarrowleft" class="iconarrowleft"></icon>
+          <icon class="iconarrowleft" type="iconarrowleft"></icon>
         </div>
-        <div class="action" v-else-if="status==2" @click.stop="goBusiness">
+        <div @click.stop="goBusiness" class="action" v-else-if="status==2">
           <div class="validate"><span class="tip">已认证</span>
-            <icon color="#26C78D" class="iconfont" type="iconrenzheng"></icon>
+            <icon class="iconfont" color="#26C78D" type="iconrenzheng"></icon>
           </div>
-          <icon type="iconarrowleft" class="iconarrowleft"></icon>
+          <icon class="iconarrowleft" type="iconarrowleft"></icon>
         </div>
-        <div class="action" v-else @click.stop="goBusinessMy">
+        <div @click.stop="goBusinessMy" class="action" v-else>
           <div class="no-validate"><span class="tip">未认证</span>
             <icon class="iconrenzheng" type="iconrenzheng"></icon>
           </div>
-          <icon type="iconarrowleft" class="iconarrowleft"></icon>
+          <icon class="iconarrowleft" type="iconarrowleft"></icon>
         </div>
       </div>
       <div class="flex flex-vertical-center" v-if="AccessToken && !info.apply_switch">
 
-        <div class="action" v-if="biz_expires" @click.stop="goBusiness(1)">
-          <div class="no-validate"><span class="tip">已过期</span>
+        <div @click.stop="goStoreRenew" class="action" v-if="biz_expires">
+          <div class="no-validate"><span class="tip">过期</span>
             <icon class="iconrenzheng" type="iconrenzheng"></icon>
           </div>
-          <icon type="iconarrowleft" class="iconarrowleft"></icon>
+          <icon class="iconarrowleft" type="iconarrowleft"></icon>
+        </div>
+        <div @click.stop="goStoreRenew" class="action" v-else>
+          <div class="no-validate"><span class="tip">正常</span>
+            <icon  class="iconrenzheng" color="#26C78D" type="iconrenzheng"></icon>
+          </div>
+          <icon class="iconarrowleft"  type="iconarrowleft"></icon>
         </div>
       </div>
     </div>
 
 
     <div class="finance-box">
-      <div class="finance-item" @click="goBanlance">
+      <div @click="goBanlance" class="finance-item">
         <div><span class="fz-12" v-if="AccessToken">￥</span><span
           class="fz-18">{{AccessToken?info.biz_money:'-'}}</span></div>
         <span class="title">店铺余额</span>
       </div>
       <div class="space-line"></div>
-      <div class="finance-item" @click="goTodayPerson">
+      <div @click="goTodayPerson" class="finance-item">
         <div class="fz-18">{{AccessToken?info.view_person_count:'-'}}</div>
         <span class="title">今日来访</span>
       </div>
       <div class="space-line"></div>
-      <div class="finance-item" @click="toShare">
-        <icon type="iconfenxiang" size="22" weight="bold" color="#333"></icon>
+      <div @click="toShare" class="finance-item">
+        <icon color="#333" size="22" type="iconfenxiang" weight="bold"></icon>
         <span class="title">分享</span>
       </div>
     </div>
 
-    <div class="message-list" v-if="messageList.length>0" @click="toMessageDetail(messageList[0])">
-      <icon type="icongonggao" color="#FF3E00" size="18"></icon>
-      <div style="flex: 1;" class="content fz-12 c7 p-l-10">{{messageList[0].title}}</div>
+    <div @click="toMessageDetail(messageList[0])" class="message-list" v-if="messageList.length>0">
+      <icon color="#FF3E00" size="18" type="icongonggao"></icon>
+      <div class="content fz-12 c7 p-l-10" style="flex: 1;">{{messageList[0].title}}</div>
       <div class="flex flex-vertical-center m-l-10">
         <span class="fz-12" style="color:#FF3D00">详情</span>
-        <icon display="inline" color="#FF3D00" size="14" type="iconarrowleft"></icon>
+        <icon color="#FF3D00" display="inline" size="14" type="iconarrowleft"></icon>
       </div>
     </div>
 
 
     <div class="container">
       <div class="count-box">
-        <div class="count-item" @click="goTodayOrder">
+        <div @click="goTodayOrder" class="count-item">
           <div class="val">
-            <icon class="icon" type="iconyuanhuan" color="#FA9981"></icon>
+            <icon class="icon" color="#FA9981" type="iconyuanhuan"></icon>
             <div class="fz-16 c333 text-center">{{AccessToken?info.today_order_count:'-'}}</div>
           </div>
           <span class="title">今日订单</span>
         </div>
         <div style="width: 50rpx;"></div>
-        <div class="count-item" @click="goTodayOrderMoney">
+        <div @click="goTodayOrderMoney" class="count-item">
           <div class="val">
-            <icon class="icon" type="iconyuanhuan" color="#DEB3EA"></icon>
+            <icon class="icon" color="#DEB3EA" type="iconyuanhuan"></icon>
             <div class="fz-12 c333 text-center">
               <block v-if="AccessToken">￥</block>
               <span class="fz-16">{{AccessToken?info.today_order_money:'-'}}</span></div>
@@ -103,29 +109,29 @@
       </div>
 
       <div class="grid">
-        <div class="grid-item" @click="goModule">
-          <icon type="iconmoban" class="grid-item-icon" size="24" color="#58b6fd"></icon>
+        <div @click="goModule" class="grid-item">
+          <icon class="grid-item-icon" color="#58b6fd" size="24" type="iconmoban"></icon>
           <div class="grid-item-title">店铺模板</div>
         </div>
-        <div class="grid-item" @click="goPro">
-          <icon type="iconshangpin" class="grid-item-icon" size="24" color="#fdad58"></icon>
+        <div @click="goPro" class="grid-item">
+          <icon class="grid-item-icon" color="#fdad58" size="24" type="iconshangpin"></icon>
           <div class="grid-item-title">商品管理</div>
         </div>
-        <div class="grid-item" @click="goStoreInfo">
-          <icon type="iconbianji" class="grid-item-icon" size="24" color="#fd5858"></icon>
+        <div @click="goStoreInfo" class="grid-item">
+          <icon class="grid-item-icon" color="#fd5858" size="24" type="iconbianji"></icon>
           <div class="grid-item-title">修改资料</div>
         </div>
-        <div class="grid-item" @click="goStatistics">
-          <icon type="icondianpu" class="grid-item-icon" size="20" color="#6058fd"></icon>
+        <div @click="goStatistics" class="grid-item">
+          <icon class="grid-item-icon" color="#6058fd" size="20" type="icondianpu"></icon>
           <div class="grid-item-title">数据统计</div>
         </div>
 
-        <div class="grid-item" @click="goMarketing">
-          <icon type="iconlaba" class="grid-item-icon" size="24" color="#9658fd"></icon>
+        <div @click="goMarketing" class="grid-item">
+          <icon class="grid-item-icon" color="#9658fd" size="24" type="iconlaba"></icon>
           <div class="grid-item-title">推广营销</div>
         </div>
-        <div class="grid-item" @click="goOrder">
-          <icon type="icondingdan" class="grid-item-icon" size="24" color="#41f072"></icon>
+        <div @click="goOrder" class="grid-item">
+          <icon class="grid-item-icon" color="#41f072" size="24" type="icondingdan"></icon>
           <div class="grid-item-title" style="display: flex;justify-content: center;">
             订单管理
             <!--              <span v-if="orderNum.waitsend&&AccessToken" class="order-tag">{{orderNum.waitsend>9?'n':orderNum.waitsend}}</span>-->
@@ -134,37 +140,43 @@
             <!--              </div>-->
           </div>
         </div>
-        <div class="grid-item" @click="goStoreSetting">
-          <icon type="iconshezhi" class="grid-item-icon" size="24" color="#fd7f58"></icon>
+        <div @click="goStoreSetting" class="grid-item">
+          <icon class="grid-item-icon" color="#fd7f58" size="24" type="iconshezhi"></icon>
           <div class="grid-item-title">店铺设置</div>
         </div>
 
-        <div class="grid-item" @click="goLogistics">
-          <icon type="iconwuliuguanli" class="grid-item-icon" size="24" color="#e458fd"></icon>
+        <div @click="goLogistics" class="grid-item">
+          <icon class="grid-item-icon" color="#e458fd" size="24" type="iconwuliuguanli"></icon>
           <div class="grid-item-title">物流管理</div>
         </div>
-        <div class="grid-item" @click="goSettlementList">
-          <icon type="iconjiesuan" class="grid-item-icon" size="24" color="#6058fd"></icon>
+        <div @click="goSettlementList" class="grid-item">
+          <icon class="grid-item-icon" color="#6058fd" size="24" type="iconjiesuan"></icon>
           <div class="grid-item-title">结算</div>
         </div>
-        <div class="grid-item" @click="goOrderRefund">
-          <icon type="iconRefund" class="grid-item-icon" size="24" color="#9658fd"></icon>
+        <div @click="goOrderRefund" class="grid-item">
+          <icon class="grid-item-icon" color="#9658fd" size="24" type="iconRefund"></icon>
           <div class="grid-item-title" style="display: flex;justify-content: center;">
-            退款售后<span v-if="orderBackNum.orderSum&&AccessToken" class="order-tag">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
+            退款售后<span class="order-tag" v-if="orderBackNum.orderSum&&AccessToken">{{orderBackNum.orderSum>9?'n':orderBackNum.orderSum}}</span>
           </div>
         </div>
-        <div class="grid-item" @click="goVip">
-          <icon type="iconMember" class="grid-item-icon" size="28" color="#17ccce"></icon>
+        <div @click="goVip" class="grid-item">
+          <icon class="grid-item-icon" color="#17ccce" size="28" type="iconMember"></icon>
           <div class="grid-item-title">会员管理</div>
         </div>
-        <div class="grid-item" @click="goLive" v-if="AccessToken&&info.live_flag===1">
-          <icon type="iconzhibo-" class="grid-item-icon" size="28" color="#e458fd"></icon>
+        <div @click="goLive" class="grid-item" v-if="AccessToken&&info.live_flag===1">
+          <icon class="grid-item-icon" color="#e458fd" size="28" type="iconzhibo-"></icon>
           <div class="grid-item-title">直播申请</div>
         </div>
-        <div class="grid-item" @click="goRecommend" v-if="cash_from===2">
-          <icon type="iconfankui" class="grid-item-icon" size="28" color="#f54012"></icon>
+        <div @click="goRecommend" class="grid-item" v-if="cash_from===2">
+          <icon class="grid-item-icon" color="#f54012" size="28" type="iconfankui"></icon>
           <div class="grid-item-title">反馈建议</div>
         </div>
+        <div @click="goPolite" class="grid-item" v-if="info.recommend_flag">
+          <icon class="grid-item-icon" color="#9658fd" size="28" type="iconliwu"></icon>
+          <div class="grid-item-title">邀请有礼</div>
+        </div>
+
+
         <!--        <div class="grid-row">-->
         <!--        </div>-->
         <!--        <div class="grid-row">-->
@@ -233,9 +245,17 @@
       toMessageDetail(message) {
         this.$linkTo('/pages/message/detail?id=' + message.id)
       },
+      goStoreRenew() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/StoreRenew')
+      },
       goModule() {
         if (!checkIsLogin(1, 1)) return
         linkTo('/pages/store/StoreAvailibleSkin')
+      },
+      goPolite() {
+        if (!checkIsLogin(1, 1)) return
+        linkTo('/pages/store/PoliteInvitation')
       },
       goVip() {
         if (!checkIsLogin(1, 1)) return
@@ -323,20 +343,20 @@
         if (!checkIsLogin(1, 1)) return
         if (!this.infoData.apply_info) {
           if (isShow) {
-            linkTo('/pages/join/CompanyCertification?action=show&show=1&expire=1')
+            linkTo('/pages/join/Certification?action=show&show=1&expire=1&certType=company')
             return
           }
-          linkTo('/pages/join/CompanyCertification?action=show&show=1')
+          linkTo('/pages/join/Certification?action=show&show=1&certType=company')
           return
         }
         const principal_type = this.infoData.apply_info.principal_type
 
         if (principal_type === 1) {
-          let url = '/pages/join/CompanyCertification?action=show&show=1'
+          let url = '/pages/join/Certification?action=show&show=1&certType=company'
           if (isShow) url += '&expire=1'
           linkTo(url)
         } else {
-          let url = '/pages/join/PersonalCertification?action=show&show=1'
+          let url = '/pages/join/Certification?action=show&show=1&certType=person'
           if (isShow) url += '&expire=1'
           linkTo(url)
         }
@@ -362,7 +382,12 @@
         })
       },
       async refreshTabTag() {
-        if (!eventHub.imInstance) return
+        if (!eventHub.imInstance) {
+          this.$wx.getTabBar().setData({
+            tags: [0, 0]
+          })
+          return
+        }
         const count = await eventHub.imInstance.getNoReadMsgCount()
         if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
           console.log('更新IM下标数量' + count)
@@ -470,11 +495,12 @@
         })
       }
 
-      this._init_func()
-
       this.AccessToken = getAccessToken()
       if (this.AccessToken) {
         this.getInit()
+        this._init_func()
+      } else {
+        this.refreshTabTag()
       }
 
       this.status = ls.get('status')

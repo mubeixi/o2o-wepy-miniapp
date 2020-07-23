@@ -63,8 +63,23 @@ export class TreeHub {
     // 得不存在，才能加入
     if (idx !== false) {
       nodes[idx].check = true
-      ls.set(eid, nodes)
+      // ls.set(eid, nodes)
     }
+    // 二级未选中的时候 清空父级的状态
+    const idxParent = findArrayIdx(nodes, { [key]: item['Category_ParentID'] })
+    if (idxParent !== false) {
+      nodes[idxParent].check = true
+    }
+
+    // 三级的时候
+    if (item.level == 2) {
+      const idxLast = findArrayIdx(nodes, { [key]: nodes[idxParent]['Category_ParentID'] })
+      if (idxParent !== false) {
+        nodes[idxLast].check = true
+      }
+    }
+
+    ls.set(eid, nodes)
   }
 
   static removeCheck(eid, item, key) {
@@ -74,8 +89,31 @@ export class TreeHub {
     // 得不存在，才能加入
     if (idx !== false) {
       nodes[idx].check = false
-      ls.set(eid, nodes)
     }
+
+    let parId = item['Category_ParentID']
+    let boo = true
+    for (let code of nodes) {
+      if (code['Category_ParentID'] == parId && code.check == true) {
+        boo = false
+      }
+    }
+
+    // 二级未选中的时候 清空父级的状态
+    const idxParent = findArrayIdx(nodes, { [key]: item['Category_ParentID'] })
+    if (idxParent !== false && boo) {
+      nodes[idxParent].check = false
+    }
+
+    // 三级的时候
+    if (item.level == 2) {
+      const idxLast = findArrayIdx(nodes, { [key]: nodes[idxParent]['Category_ParentID'] })
+      if (idxParent !== false && boo) {
+        nodes[idxLast].check = false
+      }
+    }
+
+    ls.set(eid, nodes)
   }
 
   static removeAllCheck(eid, key) {

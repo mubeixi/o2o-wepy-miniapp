@@ -15,7 +15,7 @@
       padding: 5px 0 5px;
 
       .title {
-        width: 600rpx;
+        flex:1;
         overflow-x: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -45,7 +45,7 @@
   <div class="page-wrap">
     <div class="recomment-item fz-14" v-for="(row,idx) in recomments" :key="idx" @click="toDetail(row.id)">
       <div class="head flex flex-justify-between flex-vertical-center">
-        <div class="title fz-16 c3">{{row.title}}</div>
+        <div class="title fz-16 c3">【{{row.id}}】{{row.title}}</div>
         <icon type="iconarrowleft" color="#ccc" size="14"></icon>
       </div>
       <div class="pics p-t-10" v-if="row.images.length>0">
@@ -60,7 +60,10 @@
       </div>
     </div>
     <div class="safearea-box"></div>
-    <div @click="toAdd" class="btn action-btn btn-primary m-b-safe-area">新增反馈与建议</div>
+    <div @click="toAdd" class="btn action-btn btn-primary m-b-safe-area flex flex-vertical-center flex-justify-center">
+      <icon type="iconadd" size="20" color="#fff"></icon>
+      <span class="m-l-6">新增反馈与建议</span>
+    </div>
   </div>
 </template>
 <script>
@@ -100,6 +103,9 @@
 
     },
     onLoad() {
+
+    },
+    onShow() {
       this._init_func()
     },
     created() {
@@ -108,11 +114,11 @@
   })
 </script>
 <config>
-  {
+{
   "navigationBarTitleText": "建议反馈列表",
   "navigationBarTextStyle": "black",
   "usingComponents": {
-  "icon": "~@/components/icon"
+    "icon": "~@/components/icon"
   }
-  }
+}
 </config>

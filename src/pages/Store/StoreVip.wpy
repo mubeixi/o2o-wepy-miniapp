@@ -17,6 +17,12 @@
         价格
       </div>
       <div class="store-titles" v-if="cash_from==2">
+        <block v-if="price">
+          {{price}}
+        </block>
+        <block v-else>
+          未配置
+        </block>
         <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
       <div class="store-titles" v-else>
@@ -31,6 +37,12 @@
         权益
       </div>
       <div class="store-titles">
+        <block v-if="selectValue.length>0">
+          已配置
+        </block>
+        <block v-else>
+          未配置
+        </block>
         <icon type="iconarrowleft" size="16" color="#999"></icon>
       </div>
     </div>
@@ -135,11 +147,11 @@
           value: ''
         },
         price_back: {
-          name: '购卡金额是否返赠到余额',
+          name: '购卡金额返赠到余额',
           value: 0	// 0=不赠送，1=赠送
         },
         money: {
-          name: '赠送余额',
+          name: '赠送储值金额',
           value: 0	// 0=不赠送，1=赠送
         }
       },
@@ -174,7 +186,6 @@
       this.upgrade_rights.coupon.value = ls.get('coupon_prod')
       this.upgrade_rights.money.value = ls.get('vipMoney')
       this.cash_from = ls.get('cash_from')
-
     },
     methods: {
       switch1ChangeM(e) {
@@ -200,12 +211,22 @@
           this.upgrade_rights.money = this.vipData.upgrade_rights.money ? this.vipData.upgrade_rights.money : this.upgrade_rights.money
           this.upgrade_rights.price_back = this.vipData.upgrade_rights.price_back ? this.vipData.upgrade_rights.price_back : this.upgrade_rights.price_back
 
+
+
           ls.set('coupon_prod', this.upgrade_rights.coupon.value)
           ls.set('pro_prod', this.upgrade_rights.product.value)
           ls.set('vipMoney', this.upgrade_rights.money.value)
         })
       },
       saveVip() {
+        let shippingIndex = this.selectValue.indexOf(0)
+        let discountIndex = this.selectValue.indexOf(1)
+        if (shippingIndex == -1) {
+          this.basic_rights.shipping.value = 0
+        }
+        if (discountIndex == -1) {
+          this.basic_rights.discount.value = ''
+        }
         let postData = {
           level_name: this.level_name,
           price: this.price,

@@ -74,10 +74,10 @@
           </block>
           <block v-else-if="info.apply_info.apply_status==-1">
             <div class="right-div" @click="goShow('showReason')">
-              <div class="station-button danger">
+              <div class="station-button danger" >
                 已驳回
               </div>
-              <div class="fz-12 color-red">查看原因</div>
+              <div class="fz-12 color-red" >查看原因</div>
             </div>
           </block>
           <div class="right-div" v-else @click="goShow('add')">
@@ -190,10 +190,10 @@
               const { tapIndex } = res
               console.log(tapIndex)
               if (tapIndex === 0) {
-                linkTo('/pages/join/PersonalCertification?action=add')
+                linkTo('/pages/join/Certification?action=add&certType=person')
               }
               if (tapIndex === 1) {
-                linkTo('/pages/join/CompanyCertification?action=add')
+                linkTo('/pages/join/Certification?action=add&certType=company')
               }
             },
             fail(res) {
@@ -206,19 +206,19 @@
         const principal_type = this.info.apply_info.principal_type
 
         if (action === 'show') {
-          if (principal_type === 1) {
-            linkTo('/pages/join/CompanyCertification?action=show')
+          if (principal_type === 2) {
+            linkTo('/pages/join/Certification?action=show&certType=person')
           } else {
-            linkTo('/pages/join/PersonalCertification?action=show')
+            linkTo('/pages/join/Certification?action=show&certType=company')
           }
           return
         }
 
         if (action === 'edit') {
-          if (principal_type === 1) {
-            linkTo('/pages/join/CompanyCertification?action=edit')
+          if (principal_type === 2) {
+            linkTo('/pages/join/Certification?action=edit&certType=person')
           } else {
-            linkTo('/pages/join/PersonalCertification?action=edit')
+            linkTo('/pages/join/Certification?action=edit&certType=company')
           }
         }
       },

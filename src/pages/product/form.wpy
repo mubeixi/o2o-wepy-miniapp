@@ -100,21 +100,40 @@
       </div>
       <!--价格和库存-->
       <div class="group-cell">
+<!--        <div class="cell-item">-->
+<!--          <div class="label">商品价格</div>-->
+<!--          <div class="content">-->
+<!--            <div class="flex">-->
+<!--              <div class="flex1 flex flex-vertical-center">-->
+<!--                <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceX"-->
+<!--                       placeholder="请输入现价"/>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="cell-item">-->
+<!--          <div class="label">划线价</div>-->
+<!--          <div class="content">-->
+<!--            <div class="flex">-->
+<!--              <div class="flex1 flex flex-vertical-center">-->
+<!--                <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceY"-->
+<!--                       placeholder="请输入划线价"/>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--          </div>-->
+<!--        </div>-->
         <div class="cell-item">
           <div class="label">商品价格</div>
           <div class="content">
-            <div class="flex">
-              <div class="flex1 flex flex-vertical-center">
-                <input class="m-l-15 line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceX"
-                       placeholder="请输入价格"/>
-              </div>
-              <div class="flex1 flex flex-vertical-center" style="margin-left: 30rpx">
-                <span style="white-space: nowrap" class="c3 text-centert p-r-10">划线价</span>
-                <input class="line-input" style="width: 210rpx" type="digit" v-model="formData.Products_PriceY"
-                       placeholder="请输入划线价"/>
-              </div>
-            </div>
-
+            <input class="fz-13" type="number" v-model="formData.Products_PriceX" placeholder="请输入商品价格"/>
+          </div>
+        </div>
+        <div class="cell-item">
+          <div class="label">划线价</div>
+          <div class="content">
+            <input class="fz-13" type="number" v-model="formData.Products_PriceY" placeholder="请输入划线价"/>
           </div>
         </div>
         <div class="cell-item">
@@ -157,10 +176,11 @@
             <div class="label">补差价格</div>
             <div class="content">
               <div class="flex flex-vertical-center" style="width: 450rpx">
-                <input type="digit" class="line-input" :value="item.Supply_Price" @input="bindSpecMarketPriceInput"
-                       style="width: 210rpx" placeholder="请输入商品原价"/>
+
                 <input type="digit" class="line-input" :value="item.Attr_Price" @input="bindSpecSellingPriceInput"
-                       style="width: 210rpx;margin-left: 30rpx" placeholder="请输入商品现价"/>
+                       style="width: 210rpx;" placeholder="请输入现价"/>
+                <input type="digit" class="line-input" :value="item.Supply_Price" @input="bindSpecMarketPriceInput"
+                       style="width: 210rpx;margin-left: 30rpx;" placeholder="请输入划线价"/>
               </div>
             </div>
           </div>
@@ -209,7 +229,22 @@
             </div>
           </div>
         </div>
+        <!--分享文案-->
+        <div class="cell-item" @click="openPop('descModel')" >
+          <div class="label">分享文案</div>
+          <div class="content">
+          </div>
+          <div class="right">
+            <div class="flex-vertical-center flex">
+              <span class="c6 fz-12" v-if="formData.Products_BriefDescription">已设置</span>
+              <span class="c9 fz-12" v-else>未设置</span>
+              <icon type="iconarrowleft" color="#999"></icon>
+            </div>
+          </div>
+        </div>
+
       </div>
+
 
       <div class="group-cell">
         <div class="cell-item" v-if="formData.prod_order_type === 0" @click="$openPop('sendType')">
@@ -272,18 +307,18 @@
           </div>
 
           <!--分享文案-->
-          <div class="cell-item" @click="openPop('descModel')" v-if="cash_from!=2">
-            <div class="label">分享文案</div>
-            <div class="content">
-            </div>
-            <div class="right">
-              <div class="flex-vertical-center flex">
-                <span class="c6 fz-12" v-if="formData.Products_BriefDescription">已设置</span>
-                <span class="c9 fz-12" v-else>未设置</span>
-                <icon type="iconarrowleft" color="#999"></icon>
-              </div>
-            </div>
-          </div>
+<!--          <div class="cell-item" @click="openPop('descModel')" >-->
+<!--            <div class="label">分享文案</div>-->
+<!--            <div class="content">-->
+<!--            </div>-->
+<!--            <div class="right">-->
+<!--              <div class="flex-vertical-center flex">-->
+<!--                <span class="c6 fz-12" v-if="formData.Products_BriefDescription">已设置</span>-->
+<!--                <span class="c9 fz-12" v-else>未设置</span>-->
+<!--                <icon type="iconarrowleft" color="#999"></icon>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
 
           <!--分享有礼-->
           <div class="cell-item" @click="openPop('share')" v-if="cash_from!=2">
@@ -477,7 +512,7 @@
             ref="systemCateTree"
             :conf="systemCateConf"
             :show-checkbox="true"
-            :check-only-leaf="false"
+            :check-only-leaf="true"
             :tree-data="ProductCateList"
             nodeKey="Category_ID"
           >
@@ -702,7 +737,8 @@
             <div class="title m-b-4">推荐</div>
           </div>
         </label>
-        <label v-if="_default.one_hour_send_switch" class="type-item flex flex-vertical-center bor-t"
+
+        <label v-if="cash_from!=2 && _default.one_hour_send_switch" class="type-item flex flex-vertical-center bor-t"
                @click="taggleFormData('one_hour_send')">
           <checkbox color="#00A8FF" :checked="formData.one_hour_send"></checkbox>
           <div class="label p-10">
@@ -713,28 +749,33 @@
       <button class="btn btn-primary m-t-35" @click="closePop('specailAttr')">确认</button>
     </popup-layer>
 
-    <popup-layer ref="content" :auto-close="false" :show-safe-area="false">
-      <div :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" class="editor-wrap" @click.stop.prevent>
-        <div class="editor-container">
-          <editor
-            placeholder="{{placeholderCotnent}}"
-            showImgSize
-            showImgToolbar
-            showImgResize
-            @statuschange="onEditorStatusChange"
-            :style="{maxHeight:systemInfo.windowHeight-390+'px'}" class="editor-instance" id="editor"></editor>
-          <div>
-            <div class="editor-add-btn" @click.stop="addImgByEditor">
-              <icon color="#ddd" size="40" type="iconupload"></icon>
-            </div>
-          </div>
-        </div>
+<!--    <popup-layer ref="refContent" :auto-close="false" :show-safe-area="false">-->
+<!--      <div :style="{height:systemInfo.windowHeight-diyHeadHeight+'px'}" class="editor-wrap" @click.stop.prevent>-->
+<!--        <div class="editor-container">-->
+<!--          <editor-->
+<!--            placeholder="{{placeholderCotnent}}"-->
+<!--            showImgSize-->
+<!--            showImgToolbar-->
+<!--            showImgResize-->
+<!--            @statuschange="onEditorStatusChange"-->
+<!--            :style="{maxHeight:systemInfo.windowHeight-390+'px'}"-->
+<!--            class="editor-instance"-->
+<!--            id="editor"-->
+<!--            @blur="bindEditorBlur"-->
+<!--            @focus="bindEditorFocus"-->
+<!--          ></editor>-->
+<!--          <div>-->
+<!--            <div class="editor-add-btn" @click.stop="addImgByEditor" >-->
+<!--              <icon color="#ddd" size="40" type="iconupload"></icon>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
-        <!--放置页面底部内容被挡住，额外给的高度-->
-        <div class="safearea-box"></div>
-        <button class="editor-done-btn btn btn-primary" @click="editorDone">编辑完成</button>
-      </div>
-    </popup-layer>
+<!--        &lt;!&ndash;放置页面底部内容被挡住，额外给的高度&ndash;&gt;-->
+<!--        <div class="safearea-box"></div>-->
+<!--        <button :class="{hide:editorIsFocus}" class="editor-done-btn btn btn-primary" @click="editorDone">编辑完成</button>-->
+<!--      </div>-->
+<!--    </popup-layer>-->
 
     <!-- <popup-layer title="支持外卖"  ref="delivery" >
       <div class="p-l-15 p-r-15" @touchmove.stop.prevent>
@@ -775,7 +816,6 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import Index from '../../mixins'
   import {
     cashFromValue,
     checkIsLogin,
@@ -786,7 +826,8 @@
     getArrColumn,
     getDomain,
     uploadImages,
-    validateFun
+    validateFun,
+    cleanNoParent
   } from '../../common/helper'
   import { getProductCategory, getProductDetail, getSystemProdConfig, systemOperateProd } from '../../api/product'
   import { addBizProdCate, getBizProdCateList, getCouponList, getShippingTemplate } from '../../api/store'
@@ -798,14 +839,12 @@
   import { Exception } from '../../common/Exception'
   import { initInfo } from '@/api/system'
 
-  export default {
-    components: { Index }
-  }
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
       cash_from: 1,
+      editorIsFocus: false,
       descriptionPopShow: false, // 是否显示富文本编辑
       typeIndex: -1,
       toLogin: false, // 标记为是否去登陆了，为了onShow可以不要瞎响应
@@ -938,8 +977,11 @@
     },
     methods: {
       openDescriptionPop() {
-        this.descriptionPopShow = true
-        this.$openPop('content')
+        this.$store.state.productContent = this.formData.Products_Description // 下个页面就不要请求了
+
+        this.$linkTo(`/pages/product/content?Products_ID=${this.Products_ID}`)
+        // this.descriptionPopShow = true
+        // this.$openPop('refContent')
       },
       // 拦截
       bindBackFn() {
@@ -1001,7 +1043,7 @@
       },
       editorDone() {
         this.descriptionPopShow = false
-        this.closePop('content')
+        this.closePop('refContent')
 
         this.editorInstance.getContents({
           success: (res) => {
@@ -1348,9 +1390,16 @@
       },
       setSystemCate() {
         const checkNodeList = this.$refs.systemCateTree.getCheckedNodes()
-        this.closePop('systemCatePop')
-        this.systemCateHas = getArrColumn(checkNodeList, 'Category_ID')
-        this.systemCateHasStr = getArrColumn(checkNodeList, 'Category_Name').join(',')
+        if (checkNodeList.length <= 0) {
+          this.systemCateHas = []
+          this.systemCateHasStr = ''
+          this.closePop('systemCatePop')
+        } else {
+          const lastVal = cleanNoParent(checkNodeList, 'Category_ParentID')
+          this.closePop('systemCatePop')
+          this.systemCateHas = getArrColumn(lastVal, 'Category_ID')
+          this.systemCateHasStr = getArrColumn(lastVal, 'Category_Name').join(',')
+        }
       },
       setFeeType(e) {
         const feeType = parseInt(e.$wx.detail.value)
@@ -1403,6 +1452,12 @@
         const idx = e.$wx.detail.value
         this.limitBuyIndex = idx
         this.formData.prod_limit.limit.type = this.PROD_LIMIT_TYPE[idx].id
+      },
+      bindEditorBlur(e) {
+        this.editorIsFocus = false
+      },
+      bindEditorFocus(e) {
+        this.editorIsFocus = true
       },
       onEditorStatusChange(e) {
         console.log(e)
@@ -1685,42 +1740,37 @@
             }
 
             // 富文本
-            wx.createSelectorQuery().select('#editor').context((res) => {
-              const editorInstance = res.context
-              if (editorInstance) {
-                editorInstance.setContents({
-                  html: productData.Products_Description,
-                  fail: (e) => {
-                    throw Error('初始化商品详情失败' + e.errMsg)
-                  }
-                })
-              } else {
-                // 这个时候还没有onReady
-                this.content = productData.Products_Description
-                this.contentReady = false
-              }
-            }).exec()
+            // wx.createSelectorQuery().select('#editor').context((res) => {
+            //   const editorInstance = res.context
+            //   if (editorInstance) {
+            //     editorInstance.setContents({
+            //       html: productData.Products_Description,
+            //       fail: (e) => {
+            //         throw Error('初始化商品详情失败' + e.errMsg)
+            //       }
+            //     })
+            //   } else {
+            //     // 这个时候还没有onReady
+            //     this.content = productData.Products_Description
+            //     this.contentReady = false
+            //   }
+            // }).exec()
 
             hideLoading()
           } else {
-
             var vals = []
-            //物流总是有
+            // 物流总是有
             if (this.shippingTmplList.length >= 0) {
               this.typeIndex = 0
               vals = ['0']
-
             } else {
-
               if (this._default.arrive_get) {
                 this.typeIndex = 1
                 vals = ['1']
-
               } else if (this._default.one_hour_send_switch) {
                 this.typeIndex = 2
                 vals = ['2']
               }
-
             }
 
             for (var idx3 in this.prod_send_type_list) {
@@ -1735,7 +1785,6 @@
             } else {
               this.prod_send_type_str = ''
             }
-
           }
 
           this.bizCateReady = true
@@ -1746,18 +1795,18 @@
       }
     },
     onReady() {
-      wx.createSelectorQuery().select('#editor').context((res) => {
-        this.editorInstance = res.context
-        // 编辑模式下初始化
-        if (this.Products_ID && this.content && !this.contentReady) {
-          this.editorInstance.setContents({
-            html: this.content,
-            fail: (e) => {
-              throw Error('初始化商品详情失败' + e.errMsg)
-            }
-          })
-        }
-      }).exec()
+      // wx.createSelectorQuery().select('#editor').context((res) => {
+      //   this.editorInstance = res.context
+      //   // 编辑模式下初始化
+      //   if (this.Products_ID && this.content && !this.contentReady) {
+      //     this.editorInstance.setContents({
+      //       html: this.content,
+      //       fail: (e) => {
+      //         throw Error('初始化商品详情失败' + e.errMsg)
+      //       }
+      //     })
+      //   }
+      // }).exec()
     },
     onLoad(options) {
       if (options.id) {
@@ -1772,6 +1821,13 @@
         // const order_temp_id = this.args[0].order_temp_id
         this.formData.order_temp_id = tmpl.id
         this.order_temp_text = tmpl.title
+      })
+
+      eventHub.$on('goods-description-update', ({ content }) => {
+        console.log('goods-description-update event emitted, the params are:')
+        console.log(content)
+        // const order_temp_id = this.args[0].order_temp_id
+        this.formData.Products_Description = content
       })
 
       if (checkIsLogin(0, 0)) {
@@ -1831,8 +1887,10 @@
     left: 0;
     bottom: constant(safe-area-inset-bottom);
     bottom: env(safe-area-inset-bottom);
-
-
+    &.hide{
+      position: static;
+      /*visibility: hidden;*/
+    }
   }
 
   .editor-add-btn {

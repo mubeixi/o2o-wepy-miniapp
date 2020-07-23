@@ -2,24 +2,20 @@
   .page-wrap {
     min-height: 100vh;
     background: #fff;
-    padding-bottom: 50px;
+
   }
 
   .message-face {
-    margin: 0 30rpx 30rpx;
     padding: 0rpx 30rpx;
     height: 80rpx;
-    border-radius: 40rpx;
-    background: #FFF3F0;
+    background: #fff;
     display: flex;
     align-items: center;
-
     .title {
       flex: 1;
-      color: #FF3E00;
+      color: #333;
       text-align: left;
       padding-left: 10px;
-      font-weight: bold;
     }
   }
 
@@ -129,12 +125,13 @@
 <template>
   <div class="page-wrap">
     <!--E64340-->
-    <div style="height: 30rpx"></div>
+
     <div @click="toMessageList" class="message-face">
-      <icon type="icongonggao" color="#FF3E00" size="24"></icon>
+      <icon type="icongonggao" color="#FF3E00" size="20"></icon>
       <div class="title">公告列表</div>
-      <icon display="inline" color="#FF3D00" size="18" type="iconarrowleft"></icon>
+      <icon display="inline" color="#999" size="16" type="iconarrowleft"></icon>
     </div>
+    <div class="h10" style="background: #f8f8f8;"></div>
     <div class="chat-list" v-if="chatList.length>0">
       <div class="chat-item-box"
            @click="toRoom(idx)"
@@ -174,7 +171,7 @@
       <image :src="spaceImImg" class="img"/>
       <div class="m-t-15"><span>信箱是空的</span></div>
     </div>
-
+    <div class="h50"></div>
     <!--    <fun-tabbar></fun-tabbar>-->
   </div>
 </template>
@@ -306,7 +303,12 @@
         this.$linkTo(`/pages/support/Im?type=${type}&tid=${id}&room_title=${chatItem.name}`)
       },
       async refreshTabTag() {
-        if (!imInstance) return
+        if (!imInstance) {
+          this.$wx.getTabBar().setData({
+            tags: [0, 0]
+          })
+          return
+        }
         const count = await imInstance.getNoReadMsgCount()
         if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
           console.log('更新IM下标数量' + count)
@@ -406,7 +408,11 @@
 
     },
     onShow() {
-      if (!checkIsLogin(1, 1)) return
+      if (!checkIsLogin(1, 1)) {
+        this.chatList = []
+        this.refreshTabTag()
+        return
+      }
       if (eventHub.imInstance) {
         this.imInstance = imInstance = eventHub.imInstance
       } else {

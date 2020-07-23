@@ -1,7 +1,7 @@
 <template>
   <view class="all">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <view class="main" v-for="(item,index) of data" :key="index">
+    <view class="main" v-for="(item,index) of dataList" :key="index">
       <block v-if="type===5">
         <view class="fir">
           <view class="left">
@@ -84,8 +84,8 @@
     </view>
 
 
-    <div class="defaults" v-if="data.length<=0">
-      <image :src="'/static/client/defaultImg.png'|domain"></image>
+    <div class="defaults" v-if="dataList.length<=0">
+      <image :src="defaultImg"></image>
     </div>
   </view>
 </template>
@@ -95,6 +95,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { getOrderList, getWithdrawRecordList } from '../../api/store'
+  import {getDomain} from '../../common/helper'
 
   wepy.page({
     store,
@@ -103,12 +104,14 @@
 
       page: 1,
       pageSize: 10,
-      data: [],
+      dataList: [],
       totalCount: 0,
-      type: ''
+      type: '',
+      defaultImg: ''
 
     },
     onLoad(options) {
+      this.defaultImg = getDomain('/static/client/defaultImg.png')
       this.type = Number(options.type)
       if (this.type === 3) {
         wx.setNavigationBarTitle({
@@ -131,7 +134,7 @@
       this.getWithdrawRecordList()
     },
     onReachBottom() {
-      if (this.totalCount > this.data.length) {
+      if (this.totalCount > this.dataList.length) {
         this.page++
         this.getWithdrawRecordList()
       }
@@ -148,7 +151,7 @@
           getOrderList(data).then(res => {
             this.totalCount = res.totalCount
             for (let item of res.data) {
-              this.data.push(item)
+              this.dataList.push(item)
             }
           }).catch(e => {
 
@@ -162,7 +165,7 @@
           getWithdrawRecordList(data).then(res => {
             this.totalCount = res.totalCount
             for (let item of res.data) {
-              this.data.push(item)
+              this.dataList.push(item)
             }
           }).catch(e => {
 

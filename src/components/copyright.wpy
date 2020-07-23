@@ -5,9 +5,9 @@
     padding: 20rpx;
 
     .logo {
-      margin-bottom: 20 rx;
-      width: 76rpx;
-      height: 30rpx;
+      margin-bottom: 20rpx;
+      width: 100rpx;
+      height: 49rpx;
     }
 
     .text {
@@ -18,16 +18,26 @@
 </style>
 <template>
   <div class="wrap">
-    <img class="logo" src="/static/copyright.png"/>
-    <p class="text">真产品聚划算就在网中网</p>
+    <img class="logo" :src="logoImg"/>
+    <p class="text">{{bussiBottom}}</p>
   </div>
 </template>
 <script>
   import wepy from '@wepy/core'
-
+  import { getDomain } from '../common/helper'
+  import Env from '../common/env'
   wepy.component({
     options: {
       addGlobalClass: true
+    },
+    data: {
+      logoImg: '',
+      bussiBottom: ''
+    },
+    ready() {
+      this.bussiBottom = Env.bussiBottom
+
+      this.logoImg = Env.isJb ? getDomain('/static/images/jbay/logo/100_zi.png') : '/static/copyright.png'
     }
   })
 </script>

@@ -98,13 +98,15 @@
 <style lang="scss">
 
   .page-wrap {
-    padding-bottom: 44px; //.btn的是44px
+
   }
 
   .alls {
-    height: 100vh;
+    min-height: 100vh;
     background-color: #FFFFFF;
     padding-top: 40rpx;
+    box-sizing:border-box;
+    padding-bottom: 60px; //.btn的是44px
   }
 
   .submits {
