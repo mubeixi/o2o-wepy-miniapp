@@ -257,7 +257,7 @@
   import pageMixin from '../../mixins'
   import { getOrderList, getBizInfo, codeActive } from '../../api/store'
   import { error, toast, linkTo } from '../../common/fun'
-  import { checkIsLogin } from '../../common/helper'
+  import { checkIsLogin, ls } from '../../common/helper'
   const moment = require('moment')
   wepy.page({
     store,
@@ -333,6 +333,21 @@
     },
     onShow() {
       this.showCate = false
+      if (!checkIsLogin(1, 1)) return
+      const expireNumber = ls.get('expireNumber')
+      if (expireNumber) {
+        this.code_num = expireNumber
+        this.showCode = true
+      }
+    },
+    onLoad(options) {
+      ls.remove('expireNumber')
+      const { expire = 0 } = options
+      if (expire == 1) {
+
+      } else if (expire != 0) {
+        ls.set('expireNumber', expire)
+      }
       this.init()
     },
     onReachBottom() {

@@ -23,7 +23,7 @@
         赠送余额
       </div>
       <div class="store-titles  input-div">
-        <input type="digit" v-model="money" placeholder="请输入赠送金额" class="input"/>
+        <input type="digit" v-model="money" placeholder="请输入赠送金额" maxlength="9" class="input"/>
         元
       </div>
     </div>
