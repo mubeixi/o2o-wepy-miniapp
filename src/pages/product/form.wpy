@@ -1675,9 +1675,9 @@
             for (let item of checkList) {
               if (item.name === 'express') {
                 lastCheckList.push(item)
-              } else if (item.name === 'city_express' && this._default.arrive_get) {
+              } else if (item.name === 'city_express' && this._default.one_hour_send_switch) {
                 lastCheckList.push(item)
-              } else if (item.name === 'self_get' && this._default.one_hour_send_switch) {
+              } else if (item.name === 'self_get' && this._default.arrive_get) {
                 lastCheckList.push(item)
               }
             }
