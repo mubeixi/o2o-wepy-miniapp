@@ -289,7 +289,9 @@
             objData.status = 1
           }
         })
-        hideLoading()
+        setTimeout(function() {
+          hideLoading()
+        },1500)
 
         // this.initCityExpress()
       },
