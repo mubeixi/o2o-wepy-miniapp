@@ -31,7 +31,7 @@
     },
 
     onLaunch() {
-      var obj = wx.getLaunchOptionsSync()
+      let obj = wx.getLaunchOptionsSync()
       if (obj.query.users_id) {
         ls.set('users_id', obj.query.users_id)
       }
