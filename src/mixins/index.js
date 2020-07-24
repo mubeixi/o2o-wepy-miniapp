@@ -62,6 +62,7 @@ export default {
       'pages/join/Certification',
       'pages/user/login',
       'pages/index',
+      'pages/product/form',
       'pages/support/ImList'
     ]
 
