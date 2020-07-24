@@ -11,6 +11,7 @@
   import store from '@/store'
   import { ls } from './common/helper'
   import { getAccessToken } from './common/request'
+  import {bizLoginLog} from './api/system'
   import eventHub from '@/common/eventHub'
 
   // import store from './store'
@@ -58,6 +59,13 @@
           imInstance.openListen()
           eventHub.imInstance = imInstance // 全局用一个句柄
         }).catch((e) => { console.log(e) })
+      }
+      if (AccessToken) {
+        bizLoginLog().then(res => {
+
+        }).catch(e => {
+          console.log(e, '商家登录日志')
+        })
       }
 
       // 初始化商户信息
