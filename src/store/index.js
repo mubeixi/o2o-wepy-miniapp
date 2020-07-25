@@ -36,7 +36,7 @@ export default new Vuex.Store({
     },
     SET_INIT_INFO(state, val) {
       state.initInfo = val
-      ls.set('initInfo', val, 1)cash_from
+      ls.set('initInfo', val, 1)
     },
     increment(state) {
       state.counter++
