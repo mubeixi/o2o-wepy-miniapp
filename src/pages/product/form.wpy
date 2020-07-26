@@ -410,7 +410,7 @@
       <div class="h20" style="padding: #f8f8f8;"></div>
     </scroll-view>
 
-    <modal ref="descModel" positions="top" radius="12rpx">
+    <modal ref="descModel" positions="center" radius="12rpx">
       <div class="p-20 desc-wrap">
             <textarea
               class="bor p-10 desc-content"
