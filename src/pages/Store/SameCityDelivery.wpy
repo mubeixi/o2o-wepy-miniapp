@@ -269,14 +269,15 @@
       },
       async switch1Changes(item, e, objData) {
         let boo = e.$wx.detail.value
+        var tip = ''
         if (boo) {
-          showLoading('开启中')
+          tip = '开启中'
           objData.status = 1
         } else {
           objData.status = 0
-          showLoading('关闭中')
+          tip = '关闭中'
         }
-        await cityExpressProvider({ type: item }).then(res => {
+        await cityExpressProvider({ type: item }, {tip}).then(res => {
           if (boo) {
             objData.status = 1
           } else {
@@ -289,7 +290,6 @@
             objData.status = 1
           }
         })
-        hideLoading()
 
         // this.initCityExpress()
       },
