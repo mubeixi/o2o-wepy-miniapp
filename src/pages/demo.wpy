@@ -3,48 +3,69 @@
 </style>
 <template>
   <div class="page-wrap">
-    <template v-if="forms.length>0">
-      <diy-form @update="upForm" eid="xxxxx" ref="formdemo" :forms="forms"></diy-form>
-    </template>
+    <layout-tree :treeData="treeData" :confsprops="defaultProps" @node-click="handleNodeClick"></layout-tree>
   </div>
 </template>
 <script>
   import wepy from '@wepy/core'
   import store from '../store'
   import pageMixin from '../mixins'
-  import { objTranslate } from '@/common/helper'
 
-  const infoTmpl = [
-    { label: '企业名称', name: 'company', required: true, type: 'input', value: '', desc: '', autoDesc: true },
-    { label: '地址', name: 'address', required: true, type: 'input', value: '', desc: '', autoDesc: true },
-    { label: '邮编', name: 'postal_code', required: true, type: 'input', value: '', desc: '', autoDesc: true },
-    { label: '联系人', name: 'linkname', required: true, type: 'input', value: '', desc: '', autoDesc: true },
-    { label: '电话', name: 'link', required: true, type: 'input', value: '', desc: '', autoDesc: true },
-    { label: '邮箱', name: 'email', required: true, type: 'input', value: '', desc: '', autoDesc: true },
-    { label: '企业简介', name: 'description', required: true, type: 'file', limit: 3, count: 0, value: '', desc: '' }
+  const mockData = [
+    {
+      label: '一级 1',
+      children: [{
+        label: '二级 1-1',
+        children: [{
+          label: '三级 1-1-1'
+        }]
+      }]
+    }, {
+      label: '一级 2',
+      children: [{
+        label: '二级 2-1',
+        children: [{
+          label: '三级 2-1-1'
+        }]
+      }, {
+        label: '二级 2-2',
+        children: [{
+          label: '三级 2-2-1'
+        }]
+      }]
+    }, {
+      label: '一级 3',
+      children: [{
+        label: '二级 3-1',
+        children: [{
+          label: '三级 3-1-1'
+        }]
+      }, {
+        label: '二级 3-2',
+        children: [{
+          label: '三级 3-2-1'
+        }]
+      }]
+    }
   ]
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
-      forms: [],
-      postData: {}
+      treeData: mockData,
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     },
     computed: {},
     methods: {
-      upForm(data) {
-        const _data = objTranslate(data)
-        this.postData = _data
-      },
-      async _init_func(options) {
-        const _infoTmpl = objTranslate(infoTmpl)
-        // 自动加desc
-        for (const row of _infoTmpl) {
-          if (row.type === 'input' && !row.desc && row.autoDesc) row.desc = `请输入${row.label}`
-        }
+      async _init_func() {
 
-        this.$set(this, 'forms', objTranslate(_infoTmpl))
+      },
+      handleNodeClick(data) {
+        console.log(data)
       }
     },
     onReady() {
@@ -63,7 +84,7 @@
   "navigationBarTitleText": "demo",
   "navigationBarTextStyle": "black",
   "usingComponents": {
-  "diy-form": "~@/components/diy-form-format"
+  "layout-tree": "~@/components/layout-tree/layout-tree"
   }
   }
 </config>

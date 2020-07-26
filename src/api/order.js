@@ -61,3 +61,10 @@ export const dadaExceptionOrderReceive = (param, options) => fetch({ act: 'dadaE
 
 // 商家主动取消订单
 export const cityExpressOrderReject = (param, options) => fetch({ act: 'cityExpressOrderReject', param, options })
+
+// 预估同城订单费用
+export const cityExpressComputeOrderPrice = (param, options) => fetch({ act: 'cityExpressComputeOrderPrice', param, options })
+
+
+// 获取同城配送物流
+export const cityOrderExpress = (param, options) => fetch({ act: 'cityOrderExpress', param, options })
