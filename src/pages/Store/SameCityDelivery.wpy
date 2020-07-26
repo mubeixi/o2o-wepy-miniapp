@@ -317,6 +317,7 @@
           }
           hideLoading()
         }).catch(e => {
+          hideLoading()
           if (boo) {
             objData.status = 0
           } else {
