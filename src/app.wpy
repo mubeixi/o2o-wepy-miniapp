@@ -183,6 +183,7 @@
   "pages/order/OrderRetailSend",
   "pages/order/CheckChannel",
   "pages/order/CheckByCode",
+  "pages/order/logisticsByLocation",
   "pages/order/CheckOrderInfo",
   "pages/order/SettlementList",
   "pages/order/Settlement",

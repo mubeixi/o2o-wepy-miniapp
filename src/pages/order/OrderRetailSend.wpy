@@ -165,16 +165,30 @@
             </div>
           </div>
         </block>
-        <div class="inputView" v-else>
-          <div style="width: 180rpx;">
-            合作公司
-          </div>
-          <picker @change="bindPickerChange" :value="index" :range="arr" class="picker ">
-            {{arr[index]}}
-            <icon type="iconarrowleft" size="16" color="#999"></icon>
-          </picker>
+        <block v-else>
+          <div class="inputView" >
+            <div style="width: 180rpx;">
+              合作公司
+            </div>
+            <picker @change="bindPickerChange" :value="index" :range="arr" class="picker ">
+              {{arr[index]}}
+              <icon type="iconarrowleft" size="16" color="#999"></icon>
+            </picker>
 
-        </div>
+          </div>
+
+          <div class="inputView">
+            <div style="width: 180rpx;">
+              预估运费
+            </div>
+            <div class=" fz-14 text-right" style="width: 100%;">
+              <span class="color-red" v-if="city_order_fee>0">{{'￥'+city_order_fee}}</span>
+              <span class="c9" v-else>无</span>
+            </div>
+
+          </div>
+        </block>
+
 
 
       </div>
@@ -198,8 +212,14 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getAvailableCityExpress, getOrderDetail, systemSendOrder } from '../../api/order'
+  import {
+    cityExpressComputeOrderPrice,
+    getAvailableCityExpress,
+    getOrderDetail,
+    systemSendOrder
+  } from '../../api/order'
   import { back, error, toast } from '../../common/fun'
+  import { Exception } from '@/common/Exception'
 
   const moment = require('moment')
   wepy.page({
@@ -207,12 +227,14 @@
     mixins: [pageMixin],
     data: {
       index: 0,
+      availableCityExpress: {},
       arr: [],
       order_id: '',
       listData: {},
       ship_num: '',
       remark: '',
       nameValue: '',
+      city_order_fee: null,
       tong: [],
       mobile: ''
     },
@@ -249,8 +271,19 @@
           error(err.msg)
         })
       },
+      async computedExpressmoney() {
+        var sendChannel
+        for (let key in this.tong[this.index]) {
+          sendChannel = key
+        }
+        const expectFriMoeny = await cityExpressComputeOrderPrice({provider: sendChannel, Order_ID: this.order_id}).then(res => res.data).catch(err => Exception.handle(err))
+        console.log(expectFriMoeny)
+        const {city_order_fee = 0} = expectFriMoeny
+        this.city_order_fee = city_order_fee
+      },
       bindPickerChange(e) {
         this.index = e.$wx.detail.value
+        this.computedExpressmoney()
       },
       async getOrderDetailFn() {
         let orderInfo = await getOrderDetail({ Order_ID: this.order_id }, {
@@ -266,12 +299,16 @@
         this.listData.Order_CreateTime = moment(orderInfo.Order_CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
 
         getAvailableCityExpress().then(res => {
+          this.availableCityExpress = res.data
           for (let item in res.data) {
             let it = {}
             it[item] = res.data[item]
             this.tong.push(it)
             this.arr.push(res.data[item])
           }
+
+          this.computedExpressmoney()
+
         })
 
         for (let it of this.listData.prod_list) {
@@ -279,6 +316,9 @@
             it.attr_info = JSON.parse(it.attr_info)
           }
         }
+
+
+
       }
     },
     onReachBottom() {

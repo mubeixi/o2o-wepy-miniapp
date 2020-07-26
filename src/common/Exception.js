@@ -23,6 +23,7 @@ export function Exception() {
  * @constructor
  */
 function handle(e) {
+  if (typeof e === 'string')e = Error(e)
   if (e === 'nocare' || e.message === 'nocare') return
   let { message = '错误信息', type = 'toast', icon = 'none' } = e
   if (typeof e !== 'object') {

@@ -175,40 +175,44 @@
           ctx.setFillStyle('#333333')
           ctx.setFontSize(28)
           ctx.textAlign = 'center'
-          const showProductName = cutstrFun(product.Products_Name, parseInt(640 / 24)) // 只显示一行
-          ctx.fillText(showProductName, 350, 680)
+          const showProductName = cutstrFun(product.Products_Name, parseInt(640 / 32)) // 只显示一行
+          ctx.fillText(showProductName, 350, 695)
 
           // 商品价格box
           ctx.textAlign = 'left'
           ctx.setFontSize(24)
           ctx.setFillStyle('#666666')
-          ctx.fillText('抢购价：', 63, 739)
+          ctx.fillText('抢购价：', 63, 749)
           ctx.setFillStyle('#E41515')
 
           var price = product.Products_PriceX
           if (product.is_pintuan) {
             price = product.pintuan_pricex
           }
-          ctx.fillText(`￥${price}`, 161, 739)
+          ctx.setFontSize(28)
+          ctx.fillText(`￥${price}`, 161, 749)
 
           var Products_PriceY = product.Products_PriceY
 
+          ctx.setFontSize(20)
           ctx.setFillStyle('#999')
-          ctx.fillText(`￥${Products_PriceY}`, 286, 739)
+          ctx.fillText(`￥${Products_PriceY}`, 286, 749)
+
 
           ctx.setFillStyle('#eeeeee')
-          ctx.moveTo(286, 732)
+          ctx.moveTo(286, 742)
+          ctx.setStrokeStyle('#999')
           ctx.setLineWidth(1)
-          ctx.lineTo(286 + (`￥${Products_PriceY}`).length * 16, 732)
+          ctx.lineTo(286 + (`￥${Products_PriceY}`).length * 14, 742)
           ctx.stroke()
 
           // 右侧
 
-          ctx.drawImage('/static/share/count-bg.png', 430, 710, 245, 38)
+          ctx.drawImage('/static/share/count-bg.png', 430, 720, 245, 38)
           ctx.setFontSize(20)
           ctx.setFillStyle('#fff')
           ctx.textAlign = 'center'
-          ctx.fillText(`扫码参与抢购`, 520, 736, 170)
+          ctx.fillText(`扫码参与抢购`, 520, 746, 170)
 
           ctx.textAlign = 'left'
 

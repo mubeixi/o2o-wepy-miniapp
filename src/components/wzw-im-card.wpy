@@ -77,8 +77,9 @@
 <script>
   // 消息卡片组件
   import wepy from '@wepy/core'
-  import { error } from '../common/fun'
-  import { objTranslate } from '../common/helper'
+  import { error, modal } from '@/common/fun'
+  import { ls, objTranslate } from '@/common/helper'
+  import store from '@/store'
 
   wepy.component({
     options: {
@@ -101,9 +102,52 @@
       emitClick() {
         this.$emit('itemClick')
       },
-      toGoods(content) {
-        error('暂时无法查看产品')
-        // if (content.hasOwnProperty('url'))linkToEasy(content.url)
+      async toGoods(content) {
+        const bizId = ls.get('biz_id')
+        const skin_id = this.previewId
+        const users_id = ls.get('users_id')
+        if (!users_id) {
+          error('users_id获取失败')
+          return
+        }
+
+        var url
+        if (content.hasOwnProperty('url')) {
+          url = content.url
+        } else {
+          error('产品链接错误')
+          return
+        }
+        // 肯定有参数的
+        url = `${url}&users_id=${users_id}&origin=merchat&action=preview`
+        console.log(url)
+        const initInfo = await store.dispatch('getInitInfo')
+        const {client_lp_appid} = initInfo
+        if (!client_lp_appid) {
+          error('平台暂未配置appid')
+          return
+        }
+        wx.navigateToMiniProgram({
+          appId: client_lp_appid,
+          path: url,
+          extraData: {
+
+          },
+          envVersion: 'release',
+          fail (err) {
+            console.log(`跳转失败${err.errMsg}`)
+            modal({
+              content: `跳转失败${err.errMsg}`,
+              title: '打开小程序失败'
+            })
+          },
+          success (res) {
+            // 打开成功
+          }
+        })
+
+        // error('暂时无法查看产品')
+        //
       },
       bindProductSend() {
         // 还是不要有任何关联的好

@@ -1,0 +1,263 @@
+<template>
+  <view class="all">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <view class="wuliu box-sizing" v-if="logList.length>0">
+
+      <view>
+        <view class="fonts">
+          <view class="left">
+            物流状态:
+          </view>
+          <view class="right">
+            {{logList[0].order_status_text}}
+          </view>
+        </view>
+        <view class="fonts">
+          <view class="left">
+            物流公司:
+          </view>
+          <view>
+            {{logList[0].provider_text}}
+          </view>
+        </view>
+        <view class="fonts" v-if="logList[0].driver_name">
+          <view class="left">
+            物流单号:
+          </view>
+          <view>
+            {{logList[0].driver_name}}
+          </view>
+        </view>
+        <view class="fonts" v-if="logList[0].driver_phone">
+          <view class="left">
+            派送员电话:
+          </view>
+          <view class="color-primary text-underline" @click="call">
+            {{logList[0].driver_phone}}
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="box-sizing xiangxi">
+      <block :key="index" v-for="(item,index) of logList">
+        <view class="center" v-if="index==0">
+          <view class="lefts">
+            <view class="tops">
+              <view class="views"></view>
+            </view>
+            <view class="bottoms" v-if="(index+1)<logList.length">
+
+            </view>
+          </view>
+          <view class="rights">
+            <view class="tops">
+              {{item.order_status_text}}
+            </view>
+            <view class="bottoms">
+              {{item.callback_time}}
+            </view>
+          </view>
+        </view>
+        <view class="center" v-else>
+          <view class="lefts">
+            <view class="tops unBgcolor">
+              <view class="views"></view>
+            </view>
+            <view class="bottoms" v-if="(index+1)<logList.length">
+
+            </view>
+          </view>
+          <view class="rights">
+            <view class="tops unColor">
+              {{item.order_status_text}}
+            </view>
+            <view class="bottoms">
+              {{item.callback_time}}
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import pageMixin from '@/mixins'
+import {cityOrderExpress} from '@/api/order'
+import {error} from '@/common/fun'
+const moment = require('moment')
+
+wepy.page({
+  store,
+  mixins: [pageMixin],
+  data: {
+    logList: [],
+    express: null,
+    prod_img: '',
+    shipping_id: '',
+    order_id: ''
+  },
+  onLoad (options) {
+    const {
+      express,
+      prod_img,
+      shipping_id,
+      order_id
+    } = options
+    this.express = express
+    this.order_id = order_id
+    this.prod_img = prod_img
+    this.shipping_id = shipping_id
+  },
+  onShow () {
+    this.getOrderExpress()
+  },
+  methods: {
+    call () {
+      wx.makePhoneCall({
+        phoneNumber: this.logList[0].driver_phone
+      })
+    },
+    getOrderExpress () {
+      const data = {
+        order_id: this.order_id
+      }
+      cityOrderExpress(data).then(res => {
+        this.logList = res.data.map(row => {
+          return {...row, callback_time: moment.unix(row.callback_time).format('YYYY.MM.DD HH:mm:ss')}
+        })
+      }).catch(e => {
+        error(e.msg)
+      })
+    }
+  }
+})
+</script>
+<style lang="scss" scoped>
+  .all {
+    background-color: #f8f8f8;
+  }
+
+  .wuliu {
+    width: 710rpx;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 20rpx;
+    margin: 0 auto 30rpx;
+    margin-top: 20rpx;
+    padding-top: 27rpx;
+    padding-left: 32rpx;
+    display: flex;
+    padding-bottom: 10rpx;
+
+    .image {
+      width: 72rpx;
+      height: 72rpx;
+      margin-right: 30rpx;
+    }
+
+    .fonts {
+      font-size: 24rpx;
+      color: #999999;
+      display: flex;
+      height: 40rpx;
+      line-height: 30rpx;
+
+      .left {
+        margin-right: 10rpx;
+      }
+
+      .right {
+        color: #F43131;
+      }
+    }
+  }
+
+  .xiangxi {
+    width: 710rpx;
+    box-sizing: border-box;
+    background: #FFFFFF;
+    border-radius: 20rpx;
+    padding: 45rpx 0rpx 0rpx 42rpx;
+    margin: 0 auto;
+
+    .center {
+      padding: 10px 0px;
+      width: 626rpx;
+      display: flex;
+
+      .lefts {
+        width: 32rpx;
+        position: relative;
+
+        .tops {
+          width: 32rpx;
+          height: 32rpx;
+          background-color: #FFE4E4;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .views {
+            width: 16rpx;
+            height: 16rpx;
+            background-color: #F43131;
+            border-radius: 50%;
+          }
+        }
+
+        .bottoms {
+          width: 4rpx;
+          height: 100%;
+          background-color: #ECECEC;
+          position: absolute;
+          top: 32rpx;
+          left: 14rpx;
+        }
+      }
+
+      .rights {
+        margin-left: 28rpx;
+
+        .tops {
+          font-size: 28rpx;
+          color: #F43131;
+          // height: 30rpx;
+          line-height: 30rpx;
+        }
+
+        .bottoms {
+          margin-top: 19rpx;
+          font-size: 24rpx;
+          color: #AAAAAA;
+          height: 30rpx;
+          line-height: 30rpx;
+        }
+      }
+
+      .unColor {
+        color: #777777 !important;
+      }
+
+      .unBgcolor {
+        background-color: #ECECEC !important;
+
+        .views {
+          background-color: #AFAFAF !important;
+        }
+      }
+
+    }
+  }
+
+</style>
+<config>
+{
+  "usingComponents": {
+    "wzw-im-tip": "~@/components/wzw-im-tip",
+    "icon": "~@/components/icon"
+  }
+}
+</config>

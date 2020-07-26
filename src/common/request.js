@@ -119,7 +119,7 @@ export const ajax = ({ url, method = 'post', data = {}, options = {}, isAddHost 
     mask = false,
     // timelen = 2000,
     timeout = 100, // 如果tip参数生效，请求结束后会延迟取消loading,有的请求太快了一闪而过
-    errtip = true, // 是否提示错误
+    errtip = false, // 是否提示错误
     // reqHeader = false, // 是否需要把响应头返回放在resolve里面，一般是有时候登录的时候需要从请求头里拿到token的
     onlyData = false// 是否直接返回data，方便结构赋值
   } = options
@@ -194,9 +194,11 @@ export const ajax = ({ url, method = 'post', data = {}, options = {}, isAddHost 
       },
       complete: () => {
         if (tip) {
-          setTimeout(function() {
-            wx.hideLoading()
-          }, timeout)
+
+          wx.hideLoading()
+          // setTimeout(function() {
+          //   wx.hideLoading()
+          // }, timeout)
         }
       }
     })

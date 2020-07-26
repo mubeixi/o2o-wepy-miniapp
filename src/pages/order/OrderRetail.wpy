@@ -73,13 +73,15 @@
         <span class="c9">预约配送</span>
         <span class="c7">需{{item.city_express_appoint_time_desc}}</span>
       </div>
-      <div class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between"
-           v-if="item.isLocal && (item.Order_Status==3 || item.dadaFail)">
+      <div class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between" v-if="item.isLocal && (item.Order_Status==3 || item.dadaFail)">
         <div v-if="item.Order_Status==3" class="item-btn c6 danger-btn m-r-10" @click="cancelLocalSend(item.Order_ID)">
           取消配送
         </div>
         <div v-if="item.dadaFail" class="item-btn c6 danger-btn" @click="bindLocalSendFail(item)">
           投递异常
+        </div>
+        <div class="item-btn c6 primary-btn" @click="goLogisticsByLocal(item)">
+          配送进度
         </div>
       </div>
       <div class="item-bottom p-l-15 p-r-15 m-t-15 fz-14 flex flex-vertical-center flex-justify-between"
@@ -153,7 +155,7 @@
     getOrderNum,
     systemRejectOrder
   } from '../../api/order'
-  import { error, hideLoading, showLoading, toast } from '../../common/fun'
+  import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
   import { confirm } from '../../common/helper'
   import { Exception } from '../../common/Exception'
 
@@ -222,6 +224,17 @@
       this.getOrderIndex()
     },
     methods: {
+      goLogisticsByLocal (item) {
+        // 处理物流名称
+        let express = {}
+        if (typeof item.Order_Shipping === 'object') {
+          express = item.Order_Shipping.Express
+        } else {
+          express = JSON.parse(item.Order_Shipping).Express
+        }
+        console.log(express)
+        linkTo('/pages/order/logisticsByLocation?order_id=' + item.Order_ID)
+      },
       async getOrderIndex() {
         let arr = await getOrderNum({}, { onlyData: true }).catch(e => {
           error(e.msg || '获取订单角标错误')
@@ -547,6 +560,11 @@
 
   .danger-btn {
     background-color: $fun-red-color;
+    color: #fff;
+  }
+
+  .primary-btn {
+    background-color: $fun-primary-color;
     color: #fff;
   }
 

@@ -410,7 +410,7 @@
       <div class="h20" style="padding: #f8f8f8;"></div>
     </scroll-view>
 
-    <modal ref="descModel" positions="top" radius="12rpx">
+    <modal ref="descModel" positions="center" radius="12rpx">
       <div class="p-20 desc-wrap">
             <textarea
               class="bor p-10 desc-content"
@@ -1675,9 +1675,9 @@
             for (let item of checkList) {
               if (item.name === 'express') {
                 lastCheckList.push(item)
-              } else if (item.name === 'city_express' && this._default.arrive_get) {
+              } else if (item.name === 'city_express' && this._default.one_hour_send_switch) {
                 lastCheckList.push(item)
-              } else if (item.name === 'self_get' && this._default.one_hour_send_switch) {
+              } else if (item.name === 'self_get' && this._default.arrive_get) {
                 lastCheckList.push(item)
               }
             }

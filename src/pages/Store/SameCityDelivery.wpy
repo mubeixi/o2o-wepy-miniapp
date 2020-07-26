@@ -269,6 +269,7 @@
   import pageMixin from '../../mixins'
   import { cityExpressProvider, getBizInfo, getCityExpressConfig, opCityExpressConfig } from '../../api/store'
   import { hideLoading, linkTo, showLoading } from '../../common/fun'
+  import { Exception } from '@/common/Exception'
 
   wepy.page({
     store,
@@ -314,16 +315,16 @@
           } else {
             objData.status = 0
           }
+          hideLoading()
         }).catch(e => {
+          hideLoading()
           if (boo) {
             objData.status = 0
           } else {
             objData.status = 1
           }
+          Exception.handle(e)
         })
-        setTimeout(function() {
-          hideLoading()
-        }, 1500)
 
         // this.initCityExpress()
       },
