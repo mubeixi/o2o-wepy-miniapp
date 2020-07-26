@@ -394,7 +394,7 @@
   import { getDomain, ls, validateFun } from '../../common/helper'
   import { error } from '../../common/fun'
   import { bizRegSms, getBizInfo, opBizInfo } from '../../api/store'
-  import { bizLogin } from '../../api/system'
+  import { bizLogin, bizLoginLog } from '../../api/system'
   import { regPhone } from '../../common/regs'
   import wxPromisify from '../../common/promisify'
   import IM from '../../common/Im/Im'
@@ -689,6 +689,12 @@
         ls.set('biz_id', biz_id)
         ls.set('status', status)
         this.$store.dispatch('setUserInfo', userData)
+
+        bizLoginLog().then(res => {
+
+        }).catch(e => {
+          console.log(e, '商家登录日志')
+        })
 
         // 新增全局监听
         if (!ls.get('listenStatus')) {

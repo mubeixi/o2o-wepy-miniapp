@@ -14,6 +14,9 @@ export const initInfo = (param, options) => {
     })
   })
 }
+// 商家登录日志
+export const bizLoginLog = (param, options) => fetch({ act: 'bizLoginLog', param, options })
+
 // 用户登录
 export const bizLogin = (param, options) => fetch({ act: 'bizLogin', param, options })
 
