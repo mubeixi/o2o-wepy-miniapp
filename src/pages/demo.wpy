@@ -3,13 +3,16 @@
 </style>
 <template>
   <div class="page-wrap">
-    <layout-tree :treeData="treeData" :confsprops="defaultProps" @node-click="handleNodeClick"></layout-tree>
+    <layout-tree ref="refTree1" :checkDirectly="true" :treeData="treeData" :showCheckbox="true" :label="defaultProps.label" :childrenKey="defaultProps.children" @node-click="handleNodeClick"></layout-tree>
   </div>
 </template>
 <script>
   import wepy from '@wepy/core'
   import store from '../store'
   import pageMixin from '../mixins'
+  import { getCityList } from '@/api/store'
+  import { modal } from '@/common/fun'
+  import { Exception } from '@/common/Exception'
 
   const mockData = [
     {
@@ -55,6 +58,8 @@
     data: {
       treeData: mockData,
       defaultProps: {
+        // children: '_child',
+        // label: 'area_name',
         children: 'children',
         label: 'label'
       }
@@ -62,7 +67,8 @@
     computed: {},
     methods: {
       async _init_func() {
-
+        //this.treeData = await getCityList({ 'deep': 2 }).then(res => res.data).catch(err => { Exception.handle(Error(err.msg || '初始化地区数据失败')) })
+        // this.$refs.refTree1._init_func(this.treeData)
       },
       handleNodeClick(data) {
         console.log(data)

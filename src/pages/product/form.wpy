@@ -505,14 +505,16 @@
     <popup-layer ref="systemCatePop" title="平台分类">
       <div @touchmove.stop.prevent>
         <scroll-view scroll-y v-if="systemCateReady && ProductCateList.length>0" style="height: 50vh;">
+          <!--只需要选中一个子级，父级就会选中-->
           <fun-tree
             ele-id="prodSystemCate"
             @done="setSystemCate"
             :has="systemCateHas"
             ref="systemCateTree"
             :conf="systemCateConf"
+            :auto-select-parent="true"
             :show-checkbox="true"
-            :check-only-leaf="true"
+            :check-only-leaf="false"
             :tree-data="ProductCateList"
             nodeKey="Category_ID"
           >

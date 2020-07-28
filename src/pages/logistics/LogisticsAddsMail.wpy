@@ -50,7 +50,7 @@
       为指定区域设置运费
     </div>
 
-    <city @onConfirm="selectValue" :has.sync="hasValue" deep="2" ref="cityPopup"></city>
+    <city @onConfirm="selectValue" :idx="ind" :has.sync="hasValue" deep="2" ref="cityPopup"></city>
 
     <!--占住底部的位置-->
     <div class="safearea-box fixed bgwhite"></div>
@@ -67,7 +67,7 @@
   import wepy from '@wepy/core'
   import store from '../../store'
   import pageMixin from '../../mixins'
-  import { getString, ls } from '../../common/helper'
+  import { getArrColumn, getString, ls } from '../../common/helper'
   import eventHub from '../../common/eventHub'
 
   wepy.page({
@@ -78,6 +78,7 @@
       temp_id: '',
       editData: [{ areas: '', areas_desc: '', designated: '0', prefrrendial_qty: '', prefrrendial_money: '' }],
       // showSelect: false,
+      hasAllList:[],
       hasValue: [],
       designated: '0',
       preferentialMoney: '',
@@ -111,7 +112,7 @@
         this.editData[index].designated = e.$wx.detail.value
       },
       edit(ind) {
-        this.hasValue = this.editData[this.ind].areas_desc.split(',')
+        this.hasValue = this.hasAllList.hasOwnProperty(ind) ? this.hasAllList[ind] : []
         this.ind = ind
         // this.showSelect = true
         this.$refs.cityPopup.open()
@@ -122,6 +123,7 @@
       },
       selectValue(value) {
         this.close()
+        this.$set(this.hasAllList, this.ind, getArrColumn(value, 'area_id'))
         this.editData[this.ind].areas_desc = getString(value, 'area_name', ',')
         this.editData[this.ind].areas = getString(value, 'area_code', ',')
         console.log(value)

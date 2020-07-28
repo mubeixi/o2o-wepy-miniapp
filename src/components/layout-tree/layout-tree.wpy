@@ -1,351 +1,236 @@
 <template>
-  <div
-    class="el-tree"
-    :class="{
-      'el-tree--highlight-current': highlightCurrent,
-      'is-dragging': !!dragState.draggingNode,
-      'is-drop-not-allow': !dragState.allowDrop,
-      'is-drop-inner': dragState.dropType === 'inner'
-    }"
-    role="tree"
-  >
-<!--    <tree-node-->
-<!--      v-for="child in root.childNodes"-->
-<!--      :node="child"-->
-<!--      :confsprops="confsprops"-->
-<!--      :render-after-expand="renderAfterExpand"-->
-<!--      :show-checkbox="showCheckbox"-->
-<!--      :key="getNodeKey(child)"-->
-<!--      :render-content="renderContent"-->
-<!--      @node-expand="handleNodeExpand">-->
-<!--    </tree-node>-->
-    <div class="el-tree__empty-block" v-if="isEmpty">
-      <span class="el-tree__empty-text">{{ emptyText }}</span>
-    </div>
-    <div
-      v-show="dragState.showDropIndicator"
-      class="el-tree__drop-indicator"
-      ref="dropIndicator">
-    </div>
+  <div :class="prefixCls" v-if="treeReady">
+    <tree-node
+      v-for="(item, i) in stateTree"
+      :key="i"
+      :child-index="i"
+      :node-data="item"
+      :tree-ele-id="treeEleId"
+      visible
+      :label="label"
+      :multiple="multiple"
+      :show-checkbox="showCheckbox"
+      :children-key="childrenKey">
+    </tree-node>
+    <div :class="[prefixCls + '-empty']" v-if="!stateTree.length">{{ localeEmptyText }}</div>
   </div>
+
 </template>
 <script>
-  import TreeStore from './model/tree-store'
-  import { findNearestComponent, getNodeKey } from './model/util'
   import wepy from '@wepy/core'
   import { componentMixins } from '@/mixins'
-  import { objTranslate } from '@/common/helper'
-  const addClass = () => {}
-  const removeClass = () => {}
+  import { ls } from '@/common/helper'
+  import eventHub from '@/common/eventHub'
+  import emitter from '@/mixins/emitter'
+  const moment = require('moment')
+  const randTreeEleName = () => {
+    return 'tree' + parseInt(Math.random() * 100) + moment().unix()
+  }
+  const prefixCls = 'ivu-tree'
   wepy.component({
-    mixins: [componentMixins],
+    name: 'Tree',
+    mixins: [componentMixins, emitter],
     data: {
-      store: null,
-      root: null,
-      currentNode: null,
-      treeItems: null,
-      checkboxItems: [],
-      dragState: {
-        showDropIndicator: false,
-        draggingNode: null,
-        dropNode: null,
-        allowDrop: true
-      }
+      treeReady: false,
+      prefixCls: prefixCls,
+      stateTree: [],
+      flatState: []
     },
     props: {
-      treeData: {
-        type: Array
-      },
-      emptyText: {
+
+      treeEleId: {
         type: String,
+        default: randTreeEleName()
+      },
+      treeData: {
+        type: Array,
         default() {
-          return '这是一棵空树'
+          return []
         }
       },
-      renderAfterExpand: {
-        type: Boolean,
-        default: true
-      },
-      nodeKey: String,
-      checkStrictly: Boolean,
-      defaultExpandAll: Boolean,
-      expandOnClickNode: {
-        type: Boolean,
-        default: true
-      },
-      checkOnClickNode: Boolean,
-      checkDescendants: {
+      multiple: {
         type: Boolean,
         default: false
       },
-      autoExpandParent: {
-        type: Boolean,
-        default: true
-      },
-      defaultCheckedKeys: Array,
-      defaultExpandedKeys: Array,
-      currentNodeKey: [String, Number],
-      renderContent: Function,
       showCheckbox: {
         type: Boolean,
         default: false
       },
-      draggable: {
+      checkStrictly: {
         type: Boolean,
         default: false
       },
-      allowDrag: Function,
-      allowDrop: Function,
-      confsprops: {
-        default() {
-          return {
-            children: 'children',
-            label: 'label',
-            disabled: 'disabled'
-          }
-        }
-      },
-      lazy: {
+      // 当开启 showCheckbox 时，如果开启 checkDirectly，select 将强制转为 check 事件
+      checkDirectly: {
         type: Boolean,
         default: false
       },
-      highlightCurrent: Boolean,
-      load: Function,
-      filterNodeMethod: Function,
-      accordion: Boolean,
-      indent: {
-        type: Number,
-        default: 18
+      emptyText: {
+        type: String
       },
-      iconClass: String
-    },
-
-    computed: {
-      children: {
-        set(value) {
-          this.treeData = value
-        },
-        get() {
-          return this.treeData
-        }
+      childrenKey: {
+        type: String,
+        default: 'children'
       },
-
-      treeItemArray() {
-        if (!this.treeItems) return []
-        return Array.prototype.slice.call(this.treeItems)
+      label: {
+        type: String,
+        default: 'title'
       },
-
-      isEmpty() {
-        if (!this.root) return true
-        const { childNodes } = this.root
-        return !childNodes || childNodes.length === 0 || childNodes.every(({ visible }) => !visible)
+      loadData: {
+        type: Function
+      },
+      render: {
+        type: Function
       }
     },
-
     watch: {
-      defaultCheckedKeys(newVal) {
-        this.store.setDefaultCheckedKey(newVal)
-      },
+      stateTree: {
+        deep: true,
+        handler(val, oldval) {
 
-      defaultExpandedKeys(newVal) {
-        this.store.defaultExpandedKeys = newVal
-        this.store.setDefaultExpandedKeys(newVal)
-      },
+        }
 
+      },
       treeData: {
         deep: true,
-        immediate: true,
-        handler(newVal) {
-          if (Array.isArray(newVal) && newVal.length > 0) {
-            //this.store && this.store.compSetData(newVal)
-            !this.store && this._init_func(newVal)
-          }
+        handler(val) {
+          if (!val) return
+          this._init_func()
         }
-      },
-
-      checkboxItems(val) {
-        Array.prototype.forEach.call(val, (checkbox) => {
-          checkbox.setAttribute('tabindex', -1)
-        })
-      },
-
-      checkStrictly(newVal) {
-        this.store.checkStrictly = newVal
+      }
+    },
+    computed: {
+      localeEmptyText() {
+        if (typeof this.emptyText === 'undefined') {
+          return 'i.tree.emptyText'
+        } else {
+          return this.emptyText
+        }
       }
     },
     methods: {
-      filter(value) {
-        if (!this.filterNodeMethod) throw new Error('[Tree] filterNodeMethod is required when filter')
-        this.store.filter(value)
-      },
+      async _init_func() {
+        this.stateTree = this.treeData
+        this.flatState = this.compileFlatState()
+        this.rebuildTree()
 
-      getNodeKey(node) {
-        return getNodeKey(this.nodeKey, node.data)
-      },
-
-      getNodePath(data) {
-        if (!this.nodeKey) throw new Error('[Tree] nodeKey is required in getNodePath')
-        const node = this.store.getNode(data)
-        if (!node) return []
-        const path = [node.data]
-        let parent = node.parent
-        while (parent && parent !== this.root) {
-          path.push(parent.data)
-          parent = parent.parent
+        eventHub[this.treeEleId] = {
+          //stateTree: this.stateTree, // props居然不能实时传递，要害死人啊
+          showCheckbox: this.showCheckbox,
+          checkDirectly: this.checkDirectly,
+          label: this.label
         }
-        return path.reverse()
+        console.log('33333333333')
+        this.treeReady = true
       },
+      compileFlatState() { // so we have always a relation parent/children of each node
+        let keyCounter = 0
+        let childrenKey = this.childrenKey
+        const flatTree = []
 
-      getCheckedNodes(leafOnly, includeHalfChecked) {
-        return this.store.getCheckedNodes(leafOnly, includeHalfChecked)
-      },
+        function flattenChildren(node, parent) {
+          node.nodeKey = keyCounter++
+          flatTree[node.nodeKey] = { node: node, nodeKey: node.nodeKey}
+          if (typeof parent !== 'undefined') {
+            flatTree[node.nodeKey].parent = parent.nodeKey
+            flatTree[parent.nodeKey][childrenKey].push(node.nodeKey)
+          }
 
-      getCheckedKeys(leafOnly) {
-        return this.store.getCheckedKeys(leafOnly)
-      },
+          if (node[childrenKey]) {
+            flatTree[node.nodeKey][childrenKey] = []
+            node[childrenKey].forEach(child => flattenChildren(child, node))
+          }
+        }
 
-      getCurrentNode() {
-        const currentNode = this.store.getCurrentNode()
-        return currentNode ? currentNode.data : null
-      },
-
-      getCurrentKey() {
-        if (!this.nodeKey) throw new Error('[Tree] nodeKey is required in getCurrentKey')
-        const currentNode = this.getCurrentNode()
-        return currentNode ? currentNode[this.nodeKey] : null
-      },
-
-      setCheckedNodes(nodes, leafOnly) {
-        if (!this.nodeKey) throw new Error('[Tree] nodeKey is required in setCheckedNodes')
-        this.store.setCheckedNodes(nodes, leafOnly)
-      },
-
-      setCheckedKeys(keys, leafOnly) {
-        if (!this.nodeKey) throw new Error('[Tree] nodeKey is required in setCheckedKeys')
-        this.store.setCheckedKeys(keys, leafOnly)
-      },
-
-      setChecked(data, checked, deep) {
-        this.store.setChecked(data, checked, deep)
-      },
-
-      getHalfCheckedNodes() {
-        return this.store.getHalfCheckedNodes()
-      },
-
-      getHalfCheckedKeys() {
-        return this.store.getHalfCheckedKeys()
-      },
-
-      setCurrentNode(node) {
-        if (!this.nodeKey) throw new Error('[Tree] nodeKey is required in setCurrentNode')
-        this.store.setUserCurrentNode(node)
-      },
-
-      setCurrentKey(key) {
-        if (!this.nodeKey) throw new Error('[Tree] nodeKey is required in setCurrentKey')
-        this.store.setCurrentNodeKey(key)
-      },
-
-      getNode(data) {
-        return this.store.getNode(data)
-      },
-
-      remove(data) {
-        this.store.remove(data)
-      },
-
-      append(data, parentNode) {
-        this.store.append(data, parentNode)
-      },
-
-      insertBefore(data, refNode) {
-        this.store.insertBefore(data, refNode)
-      },
-
-      insertAfter(data, refNode) {
-        this.store.insertAfter(data, refNode)
-      },
-
-      handleNodeExpand(nodeData, node, instance) {
-        this.broadcast('ElTreeNode', 'tree-node-expand', node)
-        this.$emit('node-expand', nodeData, node, instance)
-      },
-      _init_func(treeData) {
-        console.log(JSON.stringify(treeData))
-        this.isTree = true
-
-        this.store = new TreeStore({
-          key: this.nodeKey,
-          data: treeData,
-          lazy: this.lazy,
-          props: this.confsprops,
-          load: this.load,
-          currentNodeKey: this.currentNodeKey,
-          checkStrictly: this.checkStrictly,
-          checkDescendants: this.checkDescendants,
-          defaultCheckedKeys: this.defaultCheckedKeys,
-          defaultExpandedKeys: this.defaultExpandedKeys,
-          autoExpandParent: this.autoExpandParent,
-          defaultExpandAll: this.defaultExpandAll,
-          filterNodeMethod: this.filterNodeMethod
+        this.stateTree.forEach(rootNode => {
+          flattenChildren(rootNode)
         })
+        ls.set('flatTree', flatTree)
+        return flatTree
+      },
+      updateTreeUp(nodeKey) {
+        const parentKey = this.flatState[nodeKey].parent
+        if (typeof parentKey === 'undefined' || this.checkStrictly) return
 
-        this.root = this.store.root
-        console.log(this.store)
+        const node = this.flatState[nodeKey].node
+        const parent = this.flatState[parentKey].node
+        if (node.checked === parent.checked && node.indeterminate === parent.indeterminate) return // no need to update upwards
+        if (node.checked === true) {
+          this.$set(parent, 'checked', parent[this.childrenKey].every(node => node.checked))
+          this.$set(parent, 'indeterminate', !parent.checked)
+        } else {
+          this.$set(parent, 'checked', false)
+          this.$set(parent, 'indeterminate', parent[this.childrenKey].some(node => node.checked || node.indeterminate))
+        }
+        this.updateTreeUp(parentKey)
+      },
+      rebuildTree() { // only called when `data` prop changes
+        const checkedNodes = this.getCheckedNodes()
+        checkedNodes.forEach(node => {
+          this.updateTreeDown(node, { checked: true })
+          // propagate upwards
+          const parentKey = this.flatState[node.nodeKey].parent
+          if (!parentKey && parentKey !== 0) return
+          const parent = this.flatState[parentKey].node
+          const childHasCheckSetter = typeof node.checked !== 'undefined' && node.checked
+          if (childHasCheckSetter && parent.checked !== node.checked) {
+            this.updateTreeUp(node.nodeKey) // update tree upwards
+          }
+        })
       },
 
-      updateKeyChildren(key, data) {
-        if (!this.nodeKey) throw new Error('[Tree] nodeKey is required in updateKeyChild')
-        this.store.updateChildren(key, data)
+      getSelectedNodes() {
+        /* public API */
+        return this.flatState.filter(obj => obj.node.selected).map(obj => obj.node)
       },
+      getCheckedNodes() {
+        /* public API */
+        return this.flatState.filter(obj => obj.node.checked).map(obj => obj.node)
+      },
+      getCheckedAndIndeterminateNodes() {
+        /* public API */
+        return this.flatState.filter(obj => (obj.node.checked || obj.node.indeterminate)).map(obj => obj.node)
+      },
+      updateTreeDown(node, changes = {}) {
+        if (this.checkStrictly) return
+        for (let key in changes) {
+          this.$set(node, key, changes[key])
+        }
+        if (node[this.childrenKey]) {
+          node[this.childrenKey].forEach(child => {
+            this.updateTreeDown(child, changes)
+          })
+        }
+      },
+      handleSelect(nodeKey) {
+        const node = this.flatState[nodeKey].node
+        if (!this.multiple) { // reset previously selected node
+          const currentSelectedKey = this.flatState.findIndex(obj => obj.node.selected)
+          if (currentSelectedKey >= 0 && currentSelectedKey !== nodeKey) this.$set(this.flatState[currentSelectedKey].node, 'selected', false)
+        }
+        this.$set(node, 'selected', !node.selected)
 
-      initTabIndex() {
-        // this.treeItems = this.$el.querySelectorAll('.is-focusable[role=treeitem]')
-        // this.checkboxItems = this.$el.querySelectorAll('input[type=checkbox]')
-        // const checkedItem = this.$el.querySelectorAll('.is-checked[role=treeitem]')
-        // if (checkedItem.length) {
-        //   checkedItem[0].setAttribute('tabindex', 0)
-        //   return
-        // }
-        // this.treeItems[0] && this.treeItems[0].setAttribute('tabindex', 0)
+        this.$emit('on-select-change', this.getSelectedNodes(), node)
+      },
+      handleCheck({ checked, nodeKey }) {
+        const node = this.flatState[nodeKey].node
+        this.$set(node, 'checked', checked)
+        this.$set(node, 'indeterminate', false)
+        console.log(this.flatState[nodeKey])
+
+        this.updateTreeUp(nodeKey) // propagate up
+        this.updateTreeDown(node, { checked, indeterminate: false }) // reset `indeterminate` when going down
+
+        this.$emit('on-check-change', this.getCheckedNodes(), node)
       }
-
-      // handleKeydown(ev) {
-      //   const currentItem = ev.target
-      //   if (currentItem.className.indexOf('el-tree-node') === -1) return
-      //   const keyCode = ev.keyCode
-      //   this.treeItems = this.$el.querySelectorAll('.is-focusable[role=treeitem]')
-      //   const currentIndex = this.treeItemArray.indexOf(currentItem)
-      //   let nextIndex
-      //   if ([38, 40].indexOf(keyCode) > -1) { // up、down
-      //     ev.preventDefault()
-      //     if (keyCode === 38) { // up
-      //       nextIndex = currentIndex !== 0 ? currentIndex - 1 : 0
-      //     } else {
-      //       nextIndex = (currentIndex < this.treeItemArray.length - 1) ? currentIndex + 1 : 0
-      //     }
-      //     this.treeItemArray[nextIndex].focus() // 选中
-      //   }
-      //   if ([37, 39].indexOf(keyCode) > -1) { // left、right 展开
-      //     ev.preventDefault()
-      //     currentItem.click() // 选中
-      //   }
-      //   const hasInput = currentItem.querySelector('[type="checkbox"]')
-      //   if ([13, 32].indexOf(keyCode) > -1 && hasInput) { // space enter选中checkbox
-      //     ev.preventDefault()
-      //     hasInput.click()
-      //   }
-      // }
     },
+    created() {
 
-    mounted() {
-      // this.initTabIndex()
-      // this.$el.addEventListener('keydown', this.handleKeydown)
     },
-    updated() {
-      // this.treeItems = this.$el.querySelectorAll('[role=treeitem]')
-      // this.checkboxItems = this.$el.querySelectorAll('input[type=checkbox]')
+    ready() {
+      this.$on('on-check', this.handleCheck)
+      this.$on('on-selected', this.handleSelect)
+      this.$on('toggle-expand', node => this.$emit('on-toggle-expand', node))
     }
 
   })
@@ -354,9 +239,9 @@
 
 </style>
 <config>
-{
+  {
   "usingComponents": {
-    "tree-node": "~@/components/layout-tree/layout-tree-node"
+  "tree-node": "~@/components/layout-tree/layout-tree-node"
   }
-}
+  }
 </config>
