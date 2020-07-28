@@ -15,6 +15,7 @@
       <image class="priview-img" :src="priviewImg" mode="widthFix" lazy-load></image>
       <div class="action p-b-safe-area">
         <div class="cancel-btn action-btn" @click="cancelPreview">取消</div>
+        <div class="priview-btn action-btn" @click="toClientPreview">预览</div>
         <div class="confirm-btn action-btn" @click="confirmUse">使用</div>
       </div>
       <!--<div class="mask p-b-safe-area"></div>-->
@@ -28,8 +29,8 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { getAvailibleSkin, getBizInfo, opBizInfo } from '../../api/store'
-  import { error, toast } from '../../common/fun'
-  import { confirm } from '../../common/helper'
+  import { error, modal, toast } from '../../common/fun'
+  import { confirm, ls } from '../../common/helper'
 
   wepy.page({
     store,
@@ -37,16 +38,51 @@
     data: {
       showPriviewBox: false,
       priviewImg: '',
-      priviewId: '',
+      previewId: '',
       storeData: [],
       skin_id: -1
     },
     methods: {
+      async toClientPreview() {
+        const bizId = ls.get('biz_id')
+        const skin_id = this.previewId
+        const users_id = ls.get('users_id')
+        if (!users_id) {
+          error('users_id获取失败')
+          return
+        }
+        var url = `pages/store/index?users_id=${users_id}&biz_id=${bizId}&origin=merchat&action=preview&skin_id=${skin_id}`
+        console.log(url)
+        const initInfo = await this.$store.dispatch('getInitInfo')
+        const {client_lp_appid} = initInfo
+        if (!client_lp_appid) {
+          error('平台暂未配置appid')
+          return
+        }
+        wx.navigateToMiniProgram({
+          appId: client_lp_appid,
+          path: url,
+          extraData: {
+
+          },
+          envVersion: 'release',
+          fail (err) {
+            console.log(`跳转失败${err.errMsg}`)
+            modal({
+              content: `跳转失败${err.errMsg}`,
+              title: '打开小程序失败'
+            })
+          },
+          success (res) {
+            // 打开成功
+          }
+        })
+      },
       confirmUse() {
         confirm({ title: '提示', content: '确定要选择该模板吗?', confirmText: '确定', cancelText: '取消' }).then(() => {
-          opBizInfo({ skin_id: this.priviewId }).then(res => {
+          opBizInfo({ skin_id: this.previewId }).then(res => {
             toast('修改成功')
-            this.skin_id = this.priviewId
+            this.skin_id = this.previewId
             this.showPriviewBox = false
             // setTimeout(function() {
             //   wx.navigateBack()
@@ -63,7 +99,7 @@
       },
       checkId(item) {
         this.priviewImg = item.preview_url
-        this.priviewId = item.id
+        this.previewId = item.id
         this.showPriviewBox = true
       },
       async init() {
@@ -113,7 +149,10 @@
       padding: 0 70rpx;
       .action-btn{
         &.cancel-btn{
-          background: #777;
+          background: $fun-red-color;
+        }
+        &.priview-btn{
+          background: $fun-primary-color;
         }
 
         background: $fun-blue-color;

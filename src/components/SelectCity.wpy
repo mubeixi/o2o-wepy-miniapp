@@ -17,8 +17,8 @@
           :tree-data="treeData"
           :plain-array-list="plainArrayList"
           :show-checkbox="true"
-          :check-only-leaf="true"
-          nodeKey="area_name"
+          :check-only-leaf="false"
+          nodeKey="area_id"
         >
         </fun-tree>
       </scroll-view>

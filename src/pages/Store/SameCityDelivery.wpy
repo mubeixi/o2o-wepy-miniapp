@@ -37,7 +37,7 @@
         </div>
         <div class="store-titles">
 
-          <block v-if="dada.provider_status===2||meituan.provider_status===2||fengniao.provider_status===2">
+          <block v-if="dada.provider_status===2||meituan.provider_status===2||fengniao.provider_status===2||uu.provider_status===2">
             已配置
           </block>
           <icon type="iconarrowleft" size="16" color="#999"></icon>
@@ -165,6 +165,37 @@
             </div>
           </div>
         </div>
+        <div class="list-item flex flex-justify-between" v-if="(provider.uu)===1">
+          <div class="list-item-q">
+            UU跑腿
+          </div>
+          <div class="flex flex1 flex-vertical-center flex-justify-between">
+            <div class="font-wzw">
+              <div style="color: #2ABB23" v-if="uu.provider_status==2">
+                已开通
+              </div>
+              <div v-else-if="uu.provider_status==1">
+                审核中
+              </div>
+              <!--                    <div v-else-if="dada.provider_status==-1">-->
+              <!--                      未开通-->
+              <!--                    </div>-->
+              <div class="font-wzw" v-else-if="uu.provider_status==-1">
+                <div>
+                  已驳回
+                </div>
+                <div class="bohui">
+                  {{uu.reject_reason}}
+                </div>
+              </div>
+
+            </div>
+            <div>
+              <switch :checked="uu.status===1" bindchange="switch1Changes('uu',$event,uu)"
+                      style="transform: scale(.8)"></switch>
+            </div>
+          </div>
+        </div>
         <div class="list-item flex flex-justify-between" v-if="(provider.meituan)===1">
           <div class="list-item-q">
             美团
@@ -238,6 +269,7 @@
   import pageMixin from '../../mixins'
   import { cityExpressProvider, getBizInfo, getCityExpressConfig, opCityExpressConfig } from '../../api/store'
   import { hideLoading, linkTo, showLoading } from '../../common/fun'
+  import { Exception } from '@/common/Exception'
 
   wepy.page({
     store,
@@ -256,6 +288,7 @@
       dada: { status: 0 },
       meituan: {},
       fengniao: {},
+      uu: {status: 0},
       cityData: {},
       open: 0
     },
@@ -282,16 +315,16 @@
           } else {
             objData.status = 0
           }
+          hideLoading()
         }).catch(e => {
+          hideLoading()
           if (boo) {
             objData.status = 0
           } else {
             objData.status = 1
           }
+          Exception.handle(e)
         })
-        setTimeout(function() {
-          hideLoading()
-        },1500)
 
         // this.initCityExpress()
       },
@@ -384,6 +417,9 @@
             }
             if (item.provider === 'fengniao') {
               this.fengniao = item
+            }
+            if (item.provider === 'uu') {
+              this.uu = item
             }
           }
 

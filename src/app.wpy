@@ -31,7 +31,7 @@
     },
 
     onLaunch() {
-      var obj = wx.getLaunchOptionsSync()
+      let obj = wx.getLaunchOptionsSync()
       if (obj.query.users_id) {
         ls.set('users_id', obj.query.users_id)
       }
@@ -183,6 +183,7 @@
   "pages/order/OrderRetailSend",
   "pages/order/CheckChannel",
   "pages/order/CheckByCode",
+  "pages/order/logisticsByLocation",
   "pages/order/CheckOrderInfo",
   "pages/order/SettlementList",
   "pages/order/Settlement",

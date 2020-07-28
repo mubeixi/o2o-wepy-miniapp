@@ -28,7 +28,6 @@
             组合计算
           </div>
         </label>
-
       </radio-group>
       <button class="btn btn-primary m-t-35" @click="saveData">确认</button>
     </popup-layer>

@@ -383,7 +383,8 @@
   /*商品列表 start*/
   .product-list {
     height: 800rpx;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
   }
 
   .product-item {
