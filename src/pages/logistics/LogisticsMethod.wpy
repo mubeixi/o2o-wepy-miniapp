@@ -64,7 +64,7 @@
     <div class="h20"></div>
 
 
-    <city @onConfirm="selectValue" :idx="ind" :has="hasValue" deep="2" ref="cityPopup"></city>
+    <city @onConfirm="selectValue" :idx="ind" :has="hasValue" :deep="2" ref="cityPopup"></city>
 
 
     <!--占住底部的位置-->
@@ -155,7 +155,7 @@
       selectValue(value) {
         // this.showSelect = false
 
-        this.$set(this.hasAllList, this.ind, getArrColumn(value, 'area_name'))
+        this.$set(this.hasAllList, this.ind, getArrColumn(value, 'area_id'))
         this.close()
         this.special_content[this.ind].express_desc = getString(value, 'area_name', ',')
         this.special_content[this.ind].express_areas = getString(value, 'area_code', ',')

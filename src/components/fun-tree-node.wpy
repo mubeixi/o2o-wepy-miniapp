@@ -18,9 +18,9 @@
       <div v-for="(item, index) in children" :key="index" class="m-t-10">
         <fun-tree-node-child
           :ref="'item-item'+index"
-          @clear="bingClearFn"
           :single="single"
           :has="has"
+          :autoSelectParent="autoSelectParent"
           :indent="indent"
           :eid="eid"
           :nodeKey="nodeKey"
@@ -37,17 +37,24 @@
   import { TreeHub } from './TreeHub'
   import store from '../store'
   import { componentMixins } from '@/mixins'
+  import emitter from '@/mixins/emitter'
 
   wepy.component({
+    name: 'funTreeNode',
     options: {
       addGlobalClass: true
     },
-    mixins: [componentMixins],
+    mixins: [componentMixins, emitter],
     props: {
       checkOnlyLeaf: {
         type: Boolean,
         default: false
       },
+      autoSelectParent:{
+        type: Boolean,
+        default: false
+      },
+
       nodeKey: {
         type: String,
         require: true
@@ -88,7 +95,7 @@
     },
     data: {
       isCheck: false,
-      treeData: [],
+      // treeData: [],
       expanded: true
     },
     computed: {
@@ -138,38 +145,70 @@
       }
     },
     methods: {
+      // 刷新选择状态
+      flashFn() {
+        const checkList = TreeHub.getCHeckList(this.eid)
+        let isHas = false
+        for (var row of checkList) {
+          if (String(row[this.nodeKey]) === String(this.val[this.nodeKey])) {
+            isHas = true
+            break
+          }
+        }
+        this.isCheck = isHas
+        for (let i in this.$refs) {
+          this.$refs[i].flashFn()
+        }
+      },
       restCheck({ item, nodeKey }) {
         this.isCheck = item[nodeKey] === this.val[nodeKey]
         for (let i in this.$refs) {
           this.$refs[i].restCheck({ item, nodeKey })
         }
       },
-      bingClearFn({ item, nodeKey }) {
-        this.$emit('clear', { item, nodeKey })
+      updateTreeDown(node, changes = {}) {
+        if (this.checkOnlyLeaf) return
+        // 如果可以设置的话，那么批量设置下级子节点对应属性
+        TreeHub.updateTreeDown({eid: this.eid, item: node, nodeKey: this.nodeKey, changes})
+        this.dispatch('funTree', 'on-flash')
+      },
+      updateTreeUp(node, changes = {}) {
+        TreeHub.updateTreeUp({eid: this.eid, item: node, nodeKey: this.nodeKey, changes,autoSelectParent:this.autoSelectParent})
+        this.dispatch('funTree', 'on-flash')
       },
       clickFn(item) {
         if (!this.checkOnlyLeaf || this.isLeaf) {
           if (!item.hasOwnProperty(this.nodeKey)) {
             throw new Error('nodeKey参数有误')
           }
-          // console.log(this.isCheck)
+
+          // 单选的话，需要先清空其他的
+          if (this.single && !this.isCheck) {
+            this.isCheck = true
+            this.dispatch('funTree', 'on-clear', { item, nodeKey: this.nodeKey })
+            // this.$emit('clear', { item, nodeKey: this.nodeKey })
+            TreeHub.removeAllCheck(this.eid, this.nodeKey)
+            TreeHub.addCheck(this.eid, item, this.nodeKey)
+            return
+          }
+
+          var changes = {}
           this.isCheck = !this.isCheck
-          if (this.isCheck) {
-            // 单选的话，需要先清空其他的
-            if (this.single) {
-              this.$emit('clear', { item, nodeKey: this.nodeKey })
-              TreeHub.removeAllCheck(this.eid, this.nodeKey)
-            }
+          changes.check = this.isCheck
+          if (changes.check) {
             TreeHub.addCheck(this.eid, item, this.nodeKey)
           } else {
             TreeHub.removeCheck(this.eid, item, this.nodeKey)
           }
+
+          this.updateTreeDown(item, changes)
+          this.updateTreeUp(item, changes)
         }
       }
     },
     ready() {
       // this.treeData = ls.get(this.eid)
-      this.treeData = store.state.treeData
+      // this.treeData = store.state.treeData
     }
 
   })

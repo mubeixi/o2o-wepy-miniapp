@@ -1,73 +1,65 @@
+<style lang="scss">
+  .tree-node-wrap{
+    padding-left: 18px;
+    margin-bottom: 15px;
+    .tree-node-container{
+      margin: 8px 0;
+    }
+    .tree-node-arrow{
+      width: 18px;
+      display: inline-block;
+    }
+    .tree-node-title{
+      font-size: 14px;
+      &.tree-node-title-selected{
+        color: $fun-blue-color;
+      }
+    }
+  }
+
+  .ivu-tree-title{
+
+  }
+  .check-icon {
+    width: 18px;
+    height: 18px;
+    margin: 0 15px;
+  }
+</style>
 <template>
-  <div
-    class="el-tree-node"
-    @click.stop="handleClick"
-    @contextmenu="($event) => this.handleContextMenu($event)"
-    v-show="node.visible"
-    :class="{
-      'is-expanded': expanded,
-      'is-current': node.isCurrent,
-      'is-hidden': !node.visible,
-      'is-focusable': !node.disabled,
-      'is-checked': !node.disabled && node.checked
-    }"
-    role="treeitem"
-    tabindex="-1"
-    :aria-expanded="expanded"
-    :aria-disabled="node.disabled"
-    :aria-checked="node.checked"
-    :draggable="tree.draggable"
-    @dragstart.stop="handleDragStart"
-    @dragover.stop="handleDragOver"
-    @dragend.stop="handleDragEnd"
-    @drop.stop="handleDrop"
-    ref="node"
-  >
-    <div class="el-tree-node__content"
-         :style="{ 'padding-left': (node.level - 1) * tree.indent + 'px' }">
-      <span
-        @click.stop="handleExpandIconClick"
-        :class="[
-          { 'is-leaf': node.isLeaf, expanded: !node.isLeaf && expanded },
-          'el-tree-node__expand-icon',
-          tree.iconClass ? tree.iconClass : 'el-icon-caret-right'
-        ]"
-      >
-      </span>
-      <checkbox
-        v-if="showCheckbox"
-        v-model="node.checked"
-        :indeterminate="node.indeterminate"
-        :disabled="!!node.disabled"
-        @click.native.stop
-        @change="handleCheckChange"
-      >
-      </checkbox>
-      <span
-        v-if="node.loading"
-        class="el-tree-node__loading-icon el-icon-loading">
-      </span>
-      <!--<node-content :node="node"></node-content>-->
-      <span class="el-tree-node__label">{ node.label }</span>
-    </div>
-    <div>
-      <div
-        class="el-tree-node__children"
-        v-if="!renderAfterExpand || childNodeRendered"
-        v-show="expanded"
-        role="group"
-        :aria-expanded="expanded"
-      >
-        <node-child
-          :render-content="renderContent"
-          v-for="child in node.childNodes"
-          :render-after-expand="renderAfterExpand"
-          :show-checkbox="showCheckbox"
-          :key="getNodeKey(child)"
-          :node="child"
-          @node-expand="handleChildNodeExpand">
-        </node-child>
+  <div class="tree-node-wrap">
+    <div class="tree-node-container">
+      <div class="tree-node-arrow" :class="arrowClasses" @click="handleExpand">
+        <icon v-if="showArrow" :type="arrowType" color="#ddd" :custom="customArrowType" :size="arrowSize"></icon>
       </div>
+      <image @click.stop="handleCheck" v-if="showCheckbox" class="check-icon" :src="nodeData.checked?'/static/tree/fun-tree-check.png':'/static/tree/fun-tree.png'"></image>
+      <!--      <checkbox-->
+      <!--        v-if="showCheckbox"-->
+      <!--        :value="data.checked"-->
+      <!--        :indeterminate="data.indeterminate"-->
+      <!--        :disabled="data.disabled || data.disableCheckbox"-->
+      <!--        @click.native.prevent="handleCheck"></checkbox>-->
+
+      <!--      <Render v-if="data.render" :render="data.render" :data="data" :node="node"></Render>-->
+      <!--      <Render v-else-if="isParentRender" :render="parentRender" :data="data" :node="node"></Render>-->
+      <!--    :class="titleClasses"-->
+      <span class="tree-node-title" :class="{'tree-node-title-selected':nodeData.selected}" @click="handleSelect">{{ nodeData.checked }}{{ nodeData[label] }}</span>
+      <!--      :appear="appearByClickArrow"-->
+      <!--      -->
+      <block v-if="nodeData.expand">
+        <node-child
+          v-for="(item, i) in children"
+          :key="i"
+          :child-ndex="i"
+          :tree-ele-id="treeEleId"
+          :label="label"
+          :node-data="item"
+          :multiple="multiple"
+          :show-checkbox="showCheckbox"
+          :children-key="childrenKey">
+        </node-child>
+      </block>
+
     </div>
   </div>
 </template>
@@ -75,180 +67,241 @@
   import wepy from '@wepy/core'
   import { componentMixins } from '@/mixins'
 
-  import { getNodeKey } from './model/util'
+  const prefixCls = 'ivu-tree'
+
+  function findComponentUpward(context, componentName, componentNames) {
+    if (typeof componentName === 'string') {
+      componentNames = [componentName]
+    } else {
+      componentNames = componentName
+    }
+
+    console.log(context)
+    let parent = context.$parent
+    if (!parent) return false
+    console.log(parent)
+    let name = parent.$options.name
+    while (parent && (!name || componentNames.indexOf(name) < 0)) {
+      parent = parent.$parent
+      if (parent) name = parent.$options.name
+    }
+    return parent
+  }
+
+  import eventHub from '@/common/eventHub'
+  import emitter from '@/mixins/emitter'
 
   wepy.component({
-    mixins: [componentMixins],
+    name: 'TreeNode',
+    mixins: [componentMixins, emitter],
     props: {
-      node: {
+      classes: {
+        type: String,
+        default: `${prefixCls}-children`
+      },
+      childIndex: {
+        type: [String, Number]
+      },
+      treeEleId: {
+        type: String,
+        required: true
+      },
+      nodeData: {
+        type: Object,
         default() {
           return {}
         }
       },
-      confsprops: {},
-      renderContent: Function,
-      renderAfterExpand: {
+      multiple: {
         type: Boolean,
-        default: true
+        default: false
+      },
+      childrenKey: {
+        type: String,
+        default: 'children'
+      },
+      label: {
+        type: String,
+        default: 'title'
       },
       showCheckbox: {
+        type: Boolean,
+        default: false
+      },
+      appear: {
         type: Boolean,
         default: false
       }
     },
 
     components: {
-      // NodeContent: {
-      //   props: {
-      //     node: {
-      //       required: true
-      //     }
-      //   },
-      //   render(h) {
-      //     const parent = this.$parent
-      //     const tree = parent.tree
-      //     const node = this.node
-      //     const { data, store } = node
-      //     return (
-      //       parent.renderContent
-      //         ? parent.renderContent.call(parent._renderProxy, h, { _self: tree.$vnode.context, node, data, store })
-      //         : tree.$scopedSlots.default
-      //         ? tree.$scopedSlots.default({ node, data })
-      //         : <span class="el-tree-node__label">{ node.label }</span>
-      //     )
-      //   }
-      // }
+
     },
     data: {
-      tree: null,
-      expanded: false,
-      childNodeRendered: false,
-      oldChecked: null,
-      oldIndeterminate: null
+      TreeInstance: {},
+      prefixCls: prefixCls,
+      appearByClickArrow: false
     },
     watch: {
-      'node.indeterminate'(val) {
-        this.handleSelectChange(this.node.checked, val)
-      },
-      'node.checked'(val) {
-        this.handleSelectChange(val, this.node.indeterminate)
-      },
-      'node.expanded'(val) {
-        this.$nextTick(() => this.expanded = val)
-        if (val) {
-          this.childNodeRendered = true
+      nodeData: {
+        deep: true,
+        immediate: true,
+        handler(val) {
+          console.log('new nodeData is ', val)
         }
+      }
+    },
+    computed: {
+      // nodeData: {
+      //   set(value) {
+      //
+      //   },
+      //   get() {
+      //     // 迫于无奈啊
+      //     if (eventHub.hasOwnProperty((this.treeEleId)) && eventHub[this.treeEleId] && eventHub[this.treeEleId].stateTree[this.childIndex]) {
+      //       return eventHub[this.treeEleId].stateTree[this.childIndex]
+      //     } else {
+      //       return {}
+      //     }
+      //   }
+      // },
+      // classes() {
+      //   const attrName = `${prefixCls}-children`
+      //   return {
+      //     [attrName]: true
+      //   }
+      // },
+      selectedCls() {
+        return {
+          [`${prefixCls}-node-selected`]: this.nodeData.selected
+        }
+      },
+      arrowClasses() {
+        return {
+          [`${prefixCls}-arrow`]: true,
+          [`${prefixCls}-arrow-disabled`]: this.nodeData.disabled,
+          [`${prefixCls}-arrow-open`]: this.nodeData.expand
+        }
+      },
+      titleClasses() {
+        return {
+          [`${prefixCls}-title`]: true,
+          [`${prefixCls}-title-selected`]: this.nodeData.selected
+        }
+      },
+      showArrow() {
+        return !!(((this.nodeData[this.childrenKey] && this.nodeData[this.childrenKey].length) || ('loading' in this.nodeData && !this.nodeData.loading)))
+      },
+      showLoading() {
+        return 'loading' in this.nodeData && this.nodeData.loading
+      },
+      // isParentRender() {
+      //   const Tree = findComponentUpward(this, 'Tree')
+      //   return Tree && Tree.render
+      // },
+      // parentRender() {
+      //   const Tree = findComponentUpward(this, 'Tree')
+      //   if (Tree && Tree.render) {
+      //     return Tree.render
+      //   } else {
+      //     return null
+      //   }
+      // },
+      // node() {
+      //   const Tree = findComponentUpward(this, 'Tree')
+      //   console.log(Tree)
+      //   if (Tree) {
+      //     // 将所有的 node（即flatState）和当前 node 都传递
+      //     return [Tree.flatState, Tree.flatState.find(item => item.nodeKey === this.nodeData.nodeKey)]
+      //   } else {
+      //     return []
+      //   }
+      // },
+      children() {
+        return this.nodeData[this.childrenKey]
+      },
+      // 3.4.0, global setting customArrow 有值时，arrow 赋值空
+      arrowType() {
+        // iconarrow_down
+        let type = this.nodeData.expand ? 'iconarrow_down' : 'iconarrow_right'
+        return type
+      },
+      // 3.4.0, global setting
+      customArrowType() {
+        let type = ''
+
+        if (this.$IVIEW) {
+          if (this.$IVIEW.tree.customArrow) {
+            type = this.$IVIEW.tree.customArrow
+          }
+        }
+        return type
+      },
+      // 3.4.0, global setting
+      arrowSize() {
+        let size = 16
+        return size
       }
     },
     methods: {
-      getNodeKey(node) {
-        return getNodeKey(this.tree.nodeKey, node.data)
-      },
-      handleSelectChange(checked, indeterminate) {
-        if (this.oldChecked !== checked && this.oldIndeterminate !== indeterminate) {
-          this.tree.$emit('check-change', this.node.data, checked, indeterminate)
+      handleExpand() {
+        const item = this.nodeData
+        if (item.disabled) return
+
+        // Vue.js 2.6.9 对 transition 的 appear 进行了调整，导致 iView 初始化时无动画，加此方法来判断通过点击箭头展开时，加 appear，否则初始渲染时 appear 为 false
+        this.appearByClickArrow = true
+
+        console.log(item[this.childrenKey])
+        // async loading
+        if (item[this.childrenKey].length === 0) {
+          const tree = findComponentUpward(this, 'Tree')
+          if (tree && tree.loadData) {
+            this.$set(this.nodeData, 'loading', true)
+            tree.loadData(item, children => {
+              this.$set(this.nodeData, 'loading', false)
+              if (children.length) {
+                this.$set(this.nodeData, this.childrenKey, children)
+                this.$nextTick(() => this.handleExpand())
+              }
+            })
+            return
+          }
         }
-        this.oldChecked = checked
-        this.indeterminate = indeterminate
-      },
-      handleClick() {
-        const store = this.tree.store
-        store.setCurrentNode(this.node)
-        this.tree.$emit('current-change', store.currentNode ? store.currentNode.data : null, store.currentNode)
-        this.tree.currentNode = this
-        if (this.tree.expandOnClickNode) {
-          this.handleExpandIconClick()
+
+        if (item[this.childrenKey] && item[this.childrenKey].length) {
+          this.$set(this.nodeData, 'expand', !this.nodeData.expand)
+          this.dispatch('Tree', 'toggle-expand', this.nodeData)
         }
-        if (this.tree.checkOnClickNode && !this.node.disabled) {
-          this.handleCheckChange(null, {
-            target: { checked: !this.node.checked }
-          })
-        }
-        this.tree.$emit('node-click', this.node.data, this.node, this)
       },
-      handleContextMenu(event) {
-        if (this.tree._events['node-contextmenu'] && this.tree._events['node-contextmenu'].length > 0) {
-          event.stopPropagation()
-          event.preventDefault()
-        }
-        this.tree.$emit('node-contextmenu', event, this.node.data, this.node, this)
-      },
-      handleExpandIconClick() {
-        if (this.node.isLeaf) return
-        if (this.expanded) {
-          this.tree.$emit('node-collapse', this.node.data, this.node, this)
-          this.node.collapse()
+      handleSelect() {
+        if (this.nodeData.disabled) return
+
+        // 没有办法使用provide 和 inject
+        const TreeInstance = eventHub[this.treeEleId]
+        console.log(eventHub, this.treeEleId, TreeInstance)
+        if (TreeInstance.showCheckbox && TreeInstance.checkDirectly) {
+          this.handleCheck()
         } else {
-          this.node.expand()
-          this.$emit('node-expand', this.node.data, this.node, this)
+          this.dispatch('Tree', 'on-selected', this.nodeData.nodeKey)
         }
       },
-      handleCheckChange(value, ev) {
-        this.node.setChecked(ev.target.checked, !this.tree.checkStrictly)
-        this.$nextTick(() => {
-          const store = this.tree.store
-          this.tree.$emit('check', this.node.data, {
-            checkedNodes: store.getCheckedNodes(),
-            checkedKeys: store.getCheckedKeys(),
-            halfCheckedNodes: store.getHalfCheckedNodes(),
-            halfCheckedKeys: store.getHalfCheckedKeys()
-          })
-        })
-      },
-      handleChildNodeExpand(nodeData, node, instance) {
-        this.broadcast('ElTreeNode', 'tree-node-expand', node)
-        this.tree.$emit('node-expand', nodeData, node, instance)
-      },
-      handleDragStart(event) {
-        if (!this.tree.draggable) return
-        this.tree.$emit('tree-node-drag-start', event, this)
-      },
-      handleDragOver(event) {
-        if (!this.tree.draggable) return
-        this.tree.$emit('tree-node-drag-over', event, this)
-        event.preventDefault()
-      },
-      handleDrop(event) {
-        event.preventDefault()
-      },
-      handleDragEnd(event) {
-        if (!this.tree.draggable) return
-        this.tree.$emit('tree-node-drag-end', event, this)
+      handleCheck() {
+        if (this.nodeData.disabled) return
+        const changes = {
+          checked: !this.nodeData.checked && !this.nodeData.indeterminate,
+          nodeKey: this.nodeData.nodeKey
+        }
+        this.dispatch('Tree', 'on-check', changes)
       }
     },
+    ready() {
+
+    },
     created() {
-      const parent = this.$parent
-      if (parent.isTree) {
-        this.tree = parent
-      } else {
-        this.tree = parent.tree
-      }
-      const tree = this.tree
-      if (!tree) {
-        console.warn('Can not find node\'s tree.')
-      }
-      const props = tree.confsprops || {}
-      const childrenKey = props['children'] || 'children'
-      this.$watch(`node.data.${childrenKey}`, () => {
-        this.node.updateChildren()
-      })
-      if (this.node.expanded) {
-        this.expanded = true
-        this.childNodeRendered = true
-      }
-      if (this.tree.accordion) {
-        this.$on('tree-node-expand', node => {
-          if (this.node !== node) {
-            this.node.collapse()
-          }
-        })
-      }
+
     }
   })
 </script>
-<style lang="scss" scoped>
-
-</style>
 <config>
 {
   "usingComponents": {
