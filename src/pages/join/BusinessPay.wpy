@@ -28,7 +28,7 @@
             <div v-else class="unchecked"></div>
             <text class="form-text">{{item.name}}天</text>
             <text v-if="item.name<30&&item.sum>0&&type==2">(合每天{{item.sum}}元)</text>
-            <text v-if="item.name>=30&&item.sum>0&&type==2">(合每月{{item.sum*30}}元)</text>
+            <text v-if="item.name>=30&&item.sum>0&&type==2">(合每月{{item.sum*100*30/100}}元)</text>
           </div>
         </block>
 
@@ -251,7 +251,7 @@
               setTimeout(function() {
                 linkTo('/pages/index')
               }, 2000)
-              
+
             },
             fail(err) {
               throw Error(err.errMsg)
