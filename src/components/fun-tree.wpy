@@ -10,9 +10,9 @@
       <template v-for="item in tree">
         <fun-tree-node
           :val="item"
-          @clear="clearFn"
           :ref="'item'+item[nodeKey]"
           :has="has"
+          :autoSelectParent="autoSelectParent"
           :single="single"
           :eid="'tree_'+eleId"
           :show-checkbox="showCheckbox"
@@ -36,18 +36,25 @@
   import { TreeHub } from './TreeHub'
   import { objTranslate } from '@/common/helper'
   import { componentMixins } from '@/mixins'
+  import emitter from '@/mixins/emitter'
 
   wepy.component({
+    name: 'funTree',
     options: {
       addGlobalClass: true
     },
-    mixins: [componentMixins],
+    mixins: [componentMixins, emitter],
     data: {
-      treeData: [],
+      // treeData: [],
       hub: null,
       tree: []
     },
     props: {
+      // 是否只要有一个下级选中，就自动选中上级（奇葩需求)
+      autoSelectParent: {
+        type: Boolean,
+        default: false
+      },
       plainArrayList: {
         default: false
       },
@@ -146,6 +153,15 @@
           this.$refs[i].restCheck({ item, nodeKey })
         }
       },
+      flashFn() {
+        // const checkList = TreeHub.getCHeckList('tree_' + this.eleId)
+        // console.log(checkList)
+        console.log('fun-tree flashFn')
+        // console.log('flashFn', item, nodeKey, this.$refs)
+        for (let i in this.$refs) {
+          this.$refs[i].flashFn()
+        }
+      },
       getCheckedNodes() {
         return TreeHub.getCHeckList('tree_' + this.eleId)
       },
@@ -154,9 +170,10 @@
         this.hub = new TreeHub({
           eid: 'tree_' + this.eleId,
           childrenName: this.conf.children,
-          treeData: objTranslate(this.treeData),
+          treeData: [].concat(this.treeData),
           nodeKey: this.nodeKey,
           has: this.has,
+          pidKey: this.conf.pidKey,
           plainArrayList: this.plainArrayList
         })
         // 用来告诉父组件我好了，可以搞事
@@ -169,7 +186,8 @@
       }
     },
     ready() {
-
+      this.$on('on-clear', this.clearFn)
+      this.$on('on-flash', this.flashFn)
     }
   })
 </script>
