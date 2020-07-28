@@ -22,7 +22,7 @@
         </view>
         <view class="fonts" v-if="pro.shipping_no">
           <view class="left">
-            物流单号:
+            派送员:
           </view>
           <view>
             {{pro.shipping_no}}
