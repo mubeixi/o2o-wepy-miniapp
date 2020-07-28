@@ -154,8 +154,8 @@
   import { confirm, findArrayIdx, getArrColumn, objTranslate, validateFun } from '../../common/helper'
   import { bizProdList } from '../../api/product'
   import { applyLive, getLiveApplyStatus } from '@/api/live'
-  import { hideLoading, linkTo, showLoading } from '../../common/fun'
-  import { Exception } from '@/common/Exception'
+  import { error, hideLoading, linkTo, showLoading } from '../../common/fun'
+import { Exception } from '@/common/Exception'
 
   const moment = require('moment')
 
@@ -245,9 +245,8 @@
             linkTo('/pages/live/room')
           }).catch(() => {
           })
-
         }).catch(e => {
-
+          error(e.msg || '申请失败')
         })
       },
       upStartTime(val) {
