@@ -1,11 +1,25 @@
 <style lang="scss">
-  /*@import "../../assets/variables.scss";*/
+
+  .page-wrap {
+    text-align: center;
+    top: 0;
+    bottom: 0;
+    width: 750rpx;
+    color: #333;
+    box-sizing: border-box;
+    background: #fff;
+    overflow: hidden;
+    position: fixed;
+  }
+
+
   button {
     line-height: 2.3;
     /*border-radius: 0;*/
   }
 
   .form {
+
     .form-item {
       margin: 0 50rpx;
       border-bottom: 1px solid #e7e7e7;
@@ -118,14 +132,6 @@
 
   .iconwx {
     margin-right: 10px;
-  }
-
-  .page-wrap {
-    text-align: center;
-    height: 100vh;
-    color: #333;
-    box-sizing: border-box;
-    background: #fff;
   }
 
   .img {
@@ -291,7 +297,6 @@
           </div>
         </form>
       </div>
-
       <div class="channel-list">
         <div class="channel-item">
           <button class="btn" open-type="getUserInfo" @getuserinfo="weixinlogin">
@@ -309,14 +314,11 @@
       </div>
     </block>
     <block v-if="mode==='wxLogin'">
-      <!--      <image class="img wxLoginLogo" mode="widthFix" :src="logoImg"></image>-->
-
       <div class="otherLogin-top-item">
         <button @getuserinfo="weixinlogin" class="wxBtn" open-type="getUserInfo">
           微信登录
         </button>
       </div>
-
       <div class="channel-item phoneIcon" open-type="getUserInfo" @click="mode='code'">
         <icon class="icon" color="#333333" size="36" type="iconshouji"></icon>
       </div>
@@ -341,7 +343,6 @@
         </div>
       </div>
     </popup-layer>
-
 
     <popup-layer ref="phoneWx" :autoClose="false" :topStr="menuButtonInfo.height+menuButtonInfo.top+10+'px'"
                  :showMask="false">
