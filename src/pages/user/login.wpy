@@ -639,8 +639,8 @@
 
         bizLogin(postData, { reqHeader: true }).then(res => {
           this.loginCall(res.data)
-        }).catch((err) => {
-          modal(err.msg)
+        }).catch((e) => {
+          error(e.msg)
         })
       },
       cancelPwd() {
