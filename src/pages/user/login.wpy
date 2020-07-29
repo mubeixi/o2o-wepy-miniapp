@@ -393,7 +393,7 @@
   import store from '../../store'
   import pageMixin from '../../mixins'
   import { getDomain, ls, validateFun } from '../../common/helper'
-  import { error } from '../../common/fun'
+  import { error, modal } from '../../common/fun'
   import { bizRegSms, getBizInfo, opBizInfo } from '../../api/store'
   import { bizLogin, bizLoginLog } from '../../api/system'
   import { regPhone } from '../../common/regs'
@@ -401,6 +401,7 @@
   import IM from '../../common/Im/Im'
   import eventHub from '../../common/eventHub'
   import Env from '../../common/env'
+  import { Exception } from '@/common/Exception'
 
   wepy.page({
     store,
@@ -638,7 +639,8 @@
 
         bizLogin(postData, { reqHeader: true }).then(res => {
           this.loginCall(res.data)
-        }).catch(() => {
+        }).catch((err) => {
+          modal(err.msg)
         })
       },
       cancelPwd() {
@@ -781,7 +783,7 @@
           }
         } catch (e) {
           console.log(e)
-          error(e.message)
+          modal(e.message)
         }
       }
     },

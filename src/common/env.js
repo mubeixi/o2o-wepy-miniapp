@@ -42,7 +42,7 @@ const confByJb = {
   isJb: true// 判断是否是及贝 用于区分logo
 }
 
-export default confByJb
+export default confByDev
 
 // export default confByPro
  // export default confByJb
