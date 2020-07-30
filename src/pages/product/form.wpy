@@ -70,8 +70,12 @@
               </div>
 
             </div>
-            <textarea style="width: 100%;height: 90px;line-height: 30px;" placeholder-style="line-height:30px;"
+            <textarea  v-if="isShowPrimordial" style="width: 100%;height: 90px;line-height: 30px;" placeholder-style="line-height:30px;"
                       class="fz-14" v-model="formData.Products_Name" placeholder="标题示例：【疯抢】应季水果，火龙果500"/>
+
+            <div  v-if="!isShowPrimordial" style="width: 100%;height: 90px;line-height: 30px;" class="fz-14"  :class="{'c6':formData.Products_Name==''}" >
+              {{formData.Products_Name||'标题示例：【疯抢】应季水果，火龙果500'}}
+            </div>
           </div>
         </div>
         <div class="cell-item" @click="openPop('systemCatePop')">
@@ -410,7 +414,7 @@
       <div class="h20" style="padding: #f8f8f8;"></div>
     </scroll-view>
 
-    <modal ref="descModel" positions="center" radius="12rpx">
+    <modal ref="descModel" positions="center" radius="12rpx" @maskClicked="maskClicked">
       <div class="p-20 desc-wrap">
             <textarea
               class="bor p-10 desc-content"
@@ -471,7 +475,7 @@
         </div>
       </div>
     </div>
-    <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false">
+    <popup-layer ref="bizCatePop" title="自定义分类" :autoClose="false"   >
 
       <div @touchmove.stop.prevent>
         <scroll-view scroll-y :style="{maxHeight:systemInfo.windowHeight*0.6+'px'}"
@@ -502,7 +506,7 @@
       <button class="btn btn-primary m-t-35" @click="setBizCate('handle')">确认</button>
     </popup-layer>
 
-    <popup-layer ref="systemCatePop" title="平台分类">
+    <popup-layer ref="systemCatePop" title="平台分类"  @maskClicked="maskClicked">
       <div @touchmove.stop.prevent>
         <scroll-view scroll-y v-if="systemCateReady && ProductCateList.length>0" style="height: 50vh;">
           <!--只需要选中一个子级，父级就会选中-->
@@ -524,7 +528,7 @@
       <button class="btn btn-primary m-t-35" @click="setSystemCate">确认</button>
     </popup-layer>
 
-    <popup-layer ref="back">
+    <popup-layer ref="back"  @maskClicked="maskClicked">
       <div class="head flex flex-justify-between flex-vertical-center">
         <div class="c9 p-15 " @click="closePop('back')">取消</div>
         <div class="c3 p-15" @click="bindShopDamageChange">确认</div>
@@ -539,7 +543,7 @@
       </picker-view>
     </popup-layer>
 
-    <popup-layer title="运费" ref="feeSetting">
+    <popup-layer title="运费" ref="feeSetting"   @maskClicked="maskClicked">
       <radio-group class="type-list p-l-10 p-r-10" @change="setFeeType">
         <label class="type-item flex flex-vertical-center">
           <radio color="#00A8FF" value="1" :checked="formData.fee_type === 1"></radio>
@@ -589,7 +593,7 @@
       <button class="btn btn-primary m-t-35" @click="bindFeeSave">确认</button>
     </popup-layer>
 
-    <popup-layer title="商品承诺" ref="promise">
+    <popup-layer title="商品承诺" ref="promise"  @maskClicked="maskClicked">
       <div @touchmove.stop.prevent>
         <scroll-view scroll-y :scroll-into-view="promiseIntoViewId" class="wrap flex promise-wrap"
                      :style="{maxHeight:systemInfo.windowHeight*0.6+'px'}">
@@ -616,7 +620,7 @@
       <button class="btn btn-primary m-t-35" @click="closePop('promise')">确定</button>
     </popup-layer>
 
-    <popup-layer title="限购" ref="limitBuy">
+    <popup-layer title="限购" ref="limitBuy"  @maskClicked="maskClicked">
       <div class="p-15">
 
         <div class="flex flex-vertical-center m-b-15">
@@ -651,7 +655,7 @@
       <button class="btn btn-primary m-t-35" @click="closePop('limitBuy')">确定</button>
     </popup-layer>
 
-    <popup-layer title="配送方式" ref="sendType">
+    <popup-layer title="配送方式" ref="sendType"  @maskClicked="maskClicked">
       <!--      :autoClose="false"-->
       <checkbox-group class="type-list p-l-10 p-r-10" @change="setSendType">
         <label class="type-item flex flex-vertical-center bor-b" @click="typeIndex=0">
@@ -686,7 +690,7 @@
       <button class="btn btn-primary m-t-35" @click="closeSendType">确认</button>
     </popup-layer>
 
-    <popup-layer title="订单类型" ref="orderType">
+    <popup-layer title="订单类型" ref="orderType"  @maskClicked="maskClicked">
       <radio-group class="type-list p-l-10 p-r-10" @change="setOrderType">
         <label class="type-item flex flex-vertical-center bor-b">
           <radio color="#00A8FF" value="0" :checked="formData.prod_order_type === 0"></radio>
@@ -713,7 +717,7 @@
       <button class="btn btn-primary m-t-35" @click="closePop('orderType')">确认</button>
     </popup-layer>
 
-    <popup-layer title="特殊属性" ref="specailAttr">
+    <popup-layer title="特殊属性" ref="specailAttr"  @maskClicked="maskClicked">
       <div class="type-list p-l-10 p-r-10">
         <label class="type-item flex flex-vertical-center bor-b" @click="taggleFormData('Products_SoldOut')">
           <checkbox color="#00A8FF" :checked="formData.Products_SoldOut"></checkbox>
@@ -829,7 +833,8 @@
     getDomain,
     uploadImages,
     validateFun,
-    cleanNoParent
+    cleanNoParent,
+    ls
   } from '../../common/helper'
   import { getProductCategory, getProductDetail, getSystemProdConfig, systemOperateProd } from '../../api/product'
   import { addBizProdCate, getBizProdCateList, getCouponList, getShippingTemplate } from '../../api/store'
@@ -845,6 +850,7 @@
     store,
     mixins: [pageMixin],
     data: {
+      isShowPrimordial:true,
       cash_from: 1,
       editorIsFocus: false,
       descriptionPopShow: false, // 是否显示富文本编辑
@@ -959,6 +965,9 @@
       isSendCoupon() {
         return this.couponList.filter(item => item.check).length > 0
       }
+      // isShowPrimordial() {
+      //   return this.$store.getters.getShowPrimordial()
+      // }
     },
     watch: {
       imgTaskList: {
@@ -1471,12 +1480,16 @@
         this.formData[key] = val
       },
       openPop(name) {
+        this.isShowPrimordial = false
         this.$refs[name].show()
       },
+      maskClicked() {
+        this.isShowPrimordial = true
+      },
       closePop(name) {
+        this.isShowPrimordial = true
         this.$refs[name].close()
       },
-
       setOrderType(e) {
         console.log(e.$wx.detail.value)
         this.formData.prod_order_type = parseInt(e.$wx.detail.value)
