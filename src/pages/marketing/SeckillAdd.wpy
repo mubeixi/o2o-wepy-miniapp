@@ -150,9 +150,9 @@
   import pageMixin from '../../mixins'
   import { ls, validateFun } from '../../common/helper'
   import { bizFlashsaleDetail, bizOperateFlashsale, bizProdList } from '../../api/product'
-  import { back, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+  import { back, error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
 
-  const moment = require('moment')
+const moment = require('moment')
 
   wepy.page({
     store,
@@ -281,7 +281,7 @@
             back()
           }, 1000)
         }).catch(e => {
-
+          error(e.msg || '添加失败')
         })
       },
       goAdd() {

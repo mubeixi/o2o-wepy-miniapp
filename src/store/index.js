@@ -14,9 +14,16 @@ export default new Vuex.Store({
     treeData: [],
     productContent: '', // 富文本
     productImgList: [],
-    initInfo: null
+    initInfo: null,
+    isShowPrimordial: true// 是否显示原生的组件 hack 文本组件层级过高
   },
   mutations: {
+    SET_Show_Primordial(state, boo) {
+      ls.set('isShowPrimordial', boo,1)
+      state.isShowPrimordial = boo
+
+      console.log(state.isShowPrimordial,"state",ls.get('isShowPrimordial'))
+    },
     SET_CURRENT_TABBAR(state, idx) {
       state.tabbarCurrentIndex = idx
     },
@@ -51,6 +58,9 @@ export default new Vuex.Store({
   },
   getters: {
 
+    getShowPrimordial: (state) => () => {
+      return state.isShowPrimordial || ls.get('isShowPrimordial')
+    },
     getTabbarTags: (state) => () => {
       return state.tabTags
     },
@@ -75,6 +85,9 @@ export default new Vuex.Store({
      * @param storage 可选值为 local online 分别从本地和线上去
      * @returns {Promise<void>}
      */
+    setShowPrimordial({ commit }, val) {
+      commit('SET_Show_Primordial', val)
+    },
     async getInitInfo({ state, commit }, conf = {}) {
       const { storage = 'local' } = conf
       // console.log(conf, storage)

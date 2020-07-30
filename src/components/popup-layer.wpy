@@ -13,7 +13,7 @@
 <script>
 
   import wepy from '@wepy/core'
-
+  import store from '@/store'
   wepy.component({
     options: {
       addGlobalClass: true
@@ -93,6 +93,7 @@
       noop() {
       },
       show: function() {
+        store.dispatch('setShowPrimordial', false)
         this.isShow = true
         // var animation = wx.createAnimation({
         //   duration: 800,
@@ -108,6 +109,7 @@
         // }).exec()
       },
       close() {
+        store.dispatch('setShowPrimordial', true)
         this.isShow = false
       },
       ableClose() {
