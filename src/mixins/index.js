@@ -63,7 +63,8 @@ export default {
       'pages/user/login',
       'pages/index',
       'pages/product/form',
-      'pages/support/ImList'
+      'pages/support/ImList',
+      'pages/marketing/Rotate'
     ]
 
     const pathIndex = pathArr.indexOf(this.currentPagePath)

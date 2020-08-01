@@ -1,0 +1,396 @@
+<template>
+  <div  class="page-wrap">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+    <image   :src="payImg"  class="pay-success-img"></image>
+    <div class="pay-success-title m-b-20">
+      恭喜你成功抢到
+      <span class="c-66B5FF">及贝商家自营配送小程序</span>
+    </div>
+
+    <div class="pay-success-text">
+      识别下方二维码
+    </div>
+    <div  class="pay-success-text">
+      关注“及贝”官方公众号激活小程序
+    </div>
+    <image  :src="jiantouImg" class="jiantou-img"></image>
+
+    <div class="block-div"  :style="{backgroundImage: 'url('+blockImg+')'}" @click="yulan" >
+      <!--      <img   :src="$getDomain('/static/client/active/block.png')" class="block-img full-img">-->
+      <img :src="initCode" v-if="initCode"  class="init-code">
+    </div>
+    <div class="tips-text">
+      手机扫描二维码立即关注
+    </div>
+
+    <div  :style="{backgroundImage: 'url('+activeStep+')'}"   class="active-step">
+      <div class="active-step-title">
+        激活步骤
+      </div>
+      <div class="active-step-shibie active-step-text">
+        识别二维码，跳转至微信
+      </div>
+      <div class="active-step-guanzhu active-step-text">
+        关注公众号激活小程序开始使用
+      </div>
+
+    </div>
+
+    <div  :style="{backgroundImage: 'url('+xitong+')'}"   class="active-system">
+      系统亮点
+    </div>
+
+    <div class="active-peisong m-t-5">
+      专注商家自营配送，为配送而生
+    </div>
+
+    <div class="flex flex-vertical-c flex-justify-around m-b-25">
+      <div  :style="{backgroundImage: 'url('+system1+')'}"    class="system-item">
+
+        <div class="system-item-text">
+          <div>
+            1分钟搭建出
+          </div>
+          <div>
+            自己的配送平台
+          </div>
+        </div>
+
+      </div>
+      <div  :style="{backgroundImage: 'url('+system2+')'}"   class="system-item">
+
+        <div class="system-item-text">
+          <div>
+            "0"抽成"0"手续
+          </div>
+          <div>
+            费，让利消费者
+          </div>
+        </div>
+
+      </div>
+      <div :style="{backgroundImage: 'url('+system3+')'}"   class="system-item">
+
+        <div class="system-item-text">
+          <div>
+            数字化配送
+          </div>
+          <div>
+            为增加商家营收
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <div class="flex flex-vertical-c flex-justify-around">
+      <div :style="{backgroundImage: 'url('+system4+')'}"  class="system-item">
+
+        <div class="system-item-text">
+          <div>
+            无需小程序认证
+          </div>
+          <div>
+            省掉300元
+          </div>
+        </div>
+
+      </div>
+      <div :style="{backgroundImage: 'url('+system5+')'}"  class="system-item">
+
+        <div class="system-item-text">
+          <div>
+            自主配送/同城配送
+          </div>
+          <div>
+            快递收单系统
+          </div>
+        </div>
+
+      </div>
+      <div :style="{backgroundImage: 'url('+system6+')'}"  class="system-item">
+
+        <div class="system-item-text">
+          <div>
+            直播导购场景搭建
+          </div>
+          <div>
+            快速流量变现
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div  :style="{backgroundImage: 'url('+ativeSystemNote+')'}"  class="system-note">
+
+      <div class="system-note-title">
+        系统须知
+      </div>
+      <div class="jihuo">
+        如何激活？
+      </div>
+      <div class="jihuo-text">
+        保存上方二维码到相册-微信扫描二维码关注公众号-收到公众号推送的激活信息-点击信息里的立即激活-跳转到管理端小程序，激活码会直接填入输入框，直接点击确定即可
+      </div>
+      <div class="jihuo" style="margin-top: 90rpx">
+        如何使用？
+      </div>
+      <div class="jihuo-text">
+        请不用担心，及贝是一款手机端即可完成设置、发布商品、创建活动、发货、财务对账等功能的商家自营配送小程序，操作是非常简单的，另外，我们还配套有手把手开店的教程以及丰富的营销案例智库，没有任何的使用门槛，另外，如果您购买后使用中遇到任何问题，也可以通过管理端的反馈与建议与我们取得联系，感谢您对于及贝的支持！
+      </div>
+
+    </div>
+
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core'
+import store from '../../store'
+import pageMixin from '../../mixins'
+import {error} from '../../common/fun'
+import {getCodeQrcode} from '../../api/order'
+import { getDomain } from '../../common/helper'
+wepy.page({
+  store,
+  mixins: [pageMixin],
+  data: {
+    payImg: getDomain('/static/client/active/paySuccess.png'),
+    jiantouImg:getDomain('/static/client/active/jiantou.png'),
+    blockImg:getDomain('/static/client/active/block.png'),
+    activeStep:getDomain('/static/client/active/activeStep.png'),
+    xitong:getDomain('/static/client/active/xitong.png'),
+    system1:getDomain('/static/client/active/system1.png'),
+    system2:getDomain('/static/client/active/system2.png'),
+    system3:getDomain('/static/client/active/system3.png'),
+    system4:getDomain('/static/client/active/system4.png'),
+    system5:getDomain('/static/client/active/system5.png'),
+    system6:getDomain('/static/client/active/system6.png'),
+    ativeSystemNote:getDomain('/static/client/active/ativeSystemNote.png'),
+    order_id: '',
+    initCode: ''
+  },
+  methods: {
+    yulan () {
+      wx.previewImage({
+        urls: [this.initCode]
+      })
+    },
+    async init () {
+      await getCodeQrcode({ order_id: this.order_id }, { tip: '加载中' }).then(res => {
+        this.initCode = res.data
+      }).catch(e => {
+        error(e.msg || '获取二维码错误')
+        const _self = this
+        setTimeout(function () {
+
+        }, 1500)
+      })
+    }
+  },
+  onLoad (options) {
+    if (options.order_id) {
+      this.order_id = options.order_id
+      this.init()
+    }
+  }
+
+})
+
+</script>
+<style lang="scss">
+  .page-wrap {
+    min-height: 100vh;
+    box-sizing: border-box;
+    background-color: #170130;
+    padding-top: 66rpx;
+    padding-bottom: 64rpx;
+    width: 750rpx;
+    overflow-x: hidden;
+  }
+  .full-img{
+    width: 100%;
+    height: 100%;
+  }
+  .pay-success-img{
+    width: 128rpx;
+    height: 140rpx;
+    display: block;
+    margin: 0rpx auto 50rpx;
+  }
+  .c-66B5FF{
+    color: #66B5FF !important;
+  }
+  .pay-success-title{
+    width: 750rpx;
+    height: 32rpx;
+    line-height: 32rpx;
+    font-size: 34rpx;
+    color: #FFFFff;
+    text-align: center;
+  }
+  .pay-success-text{
+    width: 750rpx;
+    height: 44rpx;
+    line-height: 44rpx;
+    font-size: 24rpx;
+    color: #FFFFff;
+    text-align: center;
+  }
+  .jiantou-img{
+    display: block;
+    width: 162rpx;
+    height: 106rpx;
+    margin-left: 240rpx;
+  }
+  .block-div{
+    width: 280rpx;
+    height: 280rpx;
+    margin: 0 auto;
+    position: relative;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tips-text{
+    width: 750rpx;
+    height: 22rpx;
+    line-height: 22rpx;
+    font-size: 22rpx;
+    color: #9C92AD;
+    text-align: center;
+    margin-top: 12rpx;
+  }
+  .flex-justify-around{
+    justify-content: space-around;
+  }
+
+  .active-step{
+    width: 710rpx;
+    height: 380rpx;
+    margin: 84rpx auto 78rpx;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    position: relative;
+    .active-step-title{
+      height: 32rpx;
+      font-size: 34rpx;
+      line-height: 32rpx;
+      color: #FFFFff;
+      position: absolute;
+      top: 34rpx;
+      left: 290rpx;
+    }
+    .active-step-text{
+      height: 26rpx;
+      line-height: 26rpx;
+      font-size: 26rpx;
+      color: #333333;
+    }
+    .active-step-shibie{
+      position: absolute;
+      top: 170rpx;
+      left: 170rpx;
+    }
+    .active-step-guanzhu{
+      position: absolute;
+      top: 270rpx;
+      left: 170rpx;
+    }
+  }
+  .active-system{
+    width: 402rpx;
+    height: 102rpx;
+    line-height: 102rpx;
+    text-align: center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    font-size: 34rpx;
+    margin: 0 auto;
+    color: #FFFFff;
+  }
+  .active-peisong{
+    width: 750rpx;
+    text-align: center;
+    height: 26rpx;
+    line-height: 26rpx;
+    font-size: 26rpx;
+    color: #FFFFff;
+    margin-bottom: 36rpx;
+  }
+  .system-item{
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    position: relative;
+    width: 224rpx;
+    height: 326rpx;
+  }
+  .system-item-text{
+    width: 224rpx;
+    height: 76rpx;
+    position: absolute;
+    top: 220rpx;
+    left: 0rpx;
+    line-height: 38rpx;
+    text-align: center;
+    font-size: 22rpx;
+  }
+
+  .system-note{
+    width: 710rpx;
+    margin: 84rpx auto 0rpx;
+    height: 732rpx;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    padding-top: 34rpx;
+  }
+  .system-note-title{
+    height: 34rpx;
+    line-height: 34rpx;
+    text-align: center;
+    color: #ffffff;
+    font-size: 34rpx;
+  }
+  .jihuo{
+    width: 710rpx;
+    margin-top: 90rpx;
+    height: 30rpx;
+    line-height: 30rpx;
+    font-size: 32rpx;
+    color: #6324E8;
+    padding-left: 44rpx;
+    box-sizing: border-box;
+  }
+  .jihuo-text{
+    margin-top: 30rpx;
+    width: 604rpx;
+    padding-left: 46rpx;
+    font-size: 22rpx;
+    color: #333333;
+    line-height: 36rpx;
+
+  }
+
+  .init-code{
+    width: 230rpx;
+    height: 230rpx;
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "激活码",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon",
+  "wzw-dialog":"~@/components/ModelComponents"
+  }
+  }
+</config>

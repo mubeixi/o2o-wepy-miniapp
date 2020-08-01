@@ -163,6 +163,8 @@
   "pages/marketing/Seckill",
   "pages/marketing/SeckillAdd",
   "pages/marketing/Group",
+  "pages/marketing/Rotate",
+  "pages/marketing/ActivationCodeSuccess",
   "pages/marketing/GroupForm",
   "pages/marketing/SeckillAddSelect",
   "pages/marketing/FlashSale",
