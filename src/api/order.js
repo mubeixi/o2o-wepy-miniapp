@@ -1,5 +1,7 @@
 import { fetch } from '../common/request'
 
+
+export const getCodeQrcode = (param, options) => fetch({ act: 'getCodeQrcode', param, options })
 //  获取订单物流追踪
 export const getOrderExpress = (param, options) => fetch({ act: 'get_order_express', param, options })
 // 收取退款退货申请

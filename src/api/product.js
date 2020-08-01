@@ -75,3 +75,12 @@ export const getProductSharePic = (param, options) => fetch({
 
 // 获取商品列表
 export const getProdList = (param, options) => fetch({ act: 'get_prod', param, options })
+
+// 大转盘开始
+export const rotateBegin = (param, options) => fetch({ act: 'beginTurn', param, options })
+
+// 获取中奖记录
+export const getRotateRecord = (param, options) => fetch({ act: 'getPrizeRecord', param, options })
+
+// 大转盘初始化
+export const rotateInit = (param, options) => fetch({ act: 'initTurn', param, options })

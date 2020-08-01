@@ -1,0 +1,725 @@
+<template>
+  <div class="page-wrap" v-if="ready">
+    <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
+
+    <image :src="bgImg" class="bgimg"/>
+    <div class="rotate-box" v-if="itemList.length>3">
+      <div class="item">
+        <div  :class="{'c-FFD800':activeIdx==0||activeIdx==-1}"  class="goods">
+          <div class="picbox">
+            <image :src="itemList[0].img" class="pic" mode="widthFix"/>
+          </div>
+          <div :class="{active:activeIdx==0}" class="name">{{itemList[0].name}}</div>
+        </div>
+        <div  class="mask" :class="{'c-FFD800':activeIdx==0||activeIdx==-1}"></div>
+      </div>
+      <div class="item">
+        <div  class="goods"   :class="{'c-FFD800':activeIdx==1||activeIdx==-1}">
+          <div class="picbox">
+            <image :src="itemList[1].img" class="pic" mode="widthFix"/>
+          </div>
+          <div :class="{active:activeIdx==1}" class="name">{{itemList[1].name}}</div>
+        </div>
+        <div class="mask"  :class="{'c-FFD800':activeIdx==1||activeIdx==-1}"></div>
+      </div>
+      <div class="item" style="margin-right: 0">
+        <div  class="goods" :class="{'c-FFD800':activeIdx==2||activeIdx==-1}">
+          <div class="picbox">
+            <image :src="itemList[2].img" class="pic" mode="widthFix"/>
+          </div>
+          <div :class="{active:activeIdx==2}" class="name">{{itemList[2].name}}</div>
+        </div>
+        <div  class="mask" :class="{'c-FFD800':activeIdx==2||activeIdx==-1}"></div>
+      </div>
+      <div class="item">
+        <div  class="goods" :class="{'c-FFD800':activeIdx==7||activeIdx==-1}">
+          <div class="picbox">
+            <image :src="itemList[7].img" class="pic" mode="widthFix"/>
+          </div>
+          <div  class="name">{{itemList[7].name}}</div>
+        </div>
+        <div  class="mask" :class="{'c-FFD800':activeIdx==7||activeIdx==-1}"></div>
+      </div>
+      <div @click="startFn" class="item">
+        <div class="goods start-btn" >
+          {{getStartTip}}
+
+        </div>
+        <div class="mask start-btn-mask"></div>
+      </div>
+
+      <div class="item" style="margin-right: 0">
+        <div  class="goods" :class="{'c-FFD800':activeIdx==3||activeIdx==-1}">
+          <div class="picbox">
+            <image :src="itemList[3].img" class="pic" mode="widthFix"/>
+          </div>
+          <div :class="{active:activeIdx==3}" class="name">{{itemList[3].name}}</div>
+        </div>
+        <div  class="mask" :class="{'c-FFD800':activeIdx==3||activeIdx==-1}"></div>
+      </div>
+      <div class="item">
+        <div  class="goods" :class="{'c-FFD800':activeIdx==6||activeIdx==-1}">
+          <div class="picbox">
+            <image :src="itemList[6].img" class="pic" mode="widthFix"/>
+          </div>
+          <div :class="{active:activeIdx==6}" class="name">{{itemList[6].name}}</div>
+        </div>
+        <div  class="mask" :class="{'c-FFD800':activeIdx==6||activeIdx==-1}"></div>
+      </div>
+      <div class="item">
+        <div  class="goods" :class="{'c-FFD800':activeIdx==5||activeIdx==-1}">
+          <div class="picbox">
+            <image :src="itemList[5].img" class="pic" mode="widthFix"/>
+          </div>
+          <div :class="{active:activeIdx==5}" class="name">{{itemList[5].name}}</div>
+        </div>
+        <div class="mask" :class="{'c-FFD800':activeIdx==5||activeIdx==-1}"></div>
+      </div>
+      <div class="item" style="margin-right: 0">
+        <div  class="goods" :class="{'c-FFD800':activeIdx==4||activeIdx==-1}">
+          <div class="picbox">
+            <image :src="itemList[4].img" class="pic" mode="widthFix"/>
+          </div>
+          <div :class="{active:activeIdx==4}" class="name">{{itemList[4].name}}</div>
+        </div>
+        <div  class="mask" :class="{'c-FFD800':activeIdx==4||activeIdx==-1}"></div>
+      </div>
+
+    </div>
+
+    <div class="num-count">
+      <image :src="numCountImg" class="num-count-img"/>
+      <div class="text fz-14">今日剩余抽奖次数<span class="fz-16 color-red" style="">{{day_count}}</span>次,总剩余抽奖次数<span
+        class="fz-16 danger-color" style="">{{total_count}}</span>次
+      </div>
+    </div>
+
+    <div class="reward-list">
+      <span @click="showRewardList">我的中奖记录</span>
+<!--      <span @click="goPerson" style="margin-left: 10px;">个人中心</span>-->
+    </div>
+
+    <div class="tip-box">
+      <div class="title">抽奖规则</div>
+      <div style="color: white">
+        <text style="font-size: 14px;line-height: 1.6;">
+          {{tipText}}
+        </text>
+      </div>
+    </div>
+
+    <wzw-dialog bgColor="rgba(0,0,0,.7)"  mainBgColor="none" positions="top" ref="record">
+      <div class="record-container">
+        <div class="top">
+          <image :src="recordImg" class="record-bg"/>
+          <div class="record-box">
+            <div class="title">我的中奖记录</div>
+            <scroll-view class="table" scroll-y>
+              <div class="tr">
+                <div class="th time">时间</div>
+                <div class="th prize">奖品</div>
+                <div class="th time">操作</div>
+              </div>
+              <div class="tr" v-for="(item,idx) in record_list" :key="idx">
+                <div class="td time">{{item.time}}</div>
+                <div class="td prize">{{item.prize}}</div>
+                <div class="td time c-ff0000" @click="goActiveOrder(item.active_code.order_id)" v-if="item.active_code.status==1">去激活</div>
+                <div class="td time" v-else-if="item.active_code.status==2">已使用</div>
+              </div>
+            </scroll-view>
+          </div>
+
+        </div>
+        <div @click="cancelRecordDialog" class="btn-box">
+          <image :src="closeImg" class="close"/>
+        </div>
+      </div>
+    </wzw-dialog>
+
+    <wzw-dialog bgColor="rgba(0,0,0,.7)" mainBgColor="none" positions="center" ref="result">
+      <div @click.stop="goActive" class="result-container">
+        <div class="top">
+          <image :src="resultImg" class="result-bg"/>
+          <div class="text">
+            <div class="text-row line6">恭喜您</div>
+            <div class="text-row reward">{{result_tip}}</div>
+          </div>
+        </div>
+
+        <div @click.stop="cancelDialog" class="btn-box">
+          <image :src="closeImg" class="close"/>
+        </div>
+      </div>
+    </wzw-dialog>
+
+
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core'
+import store from '../../store'
+import pageMixin from '../../mixins'
+import { Rotate } from '../../common/luck'
+import { error, hideLoading, linkTo, showLoading, toast } from '../../common/fun'
+import { getRotateRecord, rotateBegin, rotateInit } from '../../api/product'
+import { checkIsLogin, findArrayIdx, confirm, getDomain } from '../../common/helper'
+
+const rotateInstance = new Rotate()
+wepy.page({
+  store,
+  mixins: [pageMixin],
+  data: {
+    bgImg: getDomain('/static/client/marketing/rotate-bg.jpg'),
+    numCountImg: getDomain('/static/client/marketing/num_count.png'),
+    recordImg: getDomain('/static/client/marketing/records_bg.png'),
+    closeImg: getDomain('/static/client/marketing/close-btn.png'),
+    resultImg: getDomain('/static/client/marketing/result.png'),
+    ready: false,
+    start_num: 0,
+    total_count: 0,
+    day_count: 0,
+    activity_id: null,
+    rotateObj: null,
+    itemList: [],
+    tipText: '',
+    img_url: '',
+    result_tip: '',
+    record_list: [],
+    order_id_rotate:''
+  },
+  methods: {
+    goPerson() {
+      linkTo('/pages/user/index')
+    },
+    async showRewardList() {
+      if (!checkIsLogin(1, 1)) return
+      this.$refs.record.show()
+      getRotateRecord({
+        id: this.activity_id,
+        pageSize: 999
+      }, { tip: '获取中' }).then(res => {
+        this.record_list = res.data
+      })
+    },
+    async init_func() {
+      try {
+        showLoading()
+        const res = await rotateInit({ id: this.activity_id }).then(res => {
+          return res
+        }).catch(e => {
+          throw Error(e.msg || '转盘信息加载失败')
+        })
+
+        if (res.data.prizes && Array.isArray(res.data.prizes)) {
+          this.total_count = res.data.total_count
+          this.day_count = res.data.day_count
+          this.tipText = res.data.describe
+          rotateInstance.setList(res.data.prizes)
+          this.itemList = rotateInstance.getItemList()
+          this.ready = true
+        } else {
+          throw Error('转盘信息初始化失败')
+        }
+      } catch (error) {
+        confirm({
+          title: '提示',
+          content: error.message,
+          showCancel: false
+        }).then(() => {
+
+        }).catch(() => {
+        })
+      } finally {
+        hideLoading()
+      }
+    },
+    cancelRecordDialog() {
+      this.$refs.record.close()
+    },
+    cancelDialog() {
+      this.$refs.result.close()
+    },
+    goActive() {
+      // 跳转去激活页面
+      wx.navigateTo({
+        url: '/pages/marketing/ActivationCodeSuccess?order_id='+this.order_id_rotate
+      })
+      this.$refs.result.close()
+    },
+    goActiveOrder(order_id) {
+      wx.navigateTo({
+        url: '/pages/marketing/ActivationCodeSuccess?order_id=' + order_id
+      })
+      this.$refs.record.close()
+    },
+    async startFn() {
+      let that = this
+      if (!checkIsLogin(1, 1)) return
+
+      if (rotateInstance.is_start) {
+        return // 已经启动过程中无法再触发
+      }
+
+      if (this.day_count < 1) {
+        toast('今日次数已用完，明天再来吧')
+        return
+      }
+
+      if (this.total_count < 1) {
+        toast('您的抽奖总次数用完啦')
+        return
+      }
+      this.total_count--
+      this.day_count--
+
+      // 记录点了几次开奖，这个暂时用不到
+      this.start_num++
+
+      rotateInstance.start(999, 10)
+      await rotateBegin({ id: this.activity_id }).then(res => {
+        // desc: "很遗憾，未中奖"
+        // id: 2
+        // prize: 0
+        const { desc, id, prize } = res.data
+        // 获取中奖的下标
+        const idx = findArrayIdx(this.itemList, { id: id })
+        console.log(idx)
+        // //修改限制圈数
+        rotateInstance.setRotateNum(rotateInstance.rotate_count + 5)
+        // 设置跳转的方块
+        rotateInstance.setLuckNum(Number(idx) + 1)
+        const myVar = setInterval(function () {
+          console.log(that.rotateObj, that.rotateObj.is_start == 0, 'this.rotateObj.is_start')
+          if (that.rotateObj.is_start == 0) {
+            clearInterval(myVar)
+            // 这是提示
+            console.log('4444444444444444444444')
+            rotateInstance.setReward(res.data)
+
+            rotateInstance.setCallFn(that.showResult(that))
+          }
+        }, 500)
+      }).catch(e => {
+
+      })
+    },
+    showResult(that) {
+      // uni.showModal({
+      //     title:"中奖提示",
+      //     content:'恭喜中奖，中奖id:'+idx+'中奖内容为'+name
+      // })
+
+      if (rotateInstance.reward.prize) {
+        this.result_tip = rotateInstance.reward.desc// `${name}`
+        this.order_id_rotate=rotateInstance.reward.order_id
+        console.log(that, 'this')
+        that.$refs.result.show()
+      } else {
+        error(rotateInstance.reward.desc || '没有中奖哦，再试一次吧')
+      }
+    },
+    getStyle(idx, is_mask) {
+      try {
+        if (this.activeIdx >= 0) {
+          if ((idx != this.activeIdx) && !is_mask) return '#FFEBEB'
+          if ((idx != this.activeIdx) && is_mask) return '#FFC2C8'
+        }
+
+        // if((idx!=this.activeIdx || !rotateInstance.isStart()) && !is_mask)return '#FFEBEB'
+        // if((idx!=this.activeIdx || !rotateInstance.isStart()) && is_mask)return '#FFC2C8'
+        const bgColor = '#FFD800'// rotateInstance.getBgColor(idx)
+        return bgColor // `background-color:${bgColor}`
+      } catch (e) {
+        const bgColor = '#FFD800'// rotateInstance.getBgColor(idx)
+        return bgColor // `background-color:${bgColor}`
+      }
+    },
+
+    getTextStyle(idx) {
+      if (idx == this.activeIdx) return '#fff'
+    }
+  },
+  computed: {
+    getStartTip() {
+      // if(this.start_num>0 && this.total_count>0){
+      //     return '再来一次'
+      // }
+      return '立即抽奖'
+    },
+    activeIdx() {
+      try {
+        // return rotateInstance.getIdx()
+        return this.rotateObj.idx
+      } catch (e) {
+        return -1
+      }
+    }
+  },
+  onLoad(options) {
+    const { activity_id = 0 } = options
+    this.activity_id = activity_id
+  },
+  mounted() {
+    // this.$nextTick().then(res=>{
+    //     this.showRewardList()
+    // })
+  },
+
+  onShow() {
+    this.init_func()
+  },
+  created() {
+    // this.$fun.checkIsLogin(1)
+    this.rotateObj = rotateInstance
+    // rotateInstance.setCallFn(this.showResult)
+    // this.itemList = rotateInstance.getItemList()
+    // rotateInstance.start()
+  }
+
+})
+
+</script>
+<style lang="scss">
+  .page-wrap{
+    background: #ef1828;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: absolute;
+    width: 750rpx;
+  }
+
+  .record-container {
+
+    .top {
+      position: relative;
+      text-align: center;
+      width: 656rpx;
+      height: 902rpx;
+      margin: 0 auto;
+
+      .record-bg {
+        position: absolute;
+        width: 656rpx;
+        height: 902rpx;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      .record-box {
+        position: relative;
+        z-index: 4;
+        padding: 130rpx 30rpx;
+      }
+
+      .title {
+        margin: 30rpx 0;
+        color: #e84428;
+        position: relative;
+        z-index: 4;
+      }
+
+      .table {
+        font-size: 14px;
+        height: 540rpx;
+        overflow-y: scroll;
+        overflow-x: hidden;
+
+        .tr {
+          height: 60rpx;
+          line-height: 60rpx;
+          display: flex;
+
+          .td {
+            text-align: center;
+            padding: 0rpx !important;
+          }
+
+          .th {
+            text-align: center;
+            background: #fff1ee;
+            color: #333333;
+            padding: 0rpx !important;
+          }
+
+          .time {
+            width: 200rpx;
+            color: #666;
+          }
+
+          .prize {
+            color: #666;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+
+    }
+
+    .btn-box {
+      text-align: center;
+      margin-top: 30rpx;
+
+      .close {
+        width: 70rpx;
+        height: 70rpx;
+        margin: 0 auto;
+      }
+    }
+
+  }
+
+  .reward-list {
+    right: 70rpx;
+    text-align: right;
+    position: absolute;
+    top: 1273rpx;
+    width: 750rpx;
+    font-size: 14px;
+    text-decoration: underline;
+    color: white;
+  }
+
+  .tip-box {
+    width: 650rpx;
+    position: absolute;
+    top: 1330rpx;
+    left: 50rpx;
+    overflow: hidden;
+    padding-bottom: 30px;
+
+    .title {
+      color: #FFD800;
+      margin-bottom: 10px;
+    }
+  }
+
+  .num-count {
+    width: 660rpx;
+    height: 90rpx;
+    position: absolute;
+    top: 1163rpx;
+    left: 45rpx;
+
+    .text {
+      position: absolute;
+      width: 660rpx;
+      height: 64rpx;
+      line-height: 64rpx;
+      text-align: center;
+      z-index: 3;
+      color: #925507;
+    }
+
+    .num-count-img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 660rpx;
+      height: 90rpx;
+
+    }
+  }
+
+  .result-container {
+
+    .top {
+      position: relative;
+      text-align: center;
+      width: 750rpx;
+      padding-top: 580rpx;
+
+      .result-bg {
+        position: absolute;
+        width: 750rpx;
+        height: 580rpx;
+        left: 0;
+        top: 0;
+        z-index: 1;
+      }
+
+      .text {
+        position: absolute;
+        z-index: 3;
+        width: 750rpx;
+        text-align: center;
+        top: 240rpx;
+        left: 0;
+
+        .text-row {
+          color: #FF0000;
+          /*width: 228rpx;*/
+          /*margin: 0 auto;*/
+          text-align: center;
+          line-height: 1.4;
+
+          &.reward {
+            width: 260rpx;
+            margin: 0 auto;
+            height: 120rpx;
+            font-size: 12px;
+            line-height: 12px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            word-wrap: break-word;
+          }
+
+        }
+      }
+
+    }
+
+    .btn-box {
+      text-align: center;
+      margin-top: 60rpx;
+
+      .close {
+        width: 70rpx;
+        height: 70rpx;
+        margin: 0 auto;
+      }
+    }
+
+  }
+
+  .wrap {
+
+    background: #ef1828;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: absolute;
+    width: 750rpx;
+  }
+
+  .bgimg {
+    width: 750rpx;
+    height: 1434rpx;
+  }
+
+  .rotate-box {
+    width: 460rpx;
+    height: 460rpx;
+    /*background: white;*/
+    position: absolute;
+    left: 50%;
+    top: 565rpx;
+    transform: translate(-50%);
+    /*padding: 20rpx;*/
+    z-index: 32;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 10rpx;
+    box-sizing: border-box;
+
+    .item {
+      width: 140rpx;
+      height: 140rpx;
+      text-align: center;
+      box-sizing: border-box;
+      margin-right: 10rpx;
+      margin-bottom: 10rpx;
+      position: relative;
+
+      .start-btn {
+        height: 130rpx;
+        line-height: 130rpx;
+        padding: 0 !important;
+        font-size: 14px;
+        background: #FFD800 !important;
+        color: #AB6102;
+      }
+
+      .start-btn-mask {
+        background: #FFB001 !important;
+      }
+
+      .goods {
+        z-index: 3;
+        position: absolute;
+        width: 140rpx;
+        height: 130rpx;
+        padding: 10rpx 0;
+        box-sizing: border-box;
+        background: #FFEBEB;
+        border-radius: 10rpx;
+      }
+
+      .mask {
+        z-index: 2;
+        width: 140rpx;
+        position: absolute;
+        top: 10rpx;
+        height: 130rpx;
+        padding: 10rpx 0;
+        box-sizing: border-box;
+        background: #FFC2C8;
+        border-radius: 10rpx;
+      }
+
+      .picbox {
+        width: 70rpx;
+        height: 70rpx;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .pic {
+        position: absolute;
+        width: 70rpx;
+        max-height: 70rpx;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .name {
+        margin: 10rpx auto 0;
+        height: 40rpx;
+        width: 140rpx;
+        color: #2f2f2f;
+        text-align: center;
+        line-height: 40rpx;
+        font-size: 20rpx;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.active {
+          color: #AB6102;
+        }
+      }
+    }
+  }
+
+  .c-FFD800{
+    background-color: #FFD800!important;
+  }
+  .c-ff0000{
+    color: #ff0000 !important;
+  }
+
+</style>
+<config>
+  {
+  "navigationBarTitleText": "大转盘",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#fff",
+  "usingComponents": {
+  "wzw-im-tip": "~@/components/wzw-im-tip",
+  "icon": "~@/components/icon",
+  "wzw-dialog":"~@/components/ModelComponents"
+  }
+  }
+</config>
