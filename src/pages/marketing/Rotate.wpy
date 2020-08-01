@@ -312,7 +312,7 @@ wepy.page({
 
       if (rotateInstance.reward.prize) {
         this.result_tip = rotateInstance.reward.desc// `${name}`
-        this.order_id_rotate=rotateInstance.reward.order_id
+        this.order_id_rotate=rotateInstance.reward.active_code.order_id
         console.log(that, 'this')
         that.$refs.result.show()
       } else {
