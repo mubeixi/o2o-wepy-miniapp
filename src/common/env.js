@@ -17,6 +17,7 @@ const confByDev = {
   IM_WSS_URL: 'wss://newjdtravel.bafangka.com/cus/',
   IM_API_URL: 'https://chat.bafangka.com',
   bussiBottom: '真产品聚划算就在网中网',
+  isCustom: false,
   isJb: false // 判断是否是及贝 用于区分logo
 }
 
@@ -28,6 +29,7 @@ const confByPro = {
   IM_WSS_URL: 'wss://newjdtravel.bafangka.com/cus/',
   IM_API_URL: 'https://chat.bafangka.com',
   bussiBottom: '真产品聚划算就在网中网',
+  isCustom: false,
   isJb: false// 判断是否是及贝 用于区分logo
 }
 
@@ -39,6 +41,7 @@ const confByJb = {
   IM_WSS_URL: 'wss://newjdtravel.bafangka.com/cus/',
   IM_API_URL: 'https://chat.bafangka.com',
   bussiBottom: '专业商家自营配送小程序',
+  isCustom: false,
   isJb: true// 判断是否是及贝 用于区分logo
 }
 
