@@ -14,7 +14,7 @@
 
     .pie-echarts {
       display: block;
-      width: 500rpx;
+      width: 450rpx;
       height: 340rpx;
     }
 
@@ -308,7 +308,7 @@
           </div>
           <div class="val-item flex1 text-center">
             <div class="title c9 m-b-15 fz-12">转化率</div>
-            <div class="val c3">{{systemProdSalesData.conversion_rate}}%</div>
+            <div class="val c3">{{systemProdSalesData.conversion_rate*100}}%</div>
           </div>
         </div>
         <div class="product-list table fz-14">
@@ -327,7 +327,7 @@
             <div class="td">{{product.view_user_count}}</div>
             <div class="td">{{product.pay_user_count}}</div>
             <div class="td">{{product.sales_count}}</div>
-            <div class="td">{{product.conversion_rate}}</div>
+            <div class="td">{{product.conversion_rate}}%</div>
           </div>
         </div>
       </div>
