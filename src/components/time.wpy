@@ -21,8 +21,9 @@
 <script>
   import wepy from '@wepy/core'
   import { dateTimePicker, getMonthDay, getNewDateArryByStr, withData } from '../common/time'
+  const moment = require('moment')
 
-  const cutTimeStr = (str) => {
+const cutTimeStr = (str) => {
     const _str = str.substring(0, str.length - 1)
     return withData(_str)
   }
@@ -79,14 +80,16 @@
     ready() {
       const _str = this.val
       let hasDate = false
+
       if (_str) {
-        hasDate = getNewDateArryByStr(new Date(_str))
+        const shijiancuo = moment(_str)._d
+        hasDate = getNewDateArryByStr(shijiancuo)
       }
+
       let { dateTimeArray, dateTime } = dateTimePicker('', '', hasDate)
       if (this.mode === 'time') {
         dateTimeArray = dateTimeArray.slice(-3)
         dateTime = dateTime.slice(-3)
-        console.log(this.mode, dateTimeArray)
       }
       this.dateTimeArray = dateTimeArray
       this.dateTime = dateTime
