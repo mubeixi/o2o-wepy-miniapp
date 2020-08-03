@@ -16,13 +16,13 @@
         </div>
         <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>
       </div>
-      <div class="channel-item" @click="$linkTo('/pages/logistics/ExpressCompany')">
-        <div class="content">
-          <image src="/static/logistics/nopaper.png" class="img"></image>
-          <div class="title">电子面单</div>
-        </div>
-        <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>
-      </div>
+<!--      <div class="channel-item" @click="$linkTo('/pages/logistics/ExpressCompany')">-->
+<!--        <div class="content">-->
+<!--          <image src="/static/logistics/nopaper.png" class="img"></image>-->
+<!--          <div class="title">电子面单</div>-->
+<!--        </div>-->
+<!--        <icon class="arrow-right" size="20" color="#bbb" type="iconarrowleft"></icon>-->
+<!--      </div>-->
     </div>
 
     <!--    <div class="p-t-50 p-b-50 bgwhite">-->
