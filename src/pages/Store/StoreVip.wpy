@@ -211,7 +211,12 @@
           this.upgrade_rights.money = this.vipData.upgrade_rights.money ? this.vipData.upgrade_rights.money : this.upgrade_rights.money
           this.upgrade_rights.price_back = this.vipData.upgrade_rights.price_back ? this.vipData.upgrade_rights.price_back : this.upgrade_rights.price_back
 
-
+          if (this.basic_rights.shipping.value) {
+            this.selectValue.push('0')
+          }
+          if (this.basic_rights.discount.value) {
+            this.selectValue.push('1')
+          }
 
           ls.set('coupon_prod', this.upgrade_rights.coupon.value)
           ls.set('pro_prod', this.upgrade_rights.product.value)
@@ -219,8 +224,8 @@
         })
       },
       saveVip() {
-        let shippingIndex = this.selectValue.indexOf(0)
-        let discountIndex = this.selectValue.indexOf(1)
+        let shippingIndex = this.selectValue.indexOf('0')
+        let discountIndex = this.selectValue.indexOf('1')
         if (shippingIndex == -1) {
           this.basic_rights.shipping.value = 0
         }
