@@ -96,7 +96,8 @@
           ref="systemCateTree"
           :conf="systemCateConf"
           :show-checkbox="true"
-          :check-only-leaf="true"
+          :check-only-leaf="false"
+          :auto-select-parent="true"
           :tree-data="bizList"
           nodeKey="Category_ID"
         >
