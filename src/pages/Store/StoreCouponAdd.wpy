@@ -11,31 +11,23 @@
       </div>
     </div>
     <div class="line"></div>
-    <div class="coupon-img flex flex-vertical-center">
-      <div class="title">
-        优惠券图片
-      </div>
-      <!--        <div-->
-      <!--          @click="bindThumbClick(idx,img)"-->
-      <!--          class="img-item img"-->
-      <!--          v-for="(img,idx) in imgTempList"-->
-      <!--          :key="idx"-->
-      <!--          :style="{backgroundImage:'url('+img.path+')'}">-->
-      <!--          <span class="progress" v-if="img.task.progress<100">{{img.task.progress}}%</span>-->
-      <!--        </div>-->
-      <block v-for="(img,idx) in imgTempList">
-        <image class="img-item img" :src="img" @click="bindThumbClick(idx,img)"></image>
-      </block>
+<!--    <div class="coupon-img flex flex-vertical-center">-->
+<!--      <div class="title">-->
+<!--        优惠券图片-->
+<!--      </div>-->
+<!--      <block v-for="(img,idx) in imgTempList">-->
+<!--        <image class="img-item img" :src="img" @click="bindThumbClick(idx,img)"></image>-->
+<!--      </block>-->
 
-      <div @click="addImg"
-           class="img-item add"
-           v-if="imgTempList.length<1"
-      >
-        <icon color="#ddd" size="40" type="iconupload"></icon>
-      </div>
+<!--      <div @click="addImg"-->
+<!--           class="img-item add"-->
+<!--           v-if="imgTempList.length<1"-->
+<!--      >-->
+<!--        <icon color="#ddd" size="40" type="iconupload"></icon>-->
+<!--      </div>-->
 
-    </div>
-    <div class="line"></div>
+<!--    </div>-->
+<!--    <div class="line"></div>-->
     <div class="coupon-method flex-vertical-center flex">
       <div class="title">
         优惠方式
@@ -375,6 +367,21 @@
           error('结束时间必须大于开始时间')
           return
         }
+        if (!this.Coupon_Subject) {
+          hideLoading()
+          error('请填写优惠券名称')
+          return
+        }
+        if (!this.Coupon_Cash) {
+          hideLoading()
+          error('请填写优惠券抵扣金额')
+          return
+        }
+        if (!this.Coupon_Condition) {
+          hideLoading()
+          error('请填写优惠券使用条件')
+          return
+        }
 
         if (!this.canUse.hasOwnProperty(this.index)) {
           error('请选择使用条件')
@@ -382,7 +389,7 @@
 
         let data = {
           Coupon_Subject: this.Coupon_Subject,
-          Coupon_PhotoPath: this.imgTempList[0],
+          // Coupon_PhotoPath: this.imgTempList[0],
           Coupon_Cash: this.Coupon_Cash,
           Coupon_Condition: this.Coupon_Condition,
           Coupon_UsedTimes: this.canUse[this.index].id,
@@ -426,6 +433,7 @@
           }
           hideLoading()
         }).catch(e => {
+          error(e.msg || '添加失败')
           hideLoading()
         })
       },
@@ -487,7 +495,6 @@
           this._click = false
         } catch (e) {
           if (e.message !== 'chooseImage:fail cancel') Exception.handle(e)
-
         }
       },
       bindPickerChanges(e) {
@@ -519,8 +526,8 @@
                 this.Coupon_UserLevel = String(item.Coupon_UserLevel)
                 this.front_show = item.front_show
 
-                this.imgTempList.push(item.Coupon_PhotoPath)
-                console.log(item.Coupon_PhotoPath, this.imgTempList, 'sss')
+                // this.imgTempList.push(item.Coupon_PhotoPath)
+                // console.log(item.Coupon_PhotoPath, this.imgTempList, 'sss')
 
                 let obj1 = dateTimePicker('', '', item.Coupon_StartTime) // 传入已有时间，防止出现31号的情况
                 let obj2 = dateTimePicker('', '', item.Coupon_EndTime)// 传入已有时间，防止出现31号的情况
