@@ -15,7 +15,8 @@
           :conf="propsConf"
           :tree-data="treeData"
           :show-checkbox="true"
-          :check-only-leaf="true"
+          :auto-select-parent="true"
+          :check-only-leaf="false"
           nodeKey="id"
         >
         </fun-tree>

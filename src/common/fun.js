@@ -57,7 +57,7 @@ export const linkTo = (url, type = 'default') => {
   }
 }
 
-export const showLoading = (title = 'loading', mask = true) => {
+export const showLoading = (title = '加载中', mask = true) => {
   wx.showLoading({
     title,
     mask
