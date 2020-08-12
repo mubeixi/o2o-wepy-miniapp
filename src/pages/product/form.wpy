@@ -488,6 +488,7 @@
             :conf="bizCateConf"
             :show-checkbox="true"
             :check-only-leaf="false"
+            :auto-select-parent="true"
             :tree-data="bizProdCateList"
             nodeKey="id"
           >

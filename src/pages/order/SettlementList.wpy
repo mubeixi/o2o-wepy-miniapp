@@ -1,7 +1,7 @@
 <template>
   <div class="settlement-list p-t-20 page-wrap">
     <wzw-im-tip ref="wzwImTip"></wzw-im-tip>
-    <div class="settlement-list-item" v-for="(item,index) of listData" :key="index">
+    <div v-if="listData.length>0" class="settlement-list-item" v-for="(item,index) of listData" :key="index">
       <div class="settlement-list-item-title flex flex-vertical-center flex-justify-between p-l-13 p-r-10 fz-14">
         <div class="c3">
           订单编号：{{item.id}}
@@ -43,6 +43,10 @@
         </div>
       </div>
     </div>
+    <div v-if="listData.length<1" class="none" >
+      <image :src="spaceImImg" class="img"/>
+      <div class="m-t-15"><span>暂无数据</span></div>
+    </div>
 
     <div style="height: 86rpx;width: 750rpx"></div>
 
@@ -62,11 +66,13 @@
   import pageMixin from '../../mixins'
   import { dealBizSettle, getSettle } from '../../api/order'
   import { toast } from '../../common/fun'
+  import { getDomain } from '@/common/helper'
 
   wepy.page({
     store,
     mixins: [pageMixin],
     data: {
+      spaceImImg: getDomain('/static/client/box.png'),
       listData: [],
       page: 1,
       pageSize: 5,
@@ -115,7 +121,17 @@
   })
 </script>
 <style lang="scss">
+  .none {
+    text-align: center;
+    padding: 60rpx 0;
+    color: #B0B0B0;
+    font-size: 26rpx;
+  }
 
+  .none .img {
+    height: 220rpx;
+    width: 200rpx;
+  }
 
   .cr {
     color: #FF0000;

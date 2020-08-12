@@ -5,7 +5,7 @@
 // const users_id = 'wkbq6nc2kc'
 // 及贝商家
 // wxb627a9dde54f65f6
-const buildVersion = 113
+const buildVersion = 115
 
 const spaceImg = 'https://new401t.bafangka.com/uploadfiles/wkbq6nc2kc/image/202003231610328297.jpg'
 
